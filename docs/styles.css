@@ -1,0 +1,17 @@
+#root .SnackbarContent-root {
+    flex-wrap: nowrap;
+    overflow-wrap: anywhere;
+}
+
+html,body,#root {
+    height: 100%;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+}
+
+span[aria-label="Media ensemble"] {
+    font-weight: bold;
+    /*text-decoration-line: underline;*/
+    /*text-transform: uppercase;*/
+    border-bottom: 1px solid white;
+    padding-bottom: 1px;
+}
