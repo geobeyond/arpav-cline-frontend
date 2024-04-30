@@ -1,9 +1,8 @@
 {
   "files": {
     "main.css": "/Arpav-PPCV/static/css/main.9d5541ae.css",
-    "main.js": "/Arpav-PPCV/static/js/main.ab54ce77.js",
-    "static/js/7608.7d860ed6.chunk.js": "/Arpav-PPCV/static/js/7608.7d860ed6.chunk.js",
-    "static/js/8206.44b8bb8c.chunk.js": "/Arpav-PPCV/static/js/8206.44b8bb8c.chunk.js",
+    "main.js": "/Arpav-PPCV/static/js/main.7eeeb5a9.js",
+    "static/js/5614.22ccdaf2.chunk.js": "/Arpav-PPCV/static/js/5614.22ccdaf2.chunk.js",
     "static/js/8876.2ec0c4b9.chunk.js": "/Arpav-PPCV/static/js/8876.2ec0c4b9.chunk.js",
     "static/js/9306.3441e091.chunk.js": "/Arpav-PPCV/static/js/9306.3441e091.chunk.js",
     "static/js/8266.df2e9f79.chunk.js": "/Arpav-PPCV/static/js/8266.df2e9f79.chunk.js",
@@ -174,8 +173,9 @@
     "static/js/9332.ef7e2601.chunk.js": "/Arpav-PPCV/static/js/9332.ef7e2601.chunk.js",
     "static/js/5175.1d0f9677.chunk.js": "/Arpav-PPCV/static/js/5175.1d0f9677.chunk.js",
     "static/js/9823.4c431af6.chunk.js": "/Arpav-PPCV/static/js/9823.4c431af6.chunk.js",
-    "static/css/4721.86d77cd5.chunk.css": "/Arpav-PPCV/static/css/4721.86d77cd5.chunk.css",
-    "static/js/4721.735e63b7.chunk.js": "/Arpav-PPCV/static/js/4721.735e63b7.chunk.js",
+    "static/js/8206.44b8bb8c.chunk.js": "/Arpav-PPCV/static/js/8206.44b8bb8c.chunk.js",
+    "static/css/5706.86d77cd5.chunk.css": "/Arpav-PPCV/static/css/5706.86d77cd5.chunk.css",
+    "static/js/5706.78a854c0.chunk.js": "/Arpav-PPCV/static/js/5706.78a854c0.chunk.js",
     "static/media/titillium-web-latin-400italic.woff": "/Arpav-PPCV/static/media/titillium-web-latin-400italic.ccc64f345dcd38cde5c0.woff",
     "static/media/titillium-web-latin-600italic.woff": "/Arpav-PPCV/static/media/titillium-web-latin-600italic.7ee4b2512d967c31ddc9.woff",
     "static/media/titillium-web-latin-300italic.woff": "/Arpav-PPCV/static/media/titillium-web-latin-300italic.3e12ca52140781be1fbd.woff",
@@ -202,6 +202,6 @@
   },
   "entrypoints": [
     "static/css/main.9d5541ae.css",
-    "static/js/main.ab54ce77.js"
+    "static/js/main.7eeeb5a9.js"
   ]
 }
