@@ -17,27 +17,6 @@ import { dag, Container, Directory, object, func } from "@dagger.io/dagger"
 
 @object()
 class ContinuousIntegration {
-  /**
-   * Returns a container that echoes whatever string argument is provided
-   */
-  // @func()
-  // containerEcho(stringArg: string): Container {
-  //   return dag.container().from("alpine:latest").withExec(["echo", stringArg])
-  // }
-  //
-  // /**
-  //  * Returns lines that match a pattern in the files of the provided Directory
-  //  */
-  // @func()
-  // async grepDir(directoryArg: Directory, pattern: string): Promise<string> {
-  //   return dag
-  //     .container()
-  //     .from("alpine:latest")
-  //     .withMountedDirectory("/mnt", directoryArg)
-  //     .withWorkdir("/mnt")
-  //     .withExec(["grep", "-R", pattern, "."])
-  //     .stdout()
-  // }
 
   /**
    * Build the project's docker image and optionally publish it in a registry.
@@ -53,17 +32,18 @@ class ContinuousIntegration {
       .build(
         repoRootPath,
         {
-          dockerfile: "Dockerfile"
+          dockerfile: 'Dockerfile'
         }
       )
       .withLabel(
-        "org.opencontainers.image.source",
-        "https://github.com/geobeyond/Arpav-PPCV"
+        'org.opencontainers.image.source',
+        'https://github.com/geobeyond/Arpav-PPCV'
       )
-
     if (publishDockerImage) {
       const sanitizedName = this._sanitizeDockerImageName(publishDockerImage)
       return await builtImage.publish(sanitizedName)
+    } else {
+      return 'Done!'
     }
   }
 
