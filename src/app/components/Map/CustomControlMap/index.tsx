@@ -7,6 +7,8 @@ interface Props {
   children?: React.ReactNode;
   container?: React.HTMLAttributes<HTMLDivElement>;
   prepend?: boolean;
+  className?: string;
+  style?: any;
 }
 
 const POSITION_CLASSES = {
@@ -36,9 +38,10 @@ const Control = (props: Props): JSX.Element => {
     portalRoot.append(portalContainer);
   }
 
-  const className =
+  let className =
     (props.container?.className?.concat(' ') || '') + 'leaflet-control';
-  const container = { ...props.container, className };
+  if (props.className) className += props.className;
+  const container = { ...props.container, className, style: props.style };
   const controlContainer = <div {...container}>{props.children}</div>;
 
   L.DomEvent.disableClickPropagation(portalRoot);

@@ -6,6 +6,7 @@ import {
   ChangeMapSelectionPatyload,
   Filters,
   iBaseParameterItem,
+  iCityItem,
   iLayerItem,
   MapState,
 } from './types';
@@ -248,6 +249,9 @@ const slice = createSlice({
     setOpacity(state, action: PayloadAction<number>) {
       // console.log('setTimeserie', action.payload)
       state.opacity = action.payload;
+    },
+    setCity(state, action: PayloadAction<iCityItem>) {
+      state.city = action.payload;
     },
   },
 });

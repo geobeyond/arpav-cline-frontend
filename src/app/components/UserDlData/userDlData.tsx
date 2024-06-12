@@ -119,7 +119,7 @@ const UserDlData = (props: UserDlDataProps) => {
         {formikProps => (
           <Form onChange={handleChangeForm}>
             <Box sx={UserDataContainerStyle}>
-              <Box sx={FieldContainerStyle}>
+              {/*<Box sx={FieldContainerStyle}>
                 <Field
                   id="place"
                   name="place"
@@ -156,7 +156,7 @@ const UserDlData = (props: UserDlDataProps) => {
                   )}
                   size={isMobile ? 'small' : 'medium'}
                 />
-              </Box>
+                </Box>*/}
               <Box sx={FieldContainerStyle}>
                 <Field
                   id={'membership'}

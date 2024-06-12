@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Paper,
@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import LineAxisIcon from '@mui/icons-material/LineAxis';
 import { useSelector } from 'react-redux';
-import { useMap } from 'react-leaflet';
+import { useMap, useMapEvent } from 'react-leaflet';
 import { useLeafletContext } from '@react-leaflet/core';
 import { useTranslation } from 'react-i18next';
 import { roundTo4 } from '../../../utils/json_manipulations';
@@ -23,14 +23,16 @@ import {
   MapSearchSecondRowStyle,
 } from './styles';
 import { formatYear } from '../../../utils/dates';
+import { VectorWrapperLayer } from '../Map/VectorWrapperLayer';
 import TodayIcon from '@mui/icons-material/Today';
 import GpsFixedOutlinedIcon from '@mui/icons-material/GpsFixedOutlined';
 import { OpacityComponent } from '../Map/OpacityComponent';
 import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
 import { RestartAlt } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import SearchIcon from '@mui/icons-material/Search';
 
-import { useMapEvent } from 'react-leaflet';
+import findPoly from '../../utils/muni';
 
 export interface MapSearchProps {
   className?: string;
@@ -39,6 +41,8 @@ export interface MapSearchProps {
   openCharts?: Function;
   defaultCenter: [number, number];
   defaultZoom: number;
+  vectorLayer: any;
+  customClick?: Function;
 }
 
 export interface MapPopupProps {
@@ -69,8 +73,16 @@ export const ValueRenderer = ({ time, value, unit }) => {
 };
 
 export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
-  const { value, setPoint, openCharts, className, defaultCenter, defaultZoom } =
-    props;
+  const {
+    value,
+    setPoint,
+    openCharts,
+    className,
+    defaultCenter,
+    defaultZoom,
+    vectorLayer,
+    customClick,
+  } = props;
   const { cities, selected_map, timeserie } = useSelector(
     (state: any) => state.map,
   );
@@ -79,7 +91,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const { t } = useTranslation();
   const resetMap = () => context.map.flyTo(defaultCenter, defaultZoom);
   const onChange = (event, value) => {
-    // console.log('Ricerca per comune', event, value);
+    console.log('Ricerca per comune', event, value);
     typeof setPoint === 'function' && setPoint(value);
     if (!value) {
       // console.log('no value')
@@ -120,8 +132,59 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           context.map.getZoom() + 1,
         );
       }, 100);
+      setTimeout(() => {
+        // @ts-ignore
+        customClick({
+          // @ts-ignore
+          latlng: L.latLng([value.latlng.lat, value.latlng.lng]),
+          // latlng: found.latlng,
+          layer: {
+            properties: value,
+          },
+        });
+      }, 100);
     }
   };
+
+  function latlonChange(event) {
+    let latlng = event.target.value;
+    let lat = latlng.split(' ')[0].replace(',', '.');
+    let lng = latlng.split(' ')[1].replace(',', '.');
+    let latf = parseFloat(lat);
+    let lngf = parseFloat(lng);
+    //TODO: check bounding box
+    if (
+      lngf > 9.018533 &&
+      latf > 44.596056 &&
+      lngf < 14.576226 &&
+      latf < 47.299456
+    ) {
+      if (value) {
+        value.latlng.lat = latf;
+        value.latlng.lng = lngf;
+      }
+    }
+  }
+
+  function searchPoint(event) {
+    const position = findPoly(value?.latlng);
+    console.log(position);
+    if (value?.latlng.lat === 45.78502414) {
+      value.label = 'Volpago del Montello';
+      value.name = 'Volpago del Montello';
+    } else if (value?.latlng.lat === 45 && value?.latlng.lng === 11) {
+      value.label = '';
+      value.name = '';
+    } else if (value?.latlng.lat === 45 && value?.latlng.lng === 12) {
+      value.label = 'Papozze';
+      value.name = 'Papozze';
+    } else if (value?.latlng.lat === 46 && value?.latlng.lng === 12) {
+      value.label = 'Borgo Valbelluna';
+      value.name = 'Borgo Valbelluna';
+    }
+
+    onChange(event, value);
+  }
 
   // @ts-ignore
   return (
@@ -152,12 +215,16 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
             size={'small'}
             color={'secondary'}
             variant="outlined"
-            value={
+            defaultValue={
               roundTo4(value.latlng.lat) + ', ' + roundTo4(value.latlng.lng)
             }
+            onChange={latlonChange}
             InputProps={{
               endAdornment: (
                 <>
+                  <IconButton edge="end" onClick={searchPoint}>
+                    <SearchIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
                   <IconButton
                     edge="end"
                     onClick={() =>
@@ -208,77 +275,75 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const { cities, selected_map, timeserie } = useSelector(
     (state: any) => state.map,
   );
-  const baseYear = 1976;
-  let yr = 2024;
-  let yrfield = document.getElementsByClassName('timecontrol-date');
-  let yrstring = '2024';
-  if (yrfield.length > 0) {
-    yrstring = yrfield[0].textContent!;
-  }
-  try {
-    yr = parseInt(yrstring, 10);
-  } catch (ex) {
-    yr = 2024;
-  }
-
-  let tsindex = 0;
-
-  if (timeserie[0].values.length > 1) {
-    tsindex = yr - baseYear;
-  } else {
-    tsindex = 0;
-  }
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
-  const onChange = (event, value) => {
-    // console.log('Ricerca per comune', event, value);
-    typeof setPoint === 'function' && setPoint(value);
-    // @ts-ignore
-    const found = Object.values(map._layers).find(
-      // @ts-ignore
-      x => x._url && x._url.includes('public.places_cities.geometry'),
-    );
-    // @ts-ignore
-    if (found && value?.latlng) {
-      context.map.flyTo(
-        [value.latlng.lat, value.latlng.lng],
-        context.map.getZoom() - 1,
-      );
-      // @ts-ignore
-      found.setFeatureStyle(value.name, {
-        color: 'yellow',
-        weight: 1,
-        radius: 1,
-        fill: true,
-        fillOpacity: 1,
-        opacity: 1,
-      });
-      // @ts-ignore
-      found.fire('click', {
-        // @ts-ignore
-        latlng: L.latLng([value.latlng.lat, value.latlng.lng]),
-        // latlng: found.latlng,
-        layer: {
-          properties: value,
-        },
-      });
-      setTimeout(() => {
-        context.map.flyTo(
-          [value.latlng.lat, value.latlng.lng],
-          context.map.getZoom() + 1,
-        );
-      }, 100);
+
+  let [tt, setTt] = useState(2024);
+  let [tv, setTv] = useState(0);
+
+  let tsindex = 0;
+  const baseYear = 1976;
+
+  let yr = 2024;
+  let oyr = 0;
+  let otsindex = 0;
+
+  useEffect(() => {
+    let att = yr;
+    let atv = 0;
+    let yrfield = document.getElementsByClassName('timecontrol-date');
+    let yrstring = '2024';
+    if (yrfield.length > 0) {
+      yrstring = yrfield[0].textContent!;
     }
-  };
+    try {
+      yr = parseInt(yrstring, 10);
+    } catch (ex) {
+      yr = 2024;
+    }
+
+    if (oyr !== yr) {
+      oyr = yr;
+
+      if (timeserie) {
+        if (timeserie.length > 0) {
+          if (timeserie[0].values.length > 1) {
+            tsindex = yr - baseYear;
+          } else {
+            tsindex = 0;
+          }
+          att = timeserie[0]?.values[tsindex]?.time;
+          atv = timeserie[0]?.values[tsindex]?.value;
+        }
+      }
+
+      setTt(att);
+      setTv(atv);
+    }
+  });
+
+  useEffect(() => {
+    // @ts-ignore
+    map.timeDimension.on('timeloading', data => {
+      let dt = new Date(+data.time).getFullYear();
+      console.log(dt);
+      otsindex = tsindex;
+      tsindex = dt - baseYear;
+      if (otsindex != tsindex) {
+        let ctt = timeserie[0]?.values[tsindex]?.time;
+        let ctv = timeserie[0]?.values[tsindex]?.value;
+
+        setTt(ctt);
+        setTv(ctv);
+      }
+    });
+  });
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {timeserie && (
-        <CompactValueRenderer
-          time={timeserie[0]?.values[tsindex].time}
-          value={timeserie[0]?.values[tsindex].value}
-          unit={selected_map.unit}
-        />
+        <CompactValueRenderer time={tt} value={tv} unit={selected_map.unit} />
       )}
       <span style={{ flex: '1 1 1px' }}></span>
       <div style={{ display: 'flex', flexDirection: 'column' }}>

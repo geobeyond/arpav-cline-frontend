@@ -31,6 +31,7 @@ import {
 import { full_find_keys, useMapSlice } from '../../pages/MapPage/slice';
 import { RequestApi } from '../../Services';
 import { formatYear } from '../../../utils/dates';
+import { lightBlue } from '@mui/material/colors';
 // import { saveAs } from 'file-saver';
 
 export interface TSDataContainerProps {
@@ -88,17 +89,28 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
   const colors = [
     {
-      Histo: 'rgb(100,100,100)',
-      Rcp26: 'rgb(46,105,193)',
-      Rcp45: 'rgb(243, 156, 18)',
-      Rcp85: 'rgb(231,60,60)',
+      histo: 'rgb(69,50,27)',
+      rcp26: 'rgb(46,105,193)',
+      rcp45: 'rgb(243, 156, 18)',
+      rcp85: 'rgb(231,60,60)',
     },
     {
-      Histo: 'rgba(100,100,100, 0.4)',
-      Rcp26: 'rgba(46,105,193, 0.4)',
-      Rcp45: 'rgba(243, 156, 18, 0.4)',
-      Rcp85: 'rgba(231,60,60, 0.4)',
+      histo: 'rgba(69,50,27, 0.4)',
+      rcp26: 'rgba(46,105,193, 0.4)',
+      rcp45: 'rgba(243, 156, 18, 0.4)',
+      rcp85: 'rgba(231,60,60, 0.4)',
     },
+  ];
+
+  const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
+
+  const gmodels = [
+    'Media ensamble',
+    'EC-EARTH_CCLM4-8-17',
+    'EC-EARTH_RACM022E',
+    'EC-EARTH_RCA4',
+    'HadGEM2-ES_RACM022E',
+    'MPI-ESM-LR_REMO2009',
   ];
 
   useEffect(() => {
@@ -115,7 +127,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         return scenarios.map(scenario => {
           const input = {
             ...baseSelection,
+            data_series: 'yes',
             forecast_model: model,
+            time_window: null,
             scenario,
           };
           const resItem = getItemByFilters(layers, input);
@@ -126,10 +140,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .flat();
     setIds(ids);
     api
-      .getTimeseries(ids, latLng.lat, latLng.lng)
+      .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
       .then(res => {
         //@ts-ignore
-        setTimeseries(res.results);
+        setTimeseries(res.series);
       })
       .catch(err => {
         console.log(err);
@@ -155,62 +169,118 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const getLegend = () => {
     //TODO names lookup
-    const legend = timeseries?.map(
-      item =>
-        `${findParamName(
-          item.dataset.scenario_id,
-          'scenarios',
-        )} - ${findParamName(
-          item.dataset.forecast_model_id,
-          'forecast_models',
-        )}`,
-    );
+    const legend = timeseries
+      ?.filter(x => x.name.indexOf('_BOUND_') < 0)
+      .map(item => item.name);
     return legend;
   };
 
+  const getSelectedLegend = () => {
+    //TODO names lookup
+    let ret = {};
+    const legend = timeseries
+      ?.filter(x => x.name.indexOf('_BOUND_') < 0)
+      .map(x => {
+        ret[x.name] = x.info.smoothing === 'no_smoothing';
+      });
+    return ret;
+  };
+
   const getColor = dataset => {
-    const modelColor =
-      dataset.forecast_model === models[0] ? colors[0] : colors[1];
-    return modelColor[dataset.scenario];
+    for (let k in colors[0]) {
+      if (dataset.name.indexOf(k) >= 0) {
+        return colors[0][k];
+      }
+    }
+    return dataset.info.station_id ? '#45321b' : '#ff0000';
+    //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
     return 'solid';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineOpacity = dataset => {
-    return 1;
+    return dataset.name.indexOf('_BOUND_') > 0 ? 0 : 1;
     //return dataset.forecast_model === models[0] ? 1 : 0.8;
   };
 
-  const getChartData = item => {
-    if (!movingAvg) {
-      return item.values.map(val => [val.time.substring(0, 4), val.value]);
-    } else {
-      const window = 11;
-      const values = item.values.map(val => val.value);
-      const movingAvgValues = caculateMovingAverage(values, window);
-      return item.values.map((val, index) => [
-        val.time.substring(0, 4),
-        window >= index ? movingAvgValues[0] : movingAvgValues[index - window],
-      ]);
+  const getLineWidth = dataset => {
+    return dataset.info.smoothing === 'no_smoothing' ? 2 : 1;
+  };
+
+  const getSelected = dataset => {
+    return dataset.info.smoothing === 'no_smoothing' ? true : false;
+  };
+
+  const getChartData = (item, series) => {
+    if (item.name.indexOf('_BOUND_') >= 0) {
+      if (item.name.indexOf('UPPER') >= 0) {
+        let ret: number[] = [];
+        let lbitem = series.filter(
+          x => x.name === item.name.replace('UPPER', 'LOWER'),
+        );
+        if (lbitem)
+          for (let i in item.values) {
+            ret.push(item.values[i].value - lbitem[0].values[i].value);
+          }
+        return ret;
+      }
     }
+    return item.values.map(x => x.value);
+  };
+
+  const getGraphType = dataset => {
+    return dataset.info.station_id ? 'bar' : 'line';
+  };
+  const getZLevel = dataset => {
+    return dataset.info.station_id ? 1000 : 10;
+  };
+
+  const getStack = dataset => {
+    return dataset.name.indexOf('_BOUND_') > 0
+      ? dataset.info.smoothing
+      : dataset.name;
+  };
+  const getAreaStyle = dataset => {
+    return dataset.name.indexOf('_UPPER_BOUND_') > 0
+      ? {
+          color: '#ffc3c3',
+        }
+      : null;
+  };
+
+  const getXAxis = () => {
+    const cats = timeseries?.map(item => {
+      return item.values.map(x => x.datetime.split('-')[0]);
+    });
+    return cats[0];
   };
 
   const seriesObj = timeseries?.map(item => ({
-    name: `${findParamName(
-      item.dataset.scenario_id,
-      'scenarios',
-    )} - ${findParamName(item.dataset.forecast_model_id, 'forecast_models')}`,
-    type: 'line',
+    name: item.name
+      .replace('_UNCERTAINTY_LOWER_BOUND_', '')
+      .replace('_UNCERTAINTY_UPPER_BOUND_', ''),
+    type: getGraphType(item),
     smooth: true,
     // sampling: 'average',
     symbol: 'none',
     lineStyle: {
-      color: getColor(item.dataset),
-      type: getLineType(item.dataset),
-      opacity: getLineOpacity(item.dataset),
+      color: getColor(item),
+      type: getLineType(item),
+      opacity: getLineOpacity(item),
+      width: getLineWidth(item),
     },
-    data: getChartData(item),
+    itemStyle: {
+      color: getColor(item),
+      type: getLineType(item),
+      opacity: getLineOpacity(item),
+      width: getLineWidth(item),
+    },
+    selected: getSelected(item),
+    data: getChartData(item, timeseries),
+    stack: getStack(item),
+    areaStyle: getAreaStyle(item),
+    zLevel: getZLevel(item),
   }));
 
   const titleText = `
@@ -264,6 +334,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     },
     legend: {
       data: getLegend(),
+      selected: getSelectedLegend(),
       top: '30%',
       icon: 'rect',
     },
@@ -301,6 +372,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
+      data: getXAxis(),
       axisLabel: {
         showMinLabel: false,
         rotate: 45,
@@ -341,22 +413,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     )
       .filter(x => !x[1])
       .map(x => x[0]);
-    setIds(
-      timeseries
-        .filter(
-          x =>
-            !allIds.includes(
-              `${findParamName(
-                x.dataset.scenario_id,
-                'scenarios',
-              )} - ${findParamName(
-                x.dataset.forecast_model_id,
-                'forecast_models',
-              )}`,
-            ),
-        )
-        .map(x => x.dataset.id),
-    );
+    setIds(timeseries.filter(x => !allIds.includes(x.name)).map(x => x.name));
   };
 
   const dataZoomHandle = (params, chart) => {

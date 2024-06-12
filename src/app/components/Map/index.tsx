@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import sensorPositions from './data';
@@ -36,6 +36,9 @@ import {
   MousePositionDisplayStyle,
 } from './styles';
 import { OpacityComponent } from './OpacityComponent';
+import { Tooltip, UncontrolledTooltip, Button } from 'design-react-kit';
+import InfoIcon from '@mui/icons-material/Info';
+
 // import {BaseLayerControl} from "./BaseLayerControl";
 
 const MobileSpaceDisplay = () => {
@@ -100,6 +103,13 @@ const Map = (props: MapProps) => {
     // updateTimeDimension: true,
   };
 
+  const [click, setClick] = React.useState();
+
+  const vectorWrapperRef = useRef();
+  const ref5 = useRef(null);
+
+  const [timeStatus, setTimeStatus] = React.useState('none');
+
   return (
     <MapContainer
       style={MapContainerStyle}
@@ -157,6 +167,8 @@ const Map = (props: MapProps) => {
           openCharts={openCharts}
           defaultCenter={defaultCenter}
           defaultZoom={defaultZoom}
+          vectorLayer={vectorWrapperRef}
+          customClick={setClick}
         />
       </CustomControlMap>
       {/*<BaseLayerControl/>*/}
@@ -179,41 +191,46 @@ const Map = (props: MapProps) => {
             pointToLayer={(feature, latlng) => {
               return L.circleMarker(latlng, {
                 radius: 2,
-                weight: 1,
+                weight: 2,
               });
             }}
+            interactive={false}
           ></GeoJSON>
         </LayersControl.Overlay>
       </LayersControl>
       <VectorWrapperLayer
+        ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
         openCharts={openCharts}
+        onCustom={click}
       />
-      {/*<CustomControlMap position={'topleft'}>*/}
-      {/*  <OpacityComponent/>*/}
-      {/*</CustomControlMap>*/}
-      <CustomControlMap position="bottomleft">
-        <Typography
-          className={'leaflet-bar-timecontrol leaflet-bar leaflet-disclaimer'}
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            fontSize: '11px',
-            position: 'absolute',
-            bottom: '-10px',
-            left: '-10px',
-            minWidth: '50vw',
-            margin: 0,
-            border: 0,
-            borderRadius: 0,
-          }}
-        >
-          Si trastta di proiezioni climatiche e non di previsioni a lungo
+
+      <CustomControlMap
+        position="bottomleft"
+        className=" leaflet-time-info"
+        style={{
+          position: 'absolute',
+          margin: 0,
+          backgroundColor: 'transparent',
+          height: '20px',
+          width: '20px',
+          bottom: '61px',
+          left: '385px',
+          display: timeStatus,
+          padding: 0,
+        }}
+      >
+        <Button innerRef={ref5} className="m-3">
+          <InfoIcon></InfoIcon>
+        </Button>
+        <UncontrolledTooltip placement="top" target={ref5}>
+          Si tratta di proiezioni climatiche e non di previsioni a lungo
           termine. Il valore annuale ha validità in un contesto di trend
           trentennale.
-        </Typography>
+        </UncontrolledTooltip>
       </CustomControlMap>
-      <ThreddsWrapperLayer />
+      <ThreddsWrapperLayer useTime="setTimestatus" />
     </MapContainer>
   );
 };

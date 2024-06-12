@@ -26,8 +26,9 @@ import {
   Section,
 } from 'design-react-kit';
 
-import { HeroStyle } from './styles';
+import { HeroStyle, TopHeroStyle } from './styles';
 import HeaderBar from 'app/components/HeaderBar';
+import Graph from './Graph';
 
 const IndexPage = () => {
   const { t } = useTranslation();
@@ -36,28 +37,15 @@ const IndexPage = () => {
   const regioneImg = '/img/logo_regione_veneto.png';
   const arpavImg = '/img/logo_arpav.png';
   const snpaImg = '/img/logo_SNPA.png';
+  const setIds = newIds => null;
+  const setTimeRange = tr => null;
 
   return (
     <>
       <HeaderBar mode="full"></HeaderBar>
 
-      <Hero overlay="dark" style={HeroStyle}>
-        <HeroBackground
-          alt="imagealt"
-          src="https://images.unsplash.com/photo-1566996694954-90b052c413c4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          title="image title"
-        />
-        <HeroBody>
-          <HeroTitle>Barometro Climatico</HeroTitle>
-          <p className="d-none d-lg-block">
-            Platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper
-            dignissim cras. Dictum sit amet justo donec enim diam vulputate ut.
-            Eu nisl nunc mi ipsum faucibus.
-          </p>
-          <HeroButton href="/" color="secondary">
-            Visualizza
-          </HeroButton>
-        </HeroBody>
+      <Hero overlay="dark" style={TopHeroStyle}>
+        <Graph></Graph>
       </Hero>
       <Section></Section>
       <Container color="muted" style={{ width: '100%' }}>
@@ -70,20 +58,16 @@ const IndexPage = () => {
                 title="image title"
               />
               <HeroBody>
-                <HeroTitle>Dati Storici</HeroTitle>
-                <p className="d-none d-lg-block">
-                  Platea dictumst vestibulum rhoncus est pellentesque elit
-                  ullamcorper dignissim cras. Dictum sit amet justo donec enim
-                  diam vulputate ut. Eu nisl nunc mi ipsum faucibus.
-                </p>
+                <HeroTitle>Climatologia storica</HeroTitle>
+                <p className="d-none d-lg-block"></p>
                 <HeroButton href="/ps" color="secondary">
-                  Visualizzazione semplificata
+                  Visualizzazione semplice
                 </HeroButton>
                 <br />
                 <br />
                 <br />
                 <HeroButton href="/pa" color="secondary">
-                  Visualizzazione tecnica
+                  Visualizzazione avanzata
                 </HeroButton>
               </HeroBody>
             </Hero>
@@ -96,20 +80,16 @@ const IndexPage = () => {
                 title="image title"
               />
               <HeroBody>
-                <HeroTitle>Previsioni</HeroTitle>
-                <p className="d-none d-lg-block">
-                  Platea dictumst vestibulum rhoncus est pellentesque elit
-                  ullamcorper dignissim cras. Dictum sit amet justo donec enim
-                  diam vulputate ut. Eu nisl nunc mi ipsum faucibus.
-                </p>
+                <HeroTitle>Proiezioni climatiche</HeroTitle>
+                <p className="d-none d-lg-block"></p>
                 <HeroButton href="fs" color="secondary">
-                  Visualizzazione semplificata
+                  Visualizzazione semplice
                 </HeroButton>
                 <br />
                 <br />
                 <br />
                 <HeroButton href="fa" color="secondary">
-                  Visualizzazione tecnica
+                  Visualizzazione avanzata
                 </HeroButton>
               </HeroBody>
             </Hero>

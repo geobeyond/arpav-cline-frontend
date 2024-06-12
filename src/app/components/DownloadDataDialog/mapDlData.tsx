@@ -84,7 +84,7 @@ const MapDlData = (props: MapDlDataProps) => {
     values['time_start'] = times[years[0]];
     values['time_end'] = times[years[1]];
     onChange(values);
-  }, [years]);
+  }, [onChange, times, years]);
 
   React.useEffect(() => {
     const values = {};
@@ -93,7 +93,7 @@ const MapDlData = (props: MapDlDataProps) => {
     values['east'] = parseFloat(downLoadBounds[1][1]);
     values['west'] = parseFloat(downLoadBounds[0][1]);
     onChange(values);
-  }, [downLoadBounds]);
+  }, [downLoadBounds, onChange]);
 
   return (
     <Box sx={MapDataContainerStyle}>

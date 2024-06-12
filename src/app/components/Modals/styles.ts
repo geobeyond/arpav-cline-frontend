@@ -21,6 +21,7 @@ export const PageContainerStyle = theme => ({
   bgcolor: 'background.paper',
   width: '70%',
   display: 'flex',
+  flexDirection: 'column',
   [theme.breakpoints.down('def')]: {
     mt: '2%',
     width: '98%',

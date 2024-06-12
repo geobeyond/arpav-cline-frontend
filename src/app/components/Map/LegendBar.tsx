@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { WMS_PROXY_URL } from '../../../utils/constants';
+import { WMS_PROXY_URL, V2_WMS_PROXY_URL } from '../../../utils/constants';
 import { LegendBarStyle } from './styles';
 
 export interface LegendBarProps {
@@ -17,7 +17,10 @@ export const LegendBar = (props: LegendBarProps) => {
     <Box className={className} sx={LegendBarStyle}>
       {selected_map.id && (
         <div style={{ backgroundColor: 'white' }}>
-          <img src={`${WMS_PROXY_URL}${selected_map.legend}`} alt={'Legenda'} />
+          <img
+            src={`${V2_WMS_PROXY_URL}${selected_map.legend}`}
+            alt={'Legenda'}
+          />
           <Typography
             id="modal-modal-title"
             variant="body1"
