@@ -169,19 +169,6 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   function searchPoint(event) {
     const position = findPoly(value?.latlng);
     console.log(position);
-    if (value?.latlng.lat === 45.78502414) {
-      value.label = 'Volpago del Montello';
-      value.name = 'Volpago del Montello';
-    } else if (value?.latlng.lat === 45 && value?.latlng.lng === 11) {
-      value.label = '';
-      value.name = '';
-    } else if (value?.latlng.lat === 45 && value?.latlng.lng === 12) {
-      value.label = 'Papozze';
-      value.name = 'Papozze';
-    } else if (value?.latlng.lat === 46 && value?.latlng.lng === 12) {
-      value.label = 'Borgo Valbelluna';
-      value.name = 'Borgo Valbelluna';
-    }
 
     onChange(event, value);
   }
