@@ -31,8 +31,7 @@ import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
 import { RestartAlt } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
-
-import findPoly from '../../utils/muni';
+import { RequestApi } from '../../Services';
 
 export interface MapSearchProps {
   className?: string;
@@ -86,6 +85,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const { cities, selected_map, timeserie } = useSelector(
     (state: any) => state.map,
   );
+  const api = RequestApi.getInstance();
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
@@ -167,10 +167,18 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   }
 
   function searchPoint(event) {
-    const position = findPoly(value?.latlng);
+    const position = api
+      .findMunicipality(value?.latlng.lat, value?.latlng.lng)
+      .then((geoj: any) => {
+        if (geoj.features.length > 0) {
+          if (value) {
+            value.name = geoj.features[0].properties.name;
+            value.label = geoj.features[0].properties.name;
+            onChange(event, value);
+          }
+        }
+      });
     console.log(position);
-
-    onChange(event, value);
   }
 
   // @ts-ignore

@@ -108,6 +108,12 @@ export class RequestApi extends Http {
     });
   };
 
+  public findMunicipality = (lat, lng) => {
+    return this.instance.get<any>(
+      `https://arpav.geobeyond.dev/api/v2/municipalities?coords=POINT(${lng} ${lat})`,
+    );
+  };
+
   public downloadTimeseries = params =>
     this.instance.post<any>(`/maps/ncss/timeserie/`, params, {
       responseType: 'blob',
