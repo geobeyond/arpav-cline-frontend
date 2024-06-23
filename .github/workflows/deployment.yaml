@@ -1,0 +1,26 @@
+# This workflow runs whenever an already published package gets updated,
+# which would happen after the respective image has been built and
+# pushed to the registry
+
+name: Deployment to staging environment
+
+on:
+
+  registry_package:
+    types:
+      - published
+      - updated
+
+concurrency: staging
+
+jobs:
+  initiate-deployment:
+    runs-on: ubuntu-22.04
+    environment: staging
+    steps:
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.STAGING_WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.STAGING_WEBHOOK_SECRET }}
+          webhook_type: json

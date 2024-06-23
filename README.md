@@ -1,4 +1,7 @@
 # Piattaforma Proiezioni Climatiche per il Nord-Est
+
+This is the frontend component of the ARPAV-PPCV system.
+
 #### Climate Projections Platform for North-Eastern Italy
 
 [![Piattaforma Proiezioni Climatiche per il Nord-Est](https://github.com/inkode-it/Arpav-PPCV/raw/main/public/img/screenshot.png)](https://clima.arpa.veneto.it/)
