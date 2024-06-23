@@ -95,10 +95,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       rcp85: 'rgb(231,60,60)',
     },
     {
-      histo: 'rgba(69,50,27, 0.4)',
-      rcp26: 'rgba(46,105,193, 0.4)',
-      rcp45: 'rgba(243, 156, 18, 0.4)',
-      rcp85: 'rgba(231,60,60, 0.4)',
+      histo: 'rgb(82, 73, 62)',
+      rcp26: 'rgb(146, 166, 196)',
+      rcp45: 'rgb(250, 226, 187)',
+      rcp85: 'rgb(232, 169, 169)',
     },
   ];
 
@@ -180,9 +180,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     let ret = {};
     const legend = timeseries
       ?.filter(x => x.name.indexOf('_BOUND_') < 0)
-      .map(x => {
-        ret[x.name] = x.info.smoothing === 'no_smoothing';
-      });
+      .map(x => (ret[x.name] = x.info.smoothing === 'no_smoothing'));
     return ret;
   };
 
@@ -242,11 +240,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       : dataset.name;
   };
   const getAreaStyle = dataset => {
-    return dataset.name.indexOf('_UPPER_BOUND_') > 0
-      ? {
-          color: '#ffc3c3',
+    if (dataset.name.indexOf('_UPPER_BOUND_') > 0) {
+      for (let k in colors[1]) {
+        if (dataset.name.indexOf(k) >= 0) {
+          return colors[1][k];
         }
-      : null;
+      }
+    } else {
+      return null;
+    }
   };
 
   const getXAxis = () => {

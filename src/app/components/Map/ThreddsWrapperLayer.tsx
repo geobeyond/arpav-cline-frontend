@@ -27,35 +27,35 @@ export const ThreddsWrapperLayer = (props: any) => {
     if (layer && !onlyRemove) {
       layer.bringToFront();
     }
-    try {
-      // eslint-disable-next-line array-callback-return
-      Object.keys(map._layers).map((l: any) => {
-        l = map._layers[l];
-        if (l && l._url && l._url.includes(`public.places_cities.geometry`)) {
-          l.bringToFront();
-        }
-        if (
-          l &&
-          l._url &&
-          l._url.includes(`${V2_WMS_PROXY_URL}`) &&
-          !l._url.includes(map.selected_path)
-        ) {
-          map.removeLayer(l);
-        }
-        if (
-          l &&
-          l.currentLayer &&
-          l.currentLayer._url &&
-          l.currentLayer._url.includes(`${V2_WMS_PROXY_URL}`) &&
-          !l.currentLayer._url.includes(map.selected_path)
-        ) {
-          l.currentLayer.hide();
-          map.removeLayer(l);
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    //try {
+    //  // eslint-disable-next-line array-callback-return
+    //  Object.keys(map._layers).map((l: any) => {
+    //    l = map._layers[l];
+    //    if (l && l._url && l._url.includes(`public.places_cities.geometry`)) {
+    //      l.bringToFront();
+    //    }
+    //    if (
+    //      l &&
+    //      l._url &&
+    //      //l._url.includes(`${V2_WMS_PROXY_URL}`) &&
+    //      !l._url.includes(map.selected_path)
+    //    ) {
+    //      map.removeLayer(l);
+    //    }
+    //    if (
+    //      l &&
+    //      l.currentLayer &&
+    //      l.currentLayer._url &&
+    //      //l.currentLayer._url.includes(`${V2_WMS_PROXY_URL}`) &&
+    //      !l.currentLayer._url.includes(map.selected_path)
+    //    ) {
+    //      l.currentLayer.hide();
+    //      map.removeLayer(l);
+    //    }
+    //  });
+    //} catch (e) {
+    //  console.log(e);
+    //}
   };
 
   useMapEvent('baselayerchange', () =>
@@ -98,16 +98,17 @@ export const ThreddsWrapperLayer = (props: any) => {
       //}
       let tdWmsLayer = null;
       const params = {
-        layers: selected_map_path,
-        format: 'image/gif',
+        service: 'WMS',
+        layers: 'tas',
+        format: 'image/png',
         //numcolorbands: '100',
-        //version: '1.3.0',
+        version: '1.3.0',
         //colorscalerange: `${selected_map.color_scale_min},${selected_map.color_scale_max}`,
         //logscale: 'false',
-        //styles: `default-scalar/${selected_map.palette}`,
-        // elevation: null,
+        styles: `default-scalar/default`,
+        //elevation: null,
         //width: 256,
-        //transparent: true,
+        transparent: true,
         crs: L.CRS.EPSG3857,
         //bounds: selected_map.bbox,
       };
