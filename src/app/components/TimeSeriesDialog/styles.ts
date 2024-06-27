@@ -66,7 +66,9 @@ export const CloseButtonContStyle = theme => ({
 
 export const FieldContainerStyle = theme => ({
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
+  minWith: 0,
+  flexGrow: 1,
   gap: '0.5em',
   ml: 5,
   mr: 5,
@@ -83,8 +85,8 @@ export const RowContainerStyle = theme => ({
   flexDirection: 'row',
   [theme.breakpoints.down('def')]: {
     flexDirection: 'column',
-    mt: 5,
-    mb: 5,
+    mt: 3,
+    mb: 3,
   },
 });
 

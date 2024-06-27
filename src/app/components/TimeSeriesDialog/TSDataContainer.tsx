@@ -10,7 +10,12 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
+  RadioGroup,
+  FormLabel,
+  Radio,
   useMediaQuery,
+  Slider,
+  TextField,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +75,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       forecast_parameters[listKey]?.find(item => item.id === key)?.name || ''
     );
   };
+  const baseValue: number = 1976;
 
   const {
     selected_map,
@@ -419,31 +425,58 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const dataZoomHandle = (params, chart) => {
-    const { startValue, endValue } = chart.getOption().dataZoom[0];
-    const range = {
-      start: timeserie[0].values[startValue].time,
-      end: timeserie[0].values[endValue - 1].time,
-    };
-    // console.log(startValue, endValue, range)
-    setTimeRange(range);
+    const startValue = chart.getOption().dataZoom[0].startValue;
+    const endValue = chart.getOption().dataZoom[0].endValue;
+
+    //const range = {
+    //  start: timeserie[0].values[startValue].time,
+    //  end: timeserie[0].values[endValue - 1].time,
+    //};
+    console.log(startValue, endValue);
+    //setTimeRange(range);
   };
 
+  const onStartValueChange = e => {
+    const ec = chartRef.current.getEchartsInstance();
+    chartOption.dataZoom[0]['start'] = Math.max(
+      0,
+      parseInt(e.target.value) - baseValue,
+    );
+    //setStartValue(e.target.value);
+    ec.setOption(chartOption);
+  };
+  const onEndValueChange = e => {
+    const ec = chartRef.current.getEchartsInstance();
+    chartOption.dataZoom[0]['end'] = Math.min(
+      123,
+      parseInt(e.target.value) - baseValue,
+    );
+    //setEndValue(e.target.value);
+    ec.setOption(chartOption);
+  };
+
+  function valuetext(value: number) {
+    if (value === 0) return t('app.map.timeSeriesDialog.noSmoothing');
+    else if (value === 1) return t('app.map.timeSeriesDialog.movingAverage');
+    else if (value === 2) return t('app.map.timeSeriesDialog.loess');
+  }
   return (
     <Box sx={TSDataContainerStyle}>
       <Box sx={RowContainerStyle}>
         <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ minWidth: 200 }} size="small">
+          <FormControl sx={{ width: '100%' }} size="small">
             <InputLabel id="SelectedModel">
               {t('app.map.timeSeriesDialog.selectedModel')}
             </InputLabel>
             <Select
+              disabled
               labelId="SelectedModel"
               id="SelectedModel"
-              value={models[0]}
+              value={'ens5'}
               label={t('app.map.timeSeriesDialog.selectedModel')}
               onChange={e => setModel([e.target.value as string, models[1]])}
             >
-              {forecast_models.map(m => (
+              {['Model ensamble'].map(m => (
                 <MenuItem value={m} disabled={m === models[1]}>
                   {findParamName(m, 'forecast_models')}
                 </MenuItem>
@@ -452,14 +485,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           </FormControl>
         </Box>
         <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ minWidth: 200 }} size="small">
+          <FormControl sx={{ width: '100%' }} size="small">
             <InputLabel id="SelectedModel">
               {t('app.map.timeSeriesDialog.comparisonModel')}
             </InputLabel>
             <Select
               labelId="SelectedModel"
               id="SelectedModel"
-              value={models[1]}
+              multiple={true}
+              value={[models[1]]}
               label={t('app.map.timeSeriesDialog.comparisonModel')}
               onChange={e => setModel([models[0], e.target.value as string])}
             >
@@ -472,16 +506,38 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           </FormControl>
         </Box>
         <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ minWidth: 120 }} size="small">
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={movingAvg}
-                  onChange={e => setMovingAvg(e.target.checked)}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              }
-              label={t('app.map.timeSeriesDialog.movingAverage')}
+          <FormControl sx={{ width: '50%', left: '25%' }} size="small">
+            <InputLabel id="smoothingModel">
+              {t('app.map.timeSeriesDialog.smoothing')}
+            </InputLabel>
+            <Slider
+              aria-label="Options"
+              defaultValue={1}
+              valueLabelFormat={valuetext}
+              valueLabelDisplay="on"
+              shiftStep={1}
+              step={1}
+              marks
+              min={0}
+              max={2}
+            />
+          </FormControl>
+        </Box>
+        <Box sx={FieldContainerStyle}>
+          <FormControl sx={{ width: '50%', left: '25%' }} size="small">
+            <InputLabel id="smoothingModel">
+              {t('app.map.timeSeriesDialog.smoothing')}
+            </InputLabel>
+            <Slider
+              aria-label="Options"
+              defaultValue={0}
+              valueLabelFormat={valuetext}
+              valueLabelDisplay="on"
+              shiftStep={1}
+              step={1}
+              marks
+              min={0}
+              max={1}
             />
           </FormControl>
         </Box>

@@ -81,7 +81,8 @@ export const ThreddsWrapperLayer = (props: any) => {
     // @ts-ignore
     map.selected_path = selected_map.path;
     // @ts-ignore
-    const selected_map_path = 'tas_annual_absolute_model_ensemble-rcp26';
+    const selected_map_path =
+      'tas_30yr_anomaly_seasonal_agree_model_ensemble-tw2-rcp26-DJF';
     if (selected_map_path) {
       // @ts-ignore
       //if (
@@ -99,13 +100,13 @@ export const ThreddsWrapperLayer = (props: any) => {
       let tdWmsLayer = null;
       const params = {
         service: 'WMS',
-        layers: 'tas',
+        layers: 'tas-uncertainty_group',
         format: 'image/png',
         //numcolorbands: '100',
         version: '1.3.0',
         //colorscalerange: `${selected_map.color_scale_min},${selected_map.color_scale_max}`,
         //logscale: 'false',
-        styles: `default-scalar/default`,
+        styles: `uncert-stippled/seq-YlOrRd`,
         //elevation: null,
         //width: 256,
         transparent: true,
