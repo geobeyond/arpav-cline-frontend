@@ -14,9 +14,10 @@ import {
   FormLabel,
   Radio,
   useMediaQuery,
-  Slider,
   TextField,
 } from '@mui/material';
+import Slider from '@mui/material/Slider';
+
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { LatLng } from 'leaflet';
@@ -118,6 +119,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     'HadGEM2-ES_RACM022E',
     'MPI-ESM-LR_REMO2009',
   ];
+
+  const [localStart, setLocalStart] = useState<any>(0);
+  const [localEnd, setLocalEnd] = useState<any>(100);
+  const [localStartYear, setLocalStartYear] = useState<any>('');
+  const [localEndYear, setLocalEndYear] = useState<any>('');
 
   useEffect(() => {
     setTimeseries([]);
@@ -425,15 +431,30 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const dataZoomHandle = (params, chart) => {
-    const startValue = chart.getOption().dataZoom[0].startValue;
-    const endValue = chart.getOption().dataZoom[0].endValue;
+    const { startValue, endValue, start, end } = chart.getOption().dataZoom[0];
+    // const range = {
+    //   start: timeserie[0].values[startValue].time,
+    //   end: timeserie[0].values[endValue - 1].time,
+    // };
+    // console.log(startValue, endValue, range)
+    // setTimeRange(range);
 
-    //const range = {
-    //  start: timeserie[0].values[startValue].time,
-    //  end: timeserie[0].values[endValue - 1].time,
-    //};
-    console.log(startValue, endValue);
-    //setTimeRange(range);
+    if (start >= 0) {
+      //console.log('[STF] dataZoomHandle(2)', start);
+      setLocalStart(start);
+    }
+    if (end >= 0) {
+      //console.log('[STF] dataZoomHandle(3)', end);
+      setLocalEnd(end);
+    }
+    if (startValue >= 0) {
+      //console.log('[STF] dataZoomHandle(4)', chart.getOption().xAxis[0].data[startValue]);
+      setLocalStartYear(chart.getOption().xAxis[0].data[startValue]);
+    }
+    if (endValue >= 0) {
+      //console.log('[STF] dataZoomHandle(5)', chart.getOption().xAxis[0].data[endValue]);
+      setLocalEndYear(chart.getOption().xAxis[0].data[endValue]);
+    }
   };
 
   const onStartValueChange = e => {
@@ -460,6 +481,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     else if (value === 1) return t('app.map.timeSeriesDialog.movingAverage');
     else if (value === 2) return t('app.map.timeSeriesDialog.loess');
   }
+
+  useEffect(() => {
+    if (getXAxis()) {
+      setLocalStartYear(getXAxis()[0]);
+      setLocalEndYear(getXAxis().slice(-1)[0]);
+    }
+  }, [timeseries]);
+
   return (
     <Box sx={TSDataContainerStyle}>
       <Box sx={RowContainerStyle}>
@@ -515,7 +544,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               defaultValue={1}
               valueLabelFormat={valuetext}
               valueLabelDisplay="on"
-              shiftStep={1}
               step={1}
               marks
               min={0}
@@ -533,7 +561,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               defaultValue={0}
               valueLabelFormat={valuetext}
               valueLabelDisplay="on"
-              shiftStep={1}
               step={1}
               marks
               min={0}
@@ -555,6 +582,64 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               // 'click': (A, B, C) => {console.log('click', A, B, C)},
               legendselectchanged: getMapsToDownloads,
               dataZoom: dataZoomHandle,
+            }}
+          />
+          <input
+            type="text"
+            maxLength={4}
+            placeholder="Da:"
+            value={localStartYear}
+            onChange={event => {
+              setLocalStartYear(event?.target?.value);
+              const startValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === event?.target?.value,
+                );
+              const endValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex((item: any) => item === localEndYear);
+              //console.log('[STF]', startValue, endValue);
+              if (startValue !== -1 && endValue !== -1) {
+                chartRef.current.getEchartsInstance().dispatchAction({
+                  type: 'dataZoom',
+                  dataZoomIndex: 0,
+                  startValue: startValue,
+                  endValue: endValue,
+                });
+              }
+            }}
+          />
+          <input
+            type="text"
+            maxLength={4}
+            placeholder="A:"
+            value={localEndYear}
+            onChange={event => {
+              setLocalEndYear(event?.target?.value);
+              const startValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === localStartYear,
+                );
+              const endValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === event?.target?.value,
+                );
+              //console.log('[STF]', startValue, endValue);
+              if (startValue !== -1 && endValue !== -1) {
+                chartRef.current.getEchartsInstance().dispatchAction({
+                  type: 'dataZoom',
+                  dataZoomIndex: 0,
+                  startValue: startValue,
+                  endValue: endValue,
+                });
+              }
             }}
           />
         </Box>
