@@ -182,16 +182,26 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const { t } = useTranslation();
 
-  let nfltr = 'MOVING_AVERAGE';
-  let sfltr = 'NO_SMOOTHING';
-  let mfltr = 'model_ensemble';
+  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
+  const [sfltr, setSfltr] = useState<string>('NO_SMOOTHING');
+  const [mfltr, setMfltr] = useState<string>('model_ensemble');
+  const [smfltr, setSMfltr] = useState<string>('model_ensemble');
+
+  const toDisplay = x => {
+    return x.name.indexOf('_BOUND_');
+  };
 
   const getLegend = () => {
     //TODO names lookup
     const legend = timeseries
       ?.filter(x => x.name.indexOf('_BOUND_') < 0)
       .filter(x => x.name.indexOf(nfltr) >= 0)
-      .filter(x => x.name.indexOf(mfltr) >= 0 || x.name.length < 20)
+      .filter(
+        x =>
+          x.name.indexOf(mfltr) >= 0 ||
+          x.name.length < 20 ||
+          x.name.indexOf(smfltr) >= 0,
+      )
       .map(item => item.name);
     return legend;
   };
@@ -202,7 +212,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     const legend = timeseries
       ?.filter(x => x.name.indexOf('_BOUND_') < 0)
       .filter(x => x.name.indexOf(nfltr) >= 0)
-      .filter(x => x.name.indexOf(mfltr) >= 0 || x.name.length < 20)
+      .filter(
+        x =>
+          x.name.indexOf(mfltr) >= 0 ||
+          x.name.length < 20 ||
+          x.name.indexOf(smfltr) >= 0,
+      )
       .map(x => (ret[x.name] = true));
     //.map(x => (ret[x.name] = x.info.smoothing === 'no_smoothing'));
     return ret;
@@ -237,23 +252,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const getChartData = (item, series) => {
     if (
       item.name.indexOf('_BOUND_') >= 0 &&
-      item.name.indexOf(nfltr) < 0 &&
-      item.name.indexOf(mfltr) < 0
+      item.name.indexOf(nfltr) >= 0 &&
+      (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)
     ) {
       if (item.name.indexOf('UPPER') >= 0) {
         let ret: number[] = [];
         let lbitem = series.filter(
           x => x.name === item.name.replace('UPPER', 'LOWER'),
-        );
-        if (lbitem)
-          for (let i in item.values) {
-            ret.push(item.values[i].value - lbitem[0].values[i].value);
-          }
-        return ret;
-      } else if (item.name.indexOf('LOWER') >= 0) {
-        let ret: number[] = [];
-        let lbitem = series.filter(
-          x => x.name === item.name.replace('LOWER', 'UPPER'),
         );
         if (lbitem)
           for (let i in item.values) {
@@ -273,9 +278,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getStack = dataset => {
-    return dataset.name.indexOf('_BOUND_') > 0
-      ? dataset.info.smoothing
-      : dataset.name;
+    return dataset.name.replace('_LOWER_', '').replace('_UPPER_', '');
   };
   const getAreaStyle = dataset => {
     if (dataset.name.indexOf('_UPPER_BOUND_') > 0) {
@@ -299,7 +302,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const pseriesObj = timeseries?.filter(item => {
     return (
       //item.name.indexOf('_BOUND_') >= 0 &&
-      item.name.indexOf(nfltr) >= 0 && item.name.indexOf(mfltr) >= 0
+      item.name.indexOf(nfltr) >= 0 &&
+      (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)
     );
   });
   const seriesObj = pseriesObj.map(item => ({
@@ -525,19 +529,19 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   }, [getXAxis, timeseries]);
 
   const setSensorSmoothing = v => {
-    if (v == 0) {
-      sfltr = 'NO_SMOOTHING';
-    } else if (v == 1) {
-      sfltr = 'MOVING_AVERAGE';
+    if (v === 0) {
+      setSfltr('NO_SMOOTHING');
+    } else if (v === 1) {
+      setSfltr('MOVING_AVERAGE');
     }
   };
   const setModelSmoothing = v => {
-    if (v == 0) {
-      nfltr = 'NO_SMOOTHING';
-    } else if (v == 1) {
-      nfltr = 'MOVING_AVERAGE';
-    } else if (v == 2) {
-      nfltr = 'LOESS';
+    if (v === 0) {
+      setNfltr('NO_SMOOTHING');
+    } else if (v === 1) {
+      setNfltr('MOVING_AVERAGE');
+    } else if (v === 2) {
+      setNfltr('LOESS');
     }
   };
 
@@ -549,20 +553,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             <InputLabel id="SelectedModel">
               {t('app.map.timeSeriesDialog.selectedModel')}
             </InputLabel>
-            <Select
-              disabled
-              labelId="SelectedModel"
-              id="SelectedModel"
-              value={'ens5'}
-              label={t('app.map.timeSeriesDialog.selectedModel')}
-              onChange={e => setModel([e.target.value as string, models[1]])}
-            >
-              {['Model ensamble'].map(m => (
-                <MenuItem value={m} disabled={m === models[1]}>
-                  {findParamName(m, 'forecast_models')}
-                </MenuItem>
-              ))}
-            </Select>
+            <TextField disabled value="Model Ensemble"></TextField>
           </FormControl>
         </Box>
         <Box sx={FieldContainerStyle}>
@@ -573,13 +564,16 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             <Select
               labelId="SelectedModel"
               id="SelectedModel"
-              multiple={true}
-              value={[models[1]]}
+              value={models[1]}
               label={t('app.map.timeSeriesDialog.comparisonModel')}
-              onChange={e => setModel([models[0], e.target.value as string])}
+              onChange={e =>
+                setSMfltr(
+                  (e.target.value as string).toLowerCase().replaceAll('-', '_'),
+                )
+              }
             >
               {forecast_models.map(m => (
-                <MenuItem key={m} value={m} disabled={m === models[0]}>
+                <MenuItem key={m} value={m}>
                   {findParamName(m, 'forecast_models')}
                 </MenuItem>
               ))}
@@ -699,6 +693,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         maxLength={4}
         placeholder="A:"
         defaultValue={localEndYear}
+        value={localEndYear}
         onChange={event => {
           setLocalEndYear(event?.target?.value);
           const startValue = chartRef.current
