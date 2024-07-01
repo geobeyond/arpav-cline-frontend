@@ -53,6 +53,7 @@
   "app.map.timeSeriesDialog.selectedModel": "Modello di riferimento",
   "app.map.timeSeriesDialog.comparisonModel": "Modello di confronto",
   "app.map.timeSeriesDialog.movingAverage": "Media mobile 11 anni",
+  "app.map.timeSeriesDialog.movingAverageSensor": "Media mobile 5 anni",
   "app.map.timeSeriesDialog.noSmoothing": "Nessun livellamento",
   "app.map.timeSeriesDialog.loess": "LOESS",
   "app.map.timeSeriesDialog.modelSmoothing": "Aggregazione Modelli",

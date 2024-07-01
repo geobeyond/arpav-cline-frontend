@@ -183,9 +183,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const { t } = useTranslation();
 
   const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
-  const [sfltr, setSfltr] = useState<string>('NO_SMOOTHING');
   const [mfltr, setMfltr] = useState<string>('model_ensemble');
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
+  const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
 
   const toDisplay = x => {
     return x.name.indexOf('_BOUND_');
@@ -193,23 +193,29 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const getLegend = () => {
     //TODO names lookup
-    const legend = timeseries
-      ?.filter(x => x.name.indexOf('_BOUND_') < 0)
-      .filter(x => x.name.indexOf(nfltr) >= 0)
-      .filter(
-        x =>
-          x.name.indexOf(mfltr) >= 0 ||
-          x.name.length < 20 ||
-          x.name.indexOf(smfltr) >= 0,
-      )
-      .map(item => item.name);
+    const legend = [
+      ...timeseries
+        ?.filter(x => x.name.indexOf('_BOUND_') < 0)
+        .filter(x => x.name.indexOf(nfltr) >= 0)
+        .filter(
+          x =>
+            x.name.indexOf(mfltr) >= 0 ||
+            x.name.length < 20 ||
+            x.name.indexOf(smfltr) >= 0,
+        )
+        .map(item => item.name),
+      ...timeseries
+        ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+        .filter(x => x.name.indexOf(snsfltr) >= 0)
+        .map(x => x.name),
+    ];
     return legend;
   };
 
   const getSelectedLegend = () => {
     //TODO names lookup
     let ret = {};
-    const legend = timeseries
+    timeseries
       ?.filter(x => x.name.indexOf('_BOUND_') < 0)
       .filter(x => x.name.indexOf(nfltr) >= 0)
       .filter(
@@ -218,6 +224,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.name.length < 20 ||
           x.name.indexOf(smfltr) >= 0,
       )
+      .map(x => (ret[x.name] = true));
+    timeseries
+      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      .filter(x => x.name.indexOf(snsfltr) >= 0)
       .map(x => (ret[x.name] = true));
     //.map(x => (ret[x.name] = x.info.smoothing === 'no_smoothing'));
     return ret;
@@ -251,9 +261,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const getChartData = (item, series) => {
     if (
-      item.name.indexOf('_BOUND_') >= 0 &&
-      item.name.indexOf(nfltr) >= 0 &&
-      (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)
+      (item.name.indexOf('_BOUND_') >= 0 &&
+        item.name.indexOf(nfltr) >= 0 &&
+        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
+      (Object.keys(item.info).indexOf('station_id') >= 0 &&
+        item.name.indexOf(snsfltr) >= 0)
     ) {
       if (item.name.indexOf('UPPER') >= 0) {
         let ret: number[] = [];
@@ -271,7 +283,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getGraphType = dataset => {
-    return dataset.info.station_id ? 'bar' : 'line';
+    return dataset.info.station_id && dataset.info.smoothing === 'no_smoothing'
+      ? 'bar'
+      : 'line';
   };
   const getZLevel = dataset => {
     return dataset.info.station_id ? 1000 : 10;
@@ -302,8 +316,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const pseriesObj = timeseries?.filter(item => {
     return (
       //item.name.indexOf('_BOUND_') >= 0 &&
-      item.name.indexOf(nfltr) >= 0 &&
-      (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)
+      (item.name.indexOf(nfltr) >= 0 &&
+        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
+      (Object.keys(item.info).indexOf('station_id') >= 0 &&
+        item.name.indexOf(snsfltr) >= 0)
     );
   });
   const seriesObj = pseriesObj.map(item => ({
@@ -520,6 +536,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     else if (value === 1) return t('app.map.timeSeriesDialog.movingAverage');
     else if (value === 2) return t('app.map.timeSeriesDialog.loess');
   }
+  function valuetextSensor(value: number) {
+    if (value === 0) return t('app.map.timeSeriesDialog.noSmoothing');
+    else if (value === 1)
+      return t('app.map.timeSeriesDialog.movingAverageSensor');
+  }
 
   useEffect(() => {
     if (getXAxis()) {
@@ -530,9 +551,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const setSensorSmoothing = v => {
     if (v === 0) {
-      setSfltr('NO_SMOOTHING');
+      setSnsfltr('NO_SMOOTHING');
     } else if (v === 1) {
-      setSfltr('MOVING_AVERAGE');
+      setSnsfltr('MOVING_AVERAGE');
     }
   };
   const setModelSmoothing = v => {
@@ -550,7 +571,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       <Box sx={RowContainerStyle}>
         <Box sx={FieldContainerStyle}>
           <FormControl sx={{ width: '100%' }} size="small">
-            <InputLabel id="SelectedModel">
+            <InputLabel id="SelectedModel" shrink={true}>
               {t('app.map.timeSeriesDialog.selectedModel')}
             </InputLabel>
             <TextField disabled value="Model Ensemble"></TextField>
@@ -564,7 +585,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             <Select
               labelId="SelectedModel"
               id="SelectedModel"
-              value={models[1]}
+              value={smfltr}
               label={t('app.map.timeSeriesDialog.comparisonModel')}
               onChange={e =>
                 setSMfltr(
@@ -574,7 +595,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             >
               {forecast_models.map(m => (
                 <MenuItem key={m} value={m}>
-                  {findParamName(m, 'forecast_models')}
+                  {m}
                 </MenuItem>
               ))}
             </Select>
@@ -627,7 +648,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             <Slider
               aria-label="Options"
               defaultValue={0}
-              valueLabelFormat={valuetext}
+              valueLabelFormat={valuetextSensor}
               valueLabelDisplay="on"
               step={1}
               marks
@@ -693,7 +714,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         maxLength={4}
         placeholder="A:"
         defaultValue={localEndYear}
-        value={localEndYear}
         onChange={event => {
           setLocalEndYear(event?.target?.value);
           const startValue = chartRef.current
