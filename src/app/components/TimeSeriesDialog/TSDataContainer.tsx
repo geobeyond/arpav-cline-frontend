@@ -133,23 +133,26 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       ),
     );
     // console.log(baseSelection)
-    const ids = models
-      .filter(x => x)
-      .map(model => {
-        return scenarios.map(scenario => {
-          const input = {
-            ...baseSelection,
-            data_series: 'yes',
-            forecast_model: model,
-            time_window: null,
-            scenario,
-          };
-          const resItem = getItemByFilters(layers, input);
-          // @ts-ignore
-          return resItem ? resItem?.id : null;
-        });
-      })
-      .flat();
+    //const ids = models
+    //  .filter(x => x)
+    //  .map(model => {
+    //    return scenarios.map(scenario => {
+    //      const input = {
+    //        ...baseSelection,
+    //        data_series: 'yes',
+    //        forecast_model: model,
+    //        time_window: null,
+    //        scenario,
+    //      };
+    //      const resItem = getItemByFilters(layers, input);
+    //      // @ts-ignore
+    //      return resItem ? resItem?.id : null;
+    //    });
+    //  })
+    //  .flat();
+    const ids = api.createIds('tas_annual_absolute_model_ensemble-{scenario}', {
+      scenario: ['rcp26', 'rcp45', 'rcp85'],
+    });
     setIds(ids);
     api
       .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
@@ -179,10 +182,16 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const { t } = useTranslation();
 
+  let nfltr = 'MOVING_AVERAGE';
+  let sfltr = 'NO_SMOOTHING';
+  let mfltr = 'model_ensemble';
+
   const getLegend = () => {
     //TODO names lookup
     const legend = timeseries
       ?.filter(x => x.name.indexOf('_BOUND_') < 0)
+      .filter(x => x.name.indexOf(nfltr) >= 0)
+      .filter(x => x.name.indexOf(mfltr) >= 0 || x.name.length < 20)
       .map(item => item.name);
     return legend;
   };
@@ -192,7 +201,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     let ret = {};
     const legend = timeseries
       ?.filter(x => x.name.indexOf('_BOUND_') < 0)
-      .map(x => (ret[x.name] = x.info.smoothing === 'no_smoothing'));
+      .filter(x => x.name.indexOf(nfltr) >= 0)
+      .filter(x => x.name.indexOf(mfltr) >= 0 || x.name.length < 20)
+      .map(x => (ret[x.name] = true));
+    //.map(x => (ret[x.name] = x.info.smoothing === 'no_smoothing'));
     return ret;
   };
 
@@ -223,11 +235,25 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getChartData = (item, series) => {
-    if (item.name.indexOf('_BOUND_') >= 0) {
+    if (
+      item.name.indexOf('_BOUND_') >= 0 &&
+      item.name.indexOf(nfltr) < 0 &&
+      item.name.indexOf(mfltr) < 0
+    ) {
       if (item.name.indexOf('UPPER') >= 0) {
         let ret: number[] = [];
         let lbitem = series.filter(
           x => x.name === item.name.replace('UPPER', 'LOWER'),
+        );
+        if (lbitem)
+          for (let i in item.values) {
+            ret.push(item.values[i].value - lbitem[0].values[i].value);
+          }
+        return ret;
+      } else if (item.name.indexOf('LOWER') >= 0) {
+        let ret: number[] = [];
+        let lbitem = series.filter(
+          x => x.name === item.name.replace('LOWER', 'UPPER'),
         );
         if (lbitem)
           for (let i in item.values) {
@@ -270,7 +296,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return cats[0];
   };
 
-  const seriesObj = timeseries?.map(item => ({
+  const pseriesObj = timeseries?.filter(item => {
+    return (
+      //item.name.indexOf('_BOUND_') >= 0 &&
+      item.name.indexOf(nfltr) >= 0 && item.name.indexOf(mfltr) >= 0
+    );
+  });
+  const seriesObj = pseriesObj.map(item => ({
     name: item.name
       .replace('_UNCERTAINTY_LOWER_BOUND_', '')
       .replace('_UNCERTAINTY_UPPER_BOUND_', ''),
@@ -411,6 +443,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     },
     dataZoom: [
       {
+        start: localStart,
+        end: localEnd,
+        realtime: false,
         type: 'slider',
         height: 40,
       },
@@ -487,7 +522,24 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       setLocalStartYear(getXAxis()[0]);
       setLocalEndYear(getXAxis().slice(-1)[0]);
     }
-  }, [timeseries]);
+  }, [getXAxis, timeseries]);
+
+  const setSensorSmoothing = v => {
+    if (v == 0) {
+      sfltr = 'NO_SMOOTHING';
+    } else if (v == 1) {
+      sfltr = 'MOVING_AVERAGE';
+    }
+  };
+  const setModelSmoothing = v => {
+    if (v == 0) {
+      nfltr = 'NO_SMOOTHING';
+    } else if (v == 1) {
+      nfltr = 'MOVING_AVERAGE';
+    } else if (v == 2) {
+      nfltr = 'LOESS';
+    }
+  };
 
   return (
     <Box sx={TSDataContainerStyle}>
@@ -536,8 +588,18 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         </Box>
         <Box sx={FieldContainerStyle}>
           <FormControl sx={{ width: '50%', left: '25%' }} size="small">
-            <InputLabel id="smoothingModel">
-              {t('app.map.timeSeriesDialog.smoothing')}
+            <InputLabel
+              id="smoothingModel"
+              sx={{
+                position: 'absolute',
+                left: '-79px',
+                width: '300px',
+                maxWidth: '300px',
+                fontSize: '12px',
+                top: '-17px',
+              }}
+            >
+              {t('app.map.timeSeriesDialog.modelSmoothing')}
             </InputLabel>
             <Slider
               aria-label="Options"
@@ -548,13 +610,25 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               marks
               min={0}
               max={2}
+              //@ts-ignore
+              onChange={e => setModelSmoothing(e.target?.value)}
             />
           </FormControl>
         </Box>
         <Box sx={FieldContainerStyle}>
           <FormControl sx={{ width: '50%', left: '25%' }} size="small">
-            <InputLabel id="smoothingModel">
-              {t('app.map.timeSeriesDialog.smoothing')}
+            <InputLabel
+              id="sensorSmoothingModel"
+              sx={{
+                position: 'absolute',
+                left: '-79px',
+                width: '300px',
+                maxWidth: '300px',
+                fontSize: '12px',
+                top: '-17px',
+              }}
+            >
+              {t('app.map.timeSeriesDialog.sensorSmoothing')}
             </InputLabel>
             <Slider
               aria-label="Options"
@@ -565,6 +639,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               marks
               min={0}
               max={1}
+              //@ts-ignore
+              onChange={e => setSensorSmoothing(e.target?.value)}
             />
           </FormControl>
         </Box>
@@ -584,70 +660,68 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               dataZoom: dataZoomHandle,
             }}
           />
-          <input
-            type="text"
-            maxLength={4}
-            placeholder="Da:"
-            value={localStartYear}
-            onChange={event => {
-              setLocalStartYear(event?.target?.value);
-              const startValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex(
-                  (item: any) => item === event?.target?.value,
-                );
-              const endValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex((item: any) => item === localEndYear);
-              //console.log('[STF]', startValue, endValue);
-              if (startValue !== -1 && endValue !== -1) {
-                chartRef.current.getEchartsInstance().dispatchAction({
-                  type: 'dataZoom',
-                  dataZoomIndex: 0,
-                  startValue: startValue,
-                  endValue: endValue,
-                });
-              }
-            }}
-          />
-          <input
-            type="text"
-            maxLength={4}
-            placeholder="A:"
-            value={localEndYear}
-            onChange={event => {
-              setLocalEndYear(event?.target?.value);
-              const startValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex(
-                  (item: any) => item === localStartYear,
-                );
-              const endValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex(
-                  (item: any) => item === event?.target?.value,
-                );
-              //console.log('[STF]', startValue, endValue);
-              if (startValue !== -1 && endValue !== -1) {
-                chartRef.current.getEchartsInstance().dispatchAction({
-                  type: 'dataZoom',
-                  dataZoomIndex: 0,
-                  startValue: startValue,
-                  endValue: endValue,
-                });
-              }
-            }}
-          />
         </Box>
       ) : (
         <Box sx={ChartLoaderContainerStyle}>
           <CircularProgress size={80} />
         </Box>
       )}
+      <input
+        type="text"
+        maxLength={4}
+        placeholder="Da:"
+        defaultValue={localStartYear}
+        onChange={event => {
+          setLocalStartYear(event?.target?.value);
+          const startValue = chartRef.current
+            .getEchartsInstance()
+            .getOption()
+            .xAxis[0].data.findIndex(
+              (item: any) => item === event?.target?.value,
+            );
+          const endValue = chartRef.current
+            .getEchartsInstance()
+            .getOption()
+            .xAxis[0].data.findIndex((item: any) => item === localEndYear);
+          //console.log('[STF]', startValue, endValue);
+          if (startValue !== -1 && endValue !== -1) {
+            chartRef.current.getEchartsInstance().dispatchAction({
+              type: 'dataZoom',
+              dataZoomIndex: 0,
+              startValue: startValue,
+              endValue: endValue,
+            });
+          }
+        }}
+      />
+      <input
+        type="text"
+        maxLength={4}
+        placeholder="A:"
+        defaultValue={localEndYear}
+        onChange={event => {
+          setLocalEndYear(event?.target?.value);
+          const startValue = chartRef.current
+            .getEchartsInstance()
+            .getOption()
+            .xAxis[0].data.findIndex((item: any) => item === localStartYear);
+          const endValue = chartRef.current
+            .getEchartsInstance()
+            .getOption()
+            .xAxis[0].data.findIndex(
+              (item: any) => item === event?.target?.value,
+            );
+          //console.log('[STF]', startValue, endValue);
+          if (startValue !== -1 && endValue !== -1) {
+            chartRef.current.getEchartsInstance().dispatchAction({
+              type: 'dataZoom',
+              dataZoomIndex: 0,
+              startValue: startValue,
+              endValue: endValue,
+            });
+          }
+        }}
+      />
     </Box>
   );
 };

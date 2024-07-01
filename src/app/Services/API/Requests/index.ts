@@ -61,29 +61,93 @@ export class RequestApi extends Http {
       )}&longitude=${lng.toFixed(4)}`,
     );
 
-  public getMultiTimeseriesV2 = (id: string[], lat: number, lng: number) => {
-    const ret: Promise<AxiosResponse<any, any>>[] = [];
-    for (let ids of id) {
-      ret.push(this.getTimeseriesV2(ids, lat, lng));
+  private cartesianProduct = (input, current?) => {
+    if (!input || !input.length) {
+      return [];
     }
-    return Promise.all(ret);
+
+    var head = input[0];
+    var tail = input.slice(1);
+    var output: any[] = [];
+
+    for (var key in head) {
+      for (var i = 0; i < head[key].length; i++) {
+        var newCurrent = this.copy(current);
+        newCurrent[key] = head[key][i];
+        if (tail.length) {
+          var productOfTail = this.cartesianProduct(tail, newCurrent);
+          output = output.concat(productOfTail);
+        } else output.push(newCurrent);
+      }
+    }
+    return output;
   };
 
+  private copy: any = obj => {
+    const res: any = {};
+    for (const p in obj) res[p] = obj[p];
+    return res;
+  };
+  public createIds(pattern: string, items: any) {
+    let ret: string[] = [];
+    let titems: any[] = [];
+
+    for (let k of Object.keys(items)) {
+      titems.push({ [k]: items[k] });
+    }
+    const combs = this.cartesianProduct(titems);
+    for (const c of combs) {
+      for (let j of Object.keys(c)) {
+        ret.push(pattern.replaceAll('{' + j + '}', c[j]));
+      }
+    }
+    return ret;
+  }
+
   public getTimeseriesV2 = (
+    ids: string[],
+    lat: number,
+    lng: number,
+    withStation: boolean = true,
+  ) => {
+    const ret: Promise<AxiosResponse<any, any>>[] = [];
+    for (let id of ids) {
+      ret.push(this.getTimeserieV2(id, lat, lng, withStation));
+      if (withStation) {
+        withStation = false;
+      }
+    }
+    return Promise.all(ret).then(x => {
+      return this.merge.apply(this, x);
+    });
+  };
+
+  private merge = (...objs) =>
+    [...objs].reduce(
+      (acc, obj) =>
+        Object.keys(obj).reduce((a, k) => {
+          acc[k] = acc.hasOwnProperty(k)
+            ? [].concat(acc[k]).concat(obj[k])
+            : obj[k];
+          return acc;
+        }, {}),
+      {},
+    );
+
+  public getTimeserieV2 = (
     measure: any,
     lat: number,
     lng: number,
     withStation: boolean = true,
   ) => {
-    measure = 'tas_annual_absolute_model_ensemble-rcp26';
     let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
-    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=LOESS_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=true&`;
+    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=LOESS_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=true`;
 
     if (withStation) {
-      url += `include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
+      url += `&include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
     }
 
     return this.instance.get<any>(url);
