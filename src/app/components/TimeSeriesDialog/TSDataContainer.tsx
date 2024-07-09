@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Papa } from 'papaparse';
 import {
   Box,
   InputLabel,
@@ -45,6 +46,7 @@ export interface TSDataContainerProps {
   place?: string | null;
   setIds: Function;
   setTimeRange: Function;
+  setToDownload: Function;
 }
 
 //TODO
@@ -53,7 +55,13 @@ export interface TSDataContainerProps {
 // Use i18 for fields;
 
 const TSDataContainer = (props: TSDataContainerProps) => {
-  const { latLng, setIds, setTimeRange, place = '' } = props;
+  const {
+    latLng,
+    setIds,
+    setTimeRange,
+    place = '',
+    setToDownload = () => {},
+  } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
@@ -159,6 +167,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .then(res => {
         //@ts-ignore
         setTimeseries(res.series);
+        setToDownload(res);
       })
       .catch(err => {
         console.log(err);
@@ -186,6 +195,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [mfltr, setMfltr] = useState<string>('model_ensemble');
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
+  const [uncert, setUncert] = useState<boolean>(true);
 
   const toDisplay = x => {
     return x.name.indexOf('_BOUND_');
@@ -252,7 +262,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getLineWidth = dataset => {
-    return dataset.info.smoothing === 'no_smoothing' ? 2 : 1;
+    return dataset.name.indexOf('model_ensemble') >= 0 ? 3 : 1;
   };
 
   const getSelected = dataset => {
@@ -268,17 +278,35 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         item.name.indexOf(snsfltr) >= 0)
     ) {
       if (item.name.indexOf('UPPER') >= 0) {
-        let ret: number[] = [];
+        let ret: (number | null)[] = [];
         let lbitem = series.filter(
           x => x.name === item.name.replace('UPPER', 'LOWER'),
         );
-        if (lbitem)
-          for (let i in item.values) {
-            ret.push(item.values[i].value - lbitem[0].values[i].value);
+        let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
+        if (lbitem) {
+          for (; delta > 0; delta--) {
+            ret.push(null);
           }
+          for (let i in item.values) {
+            ret.push(
+              item.values[i].value -
+                lbitem[0].values.filter(x => x.value != null)[i].value,
+            );
+          }
+        }
         return ret;
       }
     }
+    item.values = item.values.filter(x => x.value != null);
+    let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
+    console.log(item, delta);
+    if (delta > 0)
+      for (; delta > 0; delta--)
+        item.values.unshift({
+          value: null,
+          datetime: baseValue + delta + '-01-01T04:00:00',
+        });
+    console.log(item);
     return item.values.map(x => x.value);
   };
 
@@ -298,7 +326,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     if (dataset.name.indexOf('_UPPER_BOUND_') > 0) {
       for (let k in colors[1]) {
         if (dataset.name.indexOf(k) >= 0) {
-          return colors[1][k];
+          return { color: colors[1][k], opacity: 0.4 };
         }
       }
     } else {
@@ -415,6 +443,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       itemSize: 30,
       left: isMobile ? 'center' : 'right',
       feature: {
+        myTool1: {
+          show: true,
+          title: 'Toggle uncertainty',
+          icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
+          onclick: () => {
+            setUncert(!uncert);
+          },
+        },
         saveAsImage: {
           name: `Serie temporale ${findValueName(
             'variable',
@@ -681,62 +717,70 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           <CircularProgress size={80} />
         </Box>
       )}
-      <input
-        type="text"
-        maxLength={4}
-        placeholder="Da:"
-        defaultValue={localStartYear}
-        onChange={event => {
-          setLocalStartYear(event?.target?.value);
-          const startValue = chartRef.current
-            .getEchartsInstance()
-            .getOption()
-            .xAxis[0].data.findIndex(
-              (item: any) => item === event?.target?.value,
-            );
-          const endValue = chartRef.current
-            .getEchartsInstance()
-            .getOption()
-            .xAxis[0].data.findIndex((item: any) => item === localEndYear);
-          //console.log('[STF]', startValue, endValue);
-          if (startValue !== -1 && endValue !== -1) {
-            chartRef.current.getEchartsInstance().dispatchAction({
-              type: 'dataZoom',
-              dataZoomIndex: 0,
-              startValue: startValue,
-              endValue: endValue,
-            });
-          }
-        }}
-      />
-      <input
-        type="text"
-        maxLength={4}
-        placeholder="A:"
-        defaultValue={localEndYear}
-        onChange={event => {
-          setLocalEndYear(event?.target?.value);
-          const startValue = chartRef.current
-            .getEchartsInstance()
-            .getOption()
-            .xAxis[0].data.findIndex((item: any) => item === localStartYear);
-          const endValue = chartRef.current
-            .getEchartsInstance()
-            .getOption()
-            .xAxis[0].data.findIndex(
-              (item: any) => item === event?.target?.value,
-            );
-          //console.log('[STF]', startValue, endValue);
-          if (startValue !== -1 && endValue !== -1) {
-            chartRef.current.getEchartsInstance().dispatchAction({
-              type: 'dataZoom',
-              dataZoomIndex: 0,
-              startValue: startValue,
-              endValue: endValue,
-            });
-          }
-        }}
-      />
+      <Box sx={FieldContainerStyle}>
+        <Box>
+          <input
+            type="text"
+            maxLength={4}
+            placeholder="Da:"
+            defaultValue={localStartYear}
+            onChange={event => {
+              setLocalStartYear(event?.target?.value);
+              const startValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === event?.target?.value,
+                );
+              const endValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex((item: any) => item === localEndYear);
+              //console.log('[STF]', startValue, endValue);
+              if (startValue !== -1 && endValue !== -1) {
+                chartRef.current.getEchartsInstance().dispatchAction({
+                  type: 'dataZoom',
+                  dataZoomIndex: 0,
+                  startValue: startValue,
+                  endValue: endValue,
+                });
+              }
+            }}
+          />
+        </Box>
+        <Box>
+          <input
+            type="text"
+            maxLength={4}
+            placeholder="A:"
+            defaultValue={localEndYear}
+            onChange={event => {
+              setLocalEndYear(event?.target?.value);
+              const startValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === localStartYear,
+                );
+              const endValue = chartRef.current
+                .getEchartsInstance()
+                .getOption()
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === event?.target?.value,
+                );
+              //console.log('[STF]', startValue, endValue);
+              if (startValue !== -1 && endValue !== -1) {
+                chartRef.current.getEchartsInstance().dispatchAction({
+                  type: 'dataZoom',
+                  dataZoomIndex: 0,
+                  startValue: startValue,
+                  endValue: endValue,
+                });
+              }
+            }}
+          />
+        </Box>
+      </Box>
     </Box>
   );
 };

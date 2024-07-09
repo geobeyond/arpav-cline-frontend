@@ -63,6 +63,7 @@ const Graph = (props: any) => {
       forecast_parameters[listKey]?.find(item => item.id === key)?.name || ''
     );
   };
+  const baseValue: number = 1976;
 
   const {
     selected_map,
@@ -143,6 +144,11 @@ const Graph = (props: any) => {
 
   const { t } = useTranslation();
 
+  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
+  const [mfltr, setMfltr] = useState<string>('model_ensemble');
+  const [smfltr, setSMfltr] = useState<string>('model_ensemble');
+  const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
+
   const getLegend = () => {
     //TODO names lookup
     const legend = timeseries?.map(
@@ -168,17 +174,95 @@ const Graph = (props: any) => {
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineOpacity = dataset => {
-    return 1;
+    return dataset.name.indexOf('_BOUND_') > 0 ? 0 : 1;
     //return dataset.forecast_model === models[0] ? 1 : 0.8;
   };
-
-  const getChartData = item => {
-    return item.values.map(x => x.value);
+  const getLineWidth = dataset => {
+    return dataset.name.indexOf('model_ensemble') >= 0 ? 3 : 1;
   };
 
-  const seriesObj = timeseries?.map(item => ({
-    name: item.name,
-    type: 'line',
+  const getSelected = dataset => {
+    return dataset.info.smoothing === 'no_smoothing' ? true : false;
+  };
+
+  const getChartData = (item, series) => {
+    if (
+      (item.name.indexOf('_BOUND_') >= 0 &&
+        item.name.indexOf(nfltr) >= 0 &&
+        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
+      (Object.keys(item.info).indexOf('station_id') >= 0 &&
+        item.name.indexOf(snsfltr) >= 0)
+    ) {
+      if (item.name.indexOf('UPPER') >= 0) {
+        let ret: (number | null)[] = [];
+        let lbitem = series.filter(
+          x => x.name === item.name.replace('UPPER', 'LOWER'),
+        );
+        let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
+        if (lbitem) {
+          for (; delta > 0; delta--) {
+            ret.push(null);
+          }
+          for (let i in item.values) {
+            ret.push(
+              item.values[i].value -
+                lbitem[0].values.filter(x => x.value != null)[i].value,
+            );
+          }
+        }
+        return ret;
+      }
+    }
+    item.values = item.values.filter(x => x.value != null);
+    let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
+    console.log(item, delta);
+    if (delta > 0)
+      for (; delta > 0; delta--)
+        item.values.unshift({
+          value: null,
+          datetime: baseValue + delta + '-01-01T04:00:00',
+        });
+    console.log(item);
+    return item.values.map(x => x.value);
+  };
+  const getGraphType = dataset => {
+    return dataset.info.station_id && dataset.info.smoothing === 'no_smoothing'
+      ? 'bar'
+      : 'line';
+  };
+  const getZLevel = dataset => {
+    return dataset.info.station_id ? 1000 : 10;
+  };
+
+  const getStack = dataset => {
+    return dataset.name.replace('_LOWER_', '').replace('_UPPER_', '');
+  };
+  const getAreaStyle = dataset => {
+    if (dataset.name.indexOf('_UPPER_BOUND_') > 0) {
+      for (let k in colors[1]) {
+        if (dataset.name.indexOf(k) >= 0) {
+          return { color: colors[1][k], opacity: 0.4 };
+        }
+      }
+    } else {
+      return null;
+    }
+  };
+
+  const pseriesObj = timeseries?.filter(item => {
+    return (
+      //item.name.indexOf('_BOUND_') >= 0 &&
+      (item.name.indexOf(nfltr) >= 0 &&
+        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
+      (Object.keys(item.info).indexOf('station_id') >= 0 &&
+        item.name.indexOf(snsfltr) >= 0)
+    );
+  });
+  const seriesObj = pseriesObj.map(item => ({
+    name: item.name
+      .replace('_UNCERTAINTY_LOWER_BOUND_', '')
+      .replace('_UNCERTAINTY_UPPER_BOUND_', ''),
+    type: getGraphType(item),
     smooth: true,
     // sampling: 'average',
     symbol: 'none',
@@ -186,10 +270,20 @@ const Graph = (props: any) => {
       color: getColor(item),
       type: getLineType(item),
       opacity: getLineOpacity(item),
+      width: getLineWidth(item),
     },
-    data: getChartData(item),
+    itemStyle: {
+      color: getColor(item),
+      type: getLineType(item),
+      opacity: getLineOpacity(item),
+      width: getLineWidth(item),
+    },
+    selected: getSelected(item),
+    data: getChartData(item, timeseries),
+    stack: getStack(item),
+    areaStyle: getAreaStyle(item),
+    zLevel: getZLevel(item),
   }));
-
   const cats = timeseries?.map(item => {
     return item.values.map(x => x.datetime.split('-')[0]);
   });

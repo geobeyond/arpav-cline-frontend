@@ -144,7 +144,7 @@ export class RequestApi extends Http {
       4,
     )} ${lat.toFixed(
       4,
-    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=LOESS_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=true`;
+    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=true`;
 
     if (withStation) {
       url += `&include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
@@ -155,21 +155,12 @@ export class RequestApi extends Http {
 
   public getBarometroClimatico = () => {
     const measure = 'tas_annual_absolute_model_ensemble';
-    return Promise.all([
-      this.instance.get<any>(
-        `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}-rcp26?coords=POINT%2811.5469%2044.9524%29&datetime=..%2F..&include_coverage_data=true&include_observation_data=true&coverage_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=false`,
-      ),
-      this.instance.get<any>(
-        `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}-rcp45?coords=POINT%2811.5469%2044.9524%29&datetime=..%2F..&include_coverage_data=true&include_observation_data=true&coverage_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=false`,
-      ),
-      this.instance.get<any>(
-        `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}-rcp85?coords=POINT%2811.5469%2044.9524%29&datetime=..%2F..&include_coverage_data=true&include_observation_data=true&coverage_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=false`,
-      ),
-    ]).then(data => {
-      data[0].series.push(data[1].series[0]);
-      data[0].series.push(data[2].series[0]);
-      return data[0];
-    });
+    return this.getTimeseriesV2(
+      [measure + '-rcp26', measure + '-rcp45', measure + '-rcp85'],
+      44.9524,
+      11.5469,
+      false,
+    );
   };
 
   public findMunicipality = (lat, lng) => {

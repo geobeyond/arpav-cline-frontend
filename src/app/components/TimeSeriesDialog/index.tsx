@@ -38,11 +38,16 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
   const { t } = useTranslation();
 
   const ids = useRef<number[]>([]);
+  const data = useRef<any[]>([]);
   const timeRange = useRef<TimeRangeProps | null>();
   // console.log(timeRange);
   const setIds = newIds => (ids.current = newIds);
   const setTimeRange = tr => {
     timeRange.current = tr;
+  };
+
+  const setToDownload = d => {
+    data.current = d;
   };
   useEffect(() => {
     if (timeserie.length === 0) return;
@@ -84,6 +89,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               setIds={setIds}
               setTimeRange={setTimeRange}
               place={place}
+              setToDownload={setToDownload}
             />
           )}
         </Grid>
@@ -93,6 +99,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
           latLng={latLng}
           ids={ids}
           timeRange={timeRange}
+          data={data}
         />
       </Grid>
     </Modal>

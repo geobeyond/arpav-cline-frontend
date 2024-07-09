@@ -14,8 +14,11 @@ import { saveAs } from 'file-saver';
 import { useDispatch } from 'react-redux';
 import { useMapSlice } from '../../pages/MapPage/slice';
 
+import PapaParse from 'papaparse';
+import JSZip from 'jszip';
+
 export const DownloadForm = props => {
-  const { setOpen, latLng, ids, timeRange } = props;
+  const { setOpen, latLng, ids, timeRange, data } = props;
   const { t } = useTranslation();
   const api = RequestApi.getInstance();
   const dispatch = useDispatch();
@@ -41,11 +44,12 @@ export const DownloadForm = props => {
   };
 
   const download = () => {
+    console.log('dowlnload');
     if (!latLng || !ids) {
       console.log(latLng, ids);
       return;
     }
-    const downloadParams = {
+    const filterParams = {
       ...userData,
       ids: ids.current,
       latitude: latLng.lat,
@@ -54,18 +58,29 @@ export const DownloadForm = props => {
       end: timeRange?.current?.end,
     };
     setLoader(true);
-    api
-      .downloadTimeseries(downloadParams)
-      .then(res => {
-        saveAs(res, 'timeseries.zip');
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(
-          actions.actions.genericError({ error: 'app.error.dlTimeSeries' }),
-        );
-      })
-      .finally(() => setLoader(false));
+    let fdata = [];
+    for (let id in filterParams.ids) {
+      fdata.push(
+        ...data.current.series.filter(
+          x => x.name.indexOf(filterParams.ids[id]) >= 0,
+        ),
+      );
+    }
+
+    let z = new JSZip();
+    for (let f in fdata) {
+      const ffdata = fdata[f] as any;
+      console.log(fdata[f]);
+      const pu = PapaParse.unparse(ffdata.values);
+      z.file(ffdata.name + '.csv', pu);
+    }
+    z.generateAsync({ type: 'blob' }).then(function (content) {
+      // see FileSaver.js
+      saveAs(content, 'out.zip');
+    });
+
+    console.log(fdata, filterParams);
+    setLoader(false);
   };
 
   return (
