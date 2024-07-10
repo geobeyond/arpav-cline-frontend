@@ -58,11 +58,11 @@ export const DownloadForm = props => {
       end: timeRange?.current?.end,
     };
     setLoader(true);
-    let fdata = [];
+    let fdata: any[] = [];
     for (let id in filterParams.ids) {
       fdata.push(
         ...data.current.series.filter(
-          x => x.name.indexOf(filterParams.ids[id]) >= 0,
+          x => x.name.indexOf(filterParams.ids[id] as any) >= 0,
         ),
       );
     }
