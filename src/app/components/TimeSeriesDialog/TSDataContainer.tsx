@@ -158,12 +158,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //    });
     //  })
     //  .flat();
-    const ids = api.createIds('tas_annual_absolute_model_ensemble-{scenario}', {
-      scenario: ['rcp26', 'rcp45', 'rcp85'],
-    });
+    const ids = api.createIds(
+      'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
+      {
+        scenario: ['rcp26', 'rcp45', 'rcp85'],
+      },
+    );
     setIds(ids);
     api
-      .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
+      .getTimeseriesV2(ids, latLng.lat, latLng.lng, false)
       .then(res => {
         //@ts-ignore
         setTimeseries(res.series);
@@ -189,7 +192,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     actions.actions,
   ]);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  console.debug(i18n);
 
   const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
   const [mfltr, setMfltr] = useState<string>('model_ensemble');
@@ -198,56 +202,52 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [uncert, setUncert] = useState<boolean>(true);
 
   const toDisplay = x => {
-    return x.name.indexOf('_BOUND_');
+    return x.name.indexOf('uncertainty');
   };
 
   const getLegend = () => {
     //TODO names lookup
-    const legend = [
-      ...timeseries
-        ?.filter(x => x.name.indexOf('_BOUND_') < 0)
-        .filter(x => x.name.indexOf(nfltr) >= 0)
-        .filter(
-          x =>
-            x.name.indexOf(mfltr) >= 0 ||
-            x.name.length < 20 ||
-            x.name.indexOf(smfltr) >= 0,
-        )
-        .map(item => item.name),
-      ...timeseries
-        ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
-        .filter(x => x.name.indexOf(snsfltr) >= 0)
-        .map(x => x.name),
-    ];
-    return legend;
+    const series = timeseries
+      ?.filter(x => !('uncertainty_type' in x.info))
+      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(
+        x =>
+          x.info.climatological_model === mfltr ||
+          x.name.length < 20 ||
+          x.info.climatological_model === smfltr,
+      )
+      .map(item => getName(item));
+    const station = timeseries
+      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      .filter(x => x.name.indexOf(snsfltr) >= 0)
+      .map(x => getName(x));
+    return [...series, ...station];
   };
 
   const getSelectedLegend = () => {
     //TODO names lookup
     let ret = {};
     timeseries
-      ?.filter(x => x.name.indexOf('_BOUND_') < 0)
-      .filter(x => x.name.indexOf(nfltr) >= 0)
+      ?.filter(x => !('uncertainty_type' in x.info))
+      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
       .filter(
         x =>
           x.name.indexOf(mfltr) >= 0 ||
           x.name.length < 20 ||
           x.name.indexOf(smfltr) >= 0,
       )
-      .map(x => (ret[x.name] = true));
+      .map(x => (ret[getName(x)] = true));
     timeseries
       ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
       .filter(x => x.name.indexOf(snsfltr) >= 0)
-      .map(x => (ret[x.name] = true));
-    //.map(x => (ret[x.name] = x.info.smoothing === 'no_smoothing'));
+      .map(x => (ret[getName(x)] = true));
+    //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
     return ret;
   };
 
   const getColor = dataset => {
-    for (let k in colors[0]) {
-      if (dataset.name.indexOf(k) >= 0) {
-        return colors[0][k];
-      }
+    if (dataset.info.scenario) {
+      return colors[0][dataset.info.scenario];
     }
     return dataset.info.station_id ? '#45321b' : '#ff0000';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
@@ -257,31 +257,46 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineOpacity = dataset => {
-    return dataset.name.indexOf('_BOUND_') > 0 ? 0 : 1;
+    return 'uncertainty_type' in dataset.info ? 0 : 1;
     //return dataset.forecast_model === models[0] ? 1 : 0.8;
   };
 
   const getLineWidth = dataset => {
-    return dataset.name.indexOf('model_ensemble') >= 0 ? 3 : 1;
+    return dataset.info.climatological_model === 'model_ensemble' ? 3 : 1;
   };
 
   const getSelected = dataset => {
-    return dataset.info.smoothing === 'no_smoothing' ? true : false;
+    return dataset.info.processing_method === 'NO_SMOOTHING' ? true : false;
   };
 
   const getChartData = (item, series) => {
     if (
-      (item.name.indexOf('_BOUND_') >= 0 &&
-        item.name.indexOf(nfltr) >= 0 &&
-        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
-      (Object.keys(item.info).indexOf('station_id') >= 0 &&
-        item.name.indexOf(snsfltr) >= 0)
+      ('uncertainty_type' in item.info &&
+        item.info.processing_method.indexOf(nfltr) >= 0 &&
+        (item.info.climatological_model === mfltr ||
+          item.info.climatological_model === smfltr)) ||
+      ('station_id' in item.info &&
+        item.info.processing_method.indexOf(snsfltr) >= 0)
     ) {
-      if (item.name.indexOf('UPPER') >= 0) {
+      if (
+        'uncertainty_type' in item.info &&
+        item.info.uncertainty_type === 'upper_bound'
+      ) {
         let ret: (number | null)[] = [];
-        let lbitem = series.filter(
-          x => x.name === item.name.replace('UPPER', 'LOWER'),
-        );
+        let lbitem = series.filter(x => {
+          return (
+            getName(x) === getName(item) &&
+            x.info.aggregation_period === item.info.aggregation_period &&
+            x.info.climatological_model === item.info.climatological_model &&
+            x.info.climatological_variable ===
+              item.info.climatological_variable &&
+            x.info.measure === item.info.measure &&
+            x.info.scenario === item.info.scenario &&
+            x.info.year_period === item.info.year_period &&
+            'uncertainty_type' in x.info &&
+            x.info.uncertainty_type !== item.info.uncertainty_type
+          );
+        });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
         if (lbitem) {
           for (; delta > 0; delta--) {
@@ -311,7 +326,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getGraphType = dataset => {
-    return dataset.info.station_id && dataset.info.smoothing === 'no_smoothing'
+    return dataset.info.station_id &&
+      dataset.info.processing_method === 'NO_SMOOTHING'
       ? 'bar'
       : 'line';
   };
@@ -320,14 +336,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getStack = dataset => {
-    return dataset.name.replace('_LOWER_', '').replace('_UPPER_', '');
+    return getName(dataset).replaceAll(' ', '_');
   };
   const getAreaStyle = dataset => {
-    if (dataset.name.indexOf('_UPPER_BOUND_') > 0) {
-      for (let k in colors[1]) {
-        if (dataset.name.indexOf(k) >= 0) {
-          return { color: colors[1][k], opacity: 0.4 };
-        }
+    if (dataset.name.indexOf('_upper') > 0) {
+      if (dataset.info.scentario) {
+        return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
       }
     } else {
       return null;
@@ -341,19 +355,39 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return cats[0];
   };
 
+  /*{
+    "processing_method": "MOVING_AVERAGE_11_YEARS",
+    "coverage_identifier": "tas_annual_absolute_model_ensemble_upper_uncertainty-annual-model_ensemble-tas-absolute-rcp26-upper_bound-year",
+    "coverage_configuration": "tas_annual_absolute_model_ensemble_upper_uncertainty",
+    "aggregation_period": "annual",
+    "climatological_model": "model_ensemble",
+    "climatological_variable": "tas",
+    "measure": "absolute",
+    "scenario": "rcp26",
+    "uncertainty_type": "upper_bound",
+    "year_period": "year"
+}*/
+  const getName = item => {
+    let tdata: any = {};
+    for (let k in item.translations.parameter_values) {
+      tdata[k] = item.translations.parameter_values[k][i18n.language];
+    }
+    return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period}`;
+  };
+
   const pseriesObj = timeseries?.filter(item => {
     return (
       //item.name.indexOf('_BOUND_') >= 0 &&
-      (item.name.indexOf(nfltr) >= 0 &&
+      (item.info.processing_method.indexOf(nfltr) >= 0 &&
         (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
       (Object.keys(item.info).indexOf('station_id') >= 0 &&
         item.name.indexOf(snsfltr) >= 0)
     );
   });
+
   const seriesObj = pseriesObj.map(item => ({
-    name: item.name
-      .replace('_UNCERTAINTY_LOWER_BOUND_', '')
-      .replace('_UNCERTAINTY_UPPER_BOUND_', ''),
+    id: item.name,
+    name: getName(item),
     type: getGraphType(item),
     smooth: true,
     // sampling: 'average',
@@ -375,10 +409,22 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     stack: getStack(item),
     areaStyle: getAreaStyle(item),
     zLevel: getZLevel(item),
+    label: {
+      formatter: '{a}-{b}:{c}',
+    },
   }));
 
-  const titleText = `
-     ${findValueName('variable', 'variables')}
+  const titleText = timeseries.length == 0? '':`
+  ${
+    timeseries[0].translations.parameter_values.climatological_variable[
+      i18n.language
+    ]
+  }
+  ${
+    timeseries[0].translations.parameter_values.aggregation_period[
+      i18n.language
+    ]
+  }
   `;
 
   const subText = `
@@ -598,7 +644,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     } else if (v === 1) {
       setNfltr('MOVING_AVERAGE');
     } else if (v === 2) {
-      setNfltr('LOESS');
+      setNfltr('LOESS_SMOOTHING');
     }
   };
 

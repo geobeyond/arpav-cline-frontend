@@ -138,16 +138,18 @@ export class RequestApi extends Http {
     measure: any,
     lat: number,
     lng: number,
-    withStation: boolean = true,
+    withStation: boolean = false,
   ) => {
     let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
-    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=true`;
+    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING&include_coverage_uncertainty=true&include_coverage_related_data=true`;
 
     if (withStation) {
       url += `&include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
+    } else {
+      url += '&inclied_observation_data=false';
     }
 
     return this.instance.get<any>(url);
