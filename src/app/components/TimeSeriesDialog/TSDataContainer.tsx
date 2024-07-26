@@ -336,16 +336,20 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getStack = dataset => {
-    return getName(dataset).replaceAll(' ', '_');
+    if('uncertainty_type' in dataset.info)
+      return getName(dataset).replaceAll(' ', '_');
+    else
+      return null;
   };
   const getAreaStyle = dataset => {
-    if (dataset.name.indexOf('_upper') > 0) {
-      if (dataset.info.scentario) {
-        return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
+    if ('uncertainty_type' in dataset.info){
+      if (dataset.info.uncertainty_type === 'upper_bound') {
+        if (dataset.info.scenario) {
+          return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
+        }
       }
-    } else {
-      return null;
     }
+    return null;
   };
 
   const getXAxis = () => {
@@ -372,16 +376,16 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period}`;
+    return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
   };
 
   const pseriesObj = timeseries?.filter(item => {
     return (
       //item.name.indexOf('_BOUND_') >= 0 &&
       (item.info.processing_method.indexOf(nfltr) >= 0 &&
-        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
-      (Object.keys(item.info).indexOf('station_id') >= 0 &&
-        item.name.indexOf(snsfltr) >= 0)
+        (item.info.climatological_model === mfltr || item.info.climatological_model === smfltr)) ||
+      ("station_id" in item.info &&
+        item.info.processing_method === snsfltr)
     );
   });
 
@@ -414,7 +418,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     },
   }));
 
-  const titleText = timeseries.length == 0? '':`
+  const titleText = timeseries.length === 0 ? '' : `
   ${
     timeseries[0].translations.parameter_values.climatological_variable[
       i18n.language
@@ -427,14 +431,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   }
   `;
 
-  const subText = `
-    ${findValueName('value_type', 'value_types')}  -  ${findValueName(
-    'year_period',
-    'year_periods',
-  )}  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
-    selected_map.time_start,
+  const subText = timeseries.length === 0 ? '' : `
+    ${timeseries[0].translations.parameter_values.measure[
+      i18n.language
+    ]}  -  ${timeseries[0].translations.parameter_values.aggregation_period[
+      i18n.language
+    ]}  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+    localStartYear,
   )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(
-    selected_map.time_end,
+    localEndYear,
   )} - ${place ? place + ' - ' : ''}${t(
     'app.map.timeSeriesDialog.lat',
   )} ${roundTo4(latLng.lat)} ${t('app.map.timeSeriesDialog.lng')} ${roundTo4(
