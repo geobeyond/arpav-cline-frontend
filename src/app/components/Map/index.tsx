@@ -197,6 +197,10 @@ const Map = (props: MapProps) => {
             interactive={false}
           ></GeoJSON>
         </LayersControl.Overlay>
+        <LayersControl.Overlay checked name="Indicatore">
+        <ThreddsWrapperLayer useTime="setTimestatus" />
+          
+          </LayersControl.Overlay>
       </LayersControl>
       <VectorWrapperLayer
         ref={vectorWrapperRef}
@@ -230,7 +234,6 @@ const Map = (props: MapProps) => {
           trentennale.
         </UncontrolledTooltip>
       </CustomControlMap>
-      <ThreddsWrapperLayer useTime="setTimestatus" />
     </MapContainer>
   );
 };

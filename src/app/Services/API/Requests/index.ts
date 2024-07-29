@@ -186,6 +186,32 @@ export class RequestApi extends Http {
   // }
 
   public getForecastAttribute = (attribute, params = {}) => {
+    //const ret = this.instance
+    //  .get<any>(
+    //    'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+    //  )
+    //  .then((ret: any) => {
+    //    const rd = ret.items.filter(x => {
+    //      return x.name.indexOf(attribute.replaceAll('s', '')) >= 0;
+    //    });
+    //    return rd;
+    //  }).then(d=>{
+    //    if (d.length > 0){
+    //      const fout = {
+    //        results: d[0].allowed_values.map(x=>({id:x.name, 'name':x.display_name_italian, description:x.description_italian})),
+    //        count: d[0].allowed_values.length,
+    //        id: d[0].name,
+    //        name: d[0].display_name_italian,
+    //        description: d[0].description_italian
+    //      }
+    //      console.log(fout);
+    //      return fout;
+    //    } else {
+    //      console.log({});
+    //      return {}
+    //    }
+    //  });
+    //return ret;
     if (attribute === 'scenarios') {
       return {
         count: 3,

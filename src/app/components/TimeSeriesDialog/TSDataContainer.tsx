@@ -120,12 +120,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
 
   const gmodels = [
-    'Media ensamble',
-    'EC-EARTH_CCLM4-8-17',
-    'EC-EARTH_RACM022E',
-    'EC-EARTH_RCA4',
-    'HadGEM2-ES_RACM022E',
-    'MPI-ESM-LR_REMO2009',
+    {'label': '', 'value':'ens5'},
+    {'label': 'EC-EARTH_CCLM4-8-17', 'value':'ec_earth_cclm_4_8_17'},
+    {'label': 'EC-EARTH_RACM022E', 'value':'ec_earth_racmo22e'},
+    {'label': 'EC-EARTH_RCA4', 'value':'ec_earth_rca4'},
+    {'label': 'HadGEM2-ES_RACM022E', 'value':'hadgem2_racmo22e'},
+    {'label': 'MPI-ESM-LR_REMO2009', 'value':'mpi_esm_lr_remo2009'},
   ];
 
   const [localStart, setLocalStart] = useState<any>(0);
@@ -680,9 +680,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                 )
               }
             >
-              {forecast_models.map(m => (
-                <MenuItem key={m} value={m}>
-                  {m}
+              {gmodels.map(m => (
+                <MenuItem key={m.value} value={m.value}>
+                  {m.label}
                 </MenuItem>
               ))}
             </Select>

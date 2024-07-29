@@ -82,7 +82,7 @@ export const ThreddsWrapperLayer = (props: any) => {
     map.selected_path = selected_map.path;
     // @ts-ignore
     const selected_map_path =
-      'tas_30yr_anomaly_seasonal_agree_model_ensemble-tw2-rcp26-DJF';
+      'tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF';
     if (selected_map_path) {
       // @ts-ignore
       //if (
