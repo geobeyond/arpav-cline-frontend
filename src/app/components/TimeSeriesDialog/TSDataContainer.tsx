@@ -120,12 +120,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
 
   const gmodels = [
-    {'label': '', 'value':'ens5'},
-    {'label': 'EC-EARTH_CCLM4-8-17', 'value':'ec_earth_cclm_4_8_17'},
-    {'label': 'EC-EARTH_RACM022E', 'value':'ec_earth_racmo22e'},
-    {'label': 'EC-EARTH_RCA4', 'value':'ec_earth_rca4'},
-    {'label': 'HadGEM2-ES_RACM022E', 'value':'hadgem2_racmo22e'},
-    {'label': 'MPI-ESM-LR_REMO2009', 'value':'mpi_esm_lr_remo2009'},
+    { label: '', value: 'ens5' },
+    { label: 'EC-EARTH_CCLM4-8-17', value: 'ec_earth_cclm_4_8_17' },
+    { label: 'EC-EARTH_RACM022E', value: 'ec_earth_racmo22e' },
+    { label: 'EC-EARTH_RCA4', value: 'ec_earth_rca4' },
+    { label: 'HadGEM2-ES_RACM022E', value: 'hadgem2_racmo22e' },
+    { label: 'MPI-ESM-LR_REMO2009', value: 'mpi_esm_lr_remo2009' },
   ];
 
   const [localStart, setLocalStart] = useState<any>(0);
@@ -271,8 +271,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const getChartData = (item, series) => {
     if (
-      ('uncertainty_type' in item.info &&
-        item.info.processing_method.indexOf(nfltr) >= 0 &&
+      'uncertainty_type' in item.info ||
+      (item.info.processing_method.indexOf(nfltr) >= 0 &&
         (item.info.climatological_model === mfltr ||
           item.info.climatological_model === smfltr)) ||
       ('station_id' in item.info &&
@@ -336,13 +336,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getStack = dataset => {
-    if('uncertainty_type' in dataset.info)
+    if ('uncertainty_type' in dataset.info)
       return getName(dataset).replaceAll(' ', '_');
-    else
-      return null;
+    else return null;
   };
   const getAreaStyle = dataset => {
-    if ('uncertainty_type' in dataset.info){
+    if ('uncertainty_type' in dataset.info) {
       if (dataset.info.uncertainty_type === 'upper_bound') {
         if (dataset.info.scenario) {
           return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
@@ -381,11 +380,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const pseriesObj = timeseries?.filter(item => {
     return (
+      //(uncert && 'uncertainty_type' in item.info) ||
       //item.name.indexOf('_BOUND_') >= 0 &&
       (item.info.processing_method.indexOf(nfltr) >= 0 &&
-        (item.info.climatological_model === mfltr || item.info.climatological_model === smfltr)) ||
-      ("station_id" in item.info &&
-        item.info.processing_method === snsfltr)
+        (item.info.climatological_model === mfltr ||
+          item.info.climatological_model === smfltr)) ||
+      ('station_id' in item.info && item.info.processing_method === snsfltr)
     );
   });
 
@@ -418,7 +418,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     },
   }));
 
-  const titleText = timeseries.length === 0 ? '' : `
+  const titleText =
+    timeseries.length === 0
+      ? ''
+      : `
   ${
     timeseries[0].translations.parameter_values.climatological_variable[
       i18n.language
@@ -431,20 +434,21 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   }
   `;
 
-  const subText = timeseries.length === 0 ? '' : `
-    ${timeseries[0].translations.parameter_values.measure[
-      i18n.language
-    ]}  -  ${timeseries[0].translations.parameter_values.aggregation_period[
-      i18n.language
-    ]}  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
-    localStartYear,
-  )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(
-    localEndYear,
-  )} - ${place ? place + ' - ' : ''}${t(
-    'app.map.timeSeriesDialog.lat',
-  )} ${roundTo4(latLng.lat)} ${t('app.map.timeSeriesDialog.lng')} ${roundTo4(
-    latLng.lng,
-  )}     © ARPAV - Arpa FVG
+  const subText =
+    timeseries.length === 0
+      ? ''
+      : `
+    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${
+          timeseries[0].translations.parameter_values.aggregation_period[
+            i18n.language
+          ]
+        }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+          localStartYear,
+        )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${
+          place ? place + ' - ' : ''
+        }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
+          'app.map.timeSeriesDialog.lng',
+        )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
   Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`;
 
   const photoCameraIconPath =

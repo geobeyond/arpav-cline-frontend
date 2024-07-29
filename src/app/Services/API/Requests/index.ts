@@ -156,13 +156,32 @@ export class RequestApi extends Http {
   };
 
   public getBarometroClimatico = () => {
-    const measure = 'tas_annual_absolute_model_ensemble';
-    return this.getTimeseriesV2(
-      [measure + '-rcp26', measure + '-rcp45', measure + '-rcp85'],
-      44.9524,
-      11.5469,
-      false,
-    );
+    const ret: Promise<AxiosResponse<any, any>>[] = [];
+    const measure = 'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year';
+    const ids = this.createIds(measure, {scenario: ['rcp26', 'rcp45', 'rcp85']})
+    for (let id of ids) {
+      ret.push(this.getBarometroClimaticoSingle(id, 
+        44.9524,
+        11.5469));
+    }
+    return Promise.all(ret).then(x => {
+      return this.merge.apply(this, x);
+    });
+  };
+  public getBarometroClimaticoSingle = (
+    measure: any,
+    lat: number,
+    lng: number
+  ) => {
+    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
+      4,
+    )} ${lat.toFixed(
+      4,
+    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=false`;
+
+    url += '&inclied_observation_data=false';
+
+    return this.instance.get<any>(url);
   };
 
   public findMunicipality = (lat, lng) => {

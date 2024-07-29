@@ -142,62 +142,123 @@ const Graph = (props: any) => {
     actions.actions,
   ]);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  console.debug(i18n);
 
   const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
   const [mfltr, setMfltr] = useState<string>('model_ensemble');
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
+  const [uncert, setUncert] = useState<boolean>(true);
+
+  //const getLegend = () => {
+  //  //TODO names lookup
+  //  const legend = timeseries?.map(
+  //    item =>
+  //      `${findParamName(
+  //        item.info.coverage_identifier,
+  //        'scenarios',
+  //      )} - ${findParamName(item.info.smoothing, 'forecast_models')}`,
+  //  );
+  //  return legend;
+  //};
+
+  const toDisplay = x => {
+    return x.name.indexOf('uncertainty');
+  };
 
   const getLegend = () => {
     //TODO names lookup
-    const legend = timeseries?.map(
-      item =>
-        `${findParamName(
-          item.info.coverage_identifier,
-          'scenarios',
-        )} - ${findParamName(item.info.smoothing, 'forecast_models')}`,
-    );
-    return legend;
+    const series = timeseries
+      ?.filter(x => !('uncertainty_type' in x.info))
+      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(
+        x =>
+          x.info.climatological_model === mfltr ||
+          x.name.length < 20 ||
+          x.info.climatological_model === smfltr,
+      )
+      .map(item => getName(item));
+    const station = timeseries
+      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      .filter(x => x.name.indexOf(snsfltr) >= 0)
+      .map(x => getName(x));
+    return [...series, ...station];
+  };
+
+  const getSelectedLegend = () => {
+    //TODO names lookup
+    let ret = {};
+    timeseries
+      ?.filter(x => !('uncertainty_type' in x.info))
+      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(
+        x =>
+          x.name.indexOf(mfltr) >= 0 ||
+          x.name.length < 20 ||
+          x.name.indexOf(smfltr) >= 0,
+      )
+      .map(x => (ret[getName(x)] = true));
+    timeseries
+      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      .filter(x => x.name.indexOf(snsfltr) >= 0)
+      .map(x => (ret[getName(x)] = true));
+    //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
+    return ret;
   };
 
   const getColor = dataset => {
-    for (let k in colors[0]) {
-      if (dataset.name.indexOf(k) >= 0) {
-        return colors[0][k];
-      }
+    if (dataset.info.scenario) {
+      return colors[0][dataset.info.scenario];
     }
-    return '#ff0000';
+    return dataset.info.station_id ? '#45321b' : '#ff0000';
+    //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
     return 'solid';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineOpacity = dataset => {
-    return dataset.name.indexOf('_BOUND_') > 0 ? 0 : 1;
+    return 'uncertainty_type' in dataset.info ? 0 : 1;
     //return dataset.forecast_model === models[0] ? 1 : 0.8;
   };
+
   const getLineWidth = dataset => {
-    return dataset.name.indexOf('model_ensemble') >= 0 ? 3 : 1;
+    return dataset.info.climatological_model === 'model_ensemble' ? 3 : 1;
   };
 
   const getSelected = dataset => {
-    return dataset.info.smoothing === 'no_smoothing' ? true : false;
+    return dataset.info.processing_method === 'NO_SMOOTHING' ? true : false;
   };
 
   const getChartData = (item, series) => {
     if (
-      (item.name.indexOf('_BOUND_') >= 0 &&
-        item.name.indexOf(nfltr) >= 0 &&
-        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
-      (Object.keys(item.info).indexOf('station_id') >= 0 &&
-        item.name.indexOf(snsfltr) >= 0)
+      'uncertainty_type' in item.info ||
+      (item.info.processing_method.indexOf(nfltr) >= 0 &&
+        (item.info.climatological_model === mfltr ||
+          item.info.climatological_model === smfltr)) ||
+      ('station_id' in item.info &&
+        item.info.processing_method.indexOf(snsfltr) >= 0)
     ) {
-      if (item.name.indexOf('UPPER') >= 0) {
+      if (
+        'uncertainty_type' in item.info &&
+        item.info.uncertainty_type === 'upper_bound'
+      ) {
         let ret: (number | null)[] = [];
-        let lbitem = series.filter(
-          x => x.name === item.name.replace('UPPER', 'LOWER'),
-        );
+        let lbitem = series.filter(x => {
+          return (
+            getName(x) === getName(item) &&
+            x.info.aggregation_period === item.info.aggregation_period &&
+            x.info.climatological_model === item.info.climatological_model &&
+            x.info.climatological_variable ===
+              item.info.climatological_variable &&
+            x.info.measure === item.info.measure &&
+            x.info.scenario === item.info.scenario &&
+            x.info.year_period === item.info.year_period &&
+            'uncertainty_type' in x.info &&
+            x.info.uncertainty_type !== item.info.uncertainty_type
+          );
+        });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
         if (lbitem) {
           for (; delta > 0; delta--) {
@@ -225,8 +286,10 @@ const Graph = (props: any) => {
     console.log(item);
     return item.values.map(x => x.value);
   };
+
   const getGraphType = dataset => {
-    return dataset.info.station_id && dataset.info.smoothing === 'no_smoothing'
+    return dataset.info.station_id &&
+      dataset.info.processing_method === 'NO_SMOOTHING'
       ? 'bar'
       : 'line';
   };
@@ -235,33 +298,50 @@ const Graph = (props: any) => {
   };
 
   const getStack = dataset => {
-    return dataset.name.replace('_LOWER_', '').replace('_UPPER_', '');
+    if ('uncertainty_type' in dataset.info)
+      return getName(dataset).replaceAll(' ', '_');
+    else return null;
   };
   const getAreaStyle = dataset => {
-    if (dataset.name.indexOf('_UPPER_BOUND_') > 0) {
-      for (let k in colors[1]) {
-        if (dataset.name.indexOf(k) >= 0) {
-          return { color: colors[1][k], opacity: 0.4 };
+    if ('uncertainty_type' in dataset.info) {
+      if (dataset.info.uncertainty_type === 'upper_bound') {
+        if (dataset.info.scenario) {
+          return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
         }
       }
-    } else {
-      return null;
     }
+    return null;
+  };
+
+  const getXAxis = () => {
+    const cats = timeseries?.map(item => {
+      return item.values.map(x => x.datetime.split('-')[0]);
+    });
+    return cats[0];
+  };
+
+  const getName = item => {
+    let tdata: any = {};
+    for (let k in item.translations.parameter_values) {
+      tdata[k] = item.translations.parameter_values[k][i18n.language];
+    }
+    return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
   };
 
   const pseriesObj = timeseries?.filter(item => {
     return (
+      (uncert && 'uncertainty_type' in item.info) ||
       //item.name.indexOf('_BOUND_') >= 0 &&
-      (item.name.indexOf(nfltr) >= 0 &&
-        (item.name.indexOf(mfltr) >= 0 || item.name.indexOf(smfltr) >= 0)) ||
-      (Object.keys(item.info).indexOf('station_id') >= 0 &&
-        item.name.indexOf(snsfltr) >= 0)
+      (item.info.processing_method.indexOf(nfltr) >= 0 &&
+        (item.info.climatological_model === mfltr ||
+          item.info.climatological_model === smfltr)) ||
+      ('station_id' in item.info && item.info.processing_method === snsfltr)
     );
   });
+
   const seriesObj = pseriesObj.map(item => ({
-    name: item.name
-      .replace('_UNCERTAINTY_LOWER_BOUND_', '')
-      .replace('_UNCERTAINTY_UPPER_BOUND_', ''),
+    id: item.name,
+    name: getName(item),
     type: getGraphType(item),
     smooth: true,
     // sampling: 'average',
@@ -283,7 +363,11 @@ const Graph = (props: any) => {
     stack: getStack(item),
     areaStyle: getAreaStyle(item),
     zLevel: getZLevel(item),
+    label: {
+      formatter: '{a}-{b}:{c}',
+    },
   }));
+
   const cats = timeseries?.map(item => {
     return item.values.map(x => x.datetime.split('-')[0]);
   });
