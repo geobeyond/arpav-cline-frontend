@@ -138,7 +138,7 @@ export class RequestApi extends Http {
     measure: any,
     lat: number,
     lng: number,
-    withStation: boolean = false,
+    withStation: boolean = true,
   ) => {
     let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
       4,
@@ -149,7 +149,7 @@ export class RequestApi extends Http {
     if (withStation) {
       url += `&include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
     } else {
-      url += '&inclied_observation_data=false';
+      url += '&include_observation_data=false';
     }
 
     return this.instance.get<any>(url);
@@ -157,12 +157,13 @@ export class RequestApi extends Http {
 
   public getBarometroClimatico = () => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
-    const measure = 'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year';
-    const ids = this.createIds(measure, {scenario: ['rcp26', 'rcp45', 'rcp85']})
+    const measure =
+      'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year';
+    const ids = this.createIds(measure, {
+      scenario: ['rcp26', 'rcp45', 'rcp85'],
+    });
     for (let id of ids) {
-      ret.push(this.getBarometroClimaticoSingle(id, 
-        44.9524,
-        11.5469));
+      ret.push(this.getBarometroClimaticoSingle(id, 44.9524, 11.5469));
     }
     return Promise.all(ret).then(x => {
       return this.merge.apply(this, x);
@@ -171,7 +172,7 @@ export class RequestApi extends Http {
   public getBarometroClimaticoSingle = (
     measure: any,
     lat: number,
-    lng: number
+    lng: number,
   ) => {
     let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
       4,
@@ -179,7 +180,7 @@ export class RequestApi extends Http {
       4,
     )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=false`;
 
-    url += '&inclied_observation_data=false';
+    url += '&include_observation_data=false';
 
     return this.instance.get<any>(url);
   };

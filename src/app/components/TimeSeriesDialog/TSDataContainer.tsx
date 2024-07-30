@@ -47,6 +47,7 @@ export interface TSDataContainerProps {
   setIds: Function;
   setTimeRange: Function;
   setToDownload: Function;
+  setFilters: Function;
 }
 
 //TODO
@@ -61,6 +62,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setTimeRange,
     place = '',
     setToDownload = () => {},
+    setFilters = (
+      mainModel,
+      secondaryModel,
+      tsSmoothing,
+      sensorSmoothing,
+      uncertainty,
+    ) => {},
   } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
@@ -120,7 +128,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
 
   const gmodels = [
-    { label: '', value: 'ens5' },
+    { label: '--', value: 'ens5' },
     { label: 'EC-EARTH_CCLM4-8-17', value: 'ec_earth_cclm_4_8_17' },
     { label: 'EC-EARTH_RACM022E', value: 'ec_earth_racmo22e' },
     { label: 'EC-EARTH_RCA4', value: 'ec_earth_rca4' },
@@ -200,6 +208,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
+
+  useEffect(()=>{
+    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert)
+  }, [mfltr, smfltr, nfltr, snsfltr, uncert]);
 
   const toDisplay = x => {
     return x.name.indexOf('uncertainty');

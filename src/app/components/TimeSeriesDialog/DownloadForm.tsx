@@ -18,7 +18,7 @@ import PapaParse from 'papaparse';
 import JSZip from 'jszip';
 
 export const DownloadForm = props => {
-  const { setOpen, latLng, ids, timeRange, data } = props;
+  const { setOpen, latLng, ids, timeRange, data, filter } = props;
   const { t } = useTranslation();
   const api = RequestApi.getInstance();
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ export const DownloadForm = props => {
   };
 
   const download = () => {
-    console.log('dowlnload');
+    console.log('download');
     if (!latLng || !ids) {
       console.log(latLng, ids);
       return;
@@ -56,16 +56,20 @@ export const DownloadForm = props => {
       longitude: latLng.lng,
       start: timeRange?.current?.start,
       end: timeRange?.current?.end,
+      fitms: filter.current,
     };
     setLoader(true);
     let fdata: any[] = [];
-    for (let id in filterParams.ids) {
-      fdata.push(
-        ...data.current.series.filter(
-          x => x.name.indexOf(filterParams.ids[id] as any) >= 0,
-        ),
-      );
-    }
+    fdata.push(
+      ...data.current.series.filter(
+        x =>
+          [
+            filterParams.fitms.mainModel,
+            filterParams.fitms.secondaryModel,
+          ].indexOf(x.info.climatological_model) >= 0 &&
+          x.info.processing_method === filterParams.fitms.tsSmoothing,
+      ),
+    );
 
     let z = new JSZip();
     for (let f in fdata) {

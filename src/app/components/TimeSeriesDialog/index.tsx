@@ -39,6 +39,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
 
   const ids = useRef<number[]>([]);
   const data = useRef<any[]>([]);
+  const filter = useRef<any>({});
   const timeRange = useRef<TimeRangeProps | null>();
   // console.log(timeRange);
   const setIds = newIds => (ids.current = newIds);
@@ -48,6 +49,14 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
 
   const setToDownload = d => {
     data.current = d;
+  };
+
+  const setFilters = (mainModel,
+    secondaryModel,
+    tsSmoothing,
+    sensorSmoothing,
+    uncertainty) => {
+    filter.current = {mainModel, secondaryModel, tsSmoothing, sensorSmoothing, uncertainty};
   };
   useEffect(() => {
     if (timeserie.length === 0) return;
@@ -90,6 +99,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               setTimeRange={setTimeRange}
               place={place}
               setToDownload={setToDownload}
+              setFilters={setFilters}
             />
           )}
         </Grid>
@@ -100,6 +110,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
           ids={ids}
           timeRange={timeRange}
           data={data}
+          filter = {filter}
         />
       </Grid>
     </Modal>
