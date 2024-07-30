@@ -208,7 +208,10 @@ const Map = (props: MapProps) => {
           ></GeoJSON>
         </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Indicatore">
-          <ThreddsWrapperLayer useTime="setTimestatus" />
+          <ThreddsWrapperLayer useTime="setTimestatus" useUncertainty={false} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Indicatore (Con incertezza)">
+          <ThreddsWrapperLayer useTime="setTimestatus" useUncertainty={true} />
         </LayersControl.Overlay>
       </LayersControl>
 

@@ -174,7 +174,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     );
     setIds(ids);
     api
-      .getTimeseriesV2(ids, latLng.lat, latLng.lng, false)
+      .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
       .then(res => {
         //@ts-ignore
         setTimeseries(res.series);
@@ -230,9 +230,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       )
       .map(item => getName(item));
     const station = timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.name.indexOf(snsfltr) >= 0)
-      .map(x => getName(x));
+      .map(x => getName(x, 'station'));
     return [...series, ...station];
   };
 
@@ -250,9 +250,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.name.indexOf(snsfltr) >= 0)
-      .map(x => (ret[getName(x)] = true));
+      .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
     return ret;
   };
@@ -261,7 +261,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     if (dataset.info.scenario) {
       return colors[0][dataset.info.scenario];
     }
-    return dataset.info.station_id ? '#45321b' : '#ff0000';
+    return dataset.info.series_elaboration ? '#45321b' : '#ff0000';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
@@ -287,7 +287,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       (item.info.processing_method.indexOf(nfltr) >= 0 &&
         (item.info.climatological_model === mfltr ||
           item.info.climatological_model === smfltr)) ||
-      ('station_id' in item.info &&
+      ('series_elaboration' in item.info &&
         item.info.processing_method.indexOf(snsfltr) >= 0)
     ) {
       if (
@@ -338,13 +338,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getGraphType = dataset => {
-    return dataset.info.station_id &&
+    return dataset.info.series_elaboration &&
       dataset.info.processing_method === 'NO_SMOOTHING'
       ? 'bar'
       : 'line';
   };
   const getZLevel = dataset => {
-    return dataset.info.station_id ? 1000 : 10;
+    return dataset.info.series_elaboration ? 1000 : 10;
   };
 
   const getStack = dataset => {
@@ -382,12 +382,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     "uncertainty_type": "upper_bound",
     "year_period": "year"
 }*/
-  const getName = item => {
+  const getName = (item, mode='timeseries') => {
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
+    if (mode === 'timeseries')
+      return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
+    else
+      return `Sensore: ${tdata.series_name} ${tdata.series_elaboration} ${tdata.processing_method}`;
   };
 
   const pseriesObj = timeseries?.filter(item => {
@@ -397,7 +400,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       (item.info.processing_method.indexOf(nfltr) >= 0 &&
         (item.info.climatological_model === mfltr ||
           item.info.climatological_model === smfltr)) ||
-      ('station_id' in item.info && item.info.processing_method === snsfltr)
+      ('series_elaboration' in item.info && item.info.processing_method === snsfltr)
     );
   });
 

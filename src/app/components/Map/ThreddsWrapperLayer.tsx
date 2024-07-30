@@ -21,6 +21,7 @@ export const ThreddsWrapperLayer = (props: any) => {
     layer.current = l;
   };
   const setTimestatus = props.useTime;
+  const useUncertainty = props.useUncertainty;
 
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
@@ -40,7 +41,7 @@ export const ThreddsWrapperLayer = (props: any) => {
     // @ts-ignore
     map.selected_path = selected_map.path;
     // @ts-ignore
-    const selected_map_path = 
+    const selected_map_path =
       'tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF';
     if (selected_map_path) {
       // @ts-ignore
