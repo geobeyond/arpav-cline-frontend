@@ -209,8 +209,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
 
-  useEffect(()=>{
-    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert)
+  useEffect(() => {
+    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
   }, [mfltr, smfltr, nfltr, snsfltr, uncert]);
 
   const toDisplay = x => {
