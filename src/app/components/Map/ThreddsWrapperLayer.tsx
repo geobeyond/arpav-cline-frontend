@@ -1,9 +1,13 @@
 import L, { TileLayer } from 'leaflet';
-import { useMap, useMapEvent } from 'react-leaflet';
+import { WMSTileLayer, useMap, useMapEvent } from 'react-leaflet';
 import { WMS_PROXY_URL, V2_WMS_PROXY_URL } from '../../../utils/constants';
 import { useSelector } from 'react-redux';
-import { useLeafletContext, withPane } from '@react-leaflet/core';
-import { useEffect, useRef } from 'react';
+import {
+  useLeafletContext,
+  withPane,
+  useLayerLifecycle,
+} from '@react-leaflet/core';
+import { useEffect, useRef, useState } from 'react';
 import 'leaflet-timedimension';
 import './timedimension.extended';
 import 'leaflet/dist/leaflet.css';
@@ -18,70 +22,25 @@ export const ThreddsWrapperLayer = (props: any) => {
   };
   const setTimestatus = props.useTime;
 
+  const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
     Object.getOwnPropertyNames(obj).filter(
       item => typeof obj[item] === 'function',
     );
 
-  const setupFrontLayer = (layer, map, onlyRemove = false) => {
-    if (layer && !onlyRemove) {
-      layer.bringToFront();
-    }
-    //try {
-    //  // eslint-disable-next-line array-callback-return
-    //  Object.keys(map._layers).map((l: any) => {
-    //    l = map._layers[l];
-    //    if (l && l._url && l._url.includes(`public.places_cities.geometry`)) {
-    //      l.bringToFront();
-    //    }
-    //    if (
-    //      l &&
-    //      l._url &&
-    //      //l._url.includes(`${V2_WMS_PROXY_URL}`) &&
-    //      !l._url.includes(map.selected_path)
-    //    ) {
-    //      map.removeLayer(l);
-    //    }
-    //    if (
-    //      l &&
-    //      l.currentLayer &&
-    //      l.currentLayer._url &&
-    //      //l.currentLayer._url.includes(`${V2_WMS_PROXY_URL}`) &&
-    //      !l.currentLayer._url.includes(map.selected_path)
-    //    ) {
-    //      l.currentLayer.hide();
-    //      map.removeLayer(l);
-    //    }
-    //  });
-    //} catch (e) {
-    //  console.log(e);
-    //}
-  };
-
-  useMapEvent('baselayerchange', () =>
-    setupFrontLayer(layer.current, context.map),
-  );
   // @ts-ignore
-  useMapEvent('timeload', () => setupFrontLayer(layer.current, context.map));
+  //useMapEvent('timeload', () => setupFrontLayer(layer.current, context.map));
   // @ts-ignore
-  useMapEvent('timeloading', () => setupFrontLayer(layer.current, context.map));
-  // @ts-ignore
-  useMapEvent('layeradd', () =>
-    setupFrontLayer(layer.current, context.map, true),
-  );
-  // @ts-ignore
-  useMapEvent('layerremove', () =>
-    setupFrontLayer(layer.current, context.map, true),
-  );
+  // useMapEvent('timeloading', () => setupFrontLayer(layer.current, context.map));
 
   useEffect(() => {
-    const map = context.map;
+    const map = context.layerContainer || context.map;
     // @ts-ignore
-    if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
+    //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
     // @ts-ignore
     map.selected_path = selected_map.path;
     // @ts-ignore
-    const selected_map_path =
+    const selected_map_path = 
       'tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF';
     if (selected_map_path) {
       // @ts-ignore
@@ -121,7 +80,7 @@ export const ThreddsWrapperLayer = (props: any) => {
       // @ts-ignore
       const wmsLayer = new TileLayer.WMS(
         `${V2_WMS_PROXY_URL}${selected_map_path}`,
-        { ...params, ...withPane(options, { __version: 1, map: map }) },
+        { ...params, ...withPane(options, { __version: 1, map: context.map }) },
       );
       if (selected_map.id && selected_map.data_series === 'yes') {
         // @ts-ignore
@@ -133,9 +92,6 @@ export const ThreddsWrapperLayer = (props: any) => {
           zIndex: 1000,
         });
         if (tdWmsLayer) {
-          map.addLayer(tdWmsLayer);
-          // @ts-ignore
-          setupFrontLayer(tdWmsLayer, context.map);
           setLayer(tdWmsLayer);
           try {
             // @ts-ignore
@@ -150,10 +106,10 @@ export const ThreddsWrapperLayer = (props: any) => {
           } catch (e) {
             // console.log(e)
           }
+          layer.current = tdWmsLayer;
+          setTLayer(tdWmsLayer);
         }
       } else {
-        map.addLayer(wmsLayer);
-        setupFrontLayer(wmsLayer, context.map);
         setLayer(wmsLayer);
         try {
           // @ts-ignore
@@ -168,9 +124,17 @@ export const ThreddsWrapperLayer = (props: any) => {
         } catch (e) {
           // console.log(e)
         }
+        layer.current = wmsLayer;
+        setTLayer(wmsLayer);
       }
     }
+    map.addLayer(layer.current);
+
+    return () => {
+      map.removeLayer(layer.current);
+    };
   }, [
+    context.layerContainer,
     context.map,
     selected_map.bbox,
     selected_map.color_scale_max,

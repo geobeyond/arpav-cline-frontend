@@ -50,6 +50,43 @@ export class RequestApi extends Http {
 
   // public getTimeserie = (id:number|null, lat:number = 45.5, lng:number = 11) => this.instance.get<any>(`/maps/timeserie/?id=${id}&latitude=${lat}&longitude=${lng}`);
 
+  public getLayer = (
+    variable?,
+    model?,
+    scenario?,
+    measure?,
+    time_period?,
+    aggregation_period?,
+    season?,
+  ) => {
+    let filter = '';
+    if (variable) {
+      filter += 'possible_value=climatological_variable:' + variable+"&";
+    }
+    if (model) {
+      filter += "possible_value=climatological_model:"+model+"&"; 
+    }
+    if (scenario) {
+      filter += "possible_value=scenario:"+scenario+"&"; 
+    }
+    if (measure) {
+      filter += "possible_value=measure:"+measure+"&"; 
+    }
+    if (time_period) {
+      filter += "possible_value=time_window:"+time_period+"&"; 
+    }
+    if (aggregation_period) {
+      filter += "possible_value=aggregation_period:"+aggregation_period+"&"; 
+    }
+    if (season) {
+      filter += "possible_value=year_period:"+season+"&"; 
+    }
+    return this.instance.get<any>(
+      'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+        filter,
+    );
+  };
+
   public getTimeseries = (
     ids: Array<number>,
     lat: number = 45.5,

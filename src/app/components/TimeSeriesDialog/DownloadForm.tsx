@@ -67,7 +67,7 @@ export const DownloadForm = props => {
             filterParams.fitms.mainModel,
             filterParams.fitms.secondaryModel,
           ].indexOf(x.info.climatological_model) >= 0 &&
-          x.info.processing_method === filterParams.fitms.tsSmoothing,
+          x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >= 0,
       ),
     );
 

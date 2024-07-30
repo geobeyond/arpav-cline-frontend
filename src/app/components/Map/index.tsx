@@ -185,6 +185,16 @@ const Map = (props: MapProps) => {
             attribution='&copy; <a target="_blank" rel="noopener" href="https://s2maps.eu/">Sentinel-2 cloudless</a> by EOX'
           />
         </LayersControl.BaseLayer>
+        <LayersControl.Overlay checked name="Limiti Comunali">
+          <VectorWrapperLayer
+            ref={vectorWrapperRef}
+            selectCallback={point => setPoint(point)}
+            selectedPoint={selectedPoint}
+            openCharts={openCharts}
+            onCustom={click}
+          />
+        </LayersControl.Overlay>
+
         <LayersControl.Overlay checked name="Sensori">
           <GeoJSON
             data={sensorPositions}
@@ -198,17 +208,9 @@ const Map = (props: MapProps) => {
           ></GeoJSON>
         </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Indicatore">
-        <ThreddsWrapperLayer useTime="setTimestatus" />
-          
-          </LayersControl.Overlay>
+          <ThreddsWrapperLayer useTime="setTimestatus" />
+        </LayersControl.Overlay>
       </LayersControl>
-      <VectorWrapperLayer
-        ref={vectorWrapperRef}
-        selectCallback={point => setPoint(point)}
-        selectedPoint={selectedPoint}
-        openCharts={openCharts}
-        onCustom={click}
-      />
 
       <CustomControlMap
         position="bottomleft"
