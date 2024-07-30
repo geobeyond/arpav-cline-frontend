@@ -185,6 +185,12 @@ const Map = (props: MapProps) => {
             attribution='&copy; <a target="_blank" rel="noopener" href="https://s2maps.eu/">Sentinel-2 cloudless</a> by EOX'
           />
         </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="OpenTopoMap">
+          <TileLayer
+            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+            attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+          />
+        </LayersControl.BaseLayer>
         <LayersControl.Overlay checked name="Limiti Comunali">
           <VectorWrapperLayer
             ref={vectorWrapperRef}

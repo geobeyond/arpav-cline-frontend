@@ -231,7 +231,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .map(item => getName(item));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
-      .filter(x => x.name.indexOf(snsfltr) >= 0)
+      .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
       .map(x => getName(x, 'station'));
     return [...series, ...station];
   };
@@ -382,7 +382,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     "uncertainty_type": "upper_bound",
     "year_period": "year"
 }*/
-  const getName = (item, mode='timeseries') => {
+  const getName = (item, mode = 'timeseries') => {
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
@@ -400,7 +400,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       (item.info.processing_method.indexOf(nfltr) >= 0 &&
         (item.info.climatological_model === mfltr ||
           item.info.climatological_model === smfltr)) ||
-      ('series_elaboration' in item.info && item.info.processing_method === snsfltr)
+      ('series_elaboration' in item.info &&
+        item.info.processing_method.indexOf(snsfltr) >= 0)
     );
   });
 
