@@ -1,7 +1,27 @@
-import { MapContainer, Pane, Rectangle, TileLayer } from 'react-leaflet';
-import { LatLngBounds } from 'leaflet';
+import { MapContainer, Pane, Rectangle, TileLayer, useMap, FeatureGroup } from 'react-leaflet';
+import { LatLngBounds, Layer } from 'leaflet';
+import { EditControl } from 'react-leaflet-draw';
+import "leaflet-draw/dist/leaflet.draw.css";
 
-export const DownloadMap = ({ mapBounds, downLoadBounds }) => {
+export const DownloadMap = ({ mapBounds, downLoadBounds, featureGroupRef, setBoundsFromMap }) => {
+
+  const _onCreate = (layer: Layer) => {
+    // rimuovo eventuali layer creati in precedenza
+    if (Array.isArray(featureGroupRef?.current?.getLayers())) {
+      if (featureGroupRef?.current?.getLayers().length > 1) {
+        featureGroupRef?.current?.removeLayer(featureGroupRef?.current?.getLayers()[0]);
+      }
+    }
+
+    const bounds: LatLngBounds = featureGroupRef?.current?.getBounds();
+    setBoundsFromMap(bounds);
+  };
+
+  const _onEdited = (layer: Layer) => {
+    const bounds: LatLngBounds = featureGroupRef?.current?.getBounds();
+    setBoundsFromMap(bounds);
+  };
+
   return (
     <MapContainer
       center={[45.9, 12.45]}
@@ -9,6 +29,22 @@ export const DownloadMap = ({ mapBounds, downLoadBounds }) => {
       maxZoom={14}
       style={{ height: '320px', width: '100%', minWidth: '320px' }}
     >
+      <FeatureGroup ref={featureGroupRef}>
+        <EditControl
+          position="topright"
+          onCreated={_onCreate}
+          onEdited={_onEdited}
+          onDeleted={() => { }}
+          draw={{
+            rectangle: { repeatMode: false },
+            polyline: false,
+            polygon: false,
+            circle: false,
+            circlemarker: false,
+            marker: false,
+          }}
+        />
+      </FeatureGroup>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
