@@ -189,7 +189,13 @@ const MapDlData = (props: MapDlDataProps) => {
       <Box>
         {/*Column2*/}
         <Box sx={FieldContainerStyle}>
-          <DownloadMap mapBounds={mapBounds} downLoadBounds={downLoadBounds} featureGroupRef={featureGroupRef} setBoundsFromMap={setBoundsFromMap} />
+          <DownloadMap
+            mapBounds={mapBounds}
+            downLoadBounds={downLoadBounds}
+            featureGroupRef={featureGroupRef}
+            setBoundsFromMap={setBoundsFromMap}
+            resetBounds={resetBounds}
+          />
           <Box sx={ImgButtonContainerStyle}>
             <TextField
               id="outlined-number"

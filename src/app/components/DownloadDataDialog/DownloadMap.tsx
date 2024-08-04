@@ -3,7 +3,7 @@ import { LatLngBounds, Layer } from 'leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import "leaflet-draw/dist/leaflet.draw.css";
 
-export const DownloadMap = ({ mapBounds, downLoadBounds, featureGroupRef, setBoundsFromMap }) => {
+export const DownloadMap = ({ mapBounds, downLoadBounds, featureGroupRef, setBoundsFromMap, resetBounds }) => {
 
   const _onCreate = (layer: Layer) => {
     // rimuovo eventuali layer creati in precedenza
@@ -22,6 +22,10 @@ export const DownloadMap = ({ mapBounds, downLoadBounds, featureGroupRef, setBou
     setBoundsFromMap(bounds);
   };
 
+  const _onDeleted = (layer: Layer) => {
+    resetBounds();
+  };
+
   return (
     <MapContainer
       center={[45.9, 12.45]}
@@ -34,7 +38,7 @@ export const DownloadMap = ({ mapBounds, downLoadBounds, featureGroupRef, setBou
           position="topright"
           onCreated={_onCreate}
           onEdited={_onEdited}
-          onDeleted={() => { }}
+          onDeleted={_onDeleted}
           draw={{
             rectangle: { repeatMode: false },
             polyline: false,
