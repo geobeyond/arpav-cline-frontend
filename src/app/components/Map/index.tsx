@@ -202,7 +202,7 @@ const Map = (props: MapProps) => {
         </LayersControl.Overlay>
 
         <LayersControl.Overlay checked name="Sensori">
-          <GeoJSON
+        <GeoJSON
             data={sensorPositions}
             pointToLayer={(feature, latlng) => {
               return L.circleMarker(latlng, {
@@ -211,6 +211,7 @@ const Map = (props: MapProps) => {
               });
             }}
             interactive={false}
+            onEachFeature={(feature: any, layer: any) => { layer.options.interactive = false; }}
           ></GeoJSON>
         </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Indicatore">

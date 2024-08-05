@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { MapState } from '../../pages/MapPage/slice/types';
 import {
@@ -24,6 +24,7 @@ import {
 } from './styles';
 import { DownloadMap } from './DownloadMap';
 import { roundTo4 } from '../../../utils/json_manipulations';
+import { LatLngBounds } from 'leaflet';
 
 export interface MapDlDataProps {
   // getMapImg: Function;
@@ -31,8 +32,8 @@ export interface MapDlDataProps {
 }
 
 const MapDlData = (props: MapDlDataProps) => {
-  const onChange = props.onChange ?? (() => {});
-
+  const onChange = props.onChange ?? (() => { });
+  const featureGroupRef: any = useRef();
   const { t } = useTranslation();
 
   //@ts-ignore
@@ -49,6 +50,7 @@ const MapDlData = (props: MapDlDataProps) => {
 
   const resetBounds = () => {
     setDownLoadBounds(mapBounds);
+    featureGroupRef?.current?.clearLayers()
   };
 
   const changeBounds = bounds => {
@@ -57,6 +59,19 @@ const MapDlData = (props: MapDlDataProps) => {
       ? setShowReset(true)
       : setShowReset(false);
   };
+
+  const setBoundsFromMap = (bounds: LatLngBounds) => {
+    changeBounds([
+      [
+        bounds.getSouth().toFixed(3), //south
+        bounds.getWest().toFixed(3), //west
+      ],
+      [
+        bounds.getNorth().toFixed(3), // north
+        bounds.getEast().toFixed(3), // east
+      ],
+    ]);
+  }
 
   const times = timeserie ? timeserie[0].values.map(v => v.time) : [];
   const timeKeys = [...times.keys()];
@@ -174,7 +189,13 @@ const MapDlData = (props: MapDlDataProps) => {
       <Box>
         {/*Column2*/}
         <Box sx={FieldContainerStyle}>
-          <DownloadMap mapBounds={mapBounds} downLoadBounds={downLoadBounds} />
+          <DownloadMap
+            mapBounds={mapBounds}
+            downLoadBounds={downLoadBounds}
+            featureGroupRef={featureGroupRef}
+            setBoundsFromMap={setBoundsFromMap}
+            resetBounds={resetBounds}
+          />
           <Box sx={ImgButtonContainerStyle}>
             <TextField
               id="outlined-number"
