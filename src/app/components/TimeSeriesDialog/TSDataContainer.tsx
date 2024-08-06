@@ -61,14 +61,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setIds,
     setTimeRange,
     place = '',
-    setToDownload = () => {},
+    setToDownload = () => { },
     setFilters = (
       mainModel,
       secondaryModel,
       tsSmoothing,
       sensorSmoothing,
       uncertainty,
-    ) => {},
+    ) => { },
   } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
@@ -213,6 +213,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
   }, [mfltr, smfltr, nfltr, snsfltr, uncert]);
 
+  setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
+
   const toDisplay = x => {
     return x.name.indexOf('uncertainty');
   };
@@ -301,7 +303,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             x.info.aggregation_period === item.info.aggregation_period &&
             x.info.climatological_model === item.info.climatological_model &&
             x.info.climatological_variable ===
-              item.info.climatological_variable &&
+            item.info.climatological_variable &&
             x.info.measure === item.info.measure &&
             x.info.scenario === item.info.scenario &&
             x.info.year_period === item.info.year_period &&
@@ -317,7 +319,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           for (let i in item.values) {
             ret.push(
               item.values[i].value -
-                lbitem[0].values.filter(x => x.value != null)[i].value,
+              lbitem[0].values.filter(x => x.value != null)[i].value,
             );
           }
         }
@@ -393,17 +395,34 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       return `Sensore: ${tdata.series_name} ${tdata.series_elaboration} ${tdata.processing_method}`;
   };
 
-  const pseriesObj = timeseries?.filter(item => {
-    return (
-      //(uncert && 'uncertainty_type' in item.info) ||
-      //item.name.indexOf('_BOUND_') >= 0 &&
-      (item.info.processing_method.indexOf(nfltr) >= 0 &&
-        (item.info.climatological_model === mfltr ||
-          item.info.climatological_model === smfltr)) ||
-      ('series_elaboration' in item.info &&
-        item.info.processing_method.indexOf(snsfltr) >= 0)
-    );
-  });
+  let pseriesObj = [
+    ...timeseries?.filter(item => {
+      return (
+        //no uncertainty
+        !('uncertainty_type' in item.info) &&
+        ((item.info.processing_method.indexOf(nfltr) >= 0 &&
+          (item.info.climatological_model === mfltr ||
+            item.info.climatological_model === smfltr)) ||
+          ('series_elaboration' in item.info &&
+            item.info.processing_method.indexOf(snsfltr) >= 0))
+      );
+    }),
+  ];
+  if (uncert)
+    pseriesObj = [
+      ...pseriesObj,
+      ...timeseries?.filter(item => {
+        return (
+          //no uncertainty
+          'uncertainty_type' in item.info &&
+          ((item.info.processing_method.indexOf(nfltr) >= 0 &&
+            (item.info.climatological_model === mfltr ||
+              item.info.climatological_model === smfltr)) ||
+            ('series_elaboration' in item.info &&
+              item.info.processing_method.indexOf(snsfltr) >= 0))
+        );
+      }),
+    ];
 
   const seriesObj = pseriesObj.map(item => ({
     id: item.name,
@@ -438,33 +457,29 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     timeseries.length === 0
       ? ''
       : `
-  ${
-    timeseries[0].translations.parameter_values.climatological_variable[
+  ${timeseries[0].translations.parameter_values.climatological_variable[
       i18n.language
-    ]
-  }
-  ${
-    timeseries[0].translations.parameter_values.aggregation_period[
+      ]
+      }
+  ${timeseries[0].translations.parameter_values.aggregation_period[
       i18n.language
-    ]
-  }
+      ]
+      }
   `;
 
   const subText =
     timeseries.length === 0
       ? ''
       : `
-    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${
-          timeseries[0].translations.parameter_values.aggregation_period[
-            i18n.language
-          ]
-        }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
-          localStartYear,
-        )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${
-          place ? place + ' - ' : ''
-        }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
-          'app.map.timeSeriesDialog.lng',
-        )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
+    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${timeseries[0].translations.parameter_values.aggregation_period[
+      i18n.language
+      ]
+      }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+        localStartYear,
+      )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
+      }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
+        'app.map.timeSeriesDialog.lng',
+      )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
   Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`;
 
   const photoCameraIconPath =
@@ -487,14 +502,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         label: {
           show: true,
           formatter: v =>
-            `${t('app.map.timeSeriesDialog.xUnit')} ${
-              v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
+            `${t('app.map.timeSeriesDialog.xUnit')} ${v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
             }`,
         },
       },
       valueFormatter: v =>
-        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${
-          timeseries[0]?.dataset?.unit
+        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${timeseries[0]?.dataset?.unit
         }`,
     },
     legend: {

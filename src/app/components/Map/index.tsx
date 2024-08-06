@@ -14,6 +14,7 @@ import {
   CircleMarker,
   Popup,
   GeoJSON,
+  useMap,
 } from 'react-leaflet';
 import { Map as LMap } from 'leaflet';
 import {
@@ -38,6 +39,7 @@ import {
 import { OpacityComponent } from './OpacityComponent';
 import { Tooltip, UncontrolledTooltip, Button } from 'design-react-kit';
 import InfoIcon from '@mui/icons-material/Info';
+import { TWLSample } from './TWLSample';
 
 // import {BaseLayerControl} from "./BaseLayerControl";
 
@@ -46,7 +48,7 @@ const MobileSpaceDisplay = () => {
     <div
       className={'custom-panel leaflet-bar leaflet-control'}
       style={MobileSpaceDisplayStyle}
-      // style={{visibility: 'hidden'}}
+    // style={{visibility: 'hidden'}}
     ></div>
   );
 };
@@ -87,9 +89,9 @@ interface MapProps {
 
 const Map = (props: MapProps) => {
   const {
-    setPoint = () => {},
-    openCharts = () => {},
-    onReady = () => {},
+    setPoint = () => { },
+    openCharts = () => { },
+    onReady = () => { },
     selectedPoint = null,
     defaultCenter = [45.9, 12.45],
     defaultZoom = 8,
@@ -157,7 +159,7 @@ const Map = (props: MapProps) => {
         customComponent={
           isMobile ? MobileMousePositionDisplay : MousePositionDisplay
         }
-        // onClick={onMapClick}
+      // onClick={onMapClick}
       />
       <CustomControlMap position={'topleft'}>
         <MapSearch
@@ -202,7 +204,7 @@ const Map = (props: MapProps) => {
         </LayersControl.Overlay>
 
         <LayersControl.Overlay checked name="Sensori">
-        <GeoJSON
+          <GeoJSON
             data={sensorPositions}
             pointToLayer={(feature, latlng) => {
               return L.circleMarker(latlng, {
@@ -211,14 +213,68 @@ const Map = (props: MapProps) => {
               });
             }}
             interactive={false}
-            onEachFeature={(feature: any, layer: any) => { layer.options.interactive = false; }}
+            onEachFeature={(feature: any, layer: any) => {
+              layer.options.interactive = false;
+            }}
           ></GeoJSON>
         </LayersControl.Overlay>
-        <LayersControl.Overlay checked name="Indicatore">
+        <LayersControl.Overlay name="Indicatore">
           <ThreddsWrapperLayer useTime="setTimestatus" useUncertainty={false} />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Indicatore (Con incertezza)">
           <ThreddsWrapperLayer useTime="setTimestatus" useUncertainty={true} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="HARDCODED - tas_30yr_anomaly_seasonal_agree_model_ensemble">
+          <TWLSample
+            layer="tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF"
+            show="tas"
+            stl="uncert-stippled/seq-YlOrRd"
+            useTime="setTimestatus"
+            useUncertainty={true}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="HARDCODED - fd_annual_absolute_model_ensemble">
+          <TWLSample
+            layer="fd_annual_absolute_model_ensemble-annual-model_ensemble-fd-absolute-rcp26-year"
+            show="fd"
+            stl="default/seq-Blues-inv"
+            useTime="setTimestatus"
+            useUncertainty={true}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="HARDCODED - pr_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-pr-anomaly-rcp85-tw2-MAM">
+          <TWLSample
+            layer="pr_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-pr-anomaly-rcp85-tw2-MAM"
+            show="pr-uncertainty_group"
+            stl="uncert-stippled/div-BrBG"
+            useTime="setTimestatus"
+            useUncertainty={true}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="HARDCODED - su30_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-su30-anomaly-rcp85-tw1-year)">
+          <TWLSample
+            layer="su30_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-su30-anomaly-rcp85-tw1-year"
+            show="su30-uncertainty_group"
+            stl="uncert-stippled/seq-YlOrRd"
+            useTime="setTimestatus"
+            useUncertainty={true}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="HARCODED - tr_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-tr-anomaly-rcp85-tw2-year">
+          <TWLSample
+            layer="tr_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-tr-anomaly-rcp85-tw2-year"
+            show="tr-uncertainty_group"
+            stl="uncert-stippled/seq-YlOrRd"
+            useTime="setTimestatus"
+            useUncertainty={true}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Indicatore (Con incertezza)">
+          <TWLSample
+            layer="tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF"
+            useTime="setTimestatus"
+            useUncertainty={true}
+          />
         </LayersControl.Overlay>
       </LayersControl>
 
