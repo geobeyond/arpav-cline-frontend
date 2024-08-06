@@ -63,6 +63,7 @@ export const DownloadForm = props => {
     fdata.push(
       ...data.current.series.filter(
         x =>
+          !('uncertainty_type' in x.info) &&
           [
             filterParams.fitms.mainModel,
             filterParams.fitms.secondaryModel,
@@ -70,6 +71,20 @@ export const DownloadForm = props => {
           x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >= 0,
       ),
     );
+    if (filterParams.fitms.uncertainty) {
+      fdata.push(
+        ...data.current.series.filter(
+          x =>
+            'uncertainty_type' in x.info &&
+            [
+              filterParams.fitms.mainModel,
+              filterParams.fitms.secondaryModel,
+            ].indexOf(x.info.climatological_model) >= 0 &&
+            x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >=
+            0,
+        ),
+      );
+    }
 
     let z = new JSZip();
     for (let f in fdata) {

@@ -51,12 +51,20 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     data.current = d;
   };
 
-  const setFilters = (mainModel,
+  const setFilters = (
+    mainModel,
     secondaryModel,
     tsSmoothing,
     sensorSmoothing,
-    uncertainty) => {
-    filter.current = {mainModel, secondaryModel, tsSmoothing, sensorSmoothing, uncertainty};
+    uncertainty,
+  ) => {
+    filter.current = {
+      mainModel,
+      secondaryModel,
+      tsSmoothing,
+      sensorSmoothing,
+      uncertainty,
+    };
   };
   useEffect(() => {
     if (timeserie.length === 0) return;
@@ -110,7 +118,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
           ids={ids}
           timeRange={timeRange}
           data={data}
-          filter = {filter}
+          filter={filter}
         />
       </Grid>
     </Modal>

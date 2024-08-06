@@ -251,7 +251,7 @@ const Graph = (props: any) => {
             x.info.aggregation_period === item.info.aggregation_period &&
             x.info.climatological_model === item.info.climatological_model &&
             x.info.climatological_variable ===
-              item.info.climatological_variable &&
+            item.info.climatological_variable &&
             x.info.measure === item.info.measure &&
             x.info.scenario === item.info.scenario &&
             x.info.year_period === item.info.year_period &&
@@ -267,7 +267,7 @@ const Graph = (props: any) => {
           for (let i in item.values) {
             ret.push(
               item.values[i].value -
-                lbitem[0].values.filter(x => x.value != null)[i].value,
+              lbitem[0].values.filter(x => x.value != null)[i].value,
             );
           }
         }
@@ -328,16 +328,34 @@ const Graph = (props: any) => {
     return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
   };
 
-  const pseriesObj = timeseries?.filter(item => {
-    return (
-      (uncert && 'uncertainty_type' in item.info) ||
-      //item.name.indexOf('_BOUND_') >= 0 &&
-      (item.info.processing_method.indexOf(nfltr) >= 0 &&
-        (item.info.climatological_model === mfltr ||
-          item.info.climatological_model === smfltr)) ||
-      ('station_id' in item.info && item.info.processing_method === snsfltr)
-    );
-  });
+  let pseriesObj = [
+    ...timeseries?.filter(item => {
+      return (
+        //no uncertainty
+        !('uncertainty_type' in item.info) &&
+        ((item.info.processing_method.indexOf(nfltr) >= 0 &&
+          (item.info.climatological_model === mfltr ||
+            item.info.climatological_model === smfltr)) ||
+          ('series_elaboration' in item.info &&
+            item.info.processing_method.indexOf(snsfltr) >= 0))
+      );
+    }),
+  ];
+  if (uncert)
+    pseriesObj = [
+      ...pseriesObj,
+      ...timeseries?.filter(item => {
+        return (
+          //no uncertainty
+          'uncertainty_type' in item.info &&
+          ((item.info.processing_method.indexOf(nfltr) >= 0 &&
+            (item.info.climatological_model === mfltr ||
+              item.info.climatological_model === smfltr)) ||
+            ('series_elaboration' in item.info &&
+              item.info.processing_method.indexOf(snsfltr) >= 0))
+        );
+      }),
+    ];
 
   const seriesObj = pseriesObj.map(item => ({
     id: item.name,
@@ -400,8 +418,7 @@ const Graph = (props: any) => {
         label: {
           show: true,
           formatter: v =>
-            `${t('app.map.timeSeriesDialog.xUnit')} ${
-              v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
+            `${t('app.map.timeSeriesDialog.xUnit')} ${v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
             }`,
         },
       },
@@ -479,10 +496,10 @@ const Graph = (props: any) => {
           <ReactECharts
             ref={chartRef}
             option={chartOption}
-            // style={{
-            //   // minHeight: '70vh'
-            //   minHeight: '550px'
-            // }}
+          // style={{
+          //   // minHeight: '70vh'
+          //   minHeight: '550px'
+          // }}
           />
         </Box>
       ) : (

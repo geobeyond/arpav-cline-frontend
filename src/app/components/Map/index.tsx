@@ -119,7 +119,7 @@ const Map = (props: MapProps) => {
       // @ts-ignore
       center={defaultCenter}
       zoom={defaultZoom}
-      maxZoom={12}
+      maxZoom={19}
       zoomControl={false}
       // @ts-ignore
       timeDimensionControl={true}
