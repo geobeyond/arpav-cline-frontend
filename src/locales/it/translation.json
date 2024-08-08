@@ -62,6 +62,7 @@
   "app.map.timeSeriesDialog.xUnit": "Anno",
   "app.map.timeSeriesDialog.DLTimeSeries": "Scarica serie temporale",
   "app.map.timeSeriesDialog.DLCsv": "Scarica CSV",
+  "app.map.timeSeriesDialog.DLJson": "Scarica JSON",
   "app.map.search.lat": "Lat",
   "app.map.search.lng": "Long",
   "app.footer": ""

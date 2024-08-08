@@ -102,6 +102,64 @@ export const DownloadForm = props => {
     setLoader(false);
   };
 
+  const downloadJson = () => {
+    console.log('download');
+    if (!latLng || !ids) {
+      console.log(latLng, ids);
+      return;
+    }
+    const filterParams = {
+      ...userData,
+      ids: ids.current,
+      latitude: latLng.lat,
+      longitude: latLng.lng,
+      start: timeRange?.current?.start,
+      end: timeRange?.current?.end,
+      fitms: filter.current,
+    };
+    setLoader(true);
+    let fdata: any[] = [];
+    fdata.push(
+      ...data.current.series.filter(
+        x =>
+          !('uncertainty_type' in x.info) &&
+          [
+            filterParams.fitms.mainModel,
+            filterParams.fitms.secondaryModel,
+          ].indexOf(x.info.climatological_model) >= 0 &&
+          x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >= 0,
+      ),
+    );
+    if (filterParams.fitms.uncertainty) {
+      fdata.push(
+        ...data.current.series.filter(
+          x =>
+            'uncertainty_type' in x.info &&
+            [
+              filterParams.fitms.mainModel,
+              filterParams.fitms.secondaryModel,
+            ].indexOf(x.info.climatological_model) >= 0 &&
+            x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >=
+            0,
+        ),
+      );
+    }
+
+    let z = new JSZip();
+    for (let f in fdata) {
+      const ffdata = fdata[f] as any;
+      console.log(fdata[f]);
+      z.file(ffdata.name + '.json', JSON.stringify(ffdata));
+    }
+    z.generateAsync({ type: 'blob' }).then(function (content) {
+      // see FileSaver.js
+      saveAs(content, 'out.zip');
+    });
+
+    console.log(fdata, filterParams);
+    setLoader(false);
+  };
+
   return (
     <>
       <Grid xs={1} />
@@ -131,6 +189,17 @@ export const DownloadForm = props => {
           onClick={download}
         >
           {t('app.map.timeSeriesDialog.DLCsv')}
+        </Button>
+        <Button
+          disabled={downloadDisabled || loader || !ids.current?.length}
+          color={'primary'}
+          variant={'contained'}
+          startIcon={
+            loader ? <CircularProgress size={20} /> : <FileDownloadIcon />
+          }
+          onClick={downloadJson}
+        >
+          {t('app.map.timeSeriesDialog.DLJson')}
         </Button>
       </Grid>
       <Grid xs={24} def={11} sx={CloseButtonContStyle}>
