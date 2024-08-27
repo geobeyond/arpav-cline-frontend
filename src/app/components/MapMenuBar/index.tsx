@@ -54,8 +54,11 @@ import {
 
 export interface MapMenuBar {
   onDownloadMapImg?: Function;
+  onMenuChange?: Function;
   mode: string;
   data: string;
+  menus: any;
+  current_map?: any;
 }
 
 const MAP_MODES = {
@@ -68,34 +71,41 @@ const MAP_MODES = {
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export function MapMenuBar(props: MapMenuBar) {
   const map_mode = props.mode;
+  const onMenuChange = props.onMenuChange;
   const map_data = props.data;
-  const onDownloadMapImg = props.onDownloadMapImg ?? (() => {});
-  const {
-    selected_map,
-    forecast_parameters,
-    selectactable_parameters,
-    timeserie,
-    // @ts-ignore
-  } = useSelector(state => state?.map as MapState);
+  const current_map = props.current_map;
+  const forecast_parameters = props.menus;
+
+  const onDownloadMapImg = props.onDownloadMapImg ?? (() => { });
+  //const {
+  //  selected_map,
+  //  forecast_parameters,
+  //  selectactable_parameters,
+  //  timeserie,
+  //  // @ts-ignore
+  //} = useSelector(state => state?.map as MapState);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
   const mapParameters = (mapKey, parameterListKey) => {
-    const items = forecast_parameters[parameterListKey].map(item => {
-      return {
-        ...item,
-        disabled: !(
-          Array.isArray(selectactable_parameters[parameterListKey]) &&
-          selectactable_parameters[parameterListKey].includes(item?.id)
-        ),
-        selected: selected_map[mapKey] === item.id,
-      };
-    });
-    const needsSelection =
-      selected_map[mapKey] == null &&
-      items.filter(x => x.disabled === false).length > 0;
-    return { items, needsSelection };
+    if (forecast_parameters) {
+      const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
+      const items = fp.allowed_values.map(item => {
+        return {
+          ...item,
+          disabled: false,
+          selected: false, //currentMap[mapKey] === item.name,
+        };
+      });
+      //const needsSelection =
+      //  selected_map[mapKey] == null &&
+      //  items.filter(x => x.disabled === false).length > 0;
+      //return { items, needsSelection };
+      return { items, needsSelection: false };
+    } else {
+      return { items: [], needsSelection: false };
+    }
   };
 
   const setItemMenus = () => ({
@@ -104,9 +114,12 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key: 'variable',
+            key: 'climatological_variable',
             groupName: '',
-            ...mapParameters('variable', 'variables'),
+            ...mapParameters(
+              'climatological_variable',
+              'climatological_variable',
+            ),
           },
         ],
       },
@@ -115,44 +128,47 @@ export function MapMenuBar(props: MapMenuBar) {
       map_data === 'past'
         ? []
         : [
-            // COLUMNS:
-            {
-              rows: [
-                {
-                  key: 'forecast_model',
-                  groupName: t('app.map.menu.models'),
-                  ...mapParameters('forecast_model', 'forecast_models'),
-                },
-              ],
-            },
-            {
-              rows: [
-                {
-                  key: 'scenario',
-                  groupName: t('app.map.menu.scenarios'),
-                  ...mapParameters('scenario', 'scenarios'),
-                },
-              ],
-            },
-          ],
+          // COLUMNS:
+          {
+            rows: [
+              {
+                key: 'forecast_model',
+                groupName: t('app.map.menu.models'),
+                ...mapParameters(
+                  'climatological_model',
+                  'climatological_model',
+                ),
+              },
+            ],
+          },
+          {
+            rows: [
+              {
+                key: 'scenario',
+                groupName: t('app.map.menu.scenarios'),
+                ...mapParameters('scenario', 'scenario'),
+              },
+            ],
+          },
+        ],
     periodMenuSet: [
       // COLUMNS:
       {
         rows: [
           {
-            key: 'data_series',
+            key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
-            ...mapParameters('data_series', 'data_series'),
+            ...mapParameters('aggregation_period', 'aggregation_period'),
           },
           {
-            key: 'value_type',
+            key: 'measure',
             groupName: t('app.map.menu.valueTypes'),
-            ...mapParameters('value_type', 'value_types'),
+            ...mapParameters('measure', 'measure'),
           },
           {
             key: 'time_window',
             groupName: t('app.map.menu.timeWindows'),
-            ...mapParameters('time_window', 'time_windows'),
+            ...mapParameters('time_window', 'time_window'),
           },
         ],
       },
@@ -164,7 +180,7 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             key: 'year_period',
             groupName: '',
-            ...mapParameters('year_period', 'year_periods'),
+            ...mapParameters('year_period', 'year_period'),
           },
         ],
       },
@@ -176,7 +192,7 @@ export function MapMenuBar(props: MapMenuBar) {
   useEffect(() => {
     // console.log('PASSO')
     setMenus(setItemMenus());
-  }, [forecast_parameters, selectactable_parameters, selected_map]);
+  }, [forecast_parameters, setItemMenus]);
 
   // const [selectedValues, setSelectedValues] = React.useState<IGrpItm[][] | []>(
   //   [],
@@ -200,18 +216,17 @@ export function MapMenuBar(props: MapMenuBar) {
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
   const handleChange = (key: string, value: string) => {
     // console.log("ciao2", key, value)
-    dispatch(actions.actions.changeSelection({ key, value }));
+    //dispatch(actions.actions.changeSelection({ key, value }));
     // const selTmp = [...selectedValues];
     // selTmp[menuIdx] = groupSelection;
     // setSelectedValues(selTmp);
+    if (onMenuChange) {
+      onMenuChange({ key, value });
+    }
   };
 
   const findValueName = (key: string, listKey: string) => {
-    const id = selected_map[key];
-    let name = '';
-    if (id)
-      name = forecast_parameters[listKey]?.find(item => item.id === id)?.name;
-    return name ?? '';
+    return '';
   };
 
   const selectedValuesToString = () => {
@@ -292,7 +307,7 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.variableMenuSet}
-              // value={selectedValues[0]}
+              current_map={current_map}
               onChange={handleChange}
               sx={LeftSelectStyle}
               menuSx={SelectMenuStyle}
@@ -306,6 +321,7 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.modelAndScenarioMenuSet}
+              current_map={current_map}
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
@@ -322,6 +338,7 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.periodMenuSet}
+              current_map={current_map}
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
@@ -336,6 +353,7 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.seasonMenuSet}
+              current_map={current_map}
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
@@ -344,7 +362,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
               }
               label={t('app.map.menuBar.season')}
-              // label={'Season'}
+            // label={'Season'}
             />
           </Grid>
           <Grid xs={1} def={2} sx={SecondRowStyle}>
@@ -352,7 +370,7 @@ export function MapMenuBar(props: MapMenuBar) {
               {isMobile ? (
                 <IconButton
                   onClick={() => setDownloadDataOpen(true)}
-                  disabled={timeserie.length === 0}
+                  disabled={true}
                   aria-label={t('app.map.menuBar.downloadData')}
                 >
                   <FileDownloadIcon />
@@ -361,7 +379,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 <Button
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
-                  disabled={timeserie.length === 0}
+                  disabled={true}
                   aria-label={t('app.map.menuBar.downloadData')}
                 >
                   {t('app.map.menuBar.downloadData')}

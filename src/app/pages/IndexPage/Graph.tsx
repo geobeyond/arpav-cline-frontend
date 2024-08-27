@@ -477,15 +477,6 @@ const Graph = (props: any) => {
         padding: 15,
       },
     },
-    dataZoom: [
-      {
-        type: 'slider',
-        height: 40,
-      },
-      {
-        type: 'inside',
-      },
-    ],
     series: seriesObj,
   };
 

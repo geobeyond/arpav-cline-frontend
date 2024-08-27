@@ -81,6 +81,7 @@ export const getOptionsForForecastParameters = (
   variables,
   data_series,
 ) => {
+  console.log(variables);
   return {
     // variables: getValuesFor('variable', currentState.layers, filterDict),
     variables: variables.map(x => x.id),

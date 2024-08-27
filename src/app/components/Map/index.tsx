@@ -40,6 +40,7 @@ import { OpacityComponent } from './OpacityComponent';
 import { Tooltip, UncontrolledTooltip, Button } from 'design-react-kit';
 import InfoIcon from '@mui/icons-material/Info';
 import { TWLSample } from './TWLSample';
+import { RequestApi } from 'app/Services';
 
 // import {BaseLayerControl} from "./BaseLayerControl";
 
@@ -82,9 +83,12 @@ interface MapProps {
   onReady?: (map: LMap) => void;
   openCharts?: (iCityItem) => void;
   setPoint?: Function;
+  layerConf?: any;
   selectedPoint?: iCityItem | null;
   defaultCenter?: [number, number];
   defaultZoom?: number;
+  currentMap?: any;
+  currentLayer?: string;
 }
 
 const Map = (props: MapProps) => {
@@ -95,6 +99,9 @@ const Map = (props: MapProps) => {
     selectedPoint = null,
     defaultCenter = [45.9, 12.45],
     defaultZoom = 8,
+    layerConf = {},
+    currentMap = {},
+    currentLayer = '',
   } = props;
 
   const theme = useTheme();
@@ -109,8 +116,15 @@ const Map = (props: MapProps) => {
 
   const vectorWrapperRef = useRef();
   const ref5 = useRef(null);
+  const api = new RequestApi();
 
   const [timeStatus, setTimeStatus] = React.useState('none');
+
+  useEffect(() => {
+    console.log(layerConf);
+    const cl = api.createIds(layerConf.coverage_id_pattern, currentMap)[0];
+    console.log(cl);
+  }, [layerConf, currentLayer]);
 
   return (
     <MapContainer
@@ -202,7 +216,6 @@ const Map = (props: MapProps) => {
             onCustom={click}
           />
         </LayersControl.Overlay>
-
         <LayersControl.Overlay checked name="Sensori">
           <GeoJSON
             data={sensorPositions}
@@ -218,64 +231,30 @@ const Map = (props: MapProps) => {
             }}
           ></GeoJSON>
         </LayersControl.Overlay>
-        <LayersControl.Overlay name="Indicatore">
-          <ThreddsWrapperLayer useTime="setTimestatus" useUncertainty={false} />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="Indicatore (Con incertezza)">
-          <ThreddsWrapperLayer useTime="setTimestatus" useUncertainty={true} />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="HARDCODED - tas_30yr_anomaly_seasonal_agree_model_ensemble">
-          <TWLSample
-            layer="tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF"
-            show="tas"
-            stl="uncert-stippled/seq-YlOrRd"
-            useTime="setTimestatus"
-            useUncertainty={true}
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="HARDCODED - fd_annual_absolute_model_ensemble">
-          <TWLSample
-            layer="fd_annual_absolute_model_ensemble-annual-model_ensemble-fd-absolute-rcp26-year"
-            show="fd"
-            stl="default/seq-Blues-inv"
-            useTime="setTimestatus"
-            useUncertainty={true}
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="HARDCODED - pr_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-pr-anomaly-rcp85-tw2-MAM">
-          <TWLSample
-            layer="pr_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-pr-anomaly-rcp85-tw2-MAM"
-            show="pr-uncertainty_group"
-            stl="uncert-stippled/div-BrBG"
-            useTime="setTimestatus"
-            useUncertainty={true}
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="HARDCODED - su30_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-su30-anomaly-rcp85-tw1-year)">
-          <TWLSample
-            layer="su30_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-su30-anomaly-rcp85-tw1-year"
-            show="su30-uncertainty_group"
-            stl="uncert-stippled/seq-YlOrRd"
-            useTime="setTimestatus"
-            useUncertainty={true}
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="HARCODED - tr_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-tr-anomaly-rcp85-tw2-year">
-          <TWLSample
-            layer="tr_30yr_anomaly_annual_agree_model_ensemble-30yr-model_ensemble-tr-anomaly-rcp85-tw2-year"
-            show="tr-uncertainty_group"
-            stl="uncert-stippled/seq-YlOrRd"
-            useTime="setTimestatus"
-            useUncertainty={true}
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="Indicatore (Con incertezza)">
-          <TWLSample
-            layer="tas_30yr_anomaly_seasonal_agree_model_ensemble-30yr-model_ensemble-tas-anomaly-rcp85-tw1-DJF"
-            useTime="setTimestatus"
-            useUncertainty={true}
-          />
-        </LayersControl.Overlay>
+        {Object.keys(layerConf).length > 0 && (
+          <>
+            <LayersControl.Overlay name={layerConf.display_name_italian}>
+              <TWLSample
+                layer={currentLayer}
+                show={layerConf.wms_secondary_layer_name}
+                stl={layerConf.palette}
+                useTime="setTimestatus"
+                useUncertainty={false}
+              />
+            </LayersControl.Overlay>
+            <LayersControl.Overlay
+              name={layerConf.display_name_italian + '(con incertezza)'}
+            >
+              <TWLSample
+                layer={currentLayer}
+                show={layerConf.wms_main_layer_name}
+                stl={layerConf.palette}
+                useTime="setTimestatus"
+                useUncertainty={true}
+              />
+            </LayersControl.Overlay>
+          </>
+        )}
       </LayersControl>
 
       <CustomControlMap

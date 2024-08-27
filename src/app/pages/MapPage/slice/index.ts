@@ -1,7 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
-import { mapSaga } from './saga';
 import {
   ChangeMapSelectionPatyload,
   Filters,
@@ -260,7 +259,7 @@ export const { actions: mapActions } = slice;
 
 export const useMapSlice = () => {
   useInjectReducer({ key: slice.name, reducer: slice.reducer });
-  useInjectSaga({ key: slice.name, saga: mapSaga });
+  //useInjectSaga({ key: slice.name, saga: mapSaga });
   return { actions: slice.actions };
 };
 
