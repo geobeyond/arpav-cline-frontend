@@ -103,12 +103,7 @@ export const StationsLayer = (props: any) => {
           pathOptions={{ color: '#164d36' }}
         >
           <Popup>
-            <Box sx={PopupStyle}>
-              <MapPopup
-                openCharts={openCharts}
-                value={selectedPoint}
-              ></MapPopup>
-            </Box>
+            <Box sx={PopupStyle}></Box>
           </Popup>
         </CircleMarker>
       </Pane>

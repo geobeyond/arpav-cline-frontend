@@ -50,7 +50,7 @@ const MapDlData = (props: MapDlDataProps) => {
 
   const resetBounds = () => {
     setDownLoadBounds(mapBounds);
-    featureGroupRef?.current?.clearLayers()
+    featureGroupRef?.current?.clearLayers();
   };
 
   const changeBounds = bounds => {
@@ -71,10 +71,10 @@ const MapDlData = (props: MapDlDataProps) => {
         bounds.getEast().toFixed(3), // east
       ],
     ]);
-  }
+  };
 
-  const times = timeserie ? timeserie[0].values.map(v => v.time) : [];
-  const timeKeys = [...times.keys()];
+  const times: any[] = []; // timeserie ? timeserie[0].values.map(v => v.time) : [];
+  const timeKeys: string[] = []; // [...times.keys()];
 
   const [years, setYears] = React.useState<number[]>([0, timeKeys.length - 1]);
 

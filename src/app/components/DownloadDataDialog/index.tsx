@@ -24,11 +24,11 @@ import { API_URL } from '../../../utils/constants';
 export interface DownloadDataDialogProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  configuration: any;
 }
 
 const DownloadDataDialog = (props: DownloadDataDialogProps) => {
-  const open = props.open;
-  const setOpen = props.setOpen;
+  const { open, setOpen, configuration } = props;
 
   const { t } = useTranslation();
   const dispatch = useDispatch();

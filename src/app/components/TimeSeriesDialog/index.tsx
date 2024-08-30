@@ -20,6 +20,8 @@ export interface TimeSeriesDialogProps {
   selectedPoint: iCityItem | null;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  currentLayer: any;
+  currentMap: any;
 }
 
 export interface TimeRangeProps {
@@ -28,7 +30,13 @@ export interface TimeRangeProps {
 }
 
 const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
-  const { open = false, setOpen, selectedPoint } = props;
+  const {
+    open = false,
+    setOpen,
+    selectedPoint,
+    currentLayer,
+    currentMap,
+  } = props;
   const latLng = selectedPoint
     ? new LatLng(selectedPoint.latlng.lat, selectedPoint.latlng.lng)
     : null;
@@ -108,6 +116,8 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               place={place}
               setToDownload={setToDownload}
               setFilters={setFilters}
+              currentLayer={currentLayer}
+              currentMap={currentMap}
             />
           )}
         </Grid>

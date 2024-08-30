@@ -71,6 +71,9 @@ export function MapPage(props: MapPageProps) {
   const [currentMap, setCurrentMap] = useState(defaultMap);
   const [currentLayer, setCurrentLayer] = useState('');
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
+  const [currentTimeSeries, setCurrentTimeSeries] = useState({});
+
+  const [foundLayers, setFoundLayers] = useState(0);
 
   const handleMapReady = (map: LMap) => {
     mapRef.current = map;
@@ -109,6 +112,7 @@ export function MapPage(props: MapPageProps) {
         )
         .then((x: any) => {
           console.log(x);
+          setFoundLayers(x.items.length);
           if (x.items.length === 1) {
             api
               .getLayerConf(x.items[0].related_coverage_configuration_url)
@@ -122,6 +126,20 @@ export function MapPage(props: MapPageProps) {
       console.log(e);
     }
   }, [currentMap]);
+
+  useEffect(() => {
+    if (currentLayer.length > 0 && selectedPoint) {
+      api
+        .getTimeseriesV2(
+          [currentLayer],
+          selectedPoint.latlng.lat,
+          selectedPoint.latlng.lng,
+        )
+        .then(data => {
+          setCurrentTimeSeries(data);
+        });
+    }
+  }, [selectedPoint, currentLayer]);
 
   const PLUGIN_OPTIONS: PluginOptions = {
     cropImageByInnerWH: true, // crop blank opacity from image borders
@@ -247,6 +265,7 @@ export function MapPage(props: MapPageProps) {
         menus={menus}
         onMenuChange={updateCurrentMap}
         current_map={currentMap}
+        foundLayers={foundLayers}
       />
 
       <Map
@@ -266,6 +285,8 @@ export function MapPage(props: MapPageProps) {
         selectedPoint={selectedPoint}
         open={tSOpen}
         setOpen={setTSOpen}
+        currentLayer={currentLayerConfig}
+        currentMap={currentMap}
       />
 
       {/*TODO Backdrop only for debug?*/}

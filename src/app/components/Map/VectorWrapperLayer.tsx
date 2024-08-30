@@ -12,6 +12,7 @@ import { MapPopup } from '../MapSearch';
 import { PopupStyle } from './styles';
 
 export const VectorWrapperLayer = (props: any) => {
+  const currentTimeSeries = props.currentTimeseries;
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 

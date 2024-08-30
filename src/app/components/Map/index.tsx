@@ -3,6 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import sensorPositions from './data';
 import L from 'leaflet';
+import { ScaleControl } from 'react-leaflet';
 
 import {
   MapContainer,
@@ -122,8 +123,6 @@ const Map = (props: MapProps) => {
 
   useEffect(() => {
     console.log(layerConf);
-    const cl = api.createIds(layerConf.coverage_id_pattern, currentMap)[0];
-    console.log(cl);
   }, [layerConf, currentLayer]);
 
   return (
@@ -149,6 +148,8 @@ const Map = (props: MapProps) => {
       //@ts-ignore
       whenReady={obj => onReady(obj.target)}
     >
+      <ScaleControl imperial={false} />
+
       <ZoomControl position={'topright'} />
       {isMobile && (
         <DummyControlComponent

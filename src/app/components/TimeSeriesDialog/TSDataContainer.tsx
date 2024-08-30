@@ -48,6 +48,8 @@ export interface TSDataContainerProps {
   setTimeRange: Function;
   setToDownload: Function;
   setFilters: Function;
+  currentLayer: any;
+  currentMap: any;
 }
 
 //TODO
@@ -62,6 +64,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setTimeRange,
     place = '',
     setToDownload = () => { },
+    currentLayer,
+    currentMap,
     setFilters = (
       mainModel,
       secondaryModel,
@@ -168,11 +172,16 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //  .flat();
     const ids = api.createIds(
       //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
-      'pr_annual_absolute_model_ec_earth_cclm4_8_17-annual-ec_earth_cclm_4_8_17-pr-absolute-{scenario}-year',
+      currentLayer.coverage_id_pattern,
       {
-        scenario: ['rcp26', 'rcp45', 'rcp85'],
+        ...currentMap,
+        ...{ name: currentLayer.name },
+        ...{
+          scenario: ['rcp26', 'rcp45', 'rcp85'],
+        },
       },
     );
+    console.log(ids);
     setIds(ids);
     api
       .getTimeseriesV2(ids, latLng.lat, latLng.lng, false)

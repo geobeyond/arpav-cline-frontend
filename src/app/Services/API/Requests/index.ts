@@ -35,20 +35,7 @@ export class RequestApi extends Http {
     return this.classInstance;
   }
 
-  public getLayers = () => this.instance.get<any>('/maps/maps/');
-
   public getCities = () => this.instance.get<any>('/places/cities/');
-
-  public getTimeserie = (
-    id: number | null,
-    lat: number = 45.5,
-    lng: number = 11,
-  ) =>
-    this.instance.get<any>(
-      `/maps/ncss/timeserie/?id=${id}&latitude=${lat}&longitude=${lng}`,
-    );
-
-  // public getTimeserie = (id:number|null, lat:number = 45.5, lng:number = 11) => this.instance.get<any>(`/maps/timeserie/?id=${id}&latitude=${lat}&longitude=${lng}`);
 
   public getLayer = (
     variable?,
@@ -72,7 +59,7 @@ export class RequestApi extends Http {
     if (measure) {
       filter += 'possible_value=measure:' + measure + '&';
     }
-    if (time_period) {
+    if (time_period && aggregation_period !== 'annual') {
       filter += 'possible_value=time_window:' + time_period + '&';
     }
     if (aggregation_period) {
@@ -90,17 +77,6 @@ export class RequestApi extends Http {
   public getLayerConf = (conf: string) => {
     return this.instance.get<any>(conf);
   };
-
-  public getTimeseries = (
-    ids: Array<number>,
-    lat: number = 45.5,
-    lng: number = 11,
-  ) =>
-    this.instance.get<any>(
-      `/maps/ncss/timeserie/?ids=${ids.join(',')}&latitude=${lat.toFixed(
-        4,
-      )}&longitude=${lng.toFixed(4)}`,
-    );
 
   public cartesianProduct = (input, current?) => {
     if (!input || !input.length) {
@@ -129,30 +105,37 @@ export class RequestApi extends Http {
     for (const p in obj) res[p] = obj[p];
     return res;
   };
+
   public createIds(pattern: string, items: any) {
     let ret: string[] = [];
     let titems: any[] = [];
 
     for (let k of Object.keys(items)) {
-      titems.push({ [k]: items[k] });
+      if (typeof items[k] !== 'object') {
+        titems.push({ [k]: [items[k]] });
+      } else {
+        titems.push({ [k]: items[k] });
+      }
     }
     const combs = this.cartesianProduct(titems);
+    let tpattern = pattern;
     for (const c of combs) {
       for (let j of Object.keys(c)) {
-        ret.push(pattern.replaceAll('{' + j + '}', c[j]));
+        tpattern = tpattern.replaceAll('{' + j + '}', c[j]);
       }
+      ret.push(tpattern);
     }
     return ret;
   }
 
   public getTimeseriesV2 = (
-    ids: string[],
+    series: string[],
     lat: number,
     lng: number,
     withStation: boolean = true,
   ) => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
-    for (let id of ids) {
+    for (let id of series) {
       ret.push(this.getTimeserieV2(id, lat, lng, withStation));
       if (withStation) {
         withStation = false;
@@ -176,12 +159,12 @@ export class RequestApi extends Http {
     );
 
   public getTimeserieV2 = (
-    measure: any,
+    serie: string,
     lat: number,
     lng: number,
     withStation: boolean = true,
   ) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
+    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
@@ -192,6 +175,21 @@ export class RequestApi extends Http {
     } else {
       url += '&include_observation_data=false';
     }
+
+    return this.instance.get<any>(url);
+  };
+
+  public getTimeSeriesDataPoint = (
+    serie: string,
+    lat: number,
+    lng: number,
+    year: number,
+  ) => {
+    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+      4,
+    )} ${lat.toFixed(4)})&datetime=${year + 1}%2F${
+      year - 1
+    }&include_coverage_data=true&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_related_data=true`;
 
     return this.instance.get<any>(url);
   };
@@ -247,20 +245,14 @@ export class RequestApi extends Http {
   // }
 
   public getAttributes = () => {
-    let c = localStorage.getItem('parameters');
-    if (c) {
-      return Promise.resolve(JSON.parse(c));
-    } else {
-      const ret = this.instance
-        .get<any>(
-          'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
-        )
-        .then((d: any) => {
-          localStorage.setItem('parameters', JSON.stringify(d.items));
-          return d.items;
-        });
-      return ret;
-    }
+    const ret = this.instance
+      .get<any>(
+        'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+      )
+      .then((d: any) => {
+        return d.items;
+      });
+    return ret;
   };
 
   public getForecastAttribute = (attribute, params = {}) => {};

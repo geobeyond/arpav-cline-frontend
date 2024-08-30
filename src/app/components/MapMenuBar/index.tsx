@@ -59,6 +59,7 @@ export interface MapMenuBar {
   data: string;
   menus: any;
   current_map?: any;
+  foundLayers?: number;
 }
 
 const MAP_MODES = {
@@ -75,6 +76,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const map_data = props.data;
   const current_map = props.current_map;
   const forecast_parameters = props.menus;
+  const foundLayers = props.foundLayers;
 
   const onDownloadMapImg = props.onDownloadMapImg ?? (() => { });
   //const {
@@ -132,7 +134,7 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             rows: [
               {
-                key: 'forecast_model',
+                key: 'climatological_model',
                 groupName: t('app.map.menu.models'),
                 ...mapParameters(
                   'climatological_model',
@@ -215,8 +217,7 @@ export function MapMenuBar(props: MapMenuBar) {
 
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
   const handleChange = (key: string, value: string) => {
-    // console.log("ciao2", key, value)
-    //dispatch(actions.actions.changeSelection({ key, value }));
+    // dispatch(actions.actions.changeSelection({ key, value }));
     // const selTmp = [...selectedValues];
     // selTmp[menuIdx] = groupSelection;
     // setSelectedValues(selTmp);
@@ -227,23 +228,6 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const findValueName = (key: string, listKey: string) => {
     return '';
-  };
-
-  const selectedValuesToString = () => {
-    const keys = [
-      ['variable', 'variables'],
-      ['forecast_model', 'forecast_models'],
-      ['scenario', 'scenarios'],
-      ['data_series', 'data_series'],
-      ['value_type', 'value_types'],
-      ['time_window', 'time_windows'],
-      ['year_period', 'year_periods'],
-    ];
-
-    const values = keys.map(key => findValueName(key[0], key[1]));
-    const label = values.filter(valSet => valSet).join(', ');
-
-    return label;
   };
 
   const hasMissingValues = items => {
@@ -295,11 +279,16 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid xs={5} sx={FirstRowStyle}>
+              <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
                     {MAP_MODES[map_data]} - {MAP_MODES[map_mode]}
                   </Typography>
+                </Box>
+              </Grid>
+              <Grid xs={1} sx={FirstRowStyle}>
+                <Box>
+                  <Typography sx={MenuLabelStyle}>{foundLayers}</Typography>
                 </Box>
               </Grid>
             </>
@@ -379,7 +368,6 @@ export function MapMenuBar(props: MapMenuBar) {
                 <Button
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
-                  disabled={true}
                   aria-label={t('app.map.menuBar.downloadData')}
                 >
                   {t('app.map.menuBar.downloadData')}
@@ -388,6 +376,7 @@ export function MapMenuBar(props: MapMenuBar) {
               <DownloadDataDialog
                 open={isDownloadDataOpen}
                 setOpen={setDownloadDataOpen}
+                configuration={forecast_parameters}
               />
             </Box>
           </Grid>
@@ -452,9 +441,7 @@ export function MapMenuBar(props: MapMenuBar) {
       </Toolbar>
       {isMobile && (
         <Toolbar sx={MenuSelectionMobileStyle}>
-          <Typography variant={'caption'}>
-            {selectedValuesToString()}
-          </Typography>
+          <Typography variant={'caption'}></Typography>
         </Toolbar>
       )}
     </FormControl>
