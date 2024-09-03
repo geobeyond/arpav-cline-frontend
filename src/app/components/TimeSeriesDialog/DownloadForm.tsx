@@ -86,6 +86,9 @@ export const DownloadForm = props => {
       );
     }
 
+    fdata.push(
+      ...data.current.series.filter(x => 'series_elaboration' in x.info),
+    );
     let z = new JSZip();
     for (let f in fdata) {
       const ffdata = fdata[f] as any;
@@ -145,6 +148,9 @@ export const DownloadForm = props => {
       );
     }
 
+    fdata.push(
+      ...data.current.series.filter(x => 'series_elaboration' in x.info),
+    );
     let z = new JSZip();
     for (let f in fdata) {
       const ffdata = fdata[f] as any;

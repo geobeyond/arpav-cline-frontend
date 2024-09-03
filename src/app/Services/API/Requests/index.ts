@@ -68,10 +68,17 @@ export class RequestApi extends Http {
     if (season) {
       filter += 'possible_value=year_period:' + season + '&';
     }
-    return this.instance.get<any>(
-      'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
-        filter,
-    );
+    return this.instance
+      .get<any>(
+        'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+          filter,
+      )
+      .then((x: any) => {
+        if (x.items.length > 0) {
+          let xx = x.items.filter(itm => itm.possible_values.length === 6);
+          return { items: xx };
+        } else return x;
+      });
   };
 
   public getLayerConf = (conf: string) => {
@@ -118,8 +125,8 @@ export class RequestApi extends Http {
       }
     }
     const combs = this.cartesianProduct(titems);
-    let tpattern = pattern;
     for (const c of combs) {
+      let tpattern = pattern;
       for (let j of Object.keys(c)) {
         tpattern = tpattern.replaceAll('{' + j + '}', c[j]);
       }
@@ -176,7 +183,12 @@ export class RequestApi extends Http {
       url += '&include_observation_data=false';
     }
 
-    return this.instance.get<any>(url);
+    return this.instance.get<any>(url).then((x: any) => {
+      x.series.map(a => {
+        console.log('timeseries: ', a.name);
+      });
+      return x;
+    });
   };
 
   public getTimeSeriesDataPoint = (

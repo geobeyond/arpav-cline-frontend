@@ -1,6 +1,6 @@
 export const ModalStyle = theme => ({
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'flex-start',
   top: theme.custom.headerHeight,

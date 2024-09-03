@@ -42,6 +42,7 @@ import { Tooltip, UncontrolledTooltip, Button } from 'design-react-kit';
 import InfoIcon from '@mui/icons-material/Info';
 import { TWLSample } from './TWLSample';
 import { RequestApi } from 'app/Services';
+import { UncertaintySwitch } from './UncertaintySwitch';
 
 // import {BaseLayerControl} from "./BaseLayerControl";
 
@@ -121,6 +122,8 @@ const Map = (props: MapProps) => {
 
   const [timeStatus, setTimeStatus] = React.useState('none');
 
+  const [showUncertainty, setShowUncertainty] = React.useState(true);
+
   useEffect(() => {
     console.log(layerConf);
   }, [layerConf, currentLayer]);
@@ -162,8 +165,18 @@ const Map = (props: MapProps) => {
           className="leaflet-bar"
           style={{ backgroundColor: 'white', padding: '2px' }}
         >
+          <UncertaintySwitch
+            setShowUncertainty={setShowUncertainty}
+          ></UncertaintySwitch>
+        </Box>
+
+        <Box
+          className="leaflet-bar"
+          style={{ backgroundColor: 'white', padding: '2px' }}
+        >
           <OpacityComponent></OpacityComponent>
         </Box>
+
         <LegendBar
           className={'leaflet-control-legend leaflet-control leaflet-bar'}
           isMobile={isMobile}
@@ -189,6 +202,7 @@ const Map = (props: MapProps) => {
         />
       </CustomControlMap>
       {/*<BaseLayerControl/>*/}
+
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="OpenStreetMap">
           <TileLayer
@@ -232,31 +246,18 @@ const Map = (props: MapProps) => {
             }}
           ></GeoJSON>
         </LayersControl.Overlay>
-        {Object.keys(layerConf).length > 0 && (
-          <>
-            <LayersControl.Overlay name={layerConf.display_name_italian}>
-              <TWLSample
-                layer={currentLayer}
-                show={layerConf.wms_secondary_layer_name}
-                stl={layerConf.palette}
-                useTime="setTimestatus"
-                useUncertainty={false}
-              />
-            </LayersControl.Overlay>
-            <LayersControl.Overlay
-              name={layerConf.display_name_italian + '(con incertezza)'}
-            >
-              <TWLSample
-                layer={currentLayer}
-                show={layerConf.wms_main_layer_name}
-                stl={layerConf.palette}
-                useTime="setTimestatus"
-                useUncertainty={true}
-              />
-            </LayersControl.Overlay>
-          </>
-        )}
       </LayersControl>
+      <TWLSample
+        layer={currentLayer}
+        show={
+          showUncertainty
+            ? layerConf.wms_main_layer_name
+            : layerConf.wms_secondary_layer_name
+        }
+        stl={layerConf.palette}
+        useTime="setTimestatus"
+        useUncertainty={true}
+      />
 
       <CustomControlMap
         position="bottomleft"

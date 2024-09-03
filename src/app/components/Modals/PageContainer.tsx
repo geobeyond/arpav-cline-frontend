@@ -7,6 +7,7 @@ import {
   PageContainerStyle,
   PageDataStyle,
   PageCloseStyle,
+  ModalStyle,
   FakePageFooter,
 } from './styles';
 import HeaderBar from '../HeaderBar';
@@ -16,32 +17,18 @@ const PageContainer = props => {
   const { t } = useTranslation();
 
   return (
-    <>
+    <Box>
       <HeaderBar></HeaderBar>
 
-      <Box sx={PageContainerStyle}>
-        <Box sx={PageDataStyle}>
+      <Box>
+        <Box>
           {children}
-          <Box sx={FakePageFooter}>
+          <Box>
             <p />
           </Box>
         </Box>
-        <Box sx={PageCloseStyle}>
-          <MuiLink
-            component={Link}
-            to="/"
-            color="success.dark"
-            underline={'none'}
-          >
-            <ExitIcon
-              color={'secondary'}
-              fontSize={'large'}
-              aria-label={t('app.common.close')}
-            />
-          </MuiLink>
-        </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 

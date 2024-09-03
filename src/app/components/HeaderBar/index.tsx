@@ -173,43 +173,6 @@ const HeaderBar = (props: HeaderBarProps) => {
                 ></img>
               </a>
             </HeaderBrand>
-            <HeaderRightZone style={HeaderTextStyle}>
-              <HeaderSocialsZone>
-                <ul>
-                  <li>
-                    <a
-                      aria-label="Facebook"
-                      href="https://www.facebook.com"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Icon icon="it-facebook" />
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      aria-label="Github"
-                      href="https://www.github.com"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Icon icon="it-github" />
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      aria-label="Twitter"
-                      href="https://www.x.com"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Icon icon="it-twitter" />
-                    </a>
-                  </li>
-                </ul>
-              </HeaderSocialsZone>
-              <HeaderSearch iconName="it-search" label="Cerca" />
-            </HeaderRightZone>
           </HeaderContent>
         </Header>
       ) : (

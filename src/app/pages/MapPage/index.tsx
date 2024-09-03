@@ -36,7 +36,7 @@ const defaultMap = {
   aggregation_period: '30yr',
   climatological_model: 'model_ensemble',
   climatological_variable: 'tas',
-  measure: 'absolute',
+  measure: 'anomaly',
   scenario: 'rcp26',
   time_window: 'tw1',
   year_period: 'DJF',

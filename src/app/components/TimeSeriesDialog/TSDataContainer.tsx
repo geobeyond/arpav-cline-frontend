@@ -184,7 +184,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     console.log(ids);
     setIds(ids);
     api
-      .getTimeseriesV2(ids, latLng.lat, latLng.lng, false)
+      .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
       .then(res => {
         //@ts-ignore
         setTimeseries(res.series);
