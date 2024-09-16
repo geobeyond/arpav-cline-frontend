@@ -7,7 +7,7 @@ const DataPolicyPage = () => {
 
   return (
     <PageContainer>
-      <div style={{ maxWidth: '70vw' }}>
+      <div>
         <h1>Data policy</h1>
         <p>
           La piattaforma web denominata{' '}

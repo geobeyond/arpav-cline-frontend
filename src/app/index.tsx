@@ -19,6 +19,9 @@ import IndexPage from './pages/IndexPage';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ModalRouter from './components/Modals';
+import InfoPage from './pages/InfoPage';
+import DataPolicyPage from './pages/DataPolicyPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 export function App() {
   const { t, i18n } = useTranslation();
@@ -34,7 +37,6 @@ export function App() {
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={3}>
         <BrowserRouter>
-          <ModalRouter />
           <Helmet
             titleTemplate={`%s - ${t('app.header.acronymMeaning')}`}
             defaultTitle={t('app.header.acronymMeaning')}
@@ -61,6 +63,10 @@ export function App() {
               path="/pa"
               element={<MapPage map_data="past" map_mode="advanced" />}
             />
+
+            <Route path="/info" element={<InfoPage />} />
+            <Route path="/data" element={<DataPolicyPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
           </Routes>
           {/*<Routes>*/}
           {/*  <Route path="*" element={<MapPage />} />*/}

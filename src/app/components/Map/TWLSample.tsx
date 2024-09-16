@@ -14,17 +14,17 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.min.css';
 
 export const TWLSample = (props: any) => {
-  const { selected_map } = useSelector((state: any) => state.map);
+  //const { selected_map } = useSelector((state: any) => state.map);
   const context = useLeafletContext();
   const layer = useRef<any>(null);
   const setLayer = (l: any) => {
     layer.current = l;
   };
   const setTimestatus = props.useTime;
-  const useUncertainty = props.useUncertainty;
   const lyr = props.layer;
   const show = props.show;
   const style = props.stl;
+  const opacity = props.opacity;
 
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
@@ -38,12 +38,12 @@ export const TWLSample = (props: any) => {
   // useMapEvent('timeloading', () => setupFrontLayer(layer.current, context.map));
 
   useEffect(() => {
-    if (lyr) {
-      const map = context.layerContainer || context.map;
+    if (lyr && show) {
+      const map = context.map;
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
       // @ts-ignore
-      map.selected_path = selected_map.path;
+      //map.selected_path = selected_map.path;
       // @ts-ignore
       const selected_map_path = lyr;
       if (selected_map_path) {
@@ -77,63 +77,62 @@ export const TWLSample = (props: any) => {
           //bounds: selected_map.bbox,
         };
         const options = {
-          opacity: 0.85,
+          opacity: opacity,
+          zIndex: 4000,
           attribution:
             '&copy; <a target="_blank" rel="noopener" href="https://www.arpa.veneto.it/">ARPAV - Arpa FVG</a>',
         };
+        const tlUrl = `${V2_WMS_PROXY_URL}${selected_map_path}`;
         // @ts-ignore
-        const wmsLayer = new TileLayer.WMS(
-          `${V2_WMS_PROXY_URL}${selected_map_path}`,
-          {
-            ...params,
-            ...withPane(options, { __version: 1, map: context.map }),
-          },
-        );
-        if (selected_map.id && selected_map.data_series === 'yes') {
+        const wmsLayer = new TileLayer.WMS(tlUrl, {
+          ...params,
+          ...withPane(options, { __version: 1, map: context.map }),
+        });
+        //if (selected_map.id && selected_map.data_series === 'yes') {
+        //  // @ts-ignore
+        //  tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
+        //    requestTimeFromCapabilities: true,
+        //    cache: 0,
+        //    cacheBackward: 0,
+        //    cacheForward: 0,
+        //    zIndex: 1000,
+        //  });
+        //  if (tdWmsLayer) {
+        //    setLayer(tdWmsLayer);
+        //    try {
+        //      // @ts-ignore
+        //      map._controlContainer.getElementsByClassName(
+        //        'leaflet-bar-timecontrol',
+        //      )[0].style.display = 'flex';
+        //      // @ts-ignore
+        //      map._controlContainer.getElementsByClassName(
+        //        'leaflet-time-info',
+        //      )[0].style.display = 'flex';
+        //      setTimestatus('flex');
+        //    } catch (e) {
+        //      // console.log(e)
+        //    }
+        //    layer.current = tdWmsLayer;
+        //    setTLayer(tdWmsLayer);
+        //  }
+        //} else {
+        setLayer(wmsLayer);
+        try {
           // @ts-ignore
-          tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
-            requestTimeFromCapabilities: true,
-            cache: 0,
-            cacheBackward: 0,
-            cacheForward: 0,
-            zIndex: 1000,
-          });
-          if (tdWmsLayer) {
-            setLayer(tdWmsLayer);
-            try {
-              // @ts-ignore
-              map._controlContainer.getElementsByClassName(
-                'leaflet-bar-timecontrol',
-              )[0].style.display = 'flex';
-              // @ts-ignore
-              map._controlContainer.getElementsByClassName(
-                'leaflet-time-info',
-              )[0].style.display = 'flex';
-              setTimestatus('flex');
-            } catch (e) {
-              // console.log(e)
-            }
-            layer.current = tdWmsLayer;
-            setTLayer(tdWmsLayer);
-          }
-        } else {
-          setLayer(wmsLayer);
-          try {
-            // @ts-ignore
-            map._controlContainer.getElementsByClassName(
-              'leaflet-bar-timecontrol',
-            )[0].style.display = 'none';
-            // @ts-ignore
-            map._controlContainer.getElementsByClassName(
-              'leaflet-time-info',
-            )[0].style.display = 'none';
-            setTimestatus('none');
-          } catch (e) {
-            // console.log(e)
-          }
-          layer.current = wmsLayer;
-          setTLayer(wmsLayer);
+          map._controlContainer.getElementsByClassName(
+            'leaflet-bar-timecontrol',
+          )[0].style.display = 'none';
+          // @ts-ignore
+          map._controlContainer.getElementsByClassName(
+            'leaflet-time-info',
+          )[0].style.display = 'none';
+          setTimestatus('none');
+        } catch (e) {
+          // console.log(e)
         }
+        layer.current = wmsLayer;
+        setTLayer(wmsLayer);
+        //}
       }
       map.addLayer(layer.current);
 
@@ -141,7 +140,7 @@ export const TWLSample = (props: any) => {
         map.removeLayer(layer.current);
       };
     }
-  }, [context.layerContainer, context.map, lyr, setTimestatus]);
+  }, [context.layerContainer, context.map, lyr, setTimestatus, opacity, show, style]);
 
   return null;
 };

@@ -6,20 +6,15 @@ import OpacityIcon from '@mui/icons-material/Opacity';
 import { useDispatch, useSelector } from 'react-redux';
 import { Filters, MapState } from '../../pages/MapPage/slice/types';
 import { useMapSlice } from '../../pages/MapPage/slice';
-export const OpacityComponent = () => {
+
+export const OpacityComponent = (param: any) => {
+  const doSetOpacity = param.doSetOpacity;
   const context = useLeafletContext();
   const dispatch = useDispatch();
   const actions = useMapSlice();
-  const { opacity } = useSelector(state => (state as any).map as MapState);
 
-  useEffect(() => {
-    // eslint-disable-next-line array-callback-return
-    context.map.eachLayer((layer: any) => {
-      if (layer._url && layer._url.includes(`/thredds/wms/`)) {
-        layer.setOpacity(opacity);
-      }
-    });
-  }, [context.map, opacity]);
+  const [opacity, setOpacity] = useState(0.85);
+
 
   return (
     <Box sx={{ width: 120 }}>
@@ -31,8 +26,10 @@ export const OpacityComponent = () => {
           aria-label="Opacità"
           value={opacity}
           // @ts-ignore
-          onChangeCommitted={(e, v) =>
-            dispatch(actions.actions.setOpacity(parseFloat(v.toString())))
+          onChangeCommitted={(e, v) => 
+           {setOpacity(parseFloat(v.toString()));
+            doSetOpacity(parseFloat(v.toString()));
+           }
           }
           step={0.05}
           // marks

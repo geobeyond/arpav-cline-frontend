@@ -44,3 +44,8 @@ export const FakePageFooter = theme => ({
     height: 4,
   },
 });
+
+export const ScrollableStyle = theme => ({
+  height: 'calc(100vh - 100px)',
+  overflow: 'visible',
+});

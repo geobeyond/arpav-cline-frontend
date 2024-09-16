@@ -10,89 +10,28 @@ const arpavImg = '../../../assets/img/logo_arpav.png';
 const snpaImg = '../../../assets/img/logo_SNPA.png';
 
 const InfoPage = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
-  const style = {
-    maxHeight: isMobile ? '10vh' : '5vh',
-    minHeight: '30px',
-    marginBottom: '30px',
-  };
-  const styleSquared = {
-    maxHeight: isMobile ? '16vh' : '7vh',
-    minHeight: '30px',
-    marginBottom: '30px',
-  };
+    const style = {
+        maxHeight: isMobile ? '10vh' : '5vh',
+        minHeight: '30px',
+        marginBottom: '30px',
+    };
+    const styleSquared = {
+        maxHeight: isMobile ? '16vh' : '7vh',
+        minHeight: '30px',
+        marginBottom: '30px',
+    };
 
-  return (
-    <>
-      <PageContainer>
-        <>
-          <br />
-          <Grid
-            container
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item>
-              <a
-                href={'https://www.arpa.veneto.it/'}
-                target={'_blank'}
-                rel="noreferrer"
-              >
-                <img
-                  src={require('../../../assets/img/logo_arpav.png')}
-                  style={style}
-                  alt={'ARPA Veneto'}
-                />
-              </a>
-            </Grid>
-            <Grid item>
-              <a
-                href={'https://www.arpa.fvg.it/'}
-                target={'_blank'}
-                rel="noreferrer"
-              >
-                <img
-                  src={require('../../../assets/img/arpafvg-logo.png')}
-                  style={style}
-                  alt={'ARPA Friuli Venezia e Giulia'}
-                />
-              </a>
-            </Grid>
-            <Grid item>
-              <a
-                href={'https://www.snpambiente.it/'}
-                target={'_blank'}
-                rel="noreferrer"
-              >
-                <img
-                  src={require('../../../assets/img/logo_SNPA.png')}
-                  style={styleSquared}
-                  alt={'SNPAmbiente'}
-                />
-              </a>
-            </Grid>
-            {/*</Grid>*/}
-            <Grid item>
-              <a
-                href={'https://www.regione.veneto.it/'}
-                target={'_blank'}
-                rel="noreferrer"
-              >
-                <img
-                  src={require('../../../assets/img/logo_regione_veneto.png')}
-                  style={styleSquared}
-                  alt={'Regione Veneto'}
-                />
-              </a>
-            </Grid>
-          </Grid>
+    return (
+        <PageContainer>
+            <>
+                <br />
 
-          <div
-            dangerouslySetInnerHTML={{
-              __html: `
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: `
 
 
 <style>
@@ -364,35 +303,11 @@ tr:nth-child(even) {
 <p>Indirizzo per informazioni e segnalazioni: <a href="mailto:cmt.rete@arpa.veneto.it" target="_blank"><u>cmt.rete@arpa.veneto.it</u></a></p>
 
             `,
-            }}
-          />
-
-          <p>
-            Software progettato e sviluppato da{' '}
-            <a rel="author" href="mailto:info@inkode.it">
-              INKODE soc coop
-            </a>
-            , codice sorgente disponibile su{' '}
-            <a
-              href="https://github.com/venetoarpa/Arpav-PPCV-backend/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
-            <br />
-            <a rel="author" href="mailto:info@inkode.it">
-              <img
-                src="https://avatars.githubusercontent.com/u/64135645"
-                alt="INKODE soc coop"
-                style={styleSquared}
-              />
-            </a>
-          </p>
-        </>
-      </PageContainer>
-    </>
-  );
+                    }}
+                />
+            </>
+        </PageContainer>
+    );
 };
 
 export default InfoPage;

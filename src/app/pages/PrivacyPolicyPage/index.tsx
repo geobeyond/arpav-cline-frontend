@@ -3,7 +3,7 @@ import PageContainer from '../../components/Modals/PageContainer';
 const PrivacyPolicyPage = () => {
   return (
     <PageContainer>
-      <div style={{ maxWidth: '70vw' }}>
+      <div>
         <h1 style={{ textAlign: 'center' }}>Informativa Privacy</h1>
         <h3 style={{ textAlign: 'center' }}>EX ART 13 GDPR 2016/679</h3>
         Nel rispetto dei principi e delle tutele previsti dal Regolamento UE n.

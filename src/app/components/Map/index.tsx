@@ -123,6 +123,7 @@ const Map = (props: MapProps) => {
   const [timeStatus, setTimeStatus] = React.useState('none');
 
   const [showUncertainty, setShowUncertainty] = React.useState(true);
+  const [opacity, doSetOpacity] = React.useState(0.85);
 
   useEffect(() => {
     console.log(layerConf);
@@ -169,12 +170,15 @@ const Map = (props: MapProps) => {
             setShowUncertainty={setShowUncertainty}
           ></UncertaintySwitch>
         </Box>
-
+      </CustomControlMap>
+      <CustomControlMap position={'topright'}>
         <Box
           className="leaflet-bar"
           style={{ backgroundColor: 'white', padding: '2px' }}
         >
-          <OpacityComponent></OpacityComponent>
+          <OpacityComponent
+          doSetOpacity={doSetOpacity}
+          ></OpacityComponent>
         </Box>
 
         <LegendBar
@@ -249,6 +253,7 @@ const Map = (props: MapProps) => {
       </LayersControl>
       <TWLSample
         layer={currentLayer}
+        opacity={opacity}
         show={
           showUncertainty
             ? layerConf.wms_main_layer_name
@@ -256,7 +261,6 @@ const Map = (props: MapProps) => {
         }
         stl={layerConf.palette}
         useTime="setTimestatus"
-        useUncertainty={true}
       />
 
       <CustomControlMap
