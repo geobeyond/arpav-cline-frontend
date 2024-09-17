@@ -226,15 +226,6 @@ const Map = (props: MapProps) => {
             attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
           />
         </LayersControl.BaseLayer>
-        <LayersControl.Overlay checked name="Limiti Comunali">
-          <VectorWrapperLayer
-            ref={vectorWrapperRef}
-            selectCallback={point => setPoint(point)}
-            selectedPoint={selectedPoint}
-            openCharts={openCharts}
-            onCustom={click}
-          />
-        </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Sensori">
           <GeoJSON
             data={sensorPositions}
@@ -251,6 +242,13 @@ const Map = (props: MapProps) => {
           ></GeoJSON>
         </LayersControl.Overlay>
       </LayersControl>
+          <VectorWrapperLayer
+            ref={vectorWrapperRef}
+            selectCallback={point => setPoint(point)}
+            selectedPoint={selectedPoint}
+            openCharts={openCharts}
+            onCustom={click}
+          />
       <TWLSample
         layer={currentLayer}
         opacity={opacity}

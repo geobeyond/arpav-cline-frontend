@@ -32,14 +32,14 @@ interface MapPageProps {
   map_data: string;
 }
 
-const defaultMap = {
+const defaultMap: any = {
   aggregation_period: '30yr',
   climatological_model: 'model_ensemble',
   climatological_variable: 'tas',
   measure: 'anomaly',
   scenario: 'rcp26',
   time_window: 'tw1',
-  year_period: 'DJF',
+  year_period: 'winter',
   data_series: 'no',
 };
 
@@ -48,6 +48,9 @@ const defaultMap = {
 export function MapPage(props: MapPageProps) {
   const map_mode = props.map_mode;
   const map_data = props.map_data;
+  if (map_data === 'future') {
+    defaultMap['archive'] = 'forecast';
+  }
   //const actions = useMapSlice();
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

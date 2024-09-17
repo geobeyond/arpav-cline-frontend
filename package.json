@@ -15,6 +15,7 @@
     "@reduxjs/toolkit": "1.8.5",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.4.0",
+    "@tolgee/react": "5.28.6",
     "@turf/boolean-contains": "6.5.0",
     "@types/fontfaceobserver": "2.1.0",
     "@types/jest": "27.5.2",

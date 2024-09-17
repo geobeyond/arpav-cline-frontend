@@ -35,7 +35,7 @@ export class RequestApi extends Http {
     return this.classInstance;
   }
 
-  public getCities = () => this.instance.get<any>('/places/cities/');
+  public getCities = (city) => this.instance.get<any>('/api/v2/municipalities/',{params:{offset: 0, limit: 5, name: city}});
 
   public getLayer = (
     variable?,
