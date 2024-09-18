@@ -18,6 +18,7 @@ import { LensBlur } from '@mui/icons-material';
 
 export const UncertaintySwitch = props => {
     const setShowUncertainty = props.setShowUncertainty;
+    const enabled = props.enabled || true;
     const context = useLeafletContext();
     const dispatch = useDispatch();
     const actions = useMapSlice();
@@ -28,6 +29,7 @@ export const UncertaintySwitch = props => {
     return (
         <Box>
             <IconButton
+                disabled={!enabled}
                 onClick={() => {
                     toggleShowUncertainty(!showUncertainty);
                     setShowUncertainty(showUncertainty);

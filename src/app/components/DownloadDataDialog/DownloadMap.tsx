@@ -1,24 +1,53 @@
-import { MapContainer, Pane, Rectangle, TileLayer, useMap, FeatureGroup } from 'react-leaflet';
-import { LatLngBounds, Layer } from 'leaflet';
+import {
+  MapContainer,
+  Pane,
+  Rectangle,
+  TileLayer,
+  useMap,
+  FeatureGroup,
+} from 'react-leaflet';
+import { LatLngBounds, LatLng, Layer } from 'leaflet';
 import { EditControl } from 'react-leaflet-draw';
-import "leaflet-draw/dist/leaflet.draw.css";
+import 'leaflet-draw/dist/leaflet.draw.css';
 
-export const DownloadMap = ({ mapBounds, downLoadBounds, featureGroupRef, setBoundsFromMap, resetBounds }) => {
+export const DownloadMap = ({
+  mapBounds,
+  downLoadBounds,
+  featureGroupRef,
+  setBoundsFromMap,
+  resetBounds,
+}) => {
+  const limitBounds = bounds => {
+    return new LatLngBounds(
+      new LatLng(
+        Math.min(bounds._northEast.lat, mapBounds[1][0]),
+        Math.min(bounds._northEast.lng, mapBounds[1][1]),
+      ),
+      new LatLng(
+        Math.max(bounds._southWest.lat, mapBounds[0][0]),
+        Math.max(bounds._southWest.lng, mapBounds[0][1]),
+      ),
+    );
+  };
 
   const _onCreate = (layer: Layer) => {
     // rimuovo eventuali layer creati in precedenza
     if (Array.isArray(featureGroupRef?.current?.getLayers())) {
       if (featureGroupRef?.current?.getLayers().length > 1) {
-        featureGroupRef?.current?.removeLayer(featureGroupRef?.current?.getLayers()[0]);
+        featureGroupRef?.current?.removeLayer(
+          featureGroupRef?.current?.getLayers()[0],
+        );
       }
     }
 
-    const bounds: LatLngBounds = featureGroupRef?.current?.getBounds();
+    let bounds: LatLngBounds = featureGroupRef?.current?.getBounds();
+    bounds = limitBounds(bounds);
     setBoundsFromMap(bounds);
   };
 
   const _onEdited = (layer: Layer) => {
-    const bounds: LatLngBounds = featureGroupRef?.current?.getBounds();
+    let bounds: LatLngBounds = featureGroupRef?.current?.getBounds();
+    bounds = limitBounds(bounds);
     setBoundsFromMap(bounds);
   };
 

@@ -517,7 +517,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         },
       },
       valueFormatter: v =>
-        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${timeseries[0]?.dataset?.unit
+        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${timeseries[0]?.dataset?.unit //TODO FIX unit
         }`,
     },
     legend: {

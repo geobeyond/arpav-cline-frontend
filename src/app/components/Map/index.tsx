@@ -167,6 +167,7 @@ const Map = (props: MapProps) => {
           style={{ backgroundColor: 'white', padding: '2px' }}
         >
           <UncertaintySwitch
+            enabled={layerConf.wms_seconday_layer_name !== null}
             setShowUncertainty={setShowUncertainty}
           ></UncertaintySwitch>
         </Box>
@@ -176,14 +177,14 @@ const Map = (props: MapProps) => {
           className="leaflet-bar"
           style={{ backgroundColor: 'white', padding: '2px' }}
         >
-          <OpacityComponent
-          doSetOpacity={doSetOpacity}
-          ></OpacityComponent>
+          <OpacityComponent doSetOpacity={doSetOpacity}></OpacityComponent>
         </Box>
 
         <LegendBar
           className={'leaflet-control-legend leaflet-control leaflet-bar'}
           isMobile={isMobile}
+          data={layerConf.legend}
+          unit={layerConf.unit_italian}
         />
       </CustomControlMap>
       <MousePositionComponent
@@ -242,13 +243,13 @@ const Map = (props: MapProps) => {
           ></GeoJSON>
         </LayersControl.Overlay>
       </LayersControl>
-          <VectorWrapperLayer
-            ref={vectorWrapperRef}
-            selectCallback={point => setPoint(point)}
-            selectedPoint={selectedPoint}
-            openCharts={openCharts}
-            onCustom={click}
-          />
+      <VectorWrapperLayer
+        ref={vectorWrapperRef}
+        selectCallback={point => setPoint(point)}
+        selectedPoint={selectedPoint}
+        openCharts={openCharts}
+        onCustom={click}
+      />
       <TWLSample
         layer={currentLayer}
         opacity={opacity}

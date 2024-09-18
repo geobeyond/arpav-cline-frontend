@@ -9,6 +9,7 @@ import {
   Input as MuiInput,
   TextField,
   Button,
+  MenuItem,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,13 +27,20 @@ import { DownloadMap } from './DownloadMap';
 import { roundTo4 } from '../../../utils/json_manipulations';
 import { LatLngBounds } from 'leaflet';
 
+import { RequestApi } from 'app/Services';
+import Select from 'react-select';
+
 export interface MapDlDataProps {
   // getMapImg: Function;
   onChange?: (values: any) => void;
+  configuration: any;
+  menus: any;
 }
 
 const MapDlData = (props: MapDlDataProps) => {
+  const attributes: any = props.menus;
   const onChange = props.onChange ?? (() => { });
+  const configuration = props.configuration;
   const featureGroupRef: any = useRef();
   const { t } = useTranslation();
 
@@ -73,7 +81,7 @@ const MapDlData = (props: MapDlDataProps) => {
     ]);
   };
 
-  const times: any[] = []; // timeserie ? timeserie[0].values.map(v => v.time) : [];
+  //const times: any[] =; // timeserie ? timeserie[0].values.map(v => v.time) : [];
   const timeKeys: string[] = []; // [...times.keys()];
 
   const [years, setYears] = React.useState<number[]>([0, timeKeys.length - 1]);
@@ -96,10 +104,10 @@ const MapDlData = (props: MapDlDataProps) => {
 
   React.useEffect(() => {
     const values = {};
-    values['time_start'] = times[years[0]];
-    values['time_end'] = times[years[1]];
+    //values['time_start'] = times[years[0]];
+    //values['time_end'] = times[years[1]];
     onChange(values);
-  }, [onChange, times, years]);
+  }, [onChange, years]);
 
   React.useEffect(() => {
     const values = {};
@@ -110,6 +118,16 @@ const MapDlData = (props: MapDlDataProps) => {
     onChange(values);
   }, [downLoadBounds, onChange]);
 
+  const getOptions = field => {
+    let x = attributes.filter(x => x.name === field);
+    if (x) {
+      return x[0].allowed_values.map(xx => {
+        return { value: xx.name, label: xx.display_name_italian };
+      });
+    }
+    return {};
+  };
+
   return (
     <Box sx={MapDataContainerStyle}>
       <Box>
@@ -118,55 +136,69 @@ const MapDlData = (props: MapDlDataProps) => {
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.menuBar.indicator')}
           </Typography>
-          <Typography variant={'body1'} sx={MapDataValueTextStyle}>
-            {findValueName('variable', 'variables')}
-          </Typography>
+          <Select
+            defaultValue={configuration.climatological_variable}
+            name="climatological_variable"
+            options={getOptions('climatological_variable')}
+          ></Select>
         </Box>
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.menuBar.model')}
           </Typography>
-          <Typography variant={'body1'} sx={MapDataValueTextStyle}>
-            {joinNames([
-              findValueName('forecast_model', 'forecast_models'),
-              findValueName('scenario', 'scenarios'),
-            ])}
+          <Select
+            defaultValue={configuration.climatological_model}
+            name="climatological_model"
+            options={getOptions('climatological_model')}
+          ></Select>
+        </Box>
+        <Box sx={FieldContainerStyle}>
+          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+            {t('app.map.menuBar.scenario')}
           </Typography>
+          <Select
+            defaultValue={configuration.scenario}
+            name="scenario"
+            options={getOptions('scenario')}
+          ></Select>
         </Box>
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.menuBar.period')}
           </Typography>
-          <Typography variant={'body1'} sx={MapDataValueTextStyle}>
-            {joinNames([
-              findValueName('data_series', 'data_series'),
-              findValueName('value_type', 'value_types'),
-              findValueName('time_window', 'time_windows'),
-            ])}
+          <Select
+            defaultValue={configuration.aggregation_period}
+            name="aggregation_period"
+            options={getOptions('aggregation_period')}
+          ></Select>
+        </Box>
+        <Box sx={FieldContainerStyle}>
+          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+            {t('app.map.menuBar.measure')}
           </Typography>
+          <Select
+            defaultValue={configuration.measure}
+            name="measure"
+            options={getOptions('measure')}
+          ></Select>
         </Box>
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.menuBar.season')}
           </Typography>
-          <Typography variant={'body1'} sx={MapDataValueTextStyle}>
-            {findValueName('year_period', 'year_periods')}
-          </Typography>
+          <Select
+            defaultValue={configuration.year_period}
+            name="year_period"
+            options={getOptions('year_period')}
+          ></Select>
         </Box>
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.downloadDataDialog.map.unit')}
-          </Typography>
-          <Typography variant={'body1'} sx={MapDataValueTextStyle}>
-            {selected_map?.unit}
-          </Typography>
-        </Box>
+        {/*
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.downloadDataDialog.map.timeRange')}
           </Typography>
           <Box sx={SliderContainerStyle}>
-            <span>{times[years[0]].substring(4, 0)}</span>
+            <!--<span>{times[years[0]].substring(4, 0)}</span>-->
             <Slider
               sx={YearsSliderStyle}
               getAriaValueText={() =>
@@ -182,9 +214,9 @@ const MapDlData = (props: MapDlDataProps) => {
               valueLabelFormat={index => times[index].substring(4, 0)}
               disableSwap
             />
-            <span>{times[years[1]].substring(4, 0)}</span>
+            <!--<span>{times[years[1]].substring(4, 0)}</span>-->
           </Box>
-        </Box>
+            </Box>*/}
       </Box>
       <Box>
         {/*Column2*/}

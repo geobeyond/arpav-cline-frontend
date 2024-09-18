@@ -16,7 +16,6 @@ import {
 } from './styles';
 import MapDlData from './mapDlData';
 import UserDlData from '../UserDlData/userDlData';
-import { RequestApi } from '../../Services';
 import { saveAs } from 'file-saver';
 import { useMapSlice } from '../../pages/MapPage/slice';
 import { API_URL } from '../../../utils/constants';
@@ -25,15 +24,15 @@ export interface DownloadDataDialogProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   configuration: any;
+  menus: any;
 }
 
 const DownloadDataDialog = (props: DownloadDataDialogProps) => {
-  const { open, setOpen, configuration } = props;
+  const { open, setOpen, configuration, menus } = props;
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
-  const api = RequestApi.getInstance();
 
   const dataSet = React.useRef<any>({});
   const [downloadDisabled, setDownloadDisabled] = React.useState(true);
@@ -96,7 +95,11 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
             sx={MapUserContainerStyle}
           >
             <Grid xs={26}>
-              <MapDlData onChange={handleChange} />
+              <MapDlData
+                menus={menus}
+                onChange={handleChange}
+                configuration={configuration}
+              />
             </Grid>
             <Grid xs={26}>
               <UserDlData

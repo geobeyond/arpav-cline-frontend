@@ -212,7 +212,6 @@ export function MapMenuBar(props: MapMenuBar) {
 
   /* ********************************************************************************************************** */
   // MENU 0
-
   /* ********************************************************************************************************** */
 
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
@@ -374,9 +373,10 @@ export function MapMenuBar(props: MapMenuBar) {
                 </Button>
               )}
               <DownloadDataDialog
+                menus={forecast_parameters}
                 open={isDownloadDataOpen}
                 setOpen={setDownloadDataOpen}
-                configuration={forecast_parameters}
+                configuration={current_map}
               />
             </Box>
           </Grid>

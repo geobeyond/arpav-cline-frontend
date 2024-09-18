@@ -7,30 +7,31 @@ import { LegendBarStyle } from './styles';
 export interface LegendBarProps {
   className?: string;
   isMobile: Boolean;
+  data: any;
+  unit: string;
 }
 
 export const LegendBar = (props: LegendBarProps) => {
-  const { className, isMobile } = props;
-  const { selected_map } = useSelector((state: any) => state.map);
+  const { className, isMobile, unit } = props;
+  const data = props.data || { color_entries: [] };
 
   return (
     <Box className={className} sx={LegendBarStyle}>
-      {selected_map.id && (
-        <div style={{ backgroundColor: 'white' }}>
-          <img
-            src={`${V2_WMS_PROXY_URL}${selected_map.legend}`}
-            alt={'Legenda'}
-          />
-          <Typography
-            id="modal-modal-title"
-            variant="body1"
-            component="p"
-            align={'center'}
-          >
-            {selected_map.unit}
-          </Typography>
+      <div style={{ backgroundColor: 'white' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {data.color_entries.map(itm => {
+            <div style={{ display: 'flex', flexDirection: 'row' }}></div>;
+          })}
         </div>
-      )}
+        <Typography
+          id="modal-modal-title"
+          variant="body1"
+          component="p"
+          align={'center'}
+        >
+          {unit}
+        </Typography>
+      </div>
     </Box>
   );
 };
