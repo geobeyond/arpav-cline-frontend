@@ -35,7 +35,10 @@ export class RequestApi extends Http {
     return this.classInstance;
   }
 
-  public getCities = (city) => this.instance.get<any>('/api/v2/municipalities/',{params:{offset: 0, limit: 5, name: city}});
+  public getCities = city =>
+    this.instance.get<any>('/api/v2/municipalities/', {
+      params: { offset: 0, limit: 5, name: city },
+    });
 
   public getLayer = (
     variable?,
@@ -173,13 +176,29 @@ export class RequestApi extends Http {
     lat: number,
     lng: number,
     withStation: boolean = true,
+    related: boolean = true,
+    smoothing: boolean = true,
+    uncertainty: boolean = true,
   ) => {
     let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
-    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING&include_coverage_uncertainty=true&include_coverage_related_data=true`;
-
+    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING`;
+    if (smoothing) {
+      url +=
+        '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
+    }
+    if (uncertainty) {
+      url += '&include_coverage_uncertainty=true';
+    } else {
+      url += '&include_coverage_uncertainty=false';
+    }
+    if (related) {
+      url += '&include_coverage_related_data=true';
+    } else {
+      url += '&include_coverage_related_data=false';
+    }
     if (withStation) {
       url += `&include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
     } else {

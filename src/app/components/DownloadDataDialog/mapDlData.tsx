@@ -30,6 +30,24 @@ import { LatLngBounds } from 'leaflet';
 import { RequestApi } from 'app/Services';
 import Select from 'react-select';
 
+export function range(stop: number): number[];
+export function range(start: number, stop: number, step?: number): number[];
+export function range(
+  startOrStop: number,
+  stop?: number,
+  step: number = 1,
+): number[] {
+  if (step === 0) {
+    throw new RangeError('Parameter step must be different from 0');
+  }
+  const startBound = stop === undefined ? 0 : startOrStop;
+  const stopBound = stop === undefined ? startOrStop : stop;
+  return Array.from(
+    { length: Math.ceil((stopBound - startBound) / step - 1) + 1 },
+    (_, index) => startBound + index * step,
+  );
+}
+
 export interface MapDlDataProps {
   // getMapImg: Function;
   onChange?: (values: any) => void;
@@ -81,10 +99,9 @@ const MapDlData = (props: MapDlDataProps) => {
     ]);
   };
 
-  //const times: any[] =; // timeserie ? timeserie[0].values.map(v => v.time) : [];
-  const timeKeys: string[] = []; // [...times.keys()];
+  const times: number[] = range(1979, 2100, 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
 
-  const [years, setYears] = React.useState<number[]>([0, timeKeys.length - 1]);
+  const [years, setYears] = React.useState<number[]>([0, times.length - 1]);
 
   // const [netCdf, setNetCdf] = React.useState<any>(null);
 
@@ -104,10 +121,10 @@ const MapDlData = (props: MapDlDataProps) => {
 
   React.useEffect(() => {
     const values = {};
-    //values['time_start'] = times[years[0]];
-    //values['time_end'] = times[years[1]];
+    values['time_start'] = times[years[0]];
+    values['time_end'] = times[years[1]];
     onChange(values);
-  }, [onChange, years]);
+  }, [onChange]);
 
   React.useEffect(() => {
     const values = {};
@@ -192,31 +209,30 @@ const MapDlData = (props: MapDlDataProps) => {
             options={getOptions('year_period')}
           ></Select>
         </Box>
-        {/*
+
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.downloadDataDialog.map.timeRange')}
           </Typography>
           <Box sx={SliderContainerStyle}>
-            <!--<span>{times[years[0]].substring(4, 0)}</span>-->
+            <span>{times[0]}</span>
             <Slider
               sx={YearsSliderStyle}
               getAriaValueText={() =>
                 t('app.map.downloadDataDialog.map.timeRangeLabel')
               }
-              // valueLabelDisplay="on"
-              valueLabelDisplay="auto"
+              valueLabelDisplay="on"
               step={1}
               min={0}
               max={times.length - 1}
-              value={years}
+              value={[0, years[1]]}
               onChange={yearsHandleChange}
-              valueLabelFormat={index => times[index].substring(4, 0)}
+              valueLabelFormat={index => times[index]}
               disableSwap
             />
-            <!--<span>{times[years[1]].substring(4, 0)}</span>-->
+            <span>{times[times.length - 1]}</span>
           </Box>
-            </Box>*/}
+        </Box>
       </Box>
       <Box>
         {/*Column2*/}

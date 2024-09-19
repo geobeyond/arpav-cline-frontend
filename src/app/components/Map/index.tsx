@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery } from '@mui/material';
-import sensorPositions from './data';
 import L from 'leaflet';
 import { ScaleControl } from 'react-leaflet';
 
@@ -43,6 +42,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import { TWLSample } from './TWLSample';
 import { RequestApi } from 'app/Services';
 import { UncertaintySwitch } from './UncertaintySwitch';
+import { useTranslation } from 'react-i18next';
+import { StationsLayer } from './StationsLayer';
 
 // import {BaseLayerControl} from "./BaseLayerControl";
 
@@ -91,6 +92,7 @@ interface MapProps {
   defaultZoom?: number;
   currentMap?: any;
   currentLayer?: string;
+  currentTimeserie?: any;
 }
 
 const Map = (props: MapProps) => {
@@ -104,10 +106,12 @@ const Map = (props: MapProps) => {
     layerConf = {},
     currentMap = {},
     currentLayer = '',
+    currentTimeserie = {},
   } = props;
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
+  const { i18n } = useTranslation();
 
   const timeDimensionOptions = {
     // requestTimeFromCapabilities: true,
@@ -123,6 +127,10 @@ const Map = (props: MapProps) => {
   const [timeStatus, setTimeStatus] = React.useState('none');
 
   const [showUncertainty, setShowUncertainty] = React.useState(true);
+  const [sensorPositions, setSensorPositions] = React.useState<any>({
+    type: 'FeatureCollection',
+    features: [],
+  });
   const [opacity, doSetOpacity] = React.useState(0.85);
 
   useEffect(() => {
@@ -179,12 +187,17 @@ const Map = (props: MapProps) => {
         >
           <OpacityComponent doSetOpacity={doSetOpacity}></OpacityComponent>
         </Box>
-
+      </CustomControlMap>
+      <CustomControlMap position={'topright'}>
         <LegendBar
-          className={'leaflet-control-legend leaflet-control leaflet-bar'}
+          className={'leaflet-bar'}
           isMobile={isMobile}
           data={layerConf.legend}
-          unit={layerConf.unit_italian}
+          unit={
+            i18n.language.indexOf('it') >= 0
+              ? layerConf.unit_italian
+              : layerConf.unit_english
+          }
         />
       </CustomControlMap>
       <MousePositionComponent
@@ -227,30 +240,20 @@ const Map = (props: MapProps) => {
             attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
           />
         </LayersControl.BaseLayer>
-        <LayersControl.Overlay checked name="Sensori">
-          <GeoJSON
-            data={sensorPositions}
-            pointToLayer={(feature, latlng) => {
-              return L.circleMarker(latlng, {
-                radius: 2,
-                weight: 2,
-              });
-            }}
-            interactive={false}
-            onEachFeature={(feature: any, layer: any) => {
-              layer.options.interactive = false;
-            }}
-          ></GeoJSON>
-        </LayersControl.Overlay>
       </LayersControl>
+      <StationsLayer zIndex={600}></StationsLayer>
       <VectorWrapperLayer
+        zIndex={550}
         ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
         openCharts={openCharts}
         onCustom={click}
+        currentTimeserie={currentTimeserie}
       />
+
       <TWLSample
+        zIndex={500}
         layer={currentLayer}
         opacity={opacity}
         show={
@@ -261,7 +264,6 @@ const Map = (props: MapProps) => {
         stl={layerConf.palette}
         useTime="setTimestatus"
       />
-
       <CustomControlMap
         position="bottomleft"
         className=" leaflet-time-info"

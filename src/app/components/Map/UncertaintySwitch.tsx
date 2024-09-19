@@ -8,6 +8,7 @@ import {
     IconButton,
     Slider,
     Stack,
+    Tooltip,
     Typography,
 } from '@mui/material';
 import OpacityIcon from '@mui/icons-material/Opacity';
@@ -36,7 +37,17 @@ export const UncertaintySwitch = props => {
                 }}
                 aria-label={'cambia visualizzazione'}
             >
-                <LensBlur></LensBlur>
+                <Tooltip
+                    title={
+                        showUncertainty
+                            ? enabled
+                                ? 'Attuale: Con incertezza. Passa a: Senza incertezza'
+                                : 'Con incertezza'
+                            : 'Attuale: Senza incertezza. Passa a: Con incertezza'
+                    }
+                >
+                    <LensBlur></LensBlur>
+                </Tooltip>
             </IconButton>
         </Box>
     );

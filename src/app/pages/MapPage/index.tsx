@@ -74,7 +74,7 @@ export function MapPage(props: MapPageProps) {
   const [currentMap, setCurrentMap] = useState(defaultMap);
   const [currentLayer, setCurrentLayer] = useState('');
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
-  const [currentTimeSeries, setCurrentTimeSeries] = useState({});
+  const [currentTimeSerie, setCurrentTimeSerie] = useState({});
 
   const [foundLayers, setFoundLayers] = useState(0);
 
@@ -133,13 +133,17 @@ export function MapPage(props: MapPageProps) {
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {
       api
-        .getTimeseriesV2(
-          [currentLayer],
+        .getTimeserieV2(
+          currentLayer,
           selectedPoint.latlng.lat,
           selectedPoint.latlng.lng,
+          false,
+          false,
+          false,
+          false,
         )
         .then(data => {
-          setCurrentTimeSeries(data);
+          setCurrentTimeSerie(data.series[0]);
         });
     }
   }, [selectedPoint, currentLayer]);
@@ -278,6 +282,7 @@ export function MapPage(props: MapPageProps) {
         selectedPoint={selectedPoint}
         layerConf={currentLayerConfig}
         currentLayer={currentLayer}
+        currentTimeserie={currentTimeSerie}
       />
       {loading && (
         <Box sx={MapLoadingContainerStyle}>

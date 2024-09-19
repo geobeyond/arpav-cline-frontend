@@ -50,6 +50,7 @@ export interface MapPopupProps {
   value: iCityItem | null;
   setPoint?: Function;
   openCharts: Function;
+  currentTimeserie: any;
 }
 
 export const ValueRenderer = ({ time, value, unit }) => {
@@ -267,10 +268,10 @@ export const CompactValueRenderer = ({ time, value, unit }) => {
 };
 
 export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
-  const { value, setPoint, openCharts, className } = props;
-  const { cities, selected_map, timeserie } = useSelector(
-    (state: any) => state.map,
-  );
+  const { value, setPoint, openCharts, className, currentTimeserie } = props;
+  const { selected_map } = useSelector((state: any) => state.map);
+
+  const timeserie = currentTimeserie.values;
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
@@ -295,6 +296,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     }
     try {
       yr = parseInt(yrstring, 10);
+      if (isNaN(yr)) yr = 2024;
     } catch (ex) {
       yr = 2024;
     }
@@ -304,13 +306,13 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
       if (timeserie) {
         if (timeserie.length > 0) {
-          if (timeserie[0].values.length > 1) {
+          if (timeserie.length > 1) {
             tsindex = yr - baseYear;
           } else {
             tsindex = 0;
           }
-          att = timeserie[0]?.values[tsindex]?.time;
-          atv = timeserie[0]?.values[tsindex]?.value;
+          att = timeserie[tsindex]?.datetime;
+          atv = timeserie[tsindex]?.value;
         }
       }
 
@@ -327,8 +329,8 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       otsindex = tsindex;
       tsindex = dt - baseYear;
       if (otsindex != tsindex) {
-        let ctt = timeserie[0]?.values[tsindex]?.time;
-        let ctv = timeserie[0]?.values[tsindex]?.value;
+        let ctt = timeserie[tsindex]?.datetime;
+        let ctv = timeserie[tsindex]?.value;
 
         setTt(ctt);
         setTv(ctv);
@@ -345,6 +347,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <span style={{ flex: '1 1 1px' }}></span>
         <IconButton
+          disabled={currentTimeserie.values.length === 0}
           onClick={() => openCharts(value)}
           aria-label={'Mostra serie temporale'}
         >
