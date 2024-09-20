@@ -231,30 +231,22 @@ export class RequestApi extends Http {
   public getBarometroClimatico = () => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
     const measure =
-      'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year';
+      '{name}-{archive}-{climatological_model}-{climatological_variable}-{scenario}';
     const ids = this.createIds(measure, {
+      climatological_model: 'barometro_climatico',
+      climatological_variable: 'tas',
+      archive: 'forecast',
       scenario: ['rcp26', 'rcp45', 'rcp85'],
     });
     for (let id of ids) {
-      ret.push(this.getBarometroClimaticoSingle(id, 44.9524, 11.5469));
+      ret.push(this.getBarometroClimaticoSingle(id));
     }
     return Promise.all(ret).then(x => {
       return this.merge.apply(this, x);
     });
   };
-  public getBarometroClimaticoSingle = (
-    measure: any,
-    lat: number,
-    lng: number,
-  ) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${measure}?coords=POINT(${lng.toFixed(
-      4,
-    )} ${lat.toFixed(
-      4,
-    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_uncertainty=true&include_coverage_related_data=false`;
-
-    url += '&include_observation_data=false';
-
+  public getBarometroClimaticoSingle = (measure: any) => {
+    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/climate-barometer/${measure}?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
     return this.instance.get<any>(url);
   };
 

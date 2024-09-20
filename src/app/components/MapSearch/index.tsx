@@ -50,7 +50,8 @@ export interface MapPopupProps {
   value: iCityItem | null;
   setPoint?: Function;
   openCharts: Function;
-  currentTimeserie: any;
+  currentTimeseries: any;
+  unit: string;
 }
 
 export const ValueRenderer = ({ time, value, unit }) => {
@@ -268,10 +269,11 @@ export const CompactValueRenderer = ({ time, value, unit }) => {
 };
 
 export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
-  const { value, setPoint, openCharts, className, currentTimeserie } = props;
-  const { selected_map } = useSelector((state: any) => state.map);
+  const { value, setPoint, openCharts, className, unit, currentTimeseries } =
+    props;
+  const { cities, selected_map } = useSelector((state: any) => state.map);
 
-  const timeserie = currentTimeserie.values;
+  const timeserie = currentTimeseries.values;
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
@@ -296,7 +298,6 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     }
     try {
       yr = parseInt(yrstring, 10);
-      if (isNaN(yr)) yr = 2024;
     } catch (ex) {
       yr = 2024;
     }
@@ -306,7 +307,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
       if (timeserie) {
         if (timeserie.length > 0) {
-          if (timeserie.length > 1) {
+          if (timeserie[0].values.length > 1) {
             tsindex = yr - baseYear;
           } else {
             tsindex = 0;
@@ -340,14 +341,11 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie && (
-        <CompactValueRenderer time={tt} value={tv} unit={selected_map.unit} />
-      )}
+      {timeserie && <CompactValueRenderer time={tt} value={tv} unit={unit} />}
       <span style={{ flex: '1 1 1px' }}></span>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <span style={{ flex: '1 1 1px' }}></span>
         <IconButton
-          disabled={currentTimeserie.values.length === 0}
           onClick={() => openCharts(value)}
           aria-label={'Mostra serie temporale'}
         >

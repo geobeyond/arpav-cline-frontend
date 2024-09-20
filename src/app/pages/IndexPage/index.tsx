@@ -60,13 +60,13 @@ const IndexPage = () => {
               <HeroBody>
                 <HeroTitle>Climatologia storica</HeroTitle>
                 <p className="d-none d-lg-block"></p>
-                <HeroButton href="/ps" color="secondary">
+                <HeroButton disabled={true} href="/ps" color="secondary">
                   Visualizzazione semplice
                 </HeroButton>
                 <br />
                 <br />
                 <br />
-                <HeroButton href="/pa" color="secondary">
+                <HeroButton disabled={true} href="/pa" color="secondary">
                   Visualizzazione avanzata
                 </HeroButton>
               </HeroBody>
@@ -82,7 +82,7 @@ const IndexPage = () => {
               <HeroBody>
                 <HeroTitle>Proiezioni climatiche</HeroTitle>
                 <p className="d-none d-lg-block"></p>
-                <HeroButton href="fs" color="secondary">
+                <HeroButton disabled={true} href="fs" color="secondary">
                   Visualizzazione semplice
                 </HeroButton>
                 <br />

@@ -250,6 +250,11 @@ const Map = (props: MapProps) => {
         openCharts={openCharts}
         onCustom={click}
         currentTimeserie={currentTimeserie}
+        unit={
+          i18n.language.indexOf('it') >= 0
+            ? layerConf.unit_italian
+            : layerConf.unit_english
+        }
       />
 
       <TWLSample

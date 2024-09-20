@@ -12,32 +12,26 @@ import { MapPopup } from '../MapSearch';
 import { PopupStyle } from './styles';
 
 export const VectorWrapperLayer = (props: any) => {
-  const currentTimeSerie = props.currentTimeserie;
+  const currentTimeSeries = props.currentTimeseries;
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
   const { selected_map } = useSelector((state: any) => state.map);
-  const { selectCallback, selectedPoint, openCharts, zIndex } = props;
+  const { selectCallback, selectedPoint, openCharts, unit } = props;
   const map = useMap();
   const context = useLeafletContext();
 
   let selected = false;
 
-  const url =
-    'https://arpav.geobeyond.dev/vector-tiles/municipalities/{z}/{x}/{y}';
+  const url = `${VECTORTILES_URL}/public.places_cities.geometry/{z}/{x}/{y}.pbf`;
 
   useEffect(() => {
-    map.createPane('municipalities');
-    // @ts-ignore
-    map.getPane('municipalities').style.zIndex = zIndex;
-
     // @ts-ignore
     const _vectorLayer = L.vectorGrid
       .protobuf(url, {
-        pane: 'municipalities',
         interactive: true,
         vectorTileLayerStyles: {
-          municipalities: {
+          'public.places_cities.geometry': {
             color: '#b6b6b6',
             weight: 1,
             radius: 1,
@@ -74,7 +68,6 @@ export const VectorWrapperLayer = (props: any) => {
           popupRef.current.openPopup();
         }
       });
-
     map.addLayer(_vectorLayer);
   }, []);
 
@@ -95,7 +88,8 @@ export const VectorWrapperLayer = (props: any) => {
               <MapPopup
                 openCharts={openCharts}
                 value={selectedPoint}
-                currentTimeserie={currentTimeSerie}
+                currentTimeseries={currentTimeSeries}
+                unit={unit}
               ></MapPopup>
             </Box>
           </Popup>
