@@ -241,9 +241,9 @@ const Map = (props: MapProps) => {
           />
         </LayersControl.BaseLayer>
       </LayersControl>
-      <StationsLayer zIndex={600}></StationsLayer>
+      <StationsLayer zIndex={550}></StationsLayer>
       <VectorWrapperLayer
-        zIndex={550}
+        zIndex={600}
         ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
