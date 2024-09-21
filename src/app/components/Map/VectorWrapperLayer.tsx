@@ -12,7 +12,8 @@ import { MapPopup } from '../MapSearch';
 import { PopupStyle } from './styles';
 
 export const VectorWrapperLayer = (props: any) => {
-  const currentTimeSeries = props.currentTimeseries;
+  const currentTimeSerie = props.currentTimeserie;
+  const zIndex = props.zIndex;
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
@@ -26,10 +27,14 @@ export const VectorWrapperLayer = (props: any) => {
   const url = `${VECTORTILES_URL}/public.places_cities.geometry/{z}/{x}/{y}.pbf`;
 
   useEffect(() => {
+    context.map.createPane('municipalities');
+    // @ts-ignore
+    context.map.getPane('municipalities').style.zIndex = zIndex;
     // @ts-ignore
     const _vectorLayer = L.vectorGrid
       .protobuf(url, {
         interactive: true,
+        pane: 'municipalities',
         vectorTileLayerStyles: {
           'public.places_cities.geometry': {
             color: '#b6b6b6',
@@ -88,7 +93,7 @@ export const VectorWrapperLayer = (props: any) => {
               <MapPopup
                 openCharts={openCharts}
                 value={selectedPoint}
-                currentTimeseries={currentTimeSeries}
+                currentTimeserie={currentTimeSerie}
                 unit={unit}
               ></MapPopup>
             </Box>

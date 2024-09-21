@@ -20,6 +20,7 @@ export const TWLSample = (props: any) => {
   const setLayer = (l: any) => {
     layer.current = l;
   };
+  const zIndex = props.zIndex;
   const setTimestatus = props.useTime;
   const lyr = props.layer;
   const show = props.show;
@@ -47,19 +48,6 @@ export const TWLSample = (props: any) => {
       // @ts-ignore
       const selected_map_path = lyr;
       if (selected_map_path) {
-        // @ts-ignore
-        //if (
-        //  layer.current &&
-        //  layer.current._currentLayer &&
-        //  layer.current._currentLayer._url &&
-        //  layer.current._currentLayer._url.includes(
-        //    `${WMS_PROXY_URL}/thredds/wms/`,
-        //  ) &&
-        //  layer.current._currentLayer._url.includes(selected_map.path)
-        //) {
-        //  setupFrontLayer(layer.current, map);
-        //  return;
-        //}
         let tdWmsLayer = null;
         const params = {
           service: 'WMS',
@@ -78,7 +66,7 @@ export const TWLSample = (props: any) => {
         };
         const options = {
           opacity: opacity,
-          zIndex: 4000,
+          zIndex: zIndex,
           attribution:
             '&copy; <a target="_blank" rel="noopener" href="https://www.arpa.veneto.it/">ARPAV - Arpa FVG</a>',
         };
@@ -88,6 +76,7 @@ export const TWLSample = (props: any) => {
           ...params,
           ...withPane(options, { __version: 1, map: context.map }),
         });
+
         //if (selected_map.id && selected_map.data_series === 'yes') {
         //  // @ts-ignore
         //  tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
@@ -140,7 +129,15 @@ export const TWLSample = (props: any) => {
         map.removeLayer(layer.current);
       };
     }
-  }, [context.layerContainer, context.map, lyr, setTimestatus, opacity, show, style]);
+  }, [
+    context.layerContainer,
+    context.map,
+    lyr,
+    setTimestatus,
+    opacity,
+    show,
+    style,
+  ]);
 
   return null;
 };

@@ -50,7 +50,7 @@ export interface MapPopupProps {
   value: iCityItem | null;
   setPoint?: Function;
   openCharts: Function;
-  currentTimeseries: any;
+  currentTimeserie: any;
   unit: string;
 }
 
@@ -269,11 +269,11 @@ export const CompactValueRenderer = ({ time, value, unit }) => {
 };
 
 export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
-  const { value, setPoint, openCharts, className, unit, currentTimeseries } =
+  const { value, setPoint, openCharts, className, unit, currentTimeserie } =
     props;
   const { cities, selected_map } = useSelector((state: any) => state.map);
 
-  const timeserie = currentTimeseries.values;
+  const timeserie = currentTimeserie.values;
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
@@ -298,6 +298,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     }
     try {
       yr = parseInt(yrstring, 10);
+      if (isNaN(yr)) yr = 2024;
     } catch (ex) {
       yr = 2024;
     }
@@ -307,7 +308,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
       if (timeserie) {
         if (timeserie.length > 0) {
-          if (timeserie[0].values.length > 1) {
+          if (timeserie.length > 1) {
             tsindex = yr - baseYear;
           } else {
             tsindex = 0;
