@@ -93,7 +93,9 @@ export const DownloadForm = props => {
     for (let f in fdata) {
       const ffdata = fdata[f] as any;
       console.log(fdata[f]);
-      const pu = PapaParse.unparse(ffdata.values);
+      const pu = PapaParse.unparse(
+        ffdata.values.slice(filterParams.start, filterParams.end + 1),
+      );
       z.file(ffdata.name + '.csv', pu);
     }
     z.generateAsync({ type: 'blob' }).then(function (content) {
@@ -155,6 +157,10 @@ export const DownloadForm = props => {
     for (let f in fdata) {
       const ffdata = fdata[f] as any;
       console.log(fdata[f]);
+      ffdata.values = ffdata.values.slice(
+        filterParams.start,
+        filterParams.end + 1,
+      );
       z.file(ffdata.name + '.json', JSON.stringify(ffdata));
     }
     z.generateAsync({ type: 'blob' }).then(function (content) {
