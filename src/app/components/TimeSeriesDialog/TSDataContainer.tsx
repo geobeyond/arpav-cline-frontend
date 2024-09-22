@@ -615,14 +615,16 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setIds(timeseries.filter(x => !allIds.includes(x.name)).map(x => x.name));
   };
 
+  const str = (start, end) => {
+    const range = {
+      start: start,
+      end: end,
+    };
+    setTimeRange(range);
+  };
+
   const dataZoomHandle = (params, chart) => {
     const { startValue, endValue, start, end } = chart.getOption().dataZoom[0];
-    // const range = {
-    //   start: timeserie[0].values[startValue].time,
-    //   end: timeserie[0].values[endValue - 1].time,
-    // };
-    // console.log(startValue, endValue, range)
-    // setTimeRange(range);
 
     if (start >= 0) {
       //console.log('[STF] dataZoomHandle(2)', start);
@@ -640,6 +642,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       //console.log('[STF] dataZoomHandle(5)', chart.getOption().xAxis[0].data[endValue]);
       setLocalEndYear(chart.getOption().xAxis[0].data[endValue]);
     }
+
+    str(start, end);
   };
 
   const onStartValueChange = e => {
@@ -843,6 +847,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                   endValue: endValue,
                 });
               }
+              str(startValue, endValue);
             }}
           />
         </Box>
@@ -875,6 +880,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                   endValue: endValue,
                 });
               }
+              str(startValue, endValue);
             }}
           />
         </Box>
