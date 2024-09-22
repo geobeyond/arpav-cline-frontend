@@ -35,11 +35,33 @@ export class RequestApi extends Http {
     return this.classInstance;
   }
 
-  public getCities = city =>
-    this.instance.get<any>('/api/v2/municipalities/', {
-      params: { offset: 0, limit: 5, name: city },
-    });
-
+  public getCities = () => {
+    if (localStorage.getItem('municipality-centroids')) {
+      // @ts-ignore
+      return JSON.parse(localStorage.getItem('municipality-centroids'));
+    } else {
+      this.instance
+        .get<any>(
+          'https://arpav.geobeyond.dev/api/v2/municipalities/municipality-centroids',
+        )
+        .then((x: any) => x.features)
+        .then(x => {
+          return x.map(c => ({
+            label: c.properties.name,
+            id: c.id,
+            latlng: {
+              lat: c.geometry.coordinates[1],
+              lng: c.geometry.coordinates[0],
+            },
+          }));
+        })
+        .then(x => {
+          localStorage.setItem('municipality-centroids', JSON.stringify(x));
+        });
+      // @ts-ignore
+      return JSON.parse(localStorage.getItem('municipality-centroids'));
+    }
+  };
   public getLayer = (
     variable?,
     model?,

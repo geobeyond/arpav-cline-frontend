@@ -268,6 +268,7 @@ const Map = (props: MapProps) => {
         }
         stl={layerConf.palette}
         useTime="setTimestatus"
+        isTimeseries={currentMap.aggregation_period === 'annual'}
       />
       <CustomControlMap
         position="bottomleft"

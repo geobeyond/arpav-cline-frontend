@@ -282,6 +282,7 @@ export function MapPage(props: MapPageProps) {
         selectedPoint={selectedPoint}
         layerConf={currentLayerConfig}
         currentLayer={currentLayer}
+        currentMap={currentMap}
         currentTimeserie={currentTimeSerie}
       />
       {loading && (

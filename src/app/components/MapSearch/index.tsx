@@ -85,14 +85,13 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     vectorLayer,
     customClick,
   } = props;
-  const { cities, selected_map, timeserie } = useSelector(
-    (state: any) => state.map,
-  );
   const api = RequestApi.getInstance();
+  const cities = api.getCities();
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
   const resetMap = () => context.map.flyTo(defaultCenter, defaultZoom);
+
   const onChange = (event, value) => {
     console.log('Ricerca per comune', event, value);
     typeof setPoint === 'function' && setPoint(value);
@@ -349,6 +348,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         <IconButton
           onClick={() => openCharts(value)}
           aria-label={'Mostra serie temporale'}
+          disabled={timeserie.length === 1}
         >
           <LineAxisIcon />
         </IconButton>

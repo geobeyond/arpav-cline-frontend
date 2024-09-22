@@ -16,6 +16,7 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.min.css';
 export const TWLSample = (props: any) => {
   //const { selected_map } = useSelector((state: any) => state.map);
   const context = useLeafletContext();
+  const isTimeseries = props.isTimeseries;
   const layer = useRef<any>(null);
   const setLayer = (l: any) => {
     layer.current = l;
@@ -36,7 +37,7 @@ export const TWLSample = (props: any) => {
   // @ts-ignore
   //useMapEvent('timeload', () => setupFrontLayer(layer.current, context.map));
   // @ts-ignore
-  // useMapEvent('timeloading', () => setupFrontLayer(layer.current, context.map));
+  //useMapEvent('timeloading', () => setupFrontLayer(layer.current, context.map));
 
   useEffect(() => {
     if (lyr && show) {
@@ -77,63 +78,64 @@ export const TWLSample = (props: any) => {
           ...withPane(options, { __version: 1, map: context.map }),
         });
 
-        //if (selected_map.id && selected_map.data_series === 'yes') {
-        //  // @ts-ignore
-        //  tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
-        //    requestTimeFromCapabilities: true,
-        //    cache: 0,
-        //    cacheBackward: 0,
-        //    cacheForward: 0,
-        //    zIndex: 1000,
-        //  });
-        //  if (tdWmsLayer) {
-        //    setLayer(tdWmsLayer);
-        //    try {
-        //      // @ts-ignore
-        //      map._controlContainer.getElementsByClassName(
-        //        'leaflet-bar-timecontrol',
-        //      )[0].style.display = 'flex';
-        //      // @ts-ignore
-        //      map._controlContainer.getElementsByClassName(
-        //        'leaflet-time-info',
-        //      )[0].style.display = 'flex';
-        //      setTimestatus('flex');
-        //    } catch (e) {
-        //      // console.log(e)
-        //    }
-        //    layer.current = tdWmsLayer;
-        //    setTLayer(tdWmsLayer);
-        //  }
-        //} else {
-        setLayer(wmsLayer);
-        try {
+        if (selected_map_path && isTimeseries) {
           // @ts-ignore
-          map._controlContainer.getElementsByClassName(
-            'leaflet-bar-timecontrol',
-          )[0].style.display = 'none';
-          // @ts-ignore
-          map._controlContainer.getElementsByClassName(
-            'leaflet-time-info',
-          )[0].style.display = 'none';
-          setTimestatus('none');
-        } catch (e) {
-          // console.log(e)
+          tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
+            requestTimeFromCapabilities: true,
+            cache: 0,
+            cacheBackward: 0,
+            cacheForward: 0,
+          });
+          if (tdWmsLayer) {
+            setLayer(tdWmsLayer);
+            try {
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-bar-timecontrol',
+              )[0].style.display = 'flex';
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-time-info',
+              )[0].style.display = 'flex';
+              setTimestatus('flex');
+            } catch (e) {
+              // console.log(e)
+            }
+            layer.current = tdWmsLayer;
+            setTLayer(tdWmsLayer);
+          }
+        } else {
+          setLayer(wmsLayer);
+          try {
+            // @ts-ignore
+            map._controlContainer.getElementsByClassName(
+              'leaflet-bar-timecontrol',
+            )[0].style.display = 'none';
+            // @ts-ignore
+            map._controlContainer.getElementsByClassName(
+              'leaflet-time-info',
+            )[0].style.display = 'none';
+            setTimestatus('none');
+          } catch (e) {
+            // console.log(e)
+          }
+          layer.current = wmsLayer;
+          setTLayer(wmsLayer);
+          //}
         }
-        layer.current = wmsLayer;
-        setTLayer(wmsLayer);
-        //}
-      }
-      map.addLayer(layer.current);
+        map.addLayer(layer.current);
 
-      return () => {
-        map.removeLayer(layer.current);
-      };
+        return () => {
+          map.removeLayer(layer.current);
+        };
+      }
     }
   }, [
     context.layerContainer,
     context.map,
     lyr,
     setTimestatus,
+    isTimeseries,
     opacity,
     show,
     style,
