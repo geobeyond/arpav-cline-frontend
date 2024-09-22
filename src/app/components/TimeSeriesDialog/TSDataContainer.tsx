@@ -142,8 +142,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const [localStart, setLocalStart] = useState<any>(0);
   const [localEnd, setLocalEnd] = useState<any>(100);
-  const [localStartYear, setLocalStartYear] = useState<any>('');
-  const [localEndYear, setLocalEndYear] = useState<any>('');
+  const [localStartYear, setLocalStartYear] = useState<any>(null);
+  const [localEndYear, setLocalEndYear] = useState<any>(null);
 
   useEffect(() => {
     setTimeseries([]);
@@ -674,8 +674,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   useEffect(() => {
     if (getXAxis()) {
-      setLocalStartYear(getXAxis()[0]);
-      setLocalEndYear(getXAxis().slice(-1)[0]);
+      if (localStartYear === null) {
+        setLocalStartYear(getXAxis()[0]);
+      }
+      if (localStartYear === null) {
+        setLocalEndYear(getXAxis().slice(-1)[0]);
+      }
     }
   }, [getXAxis, timeseries]);
 
