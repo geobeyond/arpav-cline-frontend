@@ -66,6 +66,7 @@ export function MapPage(props: MapPageProps) {
   //  useSelector(selectMap);
   const [loading, setLoading] = useState(false);
   const [menus, setMenus] = useState();
+  const [combinations, setCombinations] = useState();
   const [selectedPoint, setSelectedPoint] = useState<any | null>(null);
   const [mapScreen, setMapScreen] = useState<any>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
@@ -99,7 +100,10 @@ export function MapPage(props: MapPageProps) {
   };
 
   useEffect(() => {
-    api.getAttributes().then(x => setMenus(x));
+    api.getAttributes().then(x => {
+      setCombinations(x.combinations);
+      setMenus(x.items);
+    });
 
     setSearchParams(currentMap);
     try {

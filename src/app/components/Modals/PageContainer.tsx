@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   Box,
+  Button,
   Grid,
   Link as MuiLink,
   useMediaQuery,
@@ -18,6 +19,7 @@ import {
   ScrollableStyle,
 } from './styles';
 import HeaderBar from '../HeaderBar';
+import { ArrowBack } from '@mui/icons-material';
 
 const PageContainer = props => {
   const { children } = props;
@@ -103,9 +105,18 @@ const PageContainer = props => {
       <Box className="container" sx={ScrollableStyle}>
         {children}
       </Box>
-      <Box>
-        <p />
-      </Box>
+      <div
+        className="footer"
+        style={{ position: 'fixed', left: '10px', bottom: '10px' }}
+      >
+        <Button
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <ArrowBack></ArrowBack>
+        </Button>
+      </div>
     </Box>
   );
 };

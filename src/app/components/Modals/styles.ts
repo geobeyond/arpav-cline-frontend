@@ -1,3 +1,5 @@
+import { PosAnimation } from 'leaflet';
+
 export const ModalStyle = theme => ({
   display: 'flex',
   flexDirection: 'column',

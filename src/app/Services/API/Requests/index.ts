@@ -292,15 +292,41 @@ export class RequestApi extends Http {
   //   return this.instance.get<any>(`/maps/ncss/netcdf/?${(new URLSearchParams(params)).toString()}`, {responseType: 'blob'});
   // }
 
-  public getAttributes = () => {
+  public getAttributes = (mode: string = 'forecast') => {
+    let reqs: any[] = [];
+
     const ret = this.instance
       .get<any>(
         'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
       )
       .then((d: any) => {
         return d.items;
+      })
+      .then((d: any) => {
+        let dd = d;
+        dd[2].allowed_values = dd[2].allowed_values.slice(1);
+        return dd;
       });
-    return ret;
+    reqs.push(ret);
+    if (mode === 'forecast') {
+      const cret = this.instance.get<any>(
+        'https://arpav.geobeyond.dev/api/v2/coverages/forecast-variable-combinations',
+      );
+      reqs.push(cret);
+    } else {
+      const cret = this.instance.get<any>(
+        'https://arpav.geobeyond.dev/api/v2/coverages/historical-variable-combinations',
+      );
+      reqs.push(cret);
+    }
+
+    const p = Promise.all(reqs).then(x => {
+      return {
+        items: x[0],
+        combinations: x[1].combinations,
+      };
+    });
+    return p;
   };
 
   public getForecastAttribute = (attribute, params = {}) => {};
