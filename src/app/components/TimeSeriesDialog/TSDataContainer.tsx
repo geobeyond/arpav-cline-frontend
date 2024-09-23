@@ -825,7 +825,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             type="text"
             maxLength={4}
             placeholder="Da:"
-            defaultValue={localStartYear}
+            value={localStartYear}
             onChange={event => {
               setLocalStartYear(event?.target?.value);
               const startValue = chartRef.current
@@ -856,7 +856,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             type="text"
             maxLength={4}
             placeholder="A:"
-            defaultValue={localEndYear}
+            value={localEndYear}
             onChange={event => {
               setLocalEndYear(event?.target?.value);
               const startValue = chartRef.current
