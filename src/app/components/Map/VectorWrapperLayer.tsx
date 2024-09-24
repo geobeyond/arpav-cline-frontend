@@ -70,7 +70,11 @@ export const VectorWrapperLayer = (props: any) => {
           };
           // console.log(payload)
           selectCallback(payload);
-          popupRef.current.openPopup();
+          try {
+            popupRef.current.openPopup();
+          } catch (ex) {
+            console.log(ex);
+          }
         }
       });
     map.addLayer(_vectorLayer);

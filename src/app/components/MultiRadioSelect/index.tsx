@@ -66,6 +66,7 @@ export interface RowMenuProps {
   key: string;
   groupName: string;
   items: IItem[];
+  disableable?: boolean;
 }
 
 export interface ColumnMenuProps {
@@ -216,7 +217,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                         <MenuItem
                           key={item.name}
                           disableGutters
-                          disabled={item.disabled}
+                          disabled={
+                            row.disableable &&
+                            activeCombinations.indexOf(item.name) < 0
+                          }
                         >
                           <FormControlLabel
                             className={`MultiRadioSelectMenuItem ${item.selected
@@ -226,10 +230,6 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                             //See Sorting fields note.
                             value={item.name}
                             control={<Radio />}
-                            disabled={
-                              disableable &&
-                              activeCombinations.indexOf(item.name) < 0
-                            }
                             checked={item.name === current_map[row.key]}
                             label={
                               <Box sx={MenuLabelStyle}>
