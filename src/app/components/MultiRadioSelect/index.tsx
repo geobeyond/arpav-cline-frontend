@@ -83,6 +83,8 @@ export interface MultiRadioSelectProps {
   className?: string;
   label: string;
   current_map?: any;
+  activeCombinations?: any;
+  disableable?: boolean;
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
@@ -94,6 +96,8 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   const label = props.label;
   const className = props.className ?? '';
   const MobileIcon = () => props.mobileIcon ?? <></>;
+  const activeCombinations = props.activeCombinations ?? [];
+  const disableable = props.disableable ?? true;
 
   const { t, i18n } = useTranslation();
 
@@ -222,7 +226,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                             //See Sorting fields note.
                             value={item.name}
                             control={<Radio />}
-                            // disabled={item.disabled}
+                            disabled={
+                              disableable &&
+                              activeCombinations.indexOf(item.name) < 0
+                            }
                             checked={item.name === current_map[row.key]}
                             label={
                               <Box sx={MenuLabelStyle}>

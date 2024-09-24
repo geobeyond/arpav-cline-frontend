@@ -58,6 +58,7 @@ export interface MapMenuBar {
   mode: string;
   data: string;
   menus: any;
+  combinations: any;
   current_map?: any;
   foundLayers?: number;
 }
@@ -77,6 +78,15 @@ export function MapMenuBar(props: MapMenuBar) {
   const current_map = props.current_map;
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
+  const combinations = (props.combinations || []).reduce(
+    (prev, cur) => ({
+      ...prev,
+      [cur.variable + '::' + cur.aggregation_period + '::' + cur.measure]: cur,
+    }),
+    {},
+  );
+
+  const [activeCombinations, setActiveCombinations] = useState<any>({});
 
   const onDownloadMapImg = props.onDownloadMapImg ?? (() => { });
   //const {
@@ -161,11 +171,13 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters('aggregation_period', 'aggregation_period'),
+            disableable: false,
           },
           {
             key: 'measure',
             groupName: t('app.map.menu.valueTypes'),
             ...mapParameters('measure', 'measure'),
+            disableable: false,
           },
           {
             key: 'time_window',
@@ -216,10 +228,28 @@ export function MapMenuBar(props: MapMenuBar) {
 
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
   const handleChange = (key: string, value: string) => {
-    // dispatch(actions.actions.changeSelection({ key, value }));
-    // const selTmp = [...selectedValues];
-    // selTmp[menuIdx] = groupSelection;
-    // setSelectedValues(selTmp);
+    console.log('handleChange', key, value);
+    console.log(combinations);
+    if (
+      ['climatological_variable', 'aggregation_period', 'measure'].indexOf(
+        key,
+      ) >= 0
+    ) {
+      let ckey = '{climatological_variable}::{aggregation_period}::{measure}';
+      ckey = ckey.replace('{' + key + '}', value);
+      ckey = ckey.replace(
+        '{climatological_variable}',
+        current_map.climatological_variable,
+      );
+      ckey = ckey.replace(
+        '{aggregation_period}',
+        current_map.aggregation_period,
+      );
+      ckey = ckey.replace('{measure}', current_map.measure);
+      if (Object.keys(combinations).indexOf(ckey) >= 0) {
+        setActiveCombinations(combinations[ckey]);
+      }
+    }
     if (onMenuChange) {
       onMenuChange({ key, value });
     }
@@ -300,10 +330,8 @@ export function MapMenuBar(props: MapMenuBar) {
               sx={LeftSelectStyle}
               menuSx={SelectMenuStyle}
               mobileIcon={<ThermostatIcon />}
-              className={
-                hasMissingValues(menus.variableMenuSet) ? 'NeedsSelection' : ''
-              }
               label={t('app.map.menuBar.indicator')}
+              disableable={false}
             />
           </Grid>
           <Grid xs={1} def={4} sx={SecondRowStyle}>
@@ -314,6 +342,11 @@ export function MapMenuBar(props: MapMenuBar) {
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
               mobileIcon={<ShowChartIcon />}
+              activeCombinations={[
+                ...(activeCombinations?.other_parameters
+                  ?.climatological_model || []),
+                ...(activeCombinations?.other_parameters?.scenario || []),
+              ]}
               className={
                 hasMissingValues(menus.modelAndScenarioMenuSet)
                   ? 'NeedsSelection'
@@ -331,6 +364,9 @@ export function MapMenuBar(props: MapMenuBar) {
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
               mobileIcon={<DateRangeIcon />}
+              activeCombinations={
+                activeCombinations?.other_parameters?.time_window
+              }
               className={
                 hasMissingValues(menus.periodMenuSet) ? 'NeedsSelection' : ''
               }

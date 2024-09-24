@@ -274,6 +274,7 @@ export function MapPage(props: MapPageProps) {
         mode={map_mode}
         data={map_data}
         menus={menus}
+        combinations={combinations}
         onMenuChange={updateCurrentMap}
         current_map={currentMap}
         foundLayers={foundLayers}
