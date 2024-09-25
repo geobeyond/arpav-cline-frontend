@@ -345,13 +345,21 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       <span style={{ flex: '1 1 1px' }}></span>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <span style={{ flex: '1 1 1px' }}></span>
-        <IconButton
-          onClick={() => openCharts(value)}
-          aria-label={'Mostra serie temporale'}
-          disabled={timeserie.length === 1}
+        <Tooltip
+          title={
+            timeserie.length == 1
+              ? 'Non sono disponibili dati storici'
+              : 'Visualizza la serie storica per questo punto.'
+          }
         >
-          <LineAxisIcon />
-        </IconButton>
+          <IconButton
+            onClick={() => openCharts(value)}
+            aria-label={'Mostra serie temporale'}
+            disabled={timeserie.length === 1}
+          >
+            <LineAxisIcon />
+          </IconButton>
+        </Tooltip>
         <span style={{ flex: '1 1 1px' }}></span>
       </div>
     </div>

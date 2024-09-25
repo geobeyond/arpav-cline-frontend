@@ -132,6 +132,7 @@ export function MapMenuBar(props: MapMenuBar) {
               'climatological_variable',
               'climatological_variable',
             ),
+            disableable: false,
           },
         ],
       },
@@ -150,6 +151,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   'climatological_model',
                   'climatological_model',
                 ),
+                disableable: true,
               },
             ],
           },
@@ -157,6 +159,7 @@ export function MapMenuBar(props: MapMenuBar) {
             rows: [
               {
                 key: 'scenario',
+                disableable: true,
                 groupName: t('app.map.menu.scenarios'),
                 ...mapParameters('scenario', 'scenario'),
               },

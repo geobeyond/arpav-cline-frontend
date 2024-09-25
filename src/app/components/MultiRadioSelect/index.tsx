@@ -218,7 +218,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           key={item.name}
                           disableGutters
                           disabled={
-                            row.disableable &&
+                            row.disableable ||
                             activeCombinations.indexOf(item.name) < 0
                           }
                         >
