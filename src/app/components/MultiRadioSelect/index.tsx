@@ -123,7 +123,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     )
     .flat()
     .filter(x => x);
-  const renderSelectedValue = () =>
+  const renderSelectedValue = (mode: string = 'label') =>
     valueSet
       .map(({ rows }) =>
         rows.map(({ items }) =>
@@ -133,7 +133,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
       .flat()
       .filter(x => x)
       //@ts-ignore
-      .map(x => translate(x, 'label'))
+      .map(x => translate(x, mode))
       .join(' - ');
 
   const translate = (item: IItem, mode: string = 'label') => {
@@ -160,7 +160,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
               <MobileIcon />
             </Box>
           ) : (
-            renderSelectedValue()
+            renderSelectedValue('description')
           )
         }
         open={isOpen}

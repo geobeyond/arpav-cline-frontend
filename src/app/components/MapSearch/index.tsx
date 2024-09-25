@@ -352,13 +352,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
               : 'Visualizza la serie storica per questo punto.'
           }
         >
-          <IconButton
-            onClick={() => openCharts(value)}
-            aria-label={'Mostra serie temporale'}
-            disabled={timeserie.length === 1}
-          >
-            <LineAxisIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              onClick={() => openCharts(value)}
+              aria-label={'Mostra serie temporale'}
+              disabled={timeserie.length === 1}
+            >
+              <LineAxisIcon />
+            </IconButton>
+          </span>
         </Tooltip>
         <span style={{ flex: '1 1 1px' }}></span>
       </div>
