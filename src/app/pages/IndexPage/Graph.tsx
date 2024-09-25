@@ -89,13 +89,28 @@ const Graph = (props: any) => {
       rcp85: 'rgb(231,60,60)',
     },
     {
-      histo: 'rgba(69,50,27, 0.4)',
-      rcp26: 'rgba(46,105,193, 0.4)',
-      rcp45: 'rgba(243, 156, 18, 0.4)',
-      rcp85: 'rgba(231,60,60, 0.4)',
+      histo: 'rgb(82, 73, 62)',
+      rcp26: 'rgb(146, 166, 196)',
+      rcp45: 'rgb(250, 226, 187)',
+      rcp85: 'rgb(232, 169, 169)',
     },
   ];
 
+  const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
+
+  const gmodels = [
+    { label: '--', value: 'ens5' },
+    { label: 'EC-EARTH_CCLM4-8-17', value: 'ec_earth_cclm_4_8_17' },
+    { label: 'EC-EARTH_RACM022E', value: 'ec_earth_racmo22e' },
+    { label: 'EC-EARTH_RCA4', value: 'ec_earth_rca4' },
+    { label: 'HadGEM2-ES_RACM022E', value: 'hadgem2_racmo22e' },
+    { label: 'MPI-ESM-LR_REMO2009', value: 'mpi_esm_lr_remo2009' },
+  ];
+
+  const [localStart, setLocalStart] = useState<any>(0);
+  const [localEnd, setLocalEnd] = useState<any>(100);
+  const [localStartYear, setLocalStartYear] = useState<any>(null);
+  const [localEndYear, setLocalEndYear] = useState<any>(null);
   useEffect(() => {
     setTimeseries([]);
     const baseSelection = Object.fromEntries(
@@ -103,22 +118,6 @@ const Graph = (props: any) => {
         full_find_keys.includes(key),
       ),
     );
-    // console.log(baseSelection)
-    const ids = models
-      .filter(x => x)
-      .map(model => {
-        return scenarios.map(scenario => {
-          const input = {
-            ...baseSelection,
-            forecast_model: model,
-            scenario,
-          };
-          const resItem = getItemByFilters(layers, input);
-          // @ts-ignore
-          return resItem ? resItem?.id : null;
-        });
-      })
-      .flat();
     api
       .getBarometroClimatico()
       .then(res => {
@@ -146,8 +145,8 @@ const Graph = (props: any) => {
   console.debug(i18n);
 
   const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
-  const [mfltr, setMfltr] = useState<string>('model_ensemble');
-  const [smfltr, setSMfltr] = useState<string>('model_ensemble');
+  const [mfltr, setMfltr] = useState<string>('barometro_climatico');
+  const [smfltr, setSMfltr] = useState<string>('barometro_climatico');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
 
@@ -180,9 +179,9 @@ const Graph = (props: any) => {
       )
       .map(item => getName(item));
     const station = timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
-      .filter(x => x.name.indexOf(snsfltr) >= 0)
-      .map(x => getName(x));
+      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
+      .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
+      .map(x => getName(x, 'station'));
     return [...series, ...station];
   };
 
@@ -200,9 +199,9 @@ const Graph = (props: any) => {
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('station_id') > 0)
+      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.name.indexOf(snsfltr) >= 0)
-      .map(x => (ret[getName(x)] = true));
+      .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
     return ret;
   };
@@ -211,7 +210,7 @@ const Graph = (props: any) => {
     if (dataset.info.scenario) {
       return colors[0][dataset.info.scenario];
     }
-    return dataset.info.station_id ? '#45321b' : '#ff0000';
+    return dataset.info.series_elaboration ? '#45321b' : '#ff0000';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
@@ -237,7 +236,7 @@ const Graph = (props: any) => {
       (item.info.processing_method.indexOf(nfltr) >= 0 &&
         (item.info.climatological_model === mfltr ||
           item.info.climatological_model === smfltr)) ||
-      ('station_id' in item.info &&
+      ('series_elaboration' in item.info &&
         item.info.processing_method.indexOf(snsfltr) >= 0)
     ) {
       if (
@@ -288,13 +287,13 @@ const Graph = (props: any) => {
   };
 
   const getGraphType = dataset => {
-    return dataset.info.station_id &&
+    return dataset.info.series_elaboration &&
       dataset.info.processing_method === 'NO_SMOOTHING'
       ? 'bar'
       : 'line';
   };
   const getZLevel = dataset => {
-    return dataset.info.station_id ? 1000 : 10;
+    return dataset.info.series_elaboration ? 1000 : 10;
   };
 
   const getStack = dataset => {
@@ -320,12 +319,15 @@ const Graph = (props: any) => {
     return cats[0];
   };
 
-  const getName = item => {
+  const getName = (item, mode = 'timeseries') => {
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
+    if (mode === 'timeseries')
+      return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
+    else
+      return `Sensore: ${tdata.series_name} ${tdata.series_elaboration} ${tdata.processing_method}`;
   };
 
   let pseriesObj = [
@@ -427,6 +429,7 @@ const Graph = (props: any) => {
     },
     legend: {
       data: getLegend(),
+      selected: getSelectedLegend(),
       top: '30%',
       icon: 'rect',
     },
@@ -440,21 +443,29 @@ const Graph = (props: any) => {
     toolbox: {
       itemSize: 30,
       left: isMobile ? 'center' : 'right',
-      //feature: {
-      //  saveAsImage: {
-      //    name: `Barometro Climatico`,
-      //    title: t('app.map.timeSeriesDialog.saveAsImage'),
-      //    icon: photoCameraIconPath,
-      //    iconStyle: {
-      //      color: theme.palette.primary.main,
-      //    },
-      //  },
-      //},
+      feature: {
+        myTool1: {
+          show: true,
+          title: 'Toggle uncertainty',
+          icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
+          onclick: () => {
+            setUncert(!uncert);
+          },
+        },
+        saveAsImage: {
+          name: `Barometro Climatico`,
+          title: t('app.map.timeSeriesDialog.saveAsImage'),
+          icon: photoCameraIconPath,
+          iconStyle: {
+            color: theme.palette.primary.main,
+          },
+        },
+      },
     },
     xAxis: {
       type: 'category',
-      data: cats[0],
       boundaryGap: false,
+      data: getXAxis(),
       axisLabel: {
         showMinLabel: false,
         rotate: 45,
