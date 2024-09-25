@@ -37,7 +37,7 @@ const defaultMap: any = {
   climatological_model: 'model_ensemble',
   climatological_variable: 'tas',
   measure: 'anomaly',
-  scenario: 'rcp26',
+  scenario: 'rcp85',
   time_window: 'tw1',
   year_period: 'winter',
   data_series: 'no',

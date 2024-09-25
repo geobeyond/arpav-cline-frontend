@@ -400,7 +400,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
     if (mode === 'timeseries')
-      return `${tdata.climatological_variable} ${tdata.aggregation_period} ${tdata.climatological_model} ${tdata.measure} ${tdata.scenario} ${tdata.year_period} ${tdata.processing_method}`;
+      return `${tdata.climatological_model} ${tdata.scenario} ${tdata.processing_method}`;
     else
       return `Sensore: ${tdata.series_name} ${tdata.series_elaboration} ${tdata.processing_method}`;
   };
