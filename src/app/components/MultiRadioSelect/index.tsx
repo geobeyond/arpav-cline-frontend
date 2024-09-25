@@ -160,7 +160,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
               <MobileIcon />
             </Box>
           ) : (
-            renderSelectedValue('description')
+            renderSelectedValue('label')
           )
         }
         open={isOpen}
