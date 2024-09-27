@@ -45,6 +45,25 @@ const IndexPage = () => {
       <HeaderBar mode="full"></HeaderBar>
 
       <Hero overlay="dark" style={TopHeroStyle}>
+        <h2>Barometro del clima</h2>
+
+        <i>La temperatura da noi fino ad oggi e nel futuro</i>
+
+        <p>
+          Il grafico mostra:
+          <ul>
+            <li>
+              la temperatura media annuale registrata sul Veneto negli ultimi
+              decenni (elaborazione delle misure delle stazioni sul territorio,
+              linea nera);
+            </li>
+            <li>
+              le corrispondenti proiezioni climatiche fino a fine secolo per tre
+              diversi scenari di riduzione delle emissioni di gas serra (linee
+              blu, gialla e rossa).
+            </li>
+          </ul>
+        </p>
         <Graph></Graph>
       </Hero>
       <Section></Section>

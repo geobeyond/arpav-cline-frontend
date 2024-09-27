@@ -1,6 +1,11 @@
-export const TopHeroStyle = {
+export const TopHeroStyle: React.CSSProperties = {
   backgroundColor: 'white',
-  height: '300px',
+  height: '600px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  fontFamily: 'Titillium Web, Helvetica Neue, Helvetica, Arial, sans-serif',
 };
 
 export const HeroStyle = {
