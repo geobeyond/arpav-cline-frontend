@@ -434,6 +434,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       }),
     ];
 
+  const seriesFilter = pseriesObj.map(item => {
+    return { [item.name]: true };
+  });
+
   const seriesObj = pseriesObj.map(item => ({
     id: item.name,
     name: getName(item),
@@ -441,6 +445,18 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     smooth: true,
     // sampling: 'average',
     symbol: 'none',
+    events: {
+      legendselected: event => {
+        //@ts-ignore
+        seriesFilter[item.name] = !seriesFilter[item.name];
+        console.log(seriesFilter);
+      },
+      legendunselected: event => {
+        //@ts-ignore
+        seriesFilter[item.name] = !seriesFilter[item.name];
+        console.log(seriesFilter);
+      },
+    },
     lineStyle: {
       color: getColor(item),
       type: getLineType(item),
