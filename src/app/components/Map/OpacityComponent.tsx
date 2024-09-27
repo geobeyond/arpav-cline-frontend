@@ -15,7 +15,6 @@ export const OpacityComponent = (param: any) => {
 
   const [opacity, setOpacity] = useState(0.85);
 
-
   return (
     <Box sx={{ width: 120 }}>
       <Stack spacing={2} direction="row" alignItems="center">
@@ -26,11 +25,12 @@ export const OpacityComponent = (param: any) => {
           aria-label="Opacità"
           value={opacity}
           // @ts-ignore
-          onChangeCommitted={(e, v) => 
-           {setOpacity(parseFloat(v.toString()));
-            doSetOpacity(parseFloat(v.toString()));
-           }
-          }
+          onChange={(e, v) => {
+            setOpacity(parseFloat(v.toString()));
+            setTimeout(() => {
+              doSetOpacity(parseFloat(v.toString()));
+            }, 200);
+          }}
           step={0.05}
           // marks
           min={0}

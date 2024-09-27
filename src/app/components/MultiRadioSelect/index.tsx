@@ -125,9 +125,13 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     .filter(x => x);
   const renderSelectedValue = (mode: string = 'label') =>
     valueSet
-      .map(({ rows }) =>
-        rows.map(({ items }) =>
-          items.find(x => x.name === current_map[rows[0].key]),
+      .map((rs, index) =>
+        rs.rows.map(({ items }) =>
+          items.find(
+            x =>
+              x.name ===
+              current_map[rs.rows[Math.min(index, rs.rows.length - 1)].key],
+          ),
         ),
       )
       .flat()
@@ -236,17 +240,9 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                 <span aria-label={translate(item, 'label')}>
                                   {translate(item, 'label')}
                                 </span>
-                                {isMobile ? (
-                                  <Typography variant={'caption'}>
-                                    {translate(item, 'description')}
-                                  </Typography>
-                                ) : (
-                                  <Tooltip
-                                    title={translate(item, 'description')}
-                                  >
-                                    <InfoIcon fontSize={'small'} />
-                                  </Tooltip>
-                                )}
+                                <Typography variant={'caption'}>
+                                  {translate(item, 'description')}
+                                </Typography>
                               </Box>
                             }
                           />
