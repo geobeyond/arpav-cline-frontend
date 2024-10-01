@@ -434,9 +434,18 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       }),
     ];
 
-  const seriesFilter = pseriesObj.map(item => {
-    return { [item.name]: true };
-  });
+  const seriesFilter = pseriesObj.reduce(
+    (prev, item) => ({
+      ...prev,
+      [item.name]: true,
+    }),
+    {},
+  );
+  const legendselected = event => {
+    //@ts-ignore
+    seriesFilter[item.name] = !seriesFilter[item.name];
+    console.log(seriesFilter);
+  };
 
   const seriesObj = pseriesObj.map(item => ({
     id: item.name,
@@ -445,18 +454,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     smooth: true,
     // sampling: 'average',
     symbol: 'none',
-    events: {
-      legendselected: event => {
-        //@ts-ignore
-        seriesFilter[item.name] = !seriesFilter[item.name];
-        console.log(seriesFilter);
-      },
-      legendunselected: event => {
-        //@ts-ignore
-        seriesFilter[item.name] = !seriesFilter[item.name];
-        console.log(seriesFilter);
-      },
-    },
     lineStyle: {
       color: getColor(item),
       type: getLineType(item),
@@ -533,7 +530,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         },
       },
       valueFormatter: v =>
-        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${timeseries[0]?.dataset?.unit //TODO FIX unit
+        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${currentLayer?.unit_english //TODO FIX unit
         }`,
     },
     legend: {
@@ -622,12 +619,22 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     series: seriesObj,
   };
 
-  const getMapsToDownloads = () => {
+  const getSeries = name => {
+    return [];
+  };
+
+  const getMapsToDownloads = ev => {
+    console.log(ev);
+    console.log(seriesFilter);
+    for (let s of getSeries(ev.name)) {
+      seriesFilter.map();
+    }
     const allIds = Object.entries(
       chartRef.current.getEchartsInstance().getOption().legend[0].selected,
     )
       .filter(x => !x[1])
       .map(x => x[0]);
+    console.log(allIds);
     setIds(timeseries.filter(x => !allIds.includes(x.name)).map(x => x.name));
   };
 
