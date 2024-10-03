@@ -89,7 +89,7 @@ export interface MultiRadioSelectProps {
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
-  const handleChange = props.onChange ? props.onChange : () => { };
+  const handleChange = props.onChange ? props.onChange : () => {};
   const valueSet = props.valueSet;
   const current_map = props.current_map;
   const sx = props.sx;
@@ -227,10 +227,11 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           }
                         >
                           <FormControlLabel
-                            className={`MultiRadioSelectMenuItem ${item.selected
+                            className={`MultiRadioSelectMenuItem ${
+                              item.selected
                                 ? 'MultiRadioSelectMenuItem-selected'
                                 : ''
-                              }`}
+                            }`}
                             //See Sorting fields note.
                             value={item.name}
                             control={<Radio />}
@@ -240,9 +241,17 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                 <span aria-label={translate(item, 'label')}>
                                   {translate(item, 'label')}
                                 </span>
-                                <Typography variant={'caption'}>
-                                  {translate(item, 'description')}
-                                </Typography>
+                                {isMobile ? (
+                                  <Typography variant={'caption'}>
+                                    {translate(item, 'description')}
+                                  </Typography>
+                                ) : (
+                                  <Tooltip
+                                    title={translate(item, 'description')}
+                                  >
+                                    <InfoIcon fontSize={'small'} />
+                                  </Tooltip>
+                                )}
                               </Box>
                             }
                           />

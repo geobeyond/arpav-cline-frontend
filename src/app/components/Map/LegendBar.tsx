@@ -47,7 +47,7 @@ const lightOrDark = color => {
 export const LegendBar = (props: LegendBarProps) => {
   const { className, isMobile, unit } = props;
   const data = props.data || { color_entries: [] };
-  const colors = data.color_entries.reverse();
+  const colors = data.color_entries;
 
   const hex2rgb = c => `rgb(${c.match(/\w\w/g).map(x => +`0x${x}`)})`;
 
@@ -60,7 +60,7 @@ export const LegendBar = (props: LegendBarProps) => {
             style={{
               backgroundColor: '#' + colors[0].color.substring(3),
               width: isMobile ? '60px' : '120px',
-              height: '20px',
+              height: '30px',
             }}
           ></div>}
           {colors.map((itm, index, elements) => {
