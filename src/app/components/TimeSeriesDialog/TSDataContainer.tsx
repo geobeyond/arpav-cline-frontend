@@ -406,7 +406,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     }
     if (mode === 'timeseries')
       return `${tdata.climatological_model} ${tdata.scenario}`;
-    else return `Sensore: ${tdata.variable}`;
+    else return `Stazione: ${place}`;
   };
 
   let pseriesObj = [
