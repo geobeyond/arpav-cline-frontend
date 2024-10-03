@@ -378,6 +378,7 @@ const Graph = (props: any) => {
     selected: getSelected(item),
     data: getChartData(item, timeseries),
     stack: getStack(item),
+    stackStrategy: 'all',
     areaStyle: getAreaStyle(item),
     zLevel: getZLevel(item),
     label: {
