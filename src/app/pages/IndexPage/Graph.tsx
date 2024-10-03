@@ -324,7 +324,7 @@ const Graph = (props: any) => {
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    return `${tdata.climatological_variable} ${tdata.scenario} ${tdata.processing_method}`;
+    return `${tdata.climatological_variable} ${tdata.scenario}`;
   };
 
   let pseriesObj = [
@@ -471,7 +471,7 @@ const Graph = (props: any) => {
     yAxis: {
       type: 'value',
       scale: true,
-      name: timeseries[0]?.dataset?.unit ?? '',
+      name: '°C',
       nameTextStyle: {
         align: 'center',
         padding: 15,

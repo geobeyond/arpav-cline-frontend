@@ -213,7 +213,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const { t, i18n } = useTranslation();
   console.debug(i18n);
 
-  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
+  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE_11_YEARS');
   const [mfltr, setMfltr] = useState<string>('model_ensemble');
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
@@ -286,7 +286,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getLineWidth = dataset => {
-    return dataset.info.climatological_model === 'model_ensemble' ? 3 : 1;
+    return dataset.info.climatological_model === 'model_ensemble' ||
+      dataset.info.series_elaboration === 'ORIGINAL'
+      ? 3
+      : 1;
   };
 
   const getSelected = dataset => {
@@ -310,6 +313,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         let lbitem = series.filter(x => {
           return (
             getName(x) === getName(item) &&
+            x.info.processing_method === nfltr &&
             x.info.aggregation_period === item.info.aggregation_period &&
             x.info.climatological_model === item.info.climatological_model &&
             x.info.climatological_variable ===
@@ -322,7 +326,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           );
         });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
-        if (lbitem) {
+        if (lbitem.length > 0) {
           for (; delta > 0; delta--) {
             ret.push(null);
           }
@@ -395,14 +399,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     "year_period": "year"
 }*/
   const getName = (item, mode = 'timeseries') => {
+    if ('derived_series' in item.info) mode = 'sensor';
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
     if (mode === 'timeseries')
-      return `${tdata.climatological_model} ${tdata.scenario} ${tdata.processing_method}`;
-    else
-      return `Sensore: ${tdata.series_name} ${tdata.series_elaboration} ${tdata.processing_method}`;
+      return `${tdata.climatological_model} ${tdata.scenario}`;
+    else return `Sensore: ${tdata.variable}`;
   };
 
   let pseriesObj = [
@@ -469,6 +473,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     selected: getSelected(item),
     data: getChartData(item, timeseries),
     stack: getStack(item),
+    stackStrategy: 'all',
     areaStyle: getAreaStyle(item),
     zLevel: getZLevel(item),
     label: {
@@ -598,7 +603,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     yAxis: {
       type: 'value',
       scale: true,
-      name: timeseries[0]?.dataset?.unit ?? '',
+      name: currentLayer?.unit_english ?? '',
       nameTextStyle: {
         align: 'center',
         padding: 15,
