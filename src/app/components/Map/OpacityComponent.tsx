@@ -9,11 +9,12 @@ import { useMapSlice } from '../../pages/MapPage/slice';
 
 export const OpacityComponent = (param: any) => {
   const doSetOpacity = param.doSetOpacity;
+  const opacity = param.opacity;
   const context = useLeafletContext();
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
-  const [opacity, setOpacity] = useState(0.85);
+  //const [opacity, setOpacity] = useState<number>();
 
   return (
     <Box sx={{ width: 120 }}>
@@ -26,7 +27,7 @@ export const OpacityComponent = (param: any) => {
           value={opacity}
           // @ts-ignore
           onChange={(e, v) => {
-            setOpacity(parseFloat(v.toString()));
+            //setOpacity(parseFloat(v.toString()));
             setTimeout(() => {
               doSetOpacity(parseFloat(v.toString()));
             }, 200);

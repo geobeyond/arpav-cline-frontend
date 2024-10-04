@@ -624,6 +624,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     series: seriesObj,
   };
 
+  console.log(chartOption);
+
   const getSeries = name => {
     return [];
   };

@@ -127,6 +127,12 @@ const Map = (props: MapProps) => {
   const [timeStatus, setTimeStatus] = React.useState('none');
 
   const [showUncertainty, setShowUncertainty] = React.useState(true);
+  const [showUncertaintyControl, setShowUncertaintyControl] =
+    React.useState<boolean>();
+  const doSetShowUncertainty = state => {
+    setShowUncertainty(state);
+    return !state;
+  };
   const [sensorPositions, setSensorPositions] = React.useState<any>({
     type: 'FeatureCollection',
     features: [],
@@ -135,6 +141,11 @@ const Map = (props: MapProps) => {
 
   useEffect(() => {
     console.log(layerConf);
+    if (layerConf.wms_secondary_layer_name == null) {
+      setShowUncertaintyControl(false);
+    } else {
+      setShowUncertaintyControl(true);
+    }
   }, [layerConf, currentLayer]);
 
   return (
@@ -169,23 +180,26 @@ const Map = (props: MapProps) => {
           customComponent={MobileSpaceDisplay}
         />
       )}
+      {showUncertaintyControl && (
+        <CustomControlMap position={'topright'}>
+          <Box
+            className="leaflet-bar"
+            style={{ backgroundColor: 'white', padding: '2px' }}
+          >
+            <UncertaintySwitch
+              enabled={true}
+              setShowUncertainty={doSetShowUncertainty}
+              currentUncertainty={showUncertainty}
+            ></UncertaintySwitch>
+          </Box>
+        </CustomControlMap>
+      )}
       <CustomControlMap position={'topright'}>
         <Box
           className="leaflet-bar"
           style={{ backgroundColor: 'white', padding: '2px' }}
         >
-          <UncertaintySwitch
-            enabled={layerConf.wms_seconday_layer_name !== null}
-            setShowUncertainty={setShowUncertainty}
-          ></UncertaintySwitch>
-        </Box>
-      </CustomControlMap>
-      <CustomControlMap position={'topright'}>
-        <Box
-          className="leaflet-bar"
-          style={{ backgroundColor: 'white', padding: '2px' }}
-        >
-          <OpacityComponent doSetOpacity={doSetOpacity}></OpacityComponent>
+          <OpacityComponent doSetOpacity={doSetOpacity} opacity={opacity}></OpacityComponent>
         </Box>
       </CustomControlMap>
       <CustomControlMap position={'topright'}>

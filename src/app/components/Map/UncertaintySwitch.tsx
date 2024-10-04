@@ -19,6 +19,7 @@ import { LensBlur } from '@mui/icons-material';
 
 export const UncertaintySwitch = props => {
     const setShowUncertainty = props.setShowUncertainty;
+    const currentUncertainty = props.currentUncertainty;
     const enabled = props.enabled || true;
     const context = useLeafletContext();
     const dispatch = useDispatch();
@@ -32,8 +33,8 @@ export const UncertaintySwitch = props => {
             <IconButton
                 disabled={!enabled}
                 onClick={() => {
-                    toggleShowUncertainty(!showUncertainty);
-                    setShowUncertainty(showUncertainty);
+                    const un = setShowUncertainty(!currentUncertainty);
+                    toggleShowUncertainty(un);
                 }}
                 aria-label={'cambia visualizzazione'}
             >
