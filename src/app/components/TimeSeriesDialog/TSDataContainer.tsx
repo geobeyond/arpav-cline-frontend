@@ -441,7 +441,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const seriesFilter = pseriesObj.reduce(
     (prev, item) => ({
       ...prev,
-      [item.name]: true,
+      [item.name]: { label: getName(item), show: true },
     }),
     {},
   );
@@ -489,9 +489,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       i18n.language
       ]
       }
-  ${timeseries[0].translations.parameter_values.aggregation_period[
+      ${timeseries[0].translations.parameter_values.aggregation_period[
       i18n.language
       ]
+      } - ${timeseries[0].translations.parameter_values.year_period[i18n.language]
       }
   `;
 

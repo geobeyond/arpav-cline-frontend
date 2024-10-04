@@ -177,8 +177,8 @@ const Map = (props: MapProps) => {
           customComponent={MobileSpaceDisplay}
         />
       )}
-      {showUncertaintyControl && (
-        <CustomControlMap position={'topright'}>
+      <CustomControlMap position={'topright'}>
+        {showUncertaintyControl && (
           <Box
             className="leaflet-bar"
             style={{ backgroundColor: 'white', padding: '2px' }}
@@ -189,8 +189,8 @@ const Map = (props: MapProps) => {
               currentUncertainty={showUncertainty}
             ></UncertaintySwitch>
           </Box>
-        </CustomControlMap>
-      )}
+        )}
+      </CustomControlMap>
       <CustomControlMap position={'topright'}>
         <Box
           className="leaflet-bar"
