@@ -208,6 +208,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     layers,
     dispatch,
     actions.actions,
+    currentLayer.coverage_id_pattern,
+    currentLayer.name,
+    currentMap,
+    setToDownload,
   ]);
 
   const { t, i18n } = useTranslation();
@@ -218,12 +222,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
+  const [srs, setSeriesFilter] = useState<any>();
 
   useEffect(() => {
-    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
-  }, [mfltr, smfltr, nfltr, snsfltr, uncert]);
+    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert, srs);
+  }, [mfltr, smfltr, nfltr, snsfltr, uncert, srs]);
 
-  setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
+  setFilters(mfltr, smfltr, nfltr, snsfltr, uncert, null);
 
   const toDisplay = x => {
     return x.name.indexOf('uncertainty');
@@ -438,16 +443,30 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       }),
     ];
 
-  const seriesFilter = pseriesObj.reduce(
-    (prev, item) => ({
-      ...prev,
-      [item.name]: { label: getName(item), show: true },
-    }),
-    {},
-  );
+  let seriesFilter = pseriesObj.reduce((prev, item) => {
+    const onV = getName(item);
+    const whV = item.name;
+
+    if (prev[onV]) {
+      prev[onV] = {
+        name: onV,
+        series: [...prev[onV].series, whV],
+        show: true,
+      };
+    } else {
+      prev[onV] = {
+        name: onV,
+        series: [whV],
+        show: true,
+      };
+    }
+
+    return prev;
+  }, {});
+
   const legendselected = event => {
     //@ts-ignore
-    seriesFilter[item.name] = !seriesFilter[item.name];
+    seriesFilter[item.name].show = !seriesFilter[item.name].show;
     console.log(seriesFilter);
   };
 
@@ -489,10 +508,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       i18n.language
       ]
       }
-      ${timeseries[0].translations.parameter_values.aggregation_period[
+  ${timeseries[0].translations.parameter_values.aggregation_period[
       i18n.language
       ]
-      } - ${timeseries[0].translations.parameter_values.year_period[i18n.language]
       }
   `;
 
@@ -640,9 +658,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     const allIds = Object.entries(
       chartRef.current.getEchartsInstance().getOption().legend[0].selected,
     )
-      .filter(x => !x[1])
+      .filter(x => x[1])
       .map(x => x[0]);
     console.log(allIds);
+    setSeriesFilter(
+      Object.values(seriesFilter)
+        .filter((x: any) => allIds.indexOf(x.name) >= 0)
+        .map((x: any) => x.series),
+    );
     setIds(timeseries.filter(x => !allIds.includes(x.name)).map(x => x.name));
   };
 

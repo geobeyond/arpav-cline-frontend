@@ -151,7 +151,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   'climatological_model',
                   'climatological_model',
                 ),
-                disableable: true,
+                disableable: false,
               },
             ],
           },
@@ -159,7 +159,7 @@ export function MapMenuBar(props: MapMenuBar) {
             rows: [
               {
                 key: 'scenario',
-                disableable: true,
+                disableable: false,
                 groupName: t('app.map.menu.scenarios'),
                 ...mapParameters('scenario', 'scenario'),
               },

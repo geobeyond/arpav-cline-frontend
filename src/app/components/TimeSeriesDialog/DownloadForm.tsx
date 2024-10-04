@@ -57,6 +57,7 @@ export const DownloadForm = props => {
       start: timeRange?.current?.start,
       end: timeRange?.current?.end,
       fitms: filter.current,
+      sfs: filter.series,
     };
     setLoader(true);
     let fdata: any[] = [];

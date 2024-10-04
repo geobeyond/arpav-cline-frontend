@@ -89,7 +89,7 @@ export interface MultiRadioSelectProps {
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
-  const handleChange = props.onChange ? props.onChange : () => {};
+  const handleChange = props.onChange ? props.onChange : () => { };
   const valueSet = props.valueSet;
   const current_map = props.current_map;
   const sx = props.sx;
@@ -123,22 +123,19 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     )
     .flat()
     .filter(x => x);
-  const renderSelectedValue = (mode: string = 'label') =>
-    valueSet
-      .map((rs, index) =>
-        rs.rows.map(({ items }) =>
-          items.find(
-            x =>
-              x.name ===
-              current_map[rs.rows[Math.min(index, rs.rows.length - 1)].key],
-          ),
-        ),
-      )
-      .flat()
-      .filter(x => x)
-      //@ts-ignore
-      .map(x => translate(x, mode))
-      .join(' - ');
+  const renderSelectedValue = (mode: string = 'label') => {
+    let ret: any = valueSet.map((rs, index) =>
+      rs.rows.map((row, iindex) =>
+        row.items.find(x => x.name === current_map[row.key]),
+      ),
+    );
+    ret = ret.flat();
+    ret = ret.filter(x => x);
+    //@ts-ignore
+    ret = ret.map(x => translate(x, mode)).join(' - ');
+
+    return ret;
+  };
 
   const translate = (item: IItem, mode: string = 'label') => {
     if (mode === 'label') {
@@ -227,11 +224,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           }
                         >
                           <FormControlLabel
-                            className={`MultiRadioSelectMenuItem ${
-                              item.selected
+                            className={`MultiRadioSelectMenuItem ${item.selected
                                 ? 'MultiRadioSelectMenuItem-selected'
                                 : ''
-                            }`}
+                              }`}
                             //See Sorting fields note.
                             value={item.name}
                             control={<Radio />}
