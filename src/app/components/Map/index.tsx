@@ -114,8 +114,8 @@ const Map = (props: MapProps) => {
   const { i18n } = useTranslation();
 
   const timeDimensionOptions = {
-    // requestTimeFromCapabilities: true,
-    // updateTimeDimension: true,
+    requestTimeFromCapabilities: true,
+    updateTimeDimension: true,
   };
 
   const [click, setClick] = React.useState();

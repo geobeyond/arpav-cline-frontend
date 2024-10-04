@@ -721,14 +721,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     if (v === 0) {
       setSnsfltr('NO_SMOOTHING');
     } else if (v === 1) {
-      setSnsfltr('MOVING_AVERAGE');
+      setSnsfltr('MOVING_AVERAGE_5_YEARS');
     }
   };
   const setModelSmoothing = v => {
     if (v === 0) {
       setNfltr('NO_SMOOTHING');
     } else if (v === 1) {
-      setNfltr('MOVING_AVERAGE');
+      setNfltr('MOVING_AVERAGE_11_YEARS');
     } else if (v === 2) {
       setNfltr('LOESS_SMOOTHING');
     }
