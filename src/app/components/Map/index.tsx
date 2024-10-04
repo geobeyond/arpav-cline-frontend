@@ -129,10 +129,6 @@ const Map = (props: MapProps) => {
   const [showUncertainty, setShowUncertainty] = React.useState(true);
   const [showUncertaintyControl, setShowUncertaintyControl] =
     React.useState<boolean>();
-  const doSetShowUncertainty = state => {
-    setShowUncertainty(state);
-    return !state;
-  };
   const [sensorPositions, setSensorPositions] = React.useState<any>({
     type: 'FeatureCollection',
     features: [],
@@ -188,7 +184,7 @@ const Map = (props: MapProps) => {
           >
             <UncertaintySwitch
               enabled={true}
-              setShowUncertainty={doSetShowUncertainty}
+              setShowUncertainty={setShowUncertainty}
               currentUncertainty={showUncertainty}
             ></UncertaintySwitch>
           </Box>
@@ -199,7 +195,10 @@ const Map = (props: MapProps) => {
           className="leaflet-bar"
           style={{ backgroundColor: 'white', padding: '2px' }}
         >
-          <OpacityComponent doSetOpacity={doSetOpacity} opacity={opacity}></OpacityComponent>
+          <OpacityComponent
+            doSetOpacity={doSetOpacity}
+            opacity={opacity}
+          ></OpacityComponent>
         </Box>
       </CustomControlMap>
       <CustomControlMap position={'topright'}>
