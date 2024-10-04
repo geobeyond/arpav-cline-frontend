@@ -144,7 +144,7 @@ const Graph = (props: any) => {
   const { t, i18n } = useTranslation();
   console.debug(i18n);
 
-  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE');
+  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE_11_YEARS');
   const [mfltr, setMfltr] = useState<string>('barometro_climatico');
   const [smfltr, setSMfltr] = useState<string>('barometro_climatico');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
@@ -247,6 +247,7 @@ const Graph = (props: any) => {
         let lbitem = series.filter(x => {
           return (
             getName(x) === getName(item) &&
+            x.info.processing_method === nfltr &&
             x.info.aggregation_period === item.info.aggregation_period &&
             x.info.climatological_model === item.info.climatological_model &&
             x.info.climatological_variable ===

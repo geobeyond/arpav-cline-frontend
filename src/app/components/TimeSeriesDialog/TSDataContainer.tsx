@@ -50,6 +50,7 @@ export interface TSDataContainerProps {
   setFilters: Function;
   currentLayer: any;
   currentMap: any;
+  setSeriesFilter: Function;
 }
 
 //TODO
@@ -73,6 +74,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       sensorSmoothing,
       uncertainty,
     ) => { },
+    setSeriesFilter = () => { },
   } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
@@ -222,13 +224,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [smfltr, setSMfltr] = useState<string>('model_ensemble');
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
-  const [srs, setSeriesFilter] = useState<any>();
 
   useEffect(() => {
-    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert, srs);
-  }, [mfltr, smfltr, nfltr, snsfltr, uncert, srs]);
+    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
+  }, [mfltr, smfltr, nfltr, snsfltr, uncert]);
 
-  setFilters(mfltr, smfltr, nfltr, snsfltr, uncert, null);
+  setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
 
   const toDisplay = x => {
     return x.name.indexOf('uncertainty');

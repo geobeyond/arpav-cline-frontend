@@ -59,6 +59,8 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     data.current = d;
   };
 
+  const setSeriesFilter = filter => { };
+
   const setFilters = (
     mainModel,
     secondaryModel,
@@ -118,6 +120,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               setFilters={setFilters}
               currentLayer={currentLayer}
               currentMap={currentMap}
+              setSeriesFilter={setSeriesFilter}
             />
           )}
         </Grid>
