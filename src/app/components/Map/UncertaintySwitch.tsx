@@ -26,21 +26,17 @@ export const UncertaintySwitch = props => {
     const actions = useMapSlice();
     const { opacity } = useSelector(state => (state as any).map as MapState);
 
-    const [showUncertainty, toggleShowUncertainty] = useState(true);
-
     return (
         <Box>
             <IconButton
-                disabled={!enabled}
                 onClick={() => {
-                    const un = setShowUncertainty(!currentUncertainty);
-                    toggleShowUncertainty(un);
+                    setShowUncertainty(!currentUncertainty);
                 }}
                 aria-label={'cambia visualizzazione'}
             >
                 <Tooltip
                     title={
-                        showUncertainty
+                        currentUncertainty
                             ? enabled
                                 ? 'Attuale: Con incertezza. Passa a: Senza incertezza'
                                 : 'Con incertezza'

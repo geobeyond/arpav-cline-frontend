@@ -137,6 +137,7 @@ const Map = (props: MapProps) => {
 
   useEffect(() => {
     console.log(layerConf);
+    setShowUncertainty(true);
     if (layerConf.wms_secondary_layer_name == null) {
       setShowUncertaintyControl(false);
     } else {
