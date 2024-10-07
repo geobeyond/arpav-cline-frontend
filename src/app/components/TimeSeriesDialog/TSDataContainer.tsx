@@ -471,7 +471,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     console.log(seriesFilter);
   };
 
-  const seriesObj = pseriesObj.map(item => ({
+  let seriesObj = pseriesObj.map(item => ({
     id: item.name,
     name: getName(item),
     type: getGraphType(item),
@@ -501,15 +501,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     },
   }));
 
+  seriesObj = seriesObj.sort((a, b) => {
+    return a.id.indexOf('lower') >= 0 ? -1 : 1;
+  });
+
   const titleText =
     timeseries.length === 0
       ? ''
       : `
   ${timeseries[0].translations.parameter_values.climatological_variable[
-      i18n.language
-      ]
-      }
-  ${timeseries[0].translations.parameter_values.aggregation_period[
       i18n.language
       ]
       }
@@ -519,9 +519,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     timeseries.length === 0
       ? ''
       : `
-    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${timeseries[0].translations.parameter_values.aggregation_period[
-      i18n.language
-      ]
+    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${timeseries[0].translations.parameter_values.year_period[i18n.language]
       }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
         localStartYear,
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''

@@ -87,7 +87,7 @@ interface MapProps {
   openCharts?: (iCityItem) => void;
   setPoint?: Function;
   layerConf?: any;
-  selectedPoint?: iCityItem | null;
+  selectedPoint?: iCityItem;
   defaultCenter?: [number, number];
   defaultZoom?: number;
   currentMap?: any;
@@ -100,7 +100,7 @@ const Map = (props: MapProps) => {
     setPoint = () => { },
     openCharts = () => { },
     onReady = () => { },
-    selectedPoint = null,
+    selectedPoint = { name: '', latlng: { lat: 0, lng: 0 } },
     defaultCenter = [45.9, 12.45],
     defaultZoom = 8,
     layerConf = {},

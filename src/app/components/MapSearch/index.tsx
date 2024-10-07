@@ -36,7 +36,7 @@ import { RequestApi } from '../../Services';
 
 export interface MapSearchProps {
   className?: string;
-  value: iCityItem | null;
+  value: iCityItem;
   setPoint?: Function;
   openCharts?: Function;
   defaultCenter: [number, number];
@@ -47,7 +47,7 @@ export interface MapSearchProps {
 
 export interface MapPopupProps {
   className?: string;
-  value: iCityItem | null;
+  value: iCityItem;
   setPoint?: Function;
   openCharts: Function;
   currentTimeserie: any;
@@ -76,7 +76,7 @@ export const ValueRenderer = ({ time, value, unit }) => {
 
 export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const {
-    value = { latlng: { lat: 0, lng: 0 } },
+    value,
     setPoint,
     openCharts,
     className,
@@ -205,6 +205,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           isOptionEqualToValue={(option, value) => option.label === value.label}
         />
       </Box>
+
       <Box sx={MapSearchSecondRowStyle}>
         <TextField
           sx={LatLngStyle}
@@ -212,7 +213,9 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           color={'secondary'}
           variant="outlined"
           defaultValue={
-            roundTo4(value.latlng.lat) + ', ' + roundTo4(value.latlng.lng)
+            value
+              ? roundTo4(value.latlng.lat) + ', ' + roundTo4(value.latlng.lng)
+              : ''
           }
           onChange={latlonChange}
           InputProps={{

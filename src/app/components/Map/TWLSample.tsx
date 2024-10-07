@@ -35,9 +35,9 @@ export const TWLSample = (props: any) => {
     );
 
   // @ts-ignore
-  //useMapEvent('timeload', () => setupFrontLayer(layer.current, context.map));
+  useMapEvent('timeload', time => console.log(time));
   // @ts-ignore
-  //useMapEvent('timeloading', () => setupFrontLayer(layer.current, context.map));
+  useMapEvent('timeloading', time => console.log(time));
 
   useEffect(() => {
     if (lyr && show) {
@@ -49,7 +49,6 @@ export const TWLSample = (props: any) => {
       // @ts-ignore
       const selected_map_path = lyr;
       if (selected_map_path) {
-        let tdWmsLayer = null;
         const params = {
           service: 'WMS',
           layers: show,
@@ -80,7 +79,7 @@ export const TWLSample = (props: any) => {
 
         if (selected_map_path && isTimeseries) {
           // @ts-ignore
-          tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
+          const tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
             requestTimeFromCapabilities: true,
             cache: 0,
             cacheBackward: 0,
