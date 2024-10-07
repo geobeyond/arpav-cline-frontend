@@ -405,14 +405,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     "year_period": "year"
 }*/
   const getName = (item, mode = 'timeseries') => {
-    if ('derived_series' in item.info) mode = 'sensor';
+    if ('station' in item.info) mode = 'sensor';
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
     if (mode === 'timeseries')
       return `${tdata.climatological_model} ${tdata.scenario}`;
-    else return `Stazione: ${place}`;
+    else return `${tdata.station}`;
   };
 
   let pseriesObj = [
