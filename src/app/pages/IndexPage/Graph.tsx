@@ -423,8 +423,9 @@ const Graph = (props: any) => {
             }`,
         },
       },
-      valueFormatter: v =>
-        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} °C`,
+      valueFormatter: (v, i) => {
+        return `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} °C`;
+      },
     },
     legend: {
       data: getLegend(),

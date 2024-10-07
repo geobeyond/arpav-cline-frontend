@@ -276,7 +276,7 @@ export class RequestApi extends Http {
 
   public findMunicipality = (lat, lng) => {
     return this.instance.get<any>(
-      `https://arpav.geobeyond.dev/api/v2/municipalities?coords=POINT(${lng} ${lat})`,
+      `https://arpav.geobeyond.dev/api/v2/municipalities/municipalities?coords=POINT(${lng} ${lat})`,
     );
   };
 
