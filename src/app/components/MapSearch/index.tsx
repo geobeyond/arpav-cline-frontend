@@ -76,7 +76,7 @@ export const ValueRenderer = ({ time, value, unit }) => {
 
 export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const {
-    value,
+    value = { latlng: { lat: 0, lng: 0 } },
     setPoint,
     openCharts,
     className,
@@ -206,42 +206,40 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
         />
       </Box>
       <Box sx={MapSearchSecondRowStyle}>
-        {value?.latlng && (
-          <TextField
-            sx={LatLngStyle}
-            size={'small'}
-            color={'secondary'}
-            variant="outlined"
-            defaultValue={
-              roundTo4(value.latlng.lat) + ', ' + roundTo4(value.latlng.lng)
-            }
-            onChange={latlonChange}
-            InputProps={{
-              endAdornment: (
-                <>
-                  <IconButton edge="end" onClick={searchPoint}>
-                    <SearchIcon fontSize={'small'} color={'secondary'} />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    onClick={() =>
-                      context.map.flyTo(
-                        [value.latlng.lat, value.latlng.lng],
-                        context.map.getZoom(),
-                      )
-                    }
-                  >
-                    <ZoomInMapIcon fontSize={'small'} color={'secondary'} />
-                  </IconButton>
-                  <IconButton edge="end" onClick={resetMap}>
-                    <RefreshIcon fontSize={'small'} color={'secondary'} />
-                  </IconButton>
-                </>
-              ),
-            }}
-            aria-label={'Centra la mappa'}
-          ></TextField>
-        )}
+        <TextField
+          sx={LatLngStyle}
+          size={'small'}
+          color={'secondary'}
+          variant="outlined"
+          defaultValue={
+            roundTo4(value.latlng.lat) + ', ' + roundTo4(value.latlng.lng)
+          }
+          onChange={latlonChange}
+          InputProps={{
+            endAdornment: (
+              <>
+                <IconButton edge="end" onClick={searchPoint}>
+                  <SearchIcon fontSize={'small'} color={'secondary'} />
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  onClick={() =>
+                    context.map.flyTo(
+                      [value.latlng.lat, value.latlng.lng],
+                      context.map.getZoom(),
+                    )
+                  }
+                >
+                  <ZoomInMapIcon fontSize={'small'} color={'secondary'} />
+                </IconButton>
+                <IconButton edge="end" onClick={resetMap}>
+                  <RefreshIcon fontSize={'small'} color={'secondary'} />
+                </IconButton>
+              </>
+            ),
+          }}
+          aria-label={'Centra la mappa'}
+        ></TextField>
       </Box>
     </Box>
   );
