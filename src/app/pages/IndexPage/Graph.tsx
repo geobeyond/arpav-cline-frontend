@@ -357,7 +357,7 @@ const Graph = (props: any) => {
       }),
     ];
 
-  const seriesObj = pseriesObj.map(item => ({
+  let seriesObj = pseriesObj.map(item => ({
     id: item.name,
     name: getName(item),
     type: getGraphType(item),
@@ -386,6 +386,10 @@ const Graph = (props: any) => {
       formatter: '{a}-{b}:{c}',
     },
   }));
+
+  seriesObj = seriesObj.sort((a, b) => {
+    return a.id.indexOf('lower') >= 0 ? -1 : 1;
+  });
 
   const cats = timeseries?.map(item => {
     return item.values.map(x => x.datetime.split('-')[0]);
