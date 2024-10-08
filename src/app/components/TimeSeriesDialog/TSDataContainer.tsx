@@ -235,22 +235,36 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return x.name.indexOf('uncertainty');
   };
 
+  const range = (start, end, step = 1) =>
+    [...Array(end - start)].filter(e => e % step == 0).map(e => e + start);
+
   const dataValues = timeseries.reduce((prev, curr) => {
-    if (curr.name in prev) {
-      return {
-        ...prev,
-        ...{ [curr.name + '__smo']: curr.values },
-      };
-    } else {
-      return {
-        ...prev,
-        ...{ [curr.name]: curr.values },
-      };
-    }
+    return {
+      ...prev,
+      ...{ [curr.name + '__' + curr.info.processing_method]: curr.values },
+    };
   }, {});
   for (let k of Object.keys(dataValues)) {
     for (let kk of dataValues[k]) {
       kk.datetime = kk.datetime.split('-')[0];
+    }
+    for (let y of range(baseValue, 2099)) {
+      let vv: any[] = [];
+      let found = false;
+      for (let kk of dataValues[k]) {
+        if (y.toString() === kk.datetime) {
+          found = true;
+        }
+        if (found) {
+          vv.push(kk);
+        } else {
+          vv.push({
+            value: null,
+            datetime: y.toString(),
+          });
+        }
+      }
+      dataValues[k] = vv;
     }
   }
   console.log(dataValues);
@@ -502,7 +516,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   let seriesObj = pseriesObj.map(item => ({
-    id: item.name,
+    id: item.name + '__' + item.info.processing_method,
     name: getName(item),
     type: getGraphType(item),
     smooth: true,
@@ -596,15 +610,23 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         console.log(p);
         if (!p.length) p = [p]; // default trigger:'item'
         let tt = p.map(x => {
-          return (
-            '<br>' +
-            x.marker +
-            x.seriesName +
-            getBoundsLabel(x.seriesId) +
-            ': ' +
-            dataValues[x.seriesId][x.dataIndex]?.value.toFixed(2) +
-            currentLayer?.unit_english
-          );
+          if (dataValues[x.seriesId].length > x.dataIndex) {
+            if (dataValues[x.seriesId][x.dataIndex].value) {
+              return (
+                '<br>' +
+                x.marker +
+                x.seriesName +
+                getBoundsLabel(x.seriesId) +
+                ': ' +
+                dataValues[x.seriesId][x.dataIndex]?.value
+                  ?.toFixed(2)
+                  .replace('.', i18n.language === 'en' ? '.' : ',') +
+                currentLayer?.unit_english
+              );
+            }
+          } else {
+            return '';
+          }
         });
         return tt + '';
       },
