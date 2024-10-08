@@ -603,7 +603,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         },
       },
       valueFormatter: v =>
-        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${currentLayer?.unit_english //TODO FIX unit
+        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${i18n.language === 'en'
+          ? currentLayer?.unit_english
+          : currentLayer?.unit_italian
         }`,
 
       formatter: p => {
@@ -621,7 +623,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                 dataValues[x.seriesId][x.dataIndex]?.value
                   ?.toFixed(2)
                   .replace('.', i18n.language === 'en' ? '.' : ',') +
-                currentLayer?.unit_english
+                ' ' +
+                (i18n.language === 'en'
+                  ? currentLayer?.unit_english
+                  : currentLayer?.unit_italian)
               );
             }
           } else {

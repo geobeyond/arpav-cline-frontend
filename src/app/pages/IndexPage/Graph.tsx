@@ -166,6 +166,40 @@ const Graph = (props: any) => {
     return x.name.indexOf('uncertainty');
   };
 
+  const range = (start, end, step = 1) =>
+    [...Array(end - start)].filter(e => e % step == 0).map(e => e + start);
+
+  const dataValues = timeseries.reduce((prev, curr) => {
+    return {
+      ...prev,
+      ...{ [curr.name + '__' + curr.info.processing_method]: curr.values },
+    };
+  }, {});
+  for (let k of Object.keys(dataValues)) {
+    for (let kk of dataValues[k]) {
+      kk.datetime = kk.datetime.split('-')[0];
+    }
+    for (let y of range(baseValue, 2099)) {
+      let vv: any[] = [];
+      let found = false;
+      for (let kk of dataValues[k]) {
+        if (y.toString() === kk.datetime) {
+          found = true;
+        }
+        if (found) {
+          vv.push(kk);
+        } else {
+          vv.push({
+            value: null,
+            datetime: y.toString(),
+          });
+        }
+      }
+      dataValues[k] = vv;
+    }
+  }
+  console.log(dataValues);
+
   const getLegend = () => {
     //TODO names lookup
     const series = timeseries
@@ -406,6 +440,14 @@ const Graph = (props: any) => {
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
 
+  const getBoundsLabel = name => {
+    if (name.indexOf('upper') >= 0)
+      return i18n.language === 'en' ? ' Upper bound' : ' Limite superiore';
+    if (name.indexOf('lower') >= 0)
+      return i18n.language === 'en' ? ' Lower bound' : ' Limite inferiore';
+    return '';
+  };
+
   const chartOption = {
     title: {
       //text: 'Barometro Climatico',
@@ -429,6 +471,31 @@ const Graph = (props: any) => {
       },
       valueFormatter: (v, i) => {
         return `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} °C`;
+      },
+
+      formatter: p => {
+        console.log(p);
+        if (!p.length) p = [p]; // default trigger:'item'
+        let tt = p.map(x => {
+          if (dataValues[x.seriesId].length > x.dataIndex) {
+            if (dataValues[x.seriesId][x.dataIndex].value) {
+              return (
+                '<br>' +
+                x.marker +
+                x.seriesName +
+                getBoundsLabel(x.seriesId) +
+                ': ' +
+                dataValues[x.seriesId][x.dataIndex]?.value
+                  ?.toFixed(2)
+                  .replace('.', i18n.language === 'en' ? '.' : ',') +
+                ' °C'
+              );
+            }
+          } else {
+            return '';
+          }
+        });
+        return tt + '';
       },
     },
     legend: {
