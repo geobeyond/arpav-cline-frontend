@@ -348,7 +348,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         <span style={{ flex: '1 1 1px' }}></span>
         <Tooltip
           title={
-            timeserie.length === 1
+            timeserie?.length === 1
               ? 'Non è disponibile la serie temporale per i 30 anni'
               : 'Visualizza la serie temporale per questo punto.'
           }
@@ -357,7 +357,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
             <IconButton
               onClick={() => openCharts(value)}
               aria-label={'Mostra serie temporale'}
-              disabled={timeserie.length === 1}
+              disabled={timeserie?.length === 1}
             >
               <LineAxisIcon />
             </IconButton>
