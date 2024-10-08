@@ -486,7 +486,7 @@ const Graph = (props: any) => {
                 getBoundsLabel(x.seriesId) +
                 ': ' +
                 dataValues[x.seriesId][x.dataIndex]?.value
-                  ?.toFixed(2)
+                  ?.toFixed(1)
                   .replace('.', i18n.language === 'en' ? '.' : ',') +
                 ' °C'
               );

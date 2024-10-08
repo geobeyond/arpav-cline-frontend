@@ -621,7 +621,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                 getBoundsLabel(x.seriesId) +
                 ': ' +
                 dataValues[x.seriesId][x.dataIndex]?.value
-                  ?.toFixed(2)
+                  ?.toFixed(1)
                   .replace('.', i18n.language === 'en' ? '.' : ',') +
                 ' ' +
                 (i18n.language === 'en'
