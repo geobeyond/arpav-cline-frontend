@@ -235,8 +235,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return x.name.indexOf('uncertainty');
   };
 
-  const range = (start, end, step = 1) =>
-    [...Array(end - start)].filter(e => e % step == 0).map(e => e + start);
+  const range = (start: number, end: number): number[] => {
+    let ret: number[] = [];
+    for (let i: number = start; i < end; i++) {
+      ret.push(i);
+    }
+    return ret;
+  };
 
   const dataValues = timeseries.reduce((prev, curr) => {
     return {
@@ -248,24 +253,27 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     for (let kk of dataValues[k]) {
       kk.datetime = kk.datetime.split('-')[0];
     }
+  }
+  for (let k of Object.keys(dataValues)) {
+    let vv: any[] = [];
     for (let y of range(baseValue, 2099)) {
-      let vv: any[] = [];
-      let found = false;
+      let found: boolean | any = false;
       for (let kk of dataValues[k]) {
         if (y.toString() === kk.datetime) {
-          found = true;
-        }
-        if (found) {
-          vv.push(kk);
-        } else {
-          vv.push({
-            value: null,
-            datetime: y.toString(),
-          });
+          found = kk;
+          break;
         }
       }
-      dataValues[k] = vv;
+      if (found) {
+        vv.push(found);
+      } else {
+        vv.push({
+          value: null,
+          datetime: y.toString(),
+        });
+      }
     }
+    dataValues[k] = vv;
   }
   console.log(dataValues);
 
@@ -373,30 +381,34 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
         if (lbitem.length > 0) {
-          for (; delta > 0; delta--) {
-            ret.push(null);
-          }
-          for (let i in item.values) {
-            ret.push(
-              item.values[i].value -
-              lbitem[0].values.filter(x => x.value != null)[i].value,
-            );
+          for (let i in dataValues[
+            item.name + '__' + item.info.processing_method
+          ]) {
+            if (
+              dataValues[item.name + '__' + item.info.processing_method][i]
+                .value ||
+              dataValues[
+                lbitem[0].name + '__' + lbitem[0].info.processing_method
+              ][i].value
+            ) {
+              ret.push(
+                dataValues[item.name + '__' + item.info.processing_method][i]
+                  .value -
+                dataValues[
+                  lbitem[0].name + '__' + lbitem[0].info.processing_method
+                ][i].value,
+              );
+            } else {
+              ret.push(null);
+            }
           }
         }
         return ret;
       }
     }
-    item.values = item.values.filter(x => x.value != null);
-    let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
-    console.log(item, delta);
-    if (delta > 0)
-      for (; delta > 0; delta--)
-        item.values.unshift({
-          value: null,
-          datetime: baseValue + delta + '-01-01T04:00:00',
-        });
-    console.log(item);
-    return item.values.map(x => x.value);
+    return dataValues[item.name + '__' + item.info.processing_method].map(
+      x => x.value,
+    );
   };
 
   const getGraphType = dataset => {
@@ -603,7 +615,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         label: {
           show: true,
           formatter: v => {
-            console.log(v);
             return `${t('app.map.timeSeriesDialog.xUnit')} ${v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
               }`;
           },
@@ -616,7 +627,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         }`,
 
       formatter: p => {
-        console.log(p);
         if (!p.length) p = [p]; // default trigger:'item'
         let tt = p.map(x => {
           if (dataValues[x.seriesId].length > x.dataIndex) {
