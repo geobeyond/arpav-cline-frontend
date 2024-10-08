@@ -392,7 +392,7 @@ const Graph = (props: any) => {
     ];
 
   let seriesObj = pseriesObj.map(item => ({
-    id: item.name,
+    id: item.name + '__' + item.info.processing_method,
     name: getName(item),
     type: getGraphType(item),
     smooth: true,
@@ -477,7 +477,7 @@ const Graph = (props: any) => {
         console.log(p);
         if (!p.length) p = [p]; // default trigger:'item'
         let tt = p.map(x => {
-          if (dataValues[x.seriesId].length > x.dataIndex) {
+          if (dataValues[x.seriesId]?.length > x.dataIndex) {
             if (dataValues[x.seriesId][x.dataIndex].value) {
               return (
                 '<br>' +

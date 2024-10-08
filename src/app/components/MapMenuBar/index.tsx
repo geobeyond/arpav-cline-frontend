@@ -78,13 +78,18 @@ export function MapMenuBar(props: MapMenuBar) {
   const current_map = props.current_map;
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
-  const combinations = (props.combinations || []).reduce(
-    (prev, cur) => ({
-      ...prev,
-      [cur.variable + '::' + cur.aggregation_period + '::' + cur.measure]: cur,
-    }),
-    {},
-  );
+  const combinations = (props.combinations || []).reduce((prev, cur) => {
+    const kk = cur.variable + '::' + cur.aggregation_period;
+    if (kk in prev) {
+      prev[kk] = { [cur.measure]: cur };
+      return prev;
+    } else {
+      return {
+        ...prev,
+        [cur.variable + '::' + cur.aggregation_period]: { [cur.measure]: cur },
+      };
+    }
+  }, {});
 
   const [activeCombinations, setActiveCombinations] = useState<any>({});
 
@@ -251,6 +256,7 @@ export function MapMenuBar(props: MapMenuBar) {
       );
       ckey = ckey.replace('{measure}', current_map.measure);
       if (Object.keys(combinations).indexOf(ckey) >= 0) {
+        console.log('activating Combo', ckey, combinations[ckey]);
         setActiveCombinations(combinations[ckey]);
       }
     }
@@ -335,7 +341,6 @@ export function MapMenuBar(props: MapMenuBar) {
               menuSx={SelectMenuStyle}
               mobileIcon={<ThermostatIcon />}
               label={t('app.map.menuBar.indicator')}
-              disableable={false}
             />
           </Grid>
           <Grid xs={1} def={4} sx={SecondRowStyle}>
@@ -346,11 +351,6 @@ export function MapMenuBar(props: MapMenuBar) {
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
               mobileIcon={<ShowChartIcon />}
-              activeCombinations={[
-                ...(activeCombinations?.other_parameters
-                  ?.climatological_model || []),
-                ...(activeCombinations?.other_parameters?.scenario || []),
-              ]}
               className={
                 hasMissingValues(menus.modelAndScenarioMenuSet)
                   ? 'NeedsSelection'
@@ -388,6 +388,9 @@ export function MapMenuBar(props: MapMenuBar) {
               mobileIcon={<SnowSunIcon />}
               className={
                 hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
+              }
+              activeCombinations={
+                activeCombinations?.other_parameters?.year_period
               }
               label={t('app.map.menuBar.season')}
             // label={'Season'}
