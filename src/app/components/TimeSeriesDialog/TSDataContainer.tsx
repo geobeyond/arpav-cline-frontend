@@ -400,13 +400,19 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getGraphType = dataset => {
+    return 'line';
+  };
+  const getStepType = dataset => {
     return dataset.info.series_elaboration &&
       dataset.info.processing_method === 'NO_SMOOTHING'
-      ? 'bar'
-      : 'line';
+      ? 'middle'
+      : false;
   };
   const getZLevel = dataset => {
-    return dataset.info.series_elaboration ? 1000 : 10;
+    return dataset.info.series_elaboration &&
+      dataset.info.processing_method === 'NO_SMOOTHING'
+      ? 100
+      : 10;
   };
 
   const getStack = dataset => {
@@ -537,9 +543,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     selected: getSelected(item),
     data: getChartData(item, timeseries),
     stack: getStack(item),
+    step: getStepType(item),
     stackStrategy: 'all',
     areaStyle: getAreaStyle(item),
-    zLevel: getZLevel(item),
+    z: getZLevel(item),
     label: {
       formatter: '{a}-{b}:{c}',
     },

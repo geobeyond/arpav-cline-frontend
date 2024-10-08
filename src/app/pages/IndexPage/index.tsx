@@ -73,7 +73,7 @@ const IndexPage = () => {
             <Hero overlay="dark" style={HeroStyle}>
               <HeroBackground
                 alt="imagealt"
-                src="/assets/img/Marmolada_2010_10_10.jpg"
+                src={require('../../../assets/img/Marmolada_2010_10_10.jpg')}
                 title="image title"
               />
               <HeroBody>
@@ -95,7 +95,7 @@ const IndexPage = () => {
             <Hero overlay="dark" style={HeroStyle}>
               <HeroBackground
                 alt="imagealt"
-                src="https://plus.unsplash.com/premium_photo-1679517155620-8048e22078b1?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src={require('../../../assets/img/2022-08-09 Marmolada.jpg')}
                 title="image title"
               />
               <HeroBody>
