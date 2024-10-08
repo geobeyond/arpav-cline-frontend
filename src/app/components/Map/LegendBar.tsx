@@ -47,7 +47,7 @@ const lightOrDark = color => {
 export const LegendBar = (props: LegendBarProps) => {
   const { className, isMobile, unit } = props;
   const data = props.data || { color_entries: [] };
-  const colors = data.color_entries;
+  const colors = data.color_entries.sort((a, b) => b.value - a.value);
 
   const hex2rgb = c => `rgb(${c.match(/\w\w/g).map(x => +`0x${x}`)})`;
 
@@ -55,20 +55,21 @@ export const LegendBar = (props: LegendBarProps) => {
     <Box className={className}>
       <div style={{ backgroundColor: 'white' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          { colors.length > 0 &&
-          <div
-            style={{
-              backgroundColor: '#' + colors[0].color.substring(3),
-              width: isMobile ? '60px' : '120px',
-              height: '30px',
-            }}
-          ></div>}
+          {colors.length > 0 && (
+            <div
+              style={{
+                backgroundColor: '#' + colors[0].color.substring(3),
+                width: isMobile ? '60px' : '120px',
+                height: '30px',
+              }}
+            ></div>
+          )}
           {colors.map((itm, index, elements) => {
             const bg = '#' + itm.color.substring(3);
             const hbg = hex2rgb(itm.color.substring(3));
             let nbg = bg;
             let nhbg = hbg;
-            if(index < colors.length-1){
+            if (index < colors.length - 1) {
               nbg = '#' + elements[index + 1].color.substring(3);
               nhbg = hex2rgb(elements[index + 1].color.substring(3));
             }
