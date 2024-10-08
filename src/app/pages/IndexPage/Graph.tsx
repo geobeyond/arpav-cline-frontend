@@ -99,7 +99,7 @@ const Graph = (props: any) => {
   const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
 
   const gmodels = [
-    { label: '--', value: 'ens5' },
+    { label: '--', value: 'model_ensemble' },
     { label: 'EC-EARTH_CCLM4-8-17', value: 'ec_earth_cclm_4_8_17' },
     { label: 'EC-EARTH_RACM022E', value: 'ec_earth_racmo22e' },
     { label: 'EC-EARTH_RCA4', value: 'ec_earth_rca4' },

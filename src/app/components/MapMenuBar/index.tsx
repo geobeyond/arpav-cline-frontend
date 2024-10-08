@@ -186,6 +186,7 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'time_window',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters('time_window', 'time_window'),
+            disableable: true,
           },
         ],
       },

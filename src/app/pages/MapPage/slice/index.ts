@@ -51,7 +51,7 @@ export const initialState: MapState = {
   selected_map: {
     // id: 2630,
     variable_id: 'TAS',
-    forecast_model_id: 'ens5',
+    forecast_model_id: 'model_ensemble',
     scenario_id: 'Rcp85',
     data_series_id: 'no',
     year_period_id: 'djf',
@@ -87,7 +87,7 @@ export const initialState: MapState = {
       ],
     },
     variable: 'TAS',
-    forecast_model: 'ens5',
+    forecast_model: 'model_ensemble',
     scenario: 'Rcp85',
     data_series: 'no',
     year_period: 'djf',

@@ -134,7 +134,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
 
   const gmodels = [
-    { label: '--', value: 'ens5' },
+    { label: '--', value: 'model_ensemble' },
     { label: 'EC-EARTH_CCLM4-8-17', value: 'ec_earth_cclm_4_8_17' },
     { label: 'EC-EARTH_RACM022E', value: 'ec_earth_racmo22e' },
     { label: 'EC-EARTH_RCA4', value: 'ec_earth_rca4' },
@@ -235,6 +235,26 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return x.name.indexOf('uncertainty');
   };
 
+  const dataValues = timeseries.reduce((prev, curr) => {
+    if (curr.name in prev) {
+      return {
+        ...prev,
+        ...{ [curr.name + '__smo']: curr.values },
+      };
+    } else {
+      return {
+        ...prev,
+        ...{ [curr.name]: curr.values },
+      };
+    }
+  }, {});
+  for (let k of Object.keys(dataValues)) {
+    for (let kk of dataValues[k]) {
+      kk.datetime = kk.datetime.split('-')[0];
+    }
+  }
+  console.log(dataValues);
+
   const getLegend = () => {
     //TODO names lookup
     const series = timeseries
@@ -246,11 +266,17 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.name.length < 20 ||
           x.info.climatological_model === smfltr,
       )
-      .map(item => getName(item));
+      .map(item => ({
+        name: getName(item),
+        itemStyle: { color: getColor(item) },
+      }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
-      .map(x => getName(x, 'station'));
+      .map(x => ({
+        name: getName(x, 'station'),
+        itemStyle: { color: 'black' },
+      }));
     return [...series, ...station];
   };
 
@@ -268,7 +294,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
+      ?.filter(x => Object.keys(x.info).indexOf('station') > 0)
       .filter(x => x.name.indexOf(snsfltr) >= 0)
       .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
@@ -465,6 +491,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return prev;
   }, {});
 
+  pseriesObj = pseriesObj.sort((a, b) => {
+    return a.name.indexOf('lower') >= 0 ? -1 : 1;
+  });
+
   const legendselected = event => {
     //@ts-ignore
     seriesFilter[item.name].show = !seriesFilter[item.name].show;
@@ -501,10 +531,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     },
   }));
 
-  seriesObj = seriesObj.sort((a, b) => {
-    return a.id.indexOf('lower') >= 0 ? -1 : 1;
-  });
-
   const titleText =
     timeseries.length === 0
       ? ''
@@ -531,6 +557,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
 
+  const getBoundsLabel = name => {
+    if (name.indexOf('upper') >= 0)
+      return i18n.language === 'en' ? ' Upper bound' : ' Limite superiore';
+    if (name.indexOf('lower') >= 0)
+      return i18n.language === 'en' ? ' Lower bound' : ' Limite inferiore';
+    return '';
+  };
+
   const chartOption = {
     title: {
       text: titleText,
@@ -547,14 +581,33 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       axisPointer: {
         label: {
           show: true,
-          formatter: v =>
-            `${t('app.map.timeSeriesDialog.xUnit')} ${v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
-            }`,
+          formatter: v => {
+            console.log(v);
+            return `${t('app.map.timeSeriesDialog.xUnit')} ${v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
+              }`;
+          },
         },
       },
       valueFormatter: v =>
         `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${currentLayer?.unit_english //TODO FIX unit
         }`,
+
+      formatter: p => {
+        console.log(p);
+        if (!p.length) p = [p]; // default trigger:'item'
+        let tt = p.map(x => {
+          return (
+            '<br>' +
+            x.marker +
+            x.seriesName +
+            getBoundsLabel(x.seriesId) +
+            ': ' +
+            dataValues[x.seriesId][x.dataIndex]?.value.toFixed(2) +
+            currentLayer?.unit_english
+          );
+        });
+        return tt + '';
+      },
     },
     legend: {
       data: getLegend(),
