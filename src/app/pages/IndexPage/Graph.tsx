@@ -213,12 +213,6 @@ const Graph = (props: any) => {
     const series = timeseries
       ?.filter(x => !('uncertainty_type' in x.info))
       .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
-      .filter(
-        x =>
-          x.info.climatological_model === mfltr ||
-          x.name.length < 20 ||
-          x.info.climatological_model === smfltr,
-      )
       .map(item => ({
         name: getName(item),
         itemStyle: { color: getColor(item) },
@@ -395,7 +389,7 @@ const Graph = (props: any) => {
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    if (mode === 'timeseries') return `${tdata.series_name} ${tdata.scenario}`;
+    if (mode === 'timeseries') return `${tdata.series_nameg} ${tdata.scenario}`;
     else return `${tdata.station}`;
   };
 
