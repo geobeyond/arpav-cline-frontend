@@ -271,10 +271,7 @@ const Graph = (props: any) => {
   };
 
   const getLineWidth = dataset => {
-    return dataset.info.climatological_model === 'model_ensemble' ||
-      dataset.info.series_elaboration === 'ORIGINAL'
-      ? 3
-      : 1;
+    return 3;
   };
 
   const getSelected = dataset => {
@@ -392,15 +389,13 @@ const Graph = (props: any) => {
     "scenario": "rcp26",
     "uncertainty_type": "upper_bound",
     "year_period": "year"
-}*/
-  const getName = (item, mode = 'timeseries') => {
+}*/ const getName = (item, mode = 'timeseries') => {
     if ('station' in item.info) mode = 'sensor';
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    if (mode === 'timeseries')
-      return `${tdata.climatological_model} ${tdata.scenario}`;
+    if (mode === 'timeseries') return `${tdata.series_name} ${tdata.scenario}`;
     else return `${tdata.station}`;
   };
 
@@ -430,9 +425,10 @@ const Graph = (props: any) => {
     selected: getSelected(item),
     data: getChartData(item, timeseries),
     stack: getStack(item),
+    step: getStepType(item),
     stackStrategy: 'all',
     areaStyle: getAreaStyle(item),
-    zLevel: getZLevel(item),
+    z: getZLevel(item),
     label: {
       formatter: '{a}-{b}:{c}',
     },
@@ -447,7 +443,7 @@ const Graph = (props: any) => {
   });
 
   const titleText = `
-     ${findValueName('variable', 'variables')}
+     Barometro Climatico
   `;
 
   const subText = `
