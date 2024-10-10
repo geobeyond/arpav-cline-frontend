@@ -166,8 +166,13 @@ const Graph = (props: any) => {
     return x.name.indexOf('uncertainty');
   };
 
-  const range = (start, end, step = 1) =>
-    [...Array(end - start)].filter(e => e % step == 0).map(e => e + start);
+  const range = (start: number, end: number): number[] => {
+    let ret: number[] = [];
+    for (let i: number = start; i < end; i++) {
+      ret.push(i);
+    }
+    return ret;
+  };
 
   const dataValues = timeseries.reduce((prev, curr) => {
     return {
@@ -179,24 +184,27 @@ const Graph = (props: any) => {
     for (let kk of dataValues[k]) {
       kk.datetime = kk.datetime.split('-')[0];
     }
+  }
+  for (let k of Object.keys(dataValues)) {
+    let vv: any[] = [];
     for (let y of range(baseValue, 2099)) {
-      let vv: any[] = [];
-      let found = false;
+      let found: boolean | any = false;
       for (let kk of dataValues[k]) {
         if (y.toString() === kk.datetime) {
-          found = true;
-        }
-        if (found) {
-          vv.push(kk);
-        } else {
-          vv.push({
-            value: null,
-            datetime: y.toString(),
-          });
+          found = kk;
+          break;
         }
       }
-      dataValues[k] = vv;
+      if (found) {
+        vv.push(found);
+      } else {
+        vv.push({
+          value: null,
+          datetime: y.toString(),
+        });
+      }
     }
+    dataValues[k] = vv;
   }
   console.log(dataValues);
 
@@ -211,11 +219,17 @@ const Graph = (props: any) => {
           x.name.length < 20 ||
           x.info.climatological_model === smfltr,
       )
-      .map(item => getName(item));
+      .map(item => ({
+        name: getName(item),
+        itemStyle: { color: getColor(item) },
+      }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
-      .map(x => getName(x, 'station'));
+      .map(x => ({
+        name: getName(x, 'station'),
+        itemStyle: { color: 'black' },
+      }));
     return [...series, ...station];
   };
 
@@ -233,7 +247,7 @@ const Graph = (props: any) => {
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
+      ?.filter(x => Object.keys(x.info).indexOf('station') > 0)
       .filter(x => x.name.indexOf(snsfltr) >= 0)
       .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
@@ -244,7 +258,7 @@ const Graph = (props: any) => {
     if (dataset.info.scenario) {
       return colors[0][dataset.info.scenario];
     }
-    return dataset.info.series_elaboration ? '#45321b' : '#ff0000';
+    return '#45321b';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
@@ -257,7 +271,10 @@ const Graph = (props: any) => {
   };
 
   const getLineWidth = dataset => {
-    return dataset.info.climatological_model === 'model_ensemble' ? 3 : 1;
+    return dataset.info.climatological_model === 'model_ensemble' ||
+      dataset.info.series_elaboration === 'ORIGINAL'
+      ? 3
+      : 1;
   };
 
   const getSelected = dataset => {
@@ -294,41 +311,51 @@ const Graph = (props: any) => {
           );
         });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
-        if (lbitem) {
-          for (; delta > 0; delta--) {
-            ret.push(null);
-          }
-          for (let i in item.values) {
-            ret.push(
-              item.values[i].value -
-              lbitem[0].values.filter(x => x.value != null)[i].value,
-            );
+        if (lbitem.length > 0) {
+          for (let i in dataValues[
+            item.name + '__' + item.info.processing_method
+          ]) {
+            if (
+              dataValues[item.name + '__' + item.info.processing_method][i]
+                .value ||
+              dataValues[
+                lbitem[0].name + '__' + lbitem[0].info.processing_method
+              ][i].value
+            ) {
+              ret.push(
+                dataValues[item.name + '__' + item.info.processing_method][i]
+                  .value -
+                dataValues[
+                  lbitem[0].name + '__' + lbitem[0].info.processing_method
+                ][i].value,
+              );
+            } else {
+              ret.push(null);
+            }
           }
         }
         return ret;
       }
     }
-    item.values = item.values.filter(x => x.value != null);
-    let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
-    console.log(item, delta);
-    if (delta > 0)
-      for (; delta > 0; delta--)
-        item.values.unshift({
-          value: null,
-          datetime: baseValue + delta + '-01-01T04:00:00',
-        });
-    console.log(item);
-    return item.values.map(x => x.value);
+    return dataValues[item.name + '__' + item.info.processing_method].map(
+      x => x.value,
+    );
   };
 
   const getGraphType = dataset => {
+    return 'line';
+  };
+  const getStepType = dataset => {
     return dataset.info.series_elaboration &&
       dataset.info.processing_method === 'NO_SMOOTHING'
-      ? 'bar'
-      : 'line';
+      ? 'middle'
+      : false;
   };
   const getZLevel = dataset => {
-    return dataset.info.series_elaboration ? 1000 : 10;
+    return dataset.info.series_elaboration &&
+      dataset.info.processing_method === 'NO_SMOOTHING'
+      ? 100
+      : 10;
   };
 
   const getStack = dataset => {
@@ -354,42 +381,32 @@ const Graph = (props: any) => {
     return cats[0];
   };
 
+  /*{
+    "processing_method": "MOVING_AVERAGE_11_YEARS",
+    "coverage_identifier": "tas_annual_absolute_model_ensemble_upper_uncertainty-annual-model_ensemble-tas-absolute-rcp26-upper_bound-year",
+    "coverage_configuration": "tas_annual_absolute_model_ensemble_upper_uncertainty",
+    "aggregation_period": "annual",
+    "climatological_model": "model_ensemble",
+    "climatological_variable": "tas",
+    "measure": "absolute",
+    "scenario": "rcp26",
+    "uncertainty_type": "upper_bound",
+    "year_period": "year"
+}*/
   const getName = (item, mode = 'timeseries') => {
+    if ('station' in item.info) mode = 'sensor';
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
-    return `${tdata.climatological_variable} ${tdata.scenario}`;
+    if (mode === 'timeseries')
+      return `${tdata.climatological_model} ${tdata.scenario}`;
+    else return `${tdata.station}`;
   };
 
-  let pseriesObj = [
-    ...timeseries?.filter(item => {
-      return (
-        //no uncertainty
-        !('uncertainty_type' in item.info) &&
-        ((item.info.processing_method.indexOf(nfltr) >= 0 &&
-          (item.info.climatological_model === mfltr ||
-            item.info.climatological_model === smfltr)) ||
-          ('series_elaboration' in item.info &&
-            item.info.processing_method.indexOf(snsfltr) >= 0))
-      );
-    }),
-  ];
-  if (uncert)
-    pseriesObj = [
-      ...pseriesObj,
-      ...timeseries?.filter(item => {
-        return (
-          //no uncertainty
-          'uncertainty_type' in item.info &&
-          ((item.info.processing_method.indexOf(nfltr) >= 0 &&
-            (item.info.climatological_model === mfltr ||
-              item.info.climatological_model === smfltr)) ||
-            ('series_elaboration' in item.info &&
-              item.info.processing_method.indexOf(snsfltr) >= 0))
-        );
-      }),
-    ];
+  let pseriesObj = timeseries.filter(
+    item => item.info.processing_method === 'MOVING_AVERAGE_11_YEARS',
+  );
 
   let seriesObj = pseriesObj.map(item => ({
     id: item.name + '__' + item.info.processing_method,

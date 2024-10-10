@@ -251,25 +251,7 @@ export class RequestApi extends Http {
   };
 
   public getBarometroClimatico = () => {
-    const ret: Promise<AxiosResponse<any, any>>[] = [];
-    const measure =
-      '{name}-{archive}-{climatological_model}-{climatological_variable}-{scenario}';
-    const ids = this.createIds(measure, {
-      name: 'tas_barometro_climatico',
-      climatological_model: 'barometro_climatico',
-      climatological_variable: 'tas',
-      archive: 'forecast',
-      scenario: ['rcp26', 'rcp45', 'rcp85'],
-    });
-    for (let id of ids) {
-      ret.push(this.getBarometroClimaticoSingle(id));
-    }
-    return Promise.all(ret).then(x => {
-      return this.merge.apply(this, x);
-    });
-  };
-  public getBarometroClimaticoSingle = (measure: any) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/climate-barometer/${measure}?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
+    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/climate-barometer?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
     console.log(url);
     return this.instance.get<any>(url);
   };
