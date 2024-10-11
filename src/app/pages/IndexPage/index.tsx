@@ -73,7 +73,7 @@ const IndexPage = () => {
             <Hero overlay="dark" style={HeroStyle}>
               <HeroBackground
                 alt="imagealt"
-                src={require('../../../assets/img/puntapenia_2037.jpg')}
+                src={require('../../../assets/img/puntapenia_1937.jpg')}
                 title="image title"
               />
               <HeroBody>
