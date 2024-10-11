@@ -75,7 +75,7 @@ export const ValueRenderer = ({ time, value, unit }) => {
 };
 
 export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
-  const {
+  let {
     value,
     setPoint,
     openCharts,
@@ -150,37 +150,49 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
 
   function latlonChange(event) {
     let latlng = event.target.value;
-    let lat = latlng.split(' ')[0].replace(',', '.');
-    let lng = latlng.split(' ')[1].replace(',', '.');
-    let latf = parseFloat(lat);
-    let lngf = parseFloat(lng);
-    //TODO: check bounding box
-    if (
-      lngf > 9.018533 &&
-      latf > 44.596056 &&
-      lngf < 14.576226 &&
-      latf < 47.299456
-    ) {
-      if (value) {
-        value.latlng.lat = latf;
-        value.latlng.lng = lngf;
+    if (latlng.indexOf(' ') > 0) {
+      let lat = latlng.split(' ')[0].replace(',', '.');
+      let lng = latlng.split(' ')[1].replace(',', '.');
+      let latf = parseFloat(lat);
+      let lngf = parseFloat(lng);
+      //TODO: check bounding box
+      if (
+        lngf > 9.018533 &&
+        latf > 44.596056 &&
+        lngf < 14.576226 &&
+        latf < 47.299456
+      ) {
+        if (value) {
+          value.latlng.lat = latf;
+          value.latlng.lng = lngf;
+        } else {
+          value = {
+            name: '',
+            latlng: {
+              lat: latf,
+              lng: lngf,
+            },
+          };
+        }
       }
     }
   }
 
   function searchPoint(event) {
-    const position = api
-      .findMunicipality(value?.latlng.lat, value?.latlng.lng)
-      .then((geoj: any) => {
-        if (geoj.features.length > 0) {
-          if (value) {
-            value.name = geoj.features[0].properties.name;
-            value.label = geoj.features[0].properties.name;
-            onChange(event, value);
+    if (value) {
+      const position = api
+        .findMunicipality(value?.latlng.lat, value?.latlng.lng)
+        .then((geoj: any) => {
+          if (geoj.features.length > 0) {
+            if (value) {
+              value.name = geoj.features[0].properties.name;
+              value.label = geoj.features[0].properties.name;
+              onChange(event, value);
+            }
           }
-        }
-      });
-    console.log(position);
+        });
+      console.log(position);
+    }
   }
 
   // @ts-ignore

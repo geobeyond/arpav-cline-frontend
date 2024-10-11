@@ -18,7 +18,7 @@ import PapaParse from 'papaparse';
 import JSZip from 'jszip';
 
 export const DownloadForm = props => {
-  const { setOpen, latLng, ids, timeRange, data, filter } = props;
+  const { setOpen, latLng, ids, timeRange, data, filter, filledSeries } = props;
   const { t } = useTranslation();
   const api = RequestApi.getInstance();
   const dispatch = useDispatch();
@@ -57,7 +57,7 @@ export const DownloadForm = props => {
       start: timeRange?.current?.start,
       end: timeRange?.current?.end,
       fitms: filter.current,
-      sfs: filter.series,
+      sfs: filter.current.series.flat(),
     };
     setLoader(true);
     let fdata: any[] = [];
@@ -86,6 +86,8 @@ export const DownloadForm = props => {
         ),
       );
     }
+
+    fdata = fdata.filter(x => filterParams.sfs.indexOf(x) >= 0);
 
     fdata.push(
       ...data.current.series.filter(x => 'series_elaboration' in x.info),

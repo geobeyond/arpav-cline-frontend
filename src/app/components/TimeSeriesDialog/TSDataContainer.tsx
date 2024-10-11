@@ -51,6 +51,7 @@ export interface TSDataContainerProps {
   currentLayer: any;
   currentMap: any;
   setSeriesFilter: Function;
+  setFilledSeries: Function;
 }
 
 //TODO
@@ -75,6 +76,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       uncertainty,
     ) => { },
     setSeriesFilter = () => { },
+    setFilledSeries = () => { },
   } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
@@ -276,6 +278,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     dataValues[k] = vv;
   }
   console.log(dataValues);
+  setFilledSeries(dataValues);
 
   const getLegend = () => {
     //TODO names lookup
@@ -757,11 +760,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .filter(x => x[1])
       .map(x => x[0]);
     console.log(allIds);
-    setSeriesFilter(
-      Object.values(seriesFilter)
-        .filter((x: any) => allIds.indexOf(x.name) >= 0)
-        .map((x: any) => x.series),
-    );
+    const sf = Object.values(seriesFilter)
+      .filter((x: any) => allIds.indexOf(x.name) >= 0)
+      .map((x: any) => x.series);
+    setSeriesFilter(sf);
     setIds(timeseries.filter(x => !allIds.includes(x.name)).map(x => x.name));
   };
 

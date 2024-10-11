@@ -51,6 +51,10 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
   const timeRange = useRef<TimeRangeProps | null>();
   // console.log(timeRange);
   const setIds = newIds => (ids.current = newIds);
+  let filledSeries = useRef<any[]>([]);
+  const setFilledSeries = f => {
+    filledSeries.current = f;
+  };
   const setTimeRange = tr => {
     timeRange.current = tr;
   };
@@ -59,7 +63,9 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     data.current = d;
   };
 
-  const setSeriesFilter = filter => { };
+  const setSeriesFilter = f => {
+    filter.current.series = f;
+  };
 
   const setFilters = (
     mainModel,
@@ -121,6 +127,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               currentLayer={currentLayer}
               currentMap={currentMap}
               setSeriesFilter={setSeriesFilter}
+              setFilledSeries={setFilledSeries}
             />
           )}
         </Grid>
@@ -132,6 +139,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
           timeRange={timeRange}
           data={data}
           filter={filter}
+          filledSeries={filledSeries.current}
         />
       </Grid>
     </Modal>
