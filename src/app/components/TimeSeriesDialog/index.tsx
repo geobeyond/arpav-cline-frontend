@@ -138,7 +138,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
           ids={ids}
           timeRange={timeRange}
           data={data}
-          filter={filter}
+          filter={filter.current}
           filledSeries={filledSeries.current}
         />
       </Grid>

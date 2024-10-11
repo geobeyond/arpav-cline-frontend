@@ -206,6 +206,7 @@ const Map = (props: MapProps) => {
         <LegendBar
           className={'leaflet-bar'}
           isMobile={isMobile}
+          label={layerConf}
           data={layerConf.legend}
           unit={
             i18n.language.indexOf('it') >= 0

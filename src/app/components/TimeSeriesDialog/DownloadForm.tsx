@@ -24,7 +24,8 @@ export const DownloadForm = props => {
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
-  const [loader, setLoader] = React.useState(false);
+  const [jsonLoader, setJsonLoader] = React.useState(false);
+  const [csvLoader, setCsvLoader] = React.useState(false);
 
   const [downloadDisabled, setDownloadDisabled] = React.useState(true);
   const userValidityHandleChange = (isValid: boolean) => {
@@ -59,7 +60,7 @@ export const DownloadForm = props => {
       fitms: filter.current,
       sfs: filter.current.series?.flat(),
     };
-    setLoader(true);
+    setCsvLoader(true);
     let fdata: any[] = [];
     fdata.push(
       ...data.current.series.filter(
@@ -87,7 +88,9 @@ export const DownloadForm = props => {
       );
     }
 
-    fdata = fdata.filter(x => filterParams.sfs.indexOf(x) >= 0);
+    if (filterParams.sfs) {
+      fdata = fdata.filter(x => filterParams.sfs.indexOf(x.name) >= 0);
+    }
 
     fdata.push(
       ...data.current.series.filter(x => 'series_elaboration' in x.info),
@@ -110,7 +113,7 @@ export const DownloadForm = props => {
     });
 
     console.log(fdata, filterParams);
-    setLoader(false);
+    setCsvLoader(false);
   };
 
   const downloadJson = () => {
@@ -128,7 +131,7 @@ export const DownloadForm = props => {
       end: timeRange?.current?.end,
       fitms: filter.current,
     };
-    setLoader(true);
+    setJsonLoader(true);
     let fdata: any[] = [];
     fdata.push(
       ...data.current.series.filter(
@@ -156,6 +159,10 @@ export const DownloadForm = props => {
       );
     }
 
+    if (filterParams.sfs) {
+      fdata = fdata.filter(x => filterParams.sfs.indexOf(x.name) >= 0);
+    }
+
     fdata.push(
       ...data.current.series.filter(x => 'series_elaboration' in x.info),
     );
@@ -163,6 +170,8 @@ export const DownloadForm = props => {
     for (let f in fdata) {
       const ffdata = fdata[f] as any;
       console.log(fdata[f]);
+      ffdata.values =
+        filledSeries[ffdata.name + '__' + ffdata.info.processing_method];
       ffdata.values = ffdata.values.slice(
         filterParams.start,
         filterParams.end + 1,
@@ -175,7 +184,7 @@ export const DownloadForm = props => {
     });
 
     console.log(fdata, filterParams);
-    setLoader(false);
+    setJsonLoader(false);
   };
 
   return (
@@ -198,22 +207,22 @@ export const DownloadForm = props => {
       <Grid xs={0} def={1} />
       <Grid xs={24} def={11} sx={DLButtonContStyle}>
         <Button
-          disabled={downloadDisabled || loader || !ids.current?.length}
+          disabled={downloadDisabled || csvLoader || !ids.current?.length}
           color={'primary'}
           variant={'contained'}
           startIcon={
-            loader ? <CircularProgress size={20} /> : <FileDownloadIcon />
+            csvLoader ? <CircularProgress size={20} /> : <FileDownloadIcon />
           }
           onClick={download}
         >
           {t('app.map.timeSeriesDialog.DLCsv')}
         </Button>
         <Button
-          disabled={downloadDisabled || loader || !ids.current?.length}
+          disabled={downloadDisabled || jsonLoader || !ids.current?.length}
           color={'primary'}
           variant={'contained'}
           startIcon={
-            loader ? <CircularProgress size={20} /> : <FileDownloadIcon />
+            jsonLoader ? <CircularProgress size={20} /> : <FileDownloadIcon />
           }
           onClick={downloadJson}
         >

@@ -8,6 +8,7 @@ export interface LegendBarProps {
   isMobile: Boolean;
   data: any;
   unit: string;
+  label: string;
 }
 
 const lightOrDark = color => {
@@ -45,15 +46,18 @@ const lightOrDark = color => {
 };
 
 export const LegendBar = (props: LegendBarProps) => {
-  const { className, isMobile, unit } = props;
+  const { className, isMobile, unit, label } = props;
   const data = props.data || { color_entries: [] };
-  const colors = data.color_entries.sort((a, b) => b.value - a.value);
+  const colors = data.color_entries?.sort((a, b) => b.value - a.value);
 
   const hex2rgb = c => `rgb(${c.match(/\w\w/g).map(x => +`0x${x}`)})`;
 
   return (
     <Box className={className}>
       <div style={{ backgroundColor: 'white' }}>
+        <div style={{ textAlign: 'center' }}>
+          {label['display_name_italian']}
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {colors.length > 0 && (
             <div

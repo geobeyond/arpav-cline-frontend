@@ -214,14 +214,14 @@ const Graph = (props: any) => {
       ?.filter(x => !('uncertainty_type' in x.info))
       .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
       .map(item => ({
-        name: getName(item),
+        name: labelFor(item),
         itemStyle: { color: getColor(item) },
       }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
       .map(x => ({
-        name: getName(x, 'station'),
+        name: labelFor(x, 'station'),
         itemStyle: { color: 'black' },
       }));
     return [...series, ...station];
@@ -333,14 +333,23 @@ const Graph = (props: any) => {
     );
   };
 
+  const rcps = {
+    rcp85: 'Scenario nessuna mitigazione',
+    rcp45: 'Scenario intermedio',
+    rcp26: 'Scenario forte mitigazione',
+  };
+
+  const labelFor = (itm, mode = 'default') => {
+    if ('scenario' in itm.info) return rcps[itm.info.scenario];
+    else return 'Osservazioni';
+  };
+
   const getGraphType = dataset => {
     return 'line';
   };
   const getStepType = dataset => {
-    return dataset.info.series_elaboration &&
-      dataset.info.processing_method === 'NO_SMOOTHING'
-      ? 'middle'
-      : false;
+    if ('scenario' in dataset.info) return false;
+    return 'middle';
   };
   const getZLevel = dataset => {
     return dataset.info.series_elaboration &&
@@ -399,7 +408,7 @@ const Graph = (props: any) => {
 
   let seriesObj = pseriesObj.map(item => ({
     id: item.name + '__' + item.info.processing_method,
-    name: getName(item),
+    name: labelFor(item),
     type: getGraphType(item),
     smooth: true,
     // sampling: 'average',
