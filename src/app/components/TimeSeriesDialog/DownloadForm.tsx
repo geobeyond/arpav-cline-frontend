@@ -57,7 +57,7 @@ export const DownloadForm = props => {
       start: timeRange?.current?.start,
       end: timeRange?.current?.end,
       fitms: filter.current,
-      sfs: filter.current.series.flat(),
+      sfs: filter.current.series?.flat(),
     };
     setLoader(true);
     let fdata: any[] = [];
@@ -92,9 +92,12 @@ export const DownloadForm = props => {
     fdata.push(
       ...data.current.series.filter(x => 'series_elaboration' in x.info),
     );
+
     let z = new JSZip();
     for (let f in fdata) {
       const ffdata = fdata[f] as any;
+      ffdata.values =
+        filledSeries[ffdata.name + '__' + ffdata.info.processing_method];
       console.log(fdata[f]);
       const pu = PapaParse.unparse(
         ffdata.values.slice(filterParams.start, filterParams.end + 1),
