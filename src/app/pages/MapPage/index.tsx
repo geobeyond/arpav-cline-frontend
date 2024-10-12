@@ -127,6 +127,8 @@ export function MapPage(props: MapPageProps) {
                 setCurrentLayer(x.items[0].identifier);
                 setCurrentLayerConfig(conf);
               });
+          } else if (x.items.length === 0) {
+            let cv = currentMap.climatological_variable;
           }
         });
     } catch (e) {
@@ -289,6 +291,7 @@ export function MapPage(props: MapPageProps) {
         currentLayer={currentLayer}
         currentMap={currentMap}
         currentTimeserie={currentTimeSerie}
+        setCurrentMap={setCurrentMap}
       />
       {loading && (
         <Box sx={MapLoadingContainerStyle}>

@@ -55,8 +55,10 @@ export const LegendBar = (props: LegendBarProps) => {
   return (
     <Box className={className}>
       <div style={{ backgroundColor: 'white' }}>
-        <div style={{ textAlign: 'center' }}>
-          {label['display_name_italian']}
+        <div
+          style={{ textAlign: 'center', maxWidth: isMobile ? '60px' : '120px' }}
+        >
+          <b>{label.toUpperCase()}</b>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {colors.length > 0 && (

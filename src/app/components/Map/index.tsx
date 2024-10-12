@@ -93,6 +93,7 @@ interface MapProps {
   currentMap?: any;
   currentLayer?: string;
   currentTimeserie?: any;
+  setCurrentMap?: Function;
 }
 
 const Map = (props: MapProps) => {
@@ -107,6 +108,7 @@ const Map = (props: MapProps) => {
     currentMap = {},
     currentLayer = '',
     currentTimeserie = {},
+    setCurrentMap = () => { },
   } = props;
 
   const theme = useTheme();
@@ -206,7 +208,7 @@ const Map = (props: MapProps) => {
         <LegendBar
           className={'leaflet-bar'}
           isMobile={isMobile}
-          label={layerConf}
+          label={currentMap.climatological_variable}
           data={layerConf.legend}
           unit={
             i18n.language.indexOf('it') >= 0
