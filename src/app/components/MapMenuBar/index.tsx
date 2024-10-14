@@ -83,7 +83,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const combinations = (props.combinations || []).reduce((prev, cur) => {
     const kk = cur.variable + '::' + cur.aggregation_period;
     if (kk in prev) {
-      prev[kk] = { [cur.measure]: cur };
+      prev[kk][cur.measure] = cur;
       return prev;
     } else {
       return {
@@ -254,7 +254,7 @@ export function MapMenuBar(props: MapMenuBar) {
         key,
       ) >= 0
     ) {
-      let ckey = '{climatological_variable}::{aggregation_period}::{measure}';
+      let ckey = '{climatological_variable}::{aggregation_period}';
       ckey = ckey.replace('{' + key + '}', value);
       ckey = ckey.replace(
         '{climatological_variable}',
@@ -264,10 +264,15 @@ export function MapMenuBar(props: MapMenuBar) {
         '{aggregation_period}',
         current_map.aggregation_period,
       );
-      ckey = ckey.replace('{measure}', current_map.measure);
       if (Object.keys(combinations).indexOf(ckey) >= 0) {
-        console.log('activating Combo', ckey, combinations[ckey]);
-        setActiveCombinations(combinations[ckey]);
+        if (current_map.measure in combinations[ckey]) {
+          console.log(
+            'activating Combo',
+            ckey,
+            combinations[ckey][current_map.measure],
+          );
+          setActiveCombinations(combinations[ckey][current_map.measure]);
+        }
       }
     }
     if (onMenuChange) {

@@ -633,7 +633,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         if (!p.length) p = [p]; // default trigger:'item'
         let tt = p.map(x => {
           if (dataValues[x.seriesId].length > x.dataIndex) {
-            if (dataValues[x.seriesId][x.dataIndex].value) {
+            if (!isNaN(dataValues[x.seriesId][x.dataIndex].value)) {
               return (
                 '<br>' +
                 x.marker +
