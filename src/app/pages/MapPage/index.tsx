@@ -127,8 +127,7 @@ export function MapPage(props: MapPageProps) {
                 setCurrentLayer(x.items[0].identifier);
                 setCurrentLayerConfig(conf);
               });
-          } else if (x.items.length === 0) {
-            let cv = currentMap.climatological_variable;
+          } else if (x.items.length !== 1) {
           }
         });
     } catch (e) {

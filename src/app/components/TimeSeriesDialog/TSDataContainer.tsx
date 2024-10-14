@@ -293,14 +293,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       )
       .map(item => ({
         name: getName(item),
-        itemStyle: { color: getColor(item) },
+        itemStyle: { color: getColor(item), opacity: 1 },
       }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
       .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
       .map(x => ({
         name: getName(x, 'station'),
-        itemStyle: { color: 'black' },
+        itemStyle: { color: 'black', opacity: 1 },
       }));
     return [...series, ...station];
   };

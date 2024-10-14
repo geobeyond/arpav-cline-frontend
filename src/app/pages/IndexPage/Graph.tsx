@@ -215,9 +215,9 @@ const Graph = (props: any) => {
       .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
       .map(item => ({
         name: labelFor(item),
-        itemStyle: { color: getColor(item) },
-        lineStyle: { color: getColor(item) },
-        textStyle: { color: getColor(item) },
+        itemStyle: { color: getColor(item), opacity: 1 },
+        lineStyle: { color: getColor(item), opacity: 1 },
+        icon: 'roundRect',
       }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
@@ -226,6 +226,7 @@ const Graph = (props: any) => {
         name: labelFor(x, 'station'),
         itemStyle: { color: 'black' },
         lineStyle: { color: 'black' },
+        icon: 'roundRect',
       }));
     return [...series, ...station];
   };

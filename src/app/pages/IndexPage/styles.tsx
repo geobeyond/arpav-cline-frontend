@@ -1,9 +1,8 @@
 export const TopHeroStyle: React.CSSProperties = {
   backgroundColor: 'white',
-  height: '600px',
+  height: '800px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
   alignItems: 'center',
   fontFamily: 'Titillium Web, Helvetica Neue, Helvetica, Arial, sans-serif',
 };
@@ -111,7 +110,7 @@ export const FormTitleTextStyle = theme => ({
 
 export const ChartContainerStyle = theme => ({
   '& .echarts-for-react': {
-    minHeight: '400px',
+    minHeight: '500px',
   },
 });
 
