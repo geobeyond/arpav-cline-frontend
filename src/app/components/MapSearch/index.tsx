@@ -362,7 +362,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
           title={
             timeserie?.length === 1
               ? 'Non è disponibile la serie temporale per i la media trentennale'
-              : 'Visualizza la serie temporale per questo punto.'
+              : 'Visualizza la serie temporale per il punto selezionato'
           }
         >
           <span>

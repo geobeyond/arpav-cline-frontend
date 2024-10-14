@@ -214,6 +214,7 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'year_period',
             groupName: '',
             ...mapParameters('year_period', 'year_period'),
+            disableable: true,
           },
         ],
       },

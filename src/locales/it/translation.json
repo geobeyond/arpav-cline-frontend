@@ -2,8 +2,8 @@
   "app.index.sections.barometer": "Barometro del Clima",
   "app.index.sections.proj": "Proiezioni Climatiche",
   "app.index.sections.hist": "Climatologia Storica",
-  "app.index.sections.simple": "Visualizzazione semplice",
-  "app.index.sections.advanced": "Visualizzazione avanzata",
+  "app.index.sections.simple": "Semplice",
+  "app.index.sections.advanced": "Avanzata",
 
   "app.common.close": "Chiudi",
   "app.snackbar.dismiss": "Chiudi",

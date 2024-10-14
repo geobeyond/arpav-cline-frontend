@@ -77,16 +77,16 @@ const IndexPage = () => {
                 title="image title"
               />
               <HeroBody>
-                <HeroTitle>Climatologia storica</HeroTitle>
+                <HeroTitle>{t('app.index.sections.hist')}</HeroTitle>
                 <p className="d-none d-lg-block"></p>
                 <HeroButton disabled={true} href="/ps" color="secondary">
-                  Visualizzazione semplice
+                  {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
                 <br />
                 <br />
                 <HeroButton disabled={true} href="/pa" color="secondary">
-                  Visualizzazione avanzata
+                  {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
             </Hero>
@@ -99,16 +99,16 @@ const IndexPage = () => {
                 title="image title"
               />
               <HeroBody>
-                <HeroTitle>Proiezioni climatiche</HeroTitle>
+                <HeroTitle>{t('app.index.sections.proj')}</HeroTitle>
                 <p className="d-none d-lg-block"></p>
                 <HeroButton disabled={true} href="fs" color="secondary">
-                  Visualizzazione semplice
+                  {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
                 <br />
                 <br />
                 <HeroButton href="fa" color="secondary">
-                  Visualizzazione avanzata
+                  {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
             </Hero>

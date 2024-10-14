@@ -472,7 +472,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
     if (mode === 'timeseries')
-      return `${tdata.climatological_model} ${tdata.scenario}`;
+      return `${tdata.scenario} ${tdata.climatological_model}`;
     else return `${tdata.station}`;
   };
 
