@@ -1,4 +1,10 @@
 {
+  "app.index.sections.barometer": "Barometro del Clima",
+  "app.index.sections.proj": "Proiezioni Climatiche",
+  "app.index.sections.hist": "Climatologia Storica",
+  "app.index.sections.simple": "Visualizzazione semplice",
+  "app.index.sections.advanced": "Visualizzazione avanzata",
+
   "app.common.close": "Chiudi",
   "app.snackbar.dismiss": "Chiudi",
   "app.error.dlParameters": "Errore nel download dei parametri.",
@@ -63,6 +69,7 @@
   "app.map.timeSeriesDialog.DLTimeSeries": "Scarica serie temporale",
   "app.map.timeSeriesDialog.DLCsv": "Scarica CSV",
   "app.map.timeSeriesDialog.DLJson": "Scarica JSON",
+  "app.map.timeSeriesDialog.toggleUncertainty": "Attiva/disattiva incertezza",
   "app.map.search.lat": "Lat",
   "app.map.search.lng": "Long",
   "app.footer": ""

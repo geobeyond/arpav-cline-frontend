@@ -461,27 +461,27 @@ export function MapMenuBar(props: MapMenuBar) {
               <DropdownMenu style={{ zIndex: 100000000 }}>
                 <LinkList>
                   <LinkListItem inDropdown href="/">
-                    Home - Barometro Climatico
+                    {t('app.index.sections.barometer')}
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
-                    Proiezioni climatiche
+                    {t('app.index.sections.proj')}
                   </LinkListItem>
                   <LinkListItem disabled inDropdown href="/fs">
-                    Proiezioni climatiche - Visualizzazione Semplice
+                    {t('app.index.sections.simple')}
                   </LinkListItem>
                   <LinkListItem inDropdown href="/fa">
-                    Proiezioni climatiche - Visualizzazione Avanzata
+                    {t('app.index.sections.advanced')}
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
-                    Climatologia Storica
+                    {t('app.index.sections.hist')}
                   </LinkListItem>
                   <LinkListItem disabled inDropdown href="/ps">
-                    Climatologia Storica - Visualizzazione Semplice
+                    {t('app.index.sections.simple')}
                   </LinkListItem>
                   <LinkListItem disabled inDropdown href="/pa">
-                    Climatologia Storica - Visualizzazione Avanzata
+                    {t('app.index.sections.advanced')}
                   </LinkListItem>
                 </LinkList>
               </DropdownMenu>
