@@ -424,9 +424,14 @@ const Graph = (props: any) => {
     else return `${tdata.station}`;
   };
 
-  let pseriesObj = timeseries.filter(
-    item => item.info.processing_method === 'MOVING_AVERAGE_11_YEARS',
-  );
+  let pseriesObj = timeseries.filter(item => {
+    return (
+      (item.info.processing_method === 'MOVING_AVERAGE_11_YEARS' &&
+        item.info.scenario) ||
+      (item.info.processing_method === 'NO_SMOOTHING' &&
+        item.info.historical_variable === 'tdd')
+    );
+  });
 
   let seriesObj = pseriesObj.map(item => ({
     id: item.name + '__' + item.info.processing_method,
