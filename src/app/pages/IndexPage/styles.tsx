@@ -1,6 +1,6 @@
 export const TopHeroStyle: React.CSSProperties = {
   backgroundColor: 'white',
-  height: '800px',
+  height: '700px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
