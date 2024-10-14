@@ -545,11 +545,11 @@ const Graph = (props: any) => {
     legend: {
       data: getLegend(),
       selected: getSelectedLegend(),
-      top: '30%',
+      top: '15%',
       icon: 'roundRect',
     },
     grid: {
-      top: '48%',
+      top: '30%',
       left: '3%',
       right: '4%',
       bottom: '3%',
