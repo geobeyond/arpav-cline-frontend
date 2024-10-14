@@ -89,10 +89,10 @@ const Graph = (props: any) => {
       rcp85: 'rgb(231,60,60)',
     },
     {
-      histo: 'rgb(82, 73, 62)',
-      rcp26: 'rgb(146, 166, 196)',
-      rcp45: 'rgb(250, 226, 187)',
-      rcp85: 'rgb(232, 169, 169)',
+      histo: 'rgb(69,50,27)',
+      rcp26: 'rgb(46,105,193)',
+      rcp45: 'rgb(243, 156, 18)',
+      rcp85: 'rgb(231,60,60)',
     },
   ];
 
@@ -216,6 +216,8 @@ const Graph = (props: any) => {
       .map(item => ({
         name: labelFor(item),
         itemStyle: { color: getColor(item) },
+        lineStyle: { color: getColor(item) },
+        textStyle: { color: getColor(item) },
       }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
@@ -223,10 +225,30 @@ const Graph = (props: any) => {
       .map(x => ({
         name: labelFor(x, 'station'),
         itemStyle: { color: 'black' },
+        lineStyle: { color: 'black' },
       }));
     return [...series, ...station];
   };
 
+  const toUTF16 = codePoint => {
+    var TEN_BITS = parseInt('1111111111', 2);
+    function u(codeUnit) {
+      return '\\u' + codeUnit.toString(16).toUpperCase();
+    }
+
+    if (codePoint <= 0xffff) {
+      return u(codePoint);
+    }
+    codePoint -= 0x10000;
+
+    // Shift right to get to most significant 10 bits
+    var leadSurrogate = 0xd800 + (codePoint >> 10);
+
+    // Mask to get least significant 10 bits
+    var tailSurrogate = 0xdc00 + (codePoint & TEN_BITS);
+
+    return u(leadSurrogate) + u(tailSurrogate);
+  };
   const getSelectedLegend = () => {
     //TODO names lookup
     let ret = {};
@@ -367,7 +389,7 @@ const Graph = (props: any) => {
     if ('uncertainty_type' in dataset.info) {
       if (dataset.info.uncertainty_type === 'upper_bound') {
         if (dataset.info.scenario) {
-          return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
+          return { color: colors[1][dataset.info.scenario], opacity: 0.2 };
         }
       }
     }
@@ -518,7 +540,7 @@ const Graph = (props: any) => {
       data: getLegend(),
       selected: getSelectedLegend(),
       top: '30%',
-      icon: 'rect',
+      icon: 'roundRect',
     },
     grid: {
       top: '48%',

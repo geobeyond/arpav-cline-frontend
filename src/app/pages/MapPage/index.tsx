@@ -280,6 +280,7 @@ export function MapPage(props: MapPageProps) {
         onMenuChange={updateCurrentMap}
         current_map={currentMap}
         foundLayers={foundLayers}
+        setCurrentMap={setCurrentMap}
       />
 
       <Map

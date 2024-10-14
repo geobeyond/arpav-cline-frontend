@@ -62,28 +62,46 @@ tr:nth-child(even) {
 
 <h1>Il cambiamento climatico</h1>
 <p>
-    Le attività umane influiscono sul clima: l'aumento della concentrazione di gas serra e i conseguenti cambiamenti osservati dei valori climatici medi sul lungo periodo e degli estremi climatici in ogni parte del mondo ne sono evidenti segnali. Nell'area del Mediterraneo, in particolare, le condizioni che alterano l'equilibrio climatico più severe, come l'aumento delle temperature e la diminuzione delle precipitazioni estive, e la sua vulnerabilità accentuata rispetto ad altre regioni, portano a rischi climatici più gravi.
-</p>
+Le attività umane influiscono sul clima: l'aumento della concentrazione di gas serra e i conseguenti
+cambiamenti osservati dei valori climatici medi sul lungo periodo e degli estremi climatici in ogni parte
+del mondo ne sono evidenti segnali. Nell'area del Mediterraneo, in particolare, le condizioni che alterano
+l'equilibrio climatico più severe, come l'aumento delle temperature e la diminuzione delle precipitazioni
+estive, e la sua vulnerabilità accentuata rispetto ad altre regioni, portano a rischi climatici più gravi.</p>
 <p>
-    Una valutazione del cambiamento climatico e della sua variabilità a scala regionale diviene quindi cruciale per stimarne i potenziali impatti in futuro, per lo sviluppo di strategie di adattamento (processo di adeguamento al clima attuale o atteso e ai suoi effetti, al fine di limitare i danni o sfruttare le opportunità favorevoli) e per valutare azioni di mitigazione (qualsiasi intervento umano che riduca le emissioni o rafforzi le fonti di assorbimento dei gas serra).
-</p>
+Una valutazione del cambiamento climatico e della sua variabilità a scala regionale diviene quindi
+cruciale per stimarne i potenziali impatti in futuro, per lo sviluppo di strategie di adattamento (processo di
+adeguamento al clima attuale o atteso e ai suoi effetti, al fine di limitare i danni o sfruttare le opportunità
+favorevoli) e per valutare azioni di mitigazione (qualsiasi intervento umano che riduca le emissioni o
+rafforzi le fonti di assorbimento dei gas serra).</p>
 
 <h1>La piattaforma</h1>
 <p>
-    La <strong>P</strong>iattaforma <strong>P</strong>roiezioni <strong>C</strong>limatiche per il <strong>N</strong>ord-<strong>E</strong>st (PPCNE) propone <strong>proiezioni climatiche</strong> per il territorio del <strong>Nord-Est Italia</strong> attraverso <strong>undici indicatori</strong> calcolati per possibili <strong>scenari climatici futuri</strong> e adattati ai dati raccolti dalle stazioni meteorologiche regionali.&nbsp;
+    La Piattaforma <strong>Cli</strong>ma <strong>N</strong>ord-<strong>E</strong>st (CliNE) propone <strong>proiezioni climatiche</strong> per il territorio del <strong>Nord-Est Italia</strong> attraverso <strong>tredici indicatori</strong> calcolati per possibili <strong>scenari climatici futuri</strong> e adattati ai dati raccolti dalle stazioni meteorologiche regionali.&nbsp;
 </p>
 <p>
-    Tali proiezioni vengono fornite in termini di mappe e di serie temporali, per varie scale temporali e vari scenari, con possibilità di estrazione e download dei dati per specifici punti di interesse.
+    Tali proiezioni vengono fornite in termini di mappe e di serie temporali, per varie scale temporali e vari scenari, con possibilità di estrazione e download dei dati per specifici punti di interesse. Inoltre, viene data
+la possibilità di visualizzare e confrontare la serie annuale puntuale fornita dalla proiezione con la serie
+storica puntuale misurata dalle stazioni di misura della rete meteo-idro-nivo regionale presenti nelle
+immediate vicinanze (entro 1 km).
 </p>
 <p>
-    Le informazioni presentate nella piattaforma sono di utilità per decisori politici, portatori di interesse e cittadini, al fine di supportare la pianificazione del territorio, le misure di adattamento ai cambiamenti climatici e, più in generale, aumentare la conoscenza e la consapevolezza sui cambiamenti climatici in corso.
-</p>
+Le informazioni presentate nella Piattaforma sono di utilità per decisori politici, portatori di interesse e
+cittadini, al fine di supportare la pianificazione del territorio, le misure di adattamento ai cambiamenti
+climatici e, più in generale, aumentare la conoscenza e la consapevolezza sui cambiamenti climatici in
+corso.</p>
 
 <h1>
  Gli elementi della piattaforma
 </h1>
 
-<h3>1. Undici indicatori</h3>
+<h3>1. Barometro del clima</h3>
+La home page di CliNE si apre con il Barometro del clima, che utilizza la temperatura media annuale
+come indicatore dell'evoluzione del clima. Esso mostra l'andamento della temperatura registrata sul
+Veneto negli ultimi decenni (elaborazione delle misure delle stazioni della rete regionale meteo-nivo-idro)
+a confronto con le proiezioni climatiche fino a fine secolo per tre diversi scenari di riduzione delle
+emissioni di gas serra.
+
+<h3>2. Tredici indicatori</h3>
     <table>
         <colgroup><col style="width:40%;"><col style="width:60%;"></colgroup>
         <tbody>
@@ -186,6 +204,35 @@ tr:nth-child(even) {
             <tr>
                 <td>
                     <p>
+                        Gradi giorno di riscaldamento (<strong>HDDs</strong>)
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        Somma delle differenze tra la temperatura dell’ambiente (20°C) e la
+temperatura media giornaliera esterna nell'anno solare (1 gennaio - 31
+dicembre); vengono conteggiate solo le differenze superiori allo zero
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>
+                        Gradi giorno di raffrescamento (<strong>CDDs</strong>)
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        Somma delle differenze tra la temperatura media giornaliera esterna e
+la temperatura di comfort climatico (21°C) nell'anno solare (1 gennaio
+- 31 dicembre); la differenza viene conteggiata solo se la temperatura
+media esterna supera i 24°C
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>
                         Precipitazione (<strong>PR</strong>)
                     </p>
                 </td>
@@ -238,7 +285,7 @@ tr:nth-child(even) {
     &nbsp;
 
 
-<h3>2. Medie annuali e trentennali</h3>
+<h3>3. Medie annuali e trentennali</h3>
 <p>
     Per ogni indicatore sono disponibili <strong>medie a livello annuale e trentennale</strong> in <strong>valore assoluto </strong>atteso o in termini di variazione del valore atteso nel futuro rispetto al periodo di riferimento di dati (<strong>anomalia</strong>).&nbsp;
 </p>
@@ -246,12 +293,12 @@ tr:nth-child(even) {
     Per le <strong>medie trentennali</strong> il periodo di riferimento è l'intervallo 1976-2005, che rappresenta la climatologia passata, su cui sono state calcolate le medie per i periodi 2021-2050 (futuro vicino) e 2071-2100 (futuro lontano).
 </p>
 
-<h3>3. Dati stagionali e annuali</h3>
+<h3>4. Dati stagionali e annuali</h3>
 <p>
     Gli indicatori sono calcolati su <strong>base stagionale</strong> e alcuni su <strong>base annuale</strong>, anche a seconda della tipologia dell'indicatore. Si considera la definizione climatica di stagione: inverno (dicembre-gennaio-febbraio), primavera (marzo-aprile-maggio), estate (giugno-luglio-agosto), autunno (settembre-ottobre-novembre).
 </p>
 
-<h3>4. Scenari e modelli climatici</h3>
+<h3>5. Scenari e modelli climatici</h3>
 <p>
     La piattaforma PPCNE utilizza <strong>tre scenari</strong>:
 </p>
@@ -268,7 +315,7 @@ tr:nth-child(even) {
     Per questi scenari la piattaforma elabora - con un metodo di <i>bias-correction</i> che tiene conto dei dati della rete delle stazioni meteorologiche regionali - proiezioni utilizzando <strong>cinque diversi modelli</strong> climatici e una <strong>media di ensemble</strong> come migliore proiezione per il futuro. I cinque modelli sono <strong>modelli climatici a scala regionale</strong> del progetto EURO-CORDEX (<a target="_blank" rel="noopener noreferrer" href="http://www.euro-cordex.net/"><u>http://www.euro-cordex.net/</u></a>), che rappresenta lo stato dell'arte dei modelli climatici regionali su scala europea in termini di risoluzione spaziale; questi ultimi garantiscono una rappresentazione più dettagliata delle caratteristiche geografiche e dei processi fisici che influenzano il clima a scala regionale rispetto ai modelli climatici a scala globale da cui derivano.
 </p>
 
-<h3>5. Risoluzione geografica</h3>
+<h3>6. Risoluzione geografica</h3>
 <p>
     Per gli indicatori corretti con bias-correction il passo di griglia è 500 m e 5 km, rispettivamente, per quelli calcolati sulla base di temperatura e di precipitazione. Per gli indicatori non corretti con la bias-correction il passo di griglia è quello originale del modello, ovvero 11 km.&nbsp;
 </p>

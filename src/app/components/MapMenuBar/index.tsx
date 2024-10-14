@@ -60,7 +60,8 @@ export interface MapMenuBar {
   menus: any;
   combinations: any;
   current_map?: any;
-  foundLayers?: number;
+  foundLayers: number;
+  setCurrentMap: Function;
 }
 
 const MAP_MODES = {
@@ -78,6 +79,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const current_map = props.current_map;
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
+  const setCurrentmap = props.setCurrentMap;
   const combinations = (props.combinations || []).reduce((prev, cur) => {
     const kk = cur.variable + '::' + cur.aggregation_period;
     if (kk in prev) {
@@ -104,6 +106,14 @@ export function MapMenuBar(props: MapMenuBar) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
+
+  useEffect(() => {
+    if (foundLayers === 0) {
+      const cm = { ...current_map };
+      cm.year_period = 'year';
+      setCurrentmap(cm);
+    }
+  }, [foundLayers]);
 
   const mapParameters = (mapKey, parameterListKey) => {
     if (forecast_parameters) {
@@ -451,30 +461,27 @@ export function MapMenuBar(props: MapMenuBar) {
               <DropdownMenu style={{ zIndex: 100000000 }}>
                 <LinkList>
                   <LinkListItem inDropdown href="/">
-                    Home
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/barometer">
-                    Barometro Climatico
+                    Home - Barometro Climatico
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
-                    Proiezioni
+                    Proiezioni climatiche
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/fs">
-                    Proiezioni - Semplificata
+                  <LinkListItem disabled inDropdown href="/fs">
+                    Proiezioni climatiche - Visualizzazione Semplice
                   </LinkListItem>
                   <LinkListItem inDropdown href="/fa">
-                    Proiezioni - Avanzata
+                    Proiezioni climatiche - Visualizzazione Avanzata
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
-                    Dati storici
+                    Climatologia Storica
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/ps">
-                    Storico - Semplificata
+                  <LinkListItem disabled inDropdown href="/ps">
+                    Climatologia Storica - Visualizzazione Semplice
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/pa">
-                    Storico - Avanzata
+                  <LinkListItem disabled inDropdown href="/pa">
+                    Climatologia Storica - Visualizzazione Avanzata
                   </LinkListItem>
                 </LinkList>
               </DropdownMenu>

@@ -10,9 +10,8 @@ const DataPolicyPage = () => {
       <div>
         <h1>Data policy</h1>
         <p>
-          La piattaforma web denominata{' '}
-          <i>“Piattaforma proiezioni climatiche per il Nord-Est”</i>,
-          accessibile dal link pubblico{' '}
+          La piattaforma web denominata "Piattaforma Clima Nord-Est", di seguito
+          denominata "Piattaforma", accessibile dal link pubblico
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -25,23 +24,26 @@ const DataPolicyPage = () => {
         </p>
 
         <p>
-          E’ accessibile direttamente dai cittadini, gratuitamente e senza
+          È accessibile direttamente dai cittadini, gratuitamente e senza
           credenziali, fornisce proiezioni sullo stato futuro del clima nel
           territorio del Nord-Est Italia. Offre, in particolare, la
           visualizzazione di mappe e serie temporali delle proiezioni climatiche
-          di punti specifici, con riferimento a vari indicatori climatici.&nbsp;
+          di punti specifici, con riferimento a vari indicatori climatici, con
+          la possibilità di confrontare queste ultime con le serie storiche
+          misurate dalle stazioni della rete meteo-idro-nivo regionale.
         </p>
 
         <p>
           ARPAV ha commissionato lo sviluppo e la realizzazione della
-          piattaforma e del relativo software alla ditta INKODE Soc. Coop.,
-          acquisendone, al termine dell’esecuzione della fornitura, la sua
-          titolarità comprensiva di tutti i diritti di proprietà intellettuale e
-          industriale.
+          Piattaforma e del relativo software alla ditta INKODE Soc. Coop. e
+          successivamente ha commissionato una manutenzione evolutiva a
+          Geobeyond srl. acquisendone, al termine dell'esecuzione della
+          fornitura, la sua titolarità comprensiva di tutti i diritti di
+          proprietà intellettuale e industriale.
         </p>
         <p>
-          Ai sensi di quanto previsto dall’art. 69 del Codice
-          dell’Amministrazione Digitale, ARPAV mette in riuso a titolo gratuito
+          Ai sensi di quanto previsto dall'art. 69 del Codice
+          dell'Amministrazione Digitale, ARPAV mette in riuso a titolo gratuito
           ad altre PA il software sviluppato, rendendone disponibile il codice
           sorgente, completo della documentazione, in un repository pubblico (
           <a
@@ -60,22 +62,22 @@ const DataPolicyPage = () => {
             <u>https://github.com/venetoarpa/Arpav-PPCV</u>
           </a>
           ), in licenza aperta, e registrandone il rilascio nel catalogo di
-          Developers Italia, secondo quanto previsto da AGID nelle “
+          Developers Italia, secondo quanto previsto da AGID nelle "
           <i>
             Linee guida su acquisizione e riuso di software per le Pubbliche
-            Amministrazioni”
+            Amministrazioni"
           </i>
         </p>
         <p>
           I contenuti della piattaforma, se non diversamente specificato, sono
           rilasciati sotto licenza Creative Commons Attribuzione - Condividi
-          allo stesso modo 3.0 Italia (
+          allo stesso modo 4.0 Italia (
           <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://creativecommons.org/licenses/by-sa/3.0/it/"
           >
-            <u>CC BY-SA 3.0 IT</u>
+            <u>CC BY-SA 4.0 IT</u>
           </a>
           ), rinvenibile al seguente link{' '}
           <a
@@ -91,12 +93,12 @@ const DataPolicyPage = () => {
         </p>
         <p>
           <strong>Paternità</strong> - Si deve dare evidenza che la paternità
-          dei contenuti della piattaforma è di ARPAV-Arpa FVG, su dati
+          dei contenuti della Piattaforma è di ARPAV-Arpa FVG, su dati
           ambientali forniti da Istituto Meteorologico Reale dei Paesi Bassi,
           Istituto Meteorologico e Idrologico Svedese, Istituto per la
           Meteorologia Max-Planck, CLM-Community, ARPAV, Arpa FVG, Arpae
-          Emilia-Romagna, Provincia Autonoma di Trento, Provincia Autonoma di
-          Bolzano, Aeronautica Militare; deve essere riportato altresì l’URL{' '}
+          Emilia-Romagna, Provincia Autonoma zdi Trento, Provincia Autonoma di
+          Bolzano, Aeronautica Militare; deve essere riportato altresì l'URL
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -130,7 +132,7 @@ const DataPolicyPage = () => {
               le eccezioni, libere utilizzazioni e le altre utilizzazioni
               consentite dalla legge sul diritto d'autore;
             </li>
-            <li>i diritti morali dell’autore;</li>
+            <li>i diritti morali dell'autore;</li>
             <li>
               i diritti che altre persone possono avere sull'opera stessa e/o
               sull'utilizzo dell'opera stessa, come il diritto all'immagine o
@@ -165,8 +167,8 @@ const DataPolicyPage = () => {
           </a>
           , senza che ciò possa comportare alcuna responsabilità in merito a
           eventuali problemi di qualsiasi natura causati direttamente o
-          indirettamente dall’accesso al sito, dall’incapacità o impossibilità
-          di accedervi, dall’affidamento alle informazioni in esso contenute o
+          indirettamente dall'accesso al sito, dall'incapacità o impossibilità
+          di accedervi, dall'affidamento alle informazioni in esso contenute o
           dal loro impiego.
         </p>
         <p>
@@ -180,7 +182,7 @@ const DataPolicyPage = () => {
           </a>{' '}
           sono sottoposti al controllo da parte di ARPAV, che tuttavia declina
           ogni responsabilità diretta o indiretta per eventuali ritardi,
-          imprecisioni, errori, omissioni, danni derivanti dall’uso dei
+          imprecisioni, errori, omissioni, danni derivanti dall'uso dei
           contenuti del sito da parte di terzi.
         </p>
 

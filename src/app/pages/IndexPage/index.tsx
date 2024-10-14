@@ -47,20 +47,20 @@ const IndexPage = () => {
       <Hero overlay="dark" style={TopHeroStyle}>
         <h2>Barometro del clima</h2>
 
-        <i>La temperatura da noi fino ad oggi e nel futuro</i>
+        <i>La temperatura misurata in Veneto e le proiezioni per il futuro</i>
 
         <p>
-          Il grafico mostra:
+          Il barometro utilizza la temperatura media annuale come indicatore
+          dell'evoluzione del clima. Nel grafico:
           <ul>
             <li>
-              la temperatura media annuale registrata sul Veneto negli ultimi
-              decenni (elaborazione delle misure delle stazioni sul territorio,
-              linea nera);
+              la temperatura registrata sul Veneto negli ultimi decenni (linea
+              nera);
             </li>
             <li>
-              le corrispondenti proiezioni climatiche fino a fine secolo per tre
-              diversi scenari di riduzione delle emissioni di gas serra (linee
-              blu, gialla e rossa).
+              le proiezioni climatiche fino a fine secolo per tre diversi
+              scenari di riduzione delle emissioni di gas serra (linee blu,
+              gialla e rossa).
             </li>
           </ul>
         </p>
