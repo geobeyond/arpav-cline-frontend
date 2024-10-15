@@ -1053,7 +1053,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         </Box>
       )}
       <Box sx={FieldContainerStyle}>
-        <Box>
+        <Box sx={RowContainerStyle}>
           <span>Da:</span>
           <input
             type="text"
@@ -1085,7 +1085,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             }}
           />
         </Box>
-        <Box>
+        <Box sx={RowContainerStyle}>
           <span>A:</span>
           <input
             type="text"
