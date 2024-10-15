@@ -526,9 +526,87 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return prev;
   }, {});
 
-  pseriesObj = pseriesObj.sort((a, b) => {
-    return a.name.indexOf('lower') >= 0 ? -1 : 1;
-  });
+  let opseriesObj = [
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp26' &&
+        x.info.climatological_model === mfltr &&
+        x.info.uncertainty_type === 'lower_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp26' &&
+        x.info.climatological_model === mfltr &&
+        !('undertainty_type' in x.info),
+    )[0],
+    mfltr === smfltr
+      ? null
+      : pseriesObj.filter(
+        x =>
+          x.info.scenario === 'rcp26' &&
+          x.info.climatological_model === smfltr &&
+          !('undertainty_type' in x.info),
+      )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp26' &&
+        x.info.climatological_model === mfltr &&
+        x.info.uncertainty_type === 'upper_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp45' &&
+        x.info.climatological_model === mfltr &&
+        x.info.uncertainty_type === 'lower_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp45' &&
+        x.info.climatological_model === mfltr &&
+        !('undertainty_type' in x.info),
+    )[0],
+    mfltr === smfltr
+      ? null
+      : pseriesObj.filter(
+        x =>
+          x.info.scenario === 'rcp45' &&
+          x.info.climatological_model === smfltr &&
+          !('undertainty_type' in x.info),
+      )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp45' &&
+        x.info.climatological_model === mfltr &&
+        x.info.uncertainty_type === 'upper_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_model === mfltr &&
+        x.info.uncertainty_type === 'lower_bound',
+    )[0],
+    mfltr === smfltr
+      ? null
+      : pseriesObj.filter(
+        x =>
+          x.info.scenario === 'rcp85' &&
+          x.info.climatological_model === smfltr &&
+          !('undertainty_type' in x.info),
+      )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_model === mfltr &&
+        !('undertainty_type' in x.info),
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_model === mfltr &&
+        x.info.uncertainty_type === 'upper_bound',
+    )[0],
+    pseriesObj.filter(x => 'station' in x.info)[0],
+  ];
 
   const legendselected = event => {
     //@ts-ignore
@@ -536,36 +614,39 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     console.log(seriesFilter);
   };
 
-  let seriesObj = pseriesObj.map(item => ({
-    id: item.name + '__' + item.info.processing_method,
-    name: getName(item),
-    type: getGraphType(item),
-    smooth: true,
-    // sampling: 'average',
-    symbol: 'none',
-    lineStyle: {
-      color: getColor(item),
-      type: getLineType(item),
-      opacity: getLineOpacity(item),
-      width: getLineWidth(item),
-    },
-    itemStyle: {
-      color: getColor(item),
-      type: getLineType(item),
-      opacity: getLineOpacity(item),
-      width: getLineWidth(item),
-    },
-    selected: getSelected(item),
-    data: getChartData(item, timeseries),
-    stack: getStack(item),
-    step: getStepType(item),
-    stackStrategy: 'all',
-    areaStyle: getAreaStyle(item),
-    z: getZLevel(item),
-    label: {
-      formatter: '{a}-{b}:{c}',
-    },
-  }));
+  let seriesObj = opseriesObj.map(item => {
+    if (item)
+      return {
+        id: item.name + '__' + item.info.processing_method,
+        name: getName(item),
+        type: getGraphType(item),
+        smooth: true,
+        // sampling: 'average',
+        symbol: 'none',
+        lineStyle: {
+          color: getColor(item),
+          type: getLineType(item),
+          opacity: getLineOpacity(item),
+          width: getLineWidth(item),
+        },
+        itemStyle: {
+          color: getColor(item),
+          type: getLineType(item),
+          opacity: getLineOpacity(item),
+          width: getLineWidth(item),
+        },
+        selected: getSelected(item),
+        data: getChartData(item, timeseries),
+        stack: getStack(item),
+        step: getStepType(item),
+        stackStrategy: 'all',
+        areaStyle: getAreaStyle(item),
+        z: getZLevel(item),
+        label: {
+          formatter: '{a}-{b}:{c}',
+        },
+      };
+  });
 
   const titleText =
     timeseries.length === 0
@@ -611,7 +692,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       top: '5%',
       left: 'center',
     },
-    color: seriesObj.map(x => x.lineStyle.color),
+    color: seriesObj.map(x => x?.lineStyle.color),
     tooltip: {
       trigger: 'axis',
       axisPointer: {

@@ -96,14 +96,6 @@ export function MapMenuBar(props: MapMenuBar) {
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
-  useEffect(() => {
-    if (foundLayers === 0) {
-      const cm = { ...current_map };
-      cm.year_period = 'all_year';
-      setCurrentmap(cm);
-    }
-  }, [foundLayers]);
-
   const mapParameters = (mapKey, parameterListKey) => {
     if (forecast_parameters) {
       const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
