@@ -488,7 +488,7 @@ const Graph = (props: any) => {
         x.info.climatological_variable === 'tas' &&
         x.info.uncertainty_type === 'upper_bound',
     )[0],
-    pseriesObj.filter(x => x.info.climatological_variable === 'tdd')[0],
+    pseriesObj.filter(x => x.info.historical_variable === 'tdd')[0],
   ];
 
   let seriesObj = opseriesObj.map(item => {
