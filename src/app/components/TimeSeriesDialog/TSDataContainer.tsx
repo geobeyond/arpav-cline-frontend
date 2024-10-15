@@ -585,6 +585,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         x.info.climatological_model === mfltr &&
         x.info.uncertainty_type === 'lower_bound',
     )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_model === mfltr &&
+        !('undertainty_type' in x.info),
+    )[0],
     mfltr === smfltr
       ? null
       : pseriesObj.filter(
@@ -593,12 +599,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.climatological_model === smfltr &&
           !('undertainty_type' in x.info),
       )[0],
-    pseriesObj.filter(
-      x =>
-        x.info.scenario === 'rcp85' &&
-        x.info.climatological_model === mfltr &&
-        !('undertainty_type' in x.info),
-    )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp85' &&

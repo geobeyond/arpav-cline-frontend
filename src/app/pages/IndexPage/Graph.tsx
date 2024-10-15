@@ -433,40 +433,97 @@ const Graph = (props: any) => {
         item.info.historical_variable === 'tdd')
     );
   });
+  let opseriesObj = [
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp26' &&
+        x.info.climatological_variable === 'tas' &&
+        x.info.uncertainty_type === 'lower_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp26' &&
+        x.info.climatological_variable === 'tas' &&
+        !('undertainty_type' in x.info),
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp26' &&
+        x.info.climatological_variable === 'tas' &&
+        x.info.uncertainty_type === 'upper_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp45' &&
+        x.info.climatological_variable === 'tas' &&
+        x.info.uncertainty_type === 'lower_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp45' &&
+        x.info.climatological_variable === 'tas' &&
+        !('undertainty_type' in x.info),
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp45' &&
+        x.info.climatological_variable === 'tas' &&
+        x.info.uncertainty_type === 'upper_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_variable === 'tas' &&
+        x.info.uncertainty_type === 'lower_bound',
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_variable === 'tas' &&
+        !('undertainty_type' in x.info),
+    )[0],
+    pseriesObj.filter(
+      x =>
+        x.info.scenario === 'rcp85' &&
+        x.info.climatological_variable === 'tas' &&
+        x.info.uncertainty_type === 'upper_bound',
+    )[0],
+    pseriesObj.filter(x => x.info.climatological_variable === 'tdd')[0],
+  ];
 
-  let seriesObj = pseriesObj.map(item => ({
-    id: item.name + '__' + item.info.processing_method,
-    name: labelFor(item),
-    type: getGraphType(item),
-    smooth: true,
-    // sampling: 'average',
-    symbol: 'none',
-    lineStyle: {
-      color: getColor(item),
-      type: getLineType(item),
-      opacity: getLineOpacity(item),
-      width: getLineWidth(item),
-    },
-    itemStyle: {
-      color: getColor(item),
-      type: getLineType(item),
-      opacity: getLineOpacity(item),
-      width: getLineWidth(item),
-    },
-    selected: getSelected(item),
-    data: getChartData(item, timeseries),
-    stack: getStack(item),
-    step: getStepType(item),
-    stackStrategy: 'all',
-    areaStyle: getAreaStyle(item),
-    z: getZLevel(item),
-    label: {
-      formatter: '{a}-{b}:{c}',
-    },
-  }));
-
-  seriesObj = seriesObj.sort((a, b) => {
-    return a.id.indexOf('lower') >= 0 ? -1 : 1;
+  let seriesObj = opseriesObj.map(item => {
+    if (item) {
+      return {
+        id: item.name + '__' + item.info.processing_method,
+        name: labelFor(item),
+        type: getGraphType(item),
+        smooth: true,
+        // sampling: 'average',
+        symbol: 'none',
+        lineStyle: {
+          color: getColor(item),
+          type: getLineType(item),
+          opacity: getLineOpacity(item),
+          width: getLineWidth(item),
+        },
+        itemStyle: {
+          color: getColor(item),
+          type: getLineType(item),
+          opacity: getLineOpacity(item),
+          width: getLineWidth(item),
+        },
+        selected: getSelected(item),
+        data: getChartData(item, timeseries),
+        stack: getStack(item),
+        step: getStepType(item),
+        stackStrategy: 'all',
+        areaStyle: getAreaStyle(item),
+        z: getZLevel(item),
+        label: {
+          formatter: '{a}-{b}:{c}',
+        },
+      };
+    }
   });
 
   const cats = timeseries?.map(item => {
@@ -502,7 +559,7 @@ const Graph = (props: any) => {
       top: '5%',
       left: 'center',
     },
-    color: seriesObj.map(x => x.lineStyle.color),
+    color: seriesObj.map(x => x?.lineStyle.color),
     tooltip: {
       trigger: 'axis',
       axisPointer: {
