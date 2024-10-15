@@ -48,19 +48,19 @@ export function App() {
             <Route path="/" element={<IndexPage />} />
             <Route path="/barometer" element={<IndexPage />} />
             <Route
-              path="/fs"
+              path="/proiezioni-semplice"
               element={<MapPage map_data="future" map_mode="simple" />}
             />
             <Route
-              path="/ps"
+              path="/storico-semplice"
               element={<MapPage map_data="past" map_mode="simple" />}
             />
             <Route
-              path="/fa"
+              path="/proiezioni-avanzata"
               element={<MapPage map_data="future" map_mode="advanced" />}
             />
             <Route
-              path="/pa"
+              path="/storico-avanzata"
               element={<MapPage map_data="past" map_mode="advanced" />}
             />
 

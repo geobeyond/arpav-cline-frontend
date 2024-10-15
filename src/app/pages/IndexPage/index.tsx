@@ -79,13 +79,21 @@ const IndexPage = () => {
               <HeroBody>
                 <HeroTitle>{t('app.index.sections.hist')}</HeroTitle>
                 <p className="d-none d-lg-block"></p>
-                <HeroButton disabled={true} href="/ps" color="secondary">
+                <HeroButton
+                  disabled={true}
+                  href="/storico-semplice"
+                  color="secondary"
+                >
                   {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
                 <br />
                 <br />
-                <HeroButton disabled={true} href="/pa" color="secondary">
+                <HeroButton
+                  disabled={true}
+                  href="/storico-avanzata"
+                  color="secondary"
+                >
                   {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
@@ -101,13 +109,17 @@ const IndexPage = () => {
               <HeroBody>
                 <HeroTitle>{t('app.index.sections.proj')}</HeroTitle>
                 <p className="d-none d-lg-block"></p>
-                <HeroButton disabled={true} href="fs" color="secondary">
+                <HeroButton
+                  disabled={true}
+                  href="proiezioni-semplice"
+                  color="secondary"
+                >
                   {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
                 <br />
                 <br />
-                <HeroButton href="fa" color="secondary">
+                <HeroButton href="proiezioni-avanzata" color="secondary">
                   {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
