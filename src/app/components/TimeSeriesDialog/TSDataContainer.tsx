@@ -1086,7 +1086,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           />
         </Box>
         <Box>
-          <span>Da:</span>
+          <span>A:</span>
           <input
             type="text"
             maxLength={4}
