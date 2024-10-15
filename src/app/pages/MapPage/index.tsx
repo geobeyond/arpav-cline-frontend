@@ -33,13 +33,14 @@ interface MapPageProps {
 }
 
 const defaultMap: any = {
-  aggregation_period: '30yr',
-  climatological_model: 'model_ensemble',
   climatological_variable: 'tas',
-  measure: 'anomaly',
+  climatological_model: 'model_ensemble',
   scenario: 'rcp85',
+  measure: 'anomaly',
   time_window: 'tw1',
+  aggregation_period: '30yr',
   year_period: 'winter',
+
   data_series: 'no',
 };
 
@@ -66,7 +67,7 @@ export function MapPage(props: MapPageProps) {
   //  useSelector(selectMap);
   const [loading, setLoading] = useState(false);
   const [menus, setMenus] = useState();
-  const [combinations, setCombinations] = useState();
+  const [combinations, setCombinations] = useState({});
   const [selectedPoint, setSelectedPoint] = useState<any | null>(null);
   const [mapScreen, setMapScreen] = useState<any>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
@@ -101,7 +102,22 @@ export function MapPage(props: MapPageProps) {
 
   useEffect(() => {
     api.getAttributes().then(x => {
-      setCombinations(x.combinations);
+      setCombinations(
+        x.combinations.reduce((prev, cur) => {
+          const kk = cur.variable + '::' + cur.aggregation_period;
+          if (kk in prev) {
+            prev[kk][cur.measure] = cur;
+            return prev;
+          } else {
+            return {
+              ...prev,
+              [cur.variable + '::' + cur.aggregation_period]: {
+                [cur.measure]: cur,
+              },
+            };
+          }
+        }, {}),
+      );
       setMenus(x.items);
     });
 
@@ -127,7 +143,19 @@ export function MapPage(props: MapPageProps) {
                 setCurrentLayer(x.items[0].identifier);
                 setCurrentLayerConfig(conf);
               });
-          } else if (x.items.length !== 1) {
+          } else {
+            let nm = { ...currentMap };
+            const kk =
+              currentMap.climatological_variable +
+              '::' +
+              currentMap.aggregation_period;
+            let opts = combinations[kk];
+            if (opts) {
+              if (Object.keys(opts).indexOf(currentMap.measure) >= 0) {
+                opts = opts[currentMap.measure];
+                console.log(opts);
+              }
+            }
           }
         });
     } catch (e) {

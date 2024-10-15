@@ -80,18 +80,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
   const setCurrentmap = props.setCurrentMap;
-  const combinations = (props.combinations || []).reduce((prev, cur) => {
-    const kk = cur.variable + '::' + cur.aggregation_period;
-    if (kk in prev) {
-      prev[kk][cur.measure] = cur;
-      return prev;
-    } else {
-      return {
-        ...prev,
-        [cur.variable + '::' + cur.aggregation_period]: { [cur.measure]: cur },
-      };
-    }
-  }, {});
+  const combinations = props.combinations || [];
 
   const [activeCombinations, setActiveCombinations] = useState<any>({});
 
@@ -110,7 +99,7 @@ export function MapMenuBar(props: MapMenuBar) {
   useEffect(() => {
     if (foundLayers === 0) {
       const cm = { ...current_map };
-      cm.year_period = 'year';
+      cm.year_period = 'all_year';
       setCurrentmap(cm);
     }
   }, [foundLayers]);
