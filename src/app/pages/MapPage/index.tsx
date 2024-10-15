@@ -104,18 +104,41 @@ export function MapPage(props: MapPageProps) {
     api.getAttributes().then(x => {
       setCombinations(
         x.combinations.reduce((prev, cur) => {
+          for (let k of Object.keys(defaultMap)) {
+            if (!(k in cur.other_parameters)) {
+              cur.other_parameters[k] = [];
+              if (k in cur) {
+                cur.other_parameters[k].push(cur[k]);
+              }
+            }
+          }
           const kk = cur.variable + '::' + cur.aggregation_period;
+          const ki = cur.variable;
+          cur.kk = kk;
+          cur.ki = ki;
+          if (ki in prev) {
+            prev[ki].other_parameters.aggregation_period.push(
+              cur.aggregation_period,
+            );
+            prev[ki].other_parameters.measure.push(cur.measure);
+          } else {
+            prev[ki] = { ...cur };
+            prev[ki].other_parameters.aggregation_period = [
+              cur.aggregation_period,
+            ];
+            prev[ki].other_parameters.measure = [cur.measure];
+          }
           if (kk in prev) {
             prev[kk][cur.measure] = cur;
-            return prev;
           } else {
-            return {
+            prev = {
               ...prev,
               [cur.variable + '::' + cur.aggregation_period]: {
                 [cur.measure]: cur,
               },
             };
           }
+          return prev;
         }, {}),
       );
       setMenus(x.items);

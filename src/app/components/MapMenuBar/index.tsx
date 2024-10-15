@@ -41,7 +41,7 @@ import {
 } from './styles';
 import { MapState } from '../../pages/MapPage/slice/types';
 import DownloadDataDialog from '../DownloadDataDialog';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useMapSlice } from '../../pages/MapPage/slice';
 import { MenuSelectionMobileStyle } from './styles';
 import SnowSunIcon from '../../icons/SnowSunIcon';
@@ -82,7 +82,15 @@ export function MapMenuBar(props: MapMenuBar) {
   const setCurrentmap = props.setCurrentMap;
   const combinations = props.combinations || [];
 
-  const [activeCombinations, setActiveCombinations] = useState<any>({});
+  const activeCombinations = useRef(
+    Object.keys(combinations).length > 0
+      ? combinations['tas::30yr']['anomaly']
+      : {},
+  );
+
+  const setActiveCombinations = combo => {
+    activeCombinations.current = { ...combo };
+  };
 
   const onDownloadMapImg = props.onDownloadMapImg ?? (() => { });
   //const {
@@ -129,6 +137,7 @@ export function MapMenuBar(props: MapMenuBar) {
               'climatological_variable',
             ),
             disableable: false,
+            criteria: x => [],
           },
         ],
       },
@@ -148,6 +157,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   'climatological_model',
                 ),
                 disableable: false,
+                criteria: x => [],
               },
             ],
           },
@@ -158,6 +168,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 disableable: false,
                 groupName: t('app.map.menu.scenarios'),
                 ...mapParameters('scenario', 'scenario'),
+                criteria: x => [],
               },
             ],
           },
@@ -170,19 +181,25 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters('aggregation_period', 'aggregation_period'),
-            disableable: false,
+            disableable: true,
+            criteria: x => {
+              console.log(x);
+              return x.other_parameters?.aggregation_period;
+            },
           },
           {
             key: 'measure',
             groupName: t('app.map.menu.valueTypes'),
             ...mapParameters('measure', 'measure'),
-            disableable: false,
+            disableable: true,
+            criteria: x => x.other_parameters?.measure,
           },
           {
             key: 'time_window',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters('time_window', 'time_window'),
             disableable: true,
+            criteria: x => x.other_parameters?.time_window,
           },
         ],
       },
@@ -196,6 +213,7 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: '',
             ...mapParameters('year_period', 'year_period'),
             disableable: true,
+            criteria: x => x.other_parameters?.year_period,
           },
         ],
       },
@@ -232,7 +250,7 @@ export function MapMenuBar(props: MapMenuBar) {
     console.log('handleChange', key, value);
     console.log(combinations);
     if (
-      ['climatological_variable', 'aggregation_period', 'measure'].indexOf(
+      ['climatological_variable', 'measure', 'aggregation_period'].indexOf(
         key,
       ) >= 0
     ) {
@@ -255,12 +273,22 @@ export function MapMenuBar(props: MapMenuBar) {
           );
           setActiveCombinations(combinations[ckey][current_map.measure]);
         }
+      } else if (
+        Object.keys(combinations).indexOf(
+          current_map.climatological_variable,
+        ) >= 0
+      ) {
+        setActiveCombinations(
+          combinations[current_map.climatological_variable],
+        );
       }
     }
     if (onMenuChange) {
       onMenuChange({ key, value });
     }
   };
+
+  //setActiveCombinations(combinations['tas']);
 
   const findValueName = (key: string, listKey: string) => {
     return '';
@@ -364,10 +392,8 @@ export function MapMenuBar(props: MapMenuBar) {
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
+              activeCombinations={activeCombinations.current}
               mobileIcon={<DateRangeIcon />}
-              activeCombinations={
-                activeCombinations?.other_parameters?.time_window
-              }
               className={
                 hasMissingValues(menus.periodMenuSet) ? 'NeedsSelection' : ''
               }
@@ -386,9 +412,7 @@ export function MapMenuBar(props: MapMenuBar) {
               className={
                 hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
               }
-              activeCombinations={
-                activeCombinations?.other_parameters?.year_period
-              }
+              activeCombinations={activeCombinations.current}
               label={t('app.map.menuBar.season')}
             // label={'Season'}
             />

@@ -62,6 +62,7 @@ export type TSelectedValue = IGrpItm[];
 export type TValueSet = { columns: { group: IGroup; items: IItem[] }[] }[];
 
 export interface RowMenuProps {
+  criteria(activeCombinations: any): string[];
   needsSelection: Boolean;
   key: string;
   groupName: string;
@@ -85,7 +86,6 @@ export interface MultiRadioSelectProps {
   label: string;
   current_map?: any;
   activeCombinations?: any;
-  disableable?: boolean;
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
@@ -97,8 +97,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   const label = props.label;
   const className = props.className ?? '';
   const MobileIcon = () => props.mobileIcon ?? <></>;
-  const activeCombinations = props.activeCombinations ?? [];
-  const disableable = props.disableable ?? true;
+  const activeCombinations = props.activeCombinations ?? {};
 
   const { t, i18n } = useTranslation();
 
@@ -145,6 +144,18 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
       if (i18n.language === 'it') return item.description_italian;
       else return item.description_english;
     }
+  };
+
+  const getFieldsByCriteria = (row, setting) => {
+    console.log(row, setting);
+    if (setting === {}) {
+      return row.items.map(x => x.name);
+    }
+    const r = row.criteria(setting);
+    if (r) {
+      return r;
+    }
+    return row.items.map(x => x.name);
   };
 
   return (
@@ -220,7 +231,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           disableGutters
                           disabled={
                             row.disableable &&
-                            activeCombinations.indexOf(item.name) < 0
+                            getFieldsByCriteria(
+                              row,
+                              activeCombinations,
+                            ).indexOf(item.name) < 0
                           }
                         >
                           <FormControlLabel
