@@ -1053,7 +1053,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         </Box>
       )}
       <Box sx={FieldContainerStyle}>
-        <Box>
+        <Box sx={RowContainerStyle}>
+          <span>Da:</span>&nbsp;&nbsp;
           <input
             type="text"
             maxLength={4}
@@ -1084,7 +1085,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             }}
           />
         </Box>
-        <Box>
+        <Box sx={RowContainerStyle}>
+          <span>A:</span>&nbsp;&nbsp;
           <input
             type="text"
             maxLength={4}
