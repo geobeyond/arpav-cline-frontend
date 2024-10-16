@@ -181,7 +181,7 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters('aggregation_period', 'aggregation_period'),
-            disableable: true,
+            disableable: false,
             criteria: x => {
               console.log(x);
               return x.other_parameters?.aggregation_period;
@@ -247,15 +247,13 @@ export function MapMenuBar(props: MapMenuBar) {
 
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
   const handleChange = (key: string, value: string) => {
+    const steps = ['climatological_variable', 'aggregation_period'];
     console.log('handleChange', key, value);
     console.log(combinations);
-    if (
-      ['climatological_variable', 'measure', 'aggregation_period'].indexOf(
-        key,
-      ) >= 0
-    ) {
-      let ckey = '{climatological_variable}::{aggregation_period}';
-      ckey = ckey.replace('{' + key + '}', value);
+    const idx = steps.indexOf(key);
+    let ckey = '{climatological_variable}';
+    if (idx >= 0) {
+      if (idx === 1) ckey = ckey + '::{aggregation_period}';
       ckey = ckey.replace(
         '{climatological_variable}',
         current_map.climatological_variable,

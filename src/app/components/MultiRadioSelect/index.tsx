@@ -147,8 +147,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   };
 
   const getFieldsByCriteria = (row, setting) => {
-    console.log(row, setting);
-    if (setting === {}) {
+    if (JSON.stringify(setting) === JSON.stringify({})) {
       return row.items.map(x => x.name);
     }
     const r = row.criteria(setting);
