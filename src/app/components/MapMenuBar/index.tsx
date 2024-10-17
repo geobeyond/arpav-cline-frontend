@@ -476,20 +476,20 @@ export function MapMenuBar(props: MapMenuBar) {
                   <LinkListItem header inDropdown>
                     {t('app.index.sections.proj')}
                   </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/fs">
+                  <LinkListItem disabled inDropdown href="/proiezioni-semplice">
                     {t('app.index.sections.simple')}
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/fa">
+                  <LinkListItem inDropdown href="/proiezioni-avanzata">
                     {t('app.index.sections.advanced')}
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
                     {t('app.index.sections.hist')}
                   </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/ps">
+                  <LinkListItem disabled inDropdown href="/storico-semplice">
                     {t('app.index.sections.simple')}
                   </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/pa">
+                  <LinkListItem disabled inDropdown href="/storico-avanzata">
                     {t('app.index.sections.advanced')}
                   </LinkListItem>
                 </LinkList>
