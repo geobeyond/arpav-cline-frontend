@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Paper,
@@ -106,17 +106,22 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     );
     // @ts-ignore
     if (found && value?.latlng) {
+      if (localStorage.getItem('muni')) {
+        // @ts-ignore
+        found.resetFeatureStyle(localStorage.getItem('muni'));
+      }
+      localStorage.setItem('muni', value.label);
       context.map.flyTo(
         [value.latlng.lat, value.latlng.lng],
         context.map.getZoom() - 1,
       );
       // @ts-ignore
-      found.setFeatureStyle(value.name, {
-        color: 'yellow',
-        weight: 1,
+      found.setFeatureStyle(value.label, {
+        color: '#164d36',
+        weight: 2,
         radius: 1,
         fill: true,
-        fillOpacity: 1,
+        fillOpacity: 0,
         opacity: 1,
       });
       // @ts-ignore
@@ -128,6 +133,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           properties: value,
         },
       });
+
       setTimeout(() => {
         context.map.flyTo(
           [value.latlng.lat, value.latlng.lng],
