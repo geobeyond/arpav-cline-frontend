@@ -181,7 +181,7 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters('aggregation_period', 'aggregation_period'),
-            disableable: false,
+            disableable: true,
             criteria: x => {
               console.log(x);
               return x.other_parameters?.aggregation_period;
@@ -254,14 +254,15 @@ export function MapMenuBar(props: MapMenuBar) {
     let ckey = '{climatological_variable}';
     if (idx >= 0) {
       if (idx === 1) ckey = ckey + '::{aggregation_period}';
-      ckey = ckey.replace(
-        '{climatological_variable}',
-        current_map.climatological_variable,
-      );
-      ckey = ckey.replace(
-        '{aggregation_period}',
-        current_map.aggregation_period,
-      );
+      if (idx === 1) {
+        ckey = ckey.replace(
+          '{climatological_variable}',
+          current_map.climatological_variable,
+        );
+        ckey = ckey.replace('{aggregation_period}', value);
+      } else {
+        ckey = ckey.replace('{climatological_variable}', value);
+      }
       if (Object.keys(combinations).indexOf(ckey) >= 0) {
         if (current_map.measure in combinations[ckey]) {
           console.log(
