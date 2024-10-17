@@ -849,6 +849,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const str = (start, end) => {
+    console.log('[STF] str()', start, end);
     const range = {
       start: start,
       end: end,
