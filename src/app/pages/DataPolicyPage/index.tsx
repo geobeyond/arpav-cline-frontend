@@ -65,8 +65,9 @@ const DataPolicyPage = () => {
           Developers Italia, secondo quanto previsto da AGID nelle "
           <i>
             Linee guida su acquisizione e riuso di software per le Pubbliche
-            Amministrazioni"
+            Amministrazioni
           </i>
+          "
         </p>
         <p>
           I contenuti della piattaforma, se non diversamente specificato, sono
@@ -75,7 +76,7 @@ const DataPolicyPage = () => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://creativecommons.org/licenses/by-sa/3.0/it/"
+            href="https://creativecommons.org/licenses/by-sa/4.0/deed.it"
           >
             <u>CC BY-SA 4.0 IT</u>
           </a>
@@ -83,9 +84,9 @@ const DataPolicyPage = () => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://creativecommons.org/licenses/by-sa/3.0/it/"
+            href="https://creativecommons.org/licenses/by-sa/4.0/deed.it"
           >
-            <u>https://creativecommons.org/licenses/by-sa/3.0/it/</u>
+            <u>https://creativecommons.org/licenses/by-sa/4.0/deed.it</u>
           </a>
           , e<strong> </strong>possono essere riprodotti, distribuiti,
           comunicati, esposti, rappresentati, modificati e usati anche per fini
@@ -172,16 +173,16 @@ const DataPolicyPage = () => {
           dal loro impiego.
         </p>
         <p>
-          I contenuti di{' '}
+          I contenuti di &nbsp;
           <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://clima.arpa.veneto.it/"
           >
             <u>https://clima.arpa.veneto.it/</u>
-          </a>{' '}
-          sono sottoposti al controllo da parte di ARPAV, che tuttavia declina
-          ogni responsabilità diretta o indiretta per eventuali ritardi,
+          </a>
+          &nbsp; sono sottoposti al controllo da parte di ARPAV, che tuttavia
+          declina ogni responsabilità diretta o indiretta per eventuali ritardi,
           imprecisioni, errori, omissioni, danni derivanti dall'uso dei
           contenuti del sito da parte di terzi.
         </p>
@@ -199,13 +200,13 @@ const DataPolicyPage = () => {
           quali documentazione tecnica, normativa, modulistica e software, salvo
           diversa indicazione, è liberamente e gratuitamente disponibile,
           citando la fonte, in licenza Creative Commons Attribuzione - Condividi
-          allo stesso modo 3.0 Italia (
+          allo stesso modo 4.0 Italia (
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://creativecommons.org/licenses/by-sa/3.0/it/"
+            href="https://creativecommons.org/licenses/by-sa/4.0/deed.it"
           >
-            <u>CC BY-SA 3.0 IT</u>
+            <u>CC BY-SA 4.0 IT</u>
           </a>
           ).
         </p>

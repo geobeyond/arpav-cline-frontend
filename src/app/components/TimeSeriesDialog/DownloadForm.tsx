@@ -55,10 +55,10 @@ export const DownloadForm = props => {
       ids: ids.current,
       latitude: latLng.lat,
       longitude: latLng.lng,
-      start: timeRange?.current?.start,
-      end: timeRange?.current?.end,
-      fitms: filter.current,
-      sfs: filter.current.series?.flat(),
+      start: Math.ceil(timeRange?.current?.start),
+      end: Math.ceil(timeRange?.current?.end),
+      fitms: filter,
+      sfs: filter.current?.series?.flat(),
     };
     setCsvLoader(true);
     let fdata: any[] = [];
