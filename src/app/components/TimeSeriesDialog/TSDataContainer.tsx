@@ -223,7 +223,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE_11_YEARS');
   const [mfltr, setMfltr] = useState<string>('model_ensemble');
-  const [smfltr, setSMfltr] = useState<string>('model_ensemble');
+  const [smfltr, setSMfltr] = useState<string>(currentMap.climatological_model);
   const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
 
