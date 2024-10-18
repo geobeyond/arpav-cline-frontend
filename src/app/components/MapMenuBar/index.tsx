@@ -181,9 +181,8 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters('aggregation_period', 'aggregation_period'),
-            disableable: true,
+            disableable: true && current_map.climatological_value !== '',
             criteria: x => {
-              console.log(x);
               return x.other_parameters?.aggregation_period;
             },
           },

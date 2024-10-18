@@ -172,12 +172,19 @@ export function MapPage(props: MapPageProps) {
               currentMap.climatological_variable +
               '::' +
               currentMap.aggregation_period;
-            let opts = combinations[kk];
+            let opts = combinations[kk][currentMap.measure]?.other_parameters;
+            console.log(opts);
             if (opts) {
               if (Object.keys(opts).indexOf(currentMap.measure) >= 0) {
                 opts = opts[currentMap.measure];
                 console.log(opts);
               }
+            } else {
+              opts =
+                combinations[currentMap.climatological_variable]
+                  .other_parameters;
+              nm.measure = opts.measure[0];
+              console.log(opts);
             }
           }
         });

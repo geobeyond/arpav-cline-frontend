@@ -210,9 +210,30 @@ const Graph = (props: any) => {
 
   const getLegend = () => {
     //TODO names lookup
-    const series = timeseries
+    const series_26 = timeseries
       ?.filter(x => !('uncertainty_type' in x.info))
       .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(x => x.info.scenario === 'rcp26')
+      .map(item => ({
+        name: labelFor(item),
+        itemStyle: { color: getColor(item), opacity: 1 },
+        lineStyle: { color: getColor(item), opacity: 1 },
+        icon: 'roundRect',
+      }));
+    const series_45 = timeseries
+      ?.filter(x => !('uncertainty_type' in x.info))
+      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(x => x.info.scenario === 'rcp45')
+      .map(item => ({
+        name: labelFor(item),
+        itemStyle: { color: getColor(item), opacity: 1 },
+        lineStyle: { color: getColor(item), opacity: 1 },
+        icon: 'roundRect',
+      }));
+    const series_85 = timeseries
+      ?.filter(x => !('uncertainty_type' in x.info))
+      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(x => x.info.scenario === 'rcp85')
       .map(item => ({
         name: labelFor(item),
         itemStyle: { color: getColor(item), opacity: 1 },
@@ -220,7 +241,8 @@ const Graph = (props: any) => {
         icon: 'roundRect',
       }));
     const station = timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
+      ?.filter(x => 'historical_variable' in x.info)
+      .filter(x => x.info.historical_variable === 'tdd')
       .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
       .map(x => ({
         name: labelFor(x, 'station'),
@@ -228,7 +250,7 @@ const Graph = (props: any) => {
         lineStyle: { color: 'black' },
         icon: 'roundRect',
       }));
-    return [...series, ...station];
+    return [...series_26, ...series_45, ...series_85, ...station];
   };
 
   const toUTF16 = codePoint => {
