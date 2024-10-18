@@ -68,7 +68,7 @@ export const TWLSample = (props: any) => {
           opacity: opacity,
           zIndex: zIndex,
           attribution:
-            '&copy; <a target="_blank" rel="noopener" href="https://www.arpa.veneto.it/">ARPAV - Arpa FVG</a>',
+            '&copy; <a target="_blank" rel="noopener" href="https://www.arpa.veneto.it/">ARPAV</a>',
         };
         const tlUrl = `${V2_WMS_PROXY_URL}${selected_map_path}`;
         // @ts-ignore
