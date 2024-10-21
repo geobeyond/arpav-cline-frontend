@@ -59,7 +59,7 @@ export const LegendBar = (props: LegendBarProps) => {
         <div
           style={{ textAlign: 'center', maxWidth: isMobile ? '60px' : '120px' }}
         >
-          <b>{label.toUpperCase()}</b>
+          <b>{label?.toUpperCase()}</b>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {colors.length > 0 && (

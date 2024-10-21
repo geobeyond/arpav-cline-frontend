@@ -137,6 +137,19 @@ export function MapPage(props: MapPageProps) {
     );
 
   useEffect(() => {
+    const all_meas = ['absolute', 'anomaly'];
+    const all_pers = ['annual', '30yr'];
+    const all_indx = [
+      'tas',
+      'cdds',
+      'hdds',
+      'pr',
+      'snwdays',
+      'su30',
+      'tasmax',
+      'tasmin',
+      'tr',
+    ];
     api.getAttributes().then(x => {
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
@@ -184,6 +197,7 @@ export function MapPage(props: MapPageProps) {
       }, {});
       for (let k of Object.keys(combos)) {
         if (k.indexOf('::') >= 0) {
+          const m = k.split('::')[0];
           let nc: any = {};
           let kks = Object.keys(combos[k]);
           if (kks.length === 1) {
@@ -193,6 +207,15 @@ export function MapPage(props: MapPageProps) {
               nc = merge(nc, combos[k][kk]);
             }
             combos[k] = nc;
+          }
+          if (all_indx.indexOf(m) >= 0) {
+            combos[k].measure = all_meas;
+            combos[k].aggregation_period = all_pers;
+          }
+        } else {
+          if (all_indx.indexOf(k) >= 0) {
+            combos[k].measures = all_meas;
+            combos[k].aggregation_period = all_pers;
           }
         }
       }
@@ -229,14 +252,16 @@ export function MapPage(props: MapPageProps) {
               console.log(opts);
               if (opts) {
                 for (let k of Object.keys(currentMap)) {
-                  if (opts[k].indexOf(currentMap[k])) {
+                  if (opts[k].indexOf(currentMap[k]) < 0) {
                     if (opts[k].length > 0) {
                       nm[k] = opts[k][0];
-                      console.log(nm);
+                    } else {
+                      nm[k] = null;
                     }
                   }
                 }
               }
+              console.log(nm);
               setCurrentMap(nm);
             } else {
               openError('wrong_index');
