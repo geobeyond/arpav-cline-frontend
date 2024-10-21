@@ -83,9 +83,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const combinations = props.combinations || [];
 
   const activeCombinations = useRef(
-    Object.keys(combinations).length > 0
-      ? combinations['tas::30yr']['anomaly']
-      : {},
+    Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
   );
 
   const setActiveCombinations = combo => {

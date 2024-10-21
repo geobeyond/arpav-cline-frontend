@@ -98,9 +98,9 @@ export function MapPage(props: MapPageProps) {
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
   const [currentTimeSerie, setCurrentTimeSerie] = useState({});
 
-  const [error, setError] = useState(false);
-  const openError = () => setError(true);
-  const closeError = () => setError(false);
+  const [error, setError] = useState('');
+  const openError = type => setError(type);
+  const closeError = () => setError('');
 
   const [foundLayers, setFoundLayers] = useState(0);
 
@@ -221,24 +221,25 @@ export function MapPage(props: MapPageProps) {
               setCurrentLayerConfig(conf);
             });
           } else {
-            openError();
+            openError('wrong_config');
             let nm = { ...currentMap };
-            const kk =
-              currentMap.climatological_variable +
-              '::' +
-              currentMap.aggregation_period;
-            if (currentMap.measure in combinations[kk]) {
-              let opts = combinations[kk][currentMap.measure]?.other_parameters;
+            const kk = currentMap.climatological_variable;
+            if (kk in combinations) {
+              let opts = combinations[kk];
               console.log(opts);
               if (opts) {
-                if (Object.keys(opts).indexOf(currentMap.measure) >= 0) {
-                  opts = opts[currentMap.measure];
-                  console.log(opts);
+                for (let k of Object.keys(currentMap)) {
+                  if (opts[k].indexOf(currentMap[k])) {
+                    if (opts[k].length > 0) {
+                      nm[k] = opts[k][0];
+                      console.log(nm);
+                    }
+                  }
                 }
               }
-            } else {
-              nm.measure = Object.keys(combinations[kk])[0];
               setCurrentMap(nm);
+            } else {
+              openError('wrong_index');
             }
           }
         });
@@ -382,18 +383,17 @@ export function MapPage(props: MapPageProps) {
   return (
     <Box sx={mapStyle}>
       <Modal
-        open={error}
+        open={error.length > 0}
         onClose={closeError}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Configurazione non presente
+            {t(error + '.title')}
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            La configurazione di parametri scelta non ha trovato corrispondenze.
-            Verrà applicata una configurazione di default.
+            {t(error + '.message')}
           </Typography>
           <Button onClick={closeError}>Ok</Button>
         </Box>

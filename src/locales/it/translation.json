@@ -74,5 +74,9 @@
   "app.map.timeSeriesDialog.toggleUncertainty": "Attiva/disattiva incertezza",
   "app.map.search.lat": "Lat",
   "app.map.search.lng": "Long",
-  "app.footer": ""
+  "app.footer": "",
+  "wrong_config.title": "Configurazione non valida",
+  "wrong_config.message": "La configurazione scelta non corrisponde a nessun daaset del sistema. Verrà impostata una configurzione di default.",
+  "wrong_index.title": "Indicatore non valido",
+  "wrong_index.message": "L'indicatore scelto non ha configurazioni valide."
 }
