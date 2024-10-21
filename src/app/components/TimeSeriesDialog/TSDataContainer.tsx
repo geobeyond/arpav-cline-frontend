@@ -221,17 +221,40 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const { t, i18n } = useTranslation();
   console.debug(i18n);
 
-  const [nfltr, setNfltr] = useState<string>('MOVING_AVERAGE_11_YEARS');
-  const [mfltr, setMfltr] = useState<string>('model_ensemble');
-  const [smfltr, setSMfltr] = useState<string>(currentMap.climatological_model);
-  const [snsfltr, setSnsfltr] = useState<string>('NO_SMOOTHING');
+  const [processingMethod, setPRocessingMethod] = useState<string>(
+    'MOVING_AVERAGE_11_YEARS',
+  );
+  const [baseClimatologicalModel, setBaseClimatologicalModel] =
+    useState<string>('model_ensemble');
+  const [comparisonClimatologicalModel, setComparisonClimatologicalModel] =
+    useState<string>(currentMap.climatological_model);
+  const [sensorProcessingMehtod, setSensorProcessingMethod] =
+    useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
 
   useEffect(() => {
-    setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
-  }, [mfltr, smfltr, nfltr, snsfltr, uncert]);
+    setFilters(
+      baseClimatologicalModel,
+      comparisonClimatologicalModel,
+      processingMethod,
+      sensorProcessingMehtod,
+      uncert,
+    );
+  }, [
+    baseClimatologicalModel,
+    comparisonClimatologicalModel,
+    processingMethod,
+    sensorProcessingMehtod,
+    uncert,
+  ]);
 
-  setFilters(mfltr, smfltr, nfltr, snsfltr, uncert);
+  setFilters(
+    baseClimatologicalModel,
+    comparisonClimatologicalModel,
+    processingMethod,
+    sensorProcessingMehtod,
+    uncert,
+  );
 
   const toDisplay = x => {
     return x.name.indexOf('uncertainty');
@@ -284,12 +307,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //TODO names lookup
     const series = timeseries
       ?.filter(x => !('uncertainty_type' in x.info))
-      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
       .filter(
         x =>
-          x.info.climatological_model === mfltr ||
+          x.info.climatological_model === baseClimatologicalModel ||
           x.name.length < 20 ||
-          x.info.climatological_model === smfltr,
+          x.info.climatological_model === comparisonClimatologicalModel,
       )
       .map(item => ({
         name: getName(item),
@@ -297,7 +320,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       }));
     const station = timeseries
       ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
-      .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
+      .filter(
+        x => x.info.processing_method.indexOf(sensorProcessingMehtod) >= 0,
+      )
       .map(x => ({
         name: getName(x, 'station'),
         itemStyle: { color: 'black', opacity: 1 },
@@ -310,17 +335,17 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     let ret = {};
     timeseries
       ?.filter(x => !('uncertainty_type' in x.info))
-      .filter(x => x.info.processing_method.indexOf(nfltr) >= 0)
+      .filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
       .filter(
         x =>
-          x.name.indexOf(mfltr) >= 0 ||
+          x.name.indexOf(baseClimatologicalModel) >= 0 ||
           x.name.length < 20 ||
-          x.name.indexOf(smfltr) >= 0,
+          x.name.indexOf(comparisonClimatologicalModel) >= 0,
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
       ?.filter(x => Object.keys(x.info).indexOf('station') > 0)
-      .filter(x => x.name.indexOf(snsfltr) >= 0)
+      .filter(x => x.name.indexOf(sensorProcessingMehtod) >= 0)
       .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
     return ret;
@@ -356,11 +381,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const getChartData = (item, series) => {
     if (
       'uncertainty_type' in item.info ||
-      (item.info.processing_method.indexOf(nfltr) >= 0 &&
-        (item.info.climatological_model === mfltr ||
-          item.info.climatological_model === smfltr)) ||
+      (item.info.processing_method.indexOf(processingMethod) >= 0 &&
+        (item.info.climatological_model === baseClimatologicalModel ||
+          item.info.climatological_model === comparisonClimatologicalModel)) ||
       ('series_elaboration' in item.info &&
-        item.info.processing_method.indexOf(snsfltr) >= 0)
+        item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0)
     ) {
       if (
         'uncertainty_type' in item.info &&
@@ -370,7 +395,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         let lbitem = series.filter(x => {
           return (
             getName(x) === getName(item) &&
-            x.info.processing_method === nfltr &&
+            x.info.processing_method === processingMethod &&
             x.info.aggregation_period === item.info.aggregation_period &&
             x.info.climatological_model === item.info.climatological_model &&
             x.info.climatological_variable ===
@@ -481,11 +506,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       return (
         //no uncertainty
         !('uncertainty_type' in item.info) &&
-        ((item.info.processing_method.indexOf(nfltr) >= 0 &&
-          (item.info.climatological_model === mfltr ||
-            item.info.climatological_model === smfltr)) ||
+        ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
+          (item.info.climatological_model === baseClimatologicalModel ||
+            item.info.climatological_model ===
+            comparisonClimatologicalModel)) ||
           ('series_elaboration' in item.info &&
-            item.info.processing_method.indexOf(snsfltr) >= 0))
+            item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0))
       );
     }),
   ];
@@ -496,11 +522,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         return (
           //no uncertainty
           'uncertainty_type' in item.info &&
-          ((item.info.processing_method.indexOf(nfltr) >= 0 &&
-            (item.info.climatological_model === mfltr ||
-              item.info.climatological_model === smfltr)) ||
+          ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
+            (item.info.climatological_model === baseClimatologicalModel ||
+              item.info.climatological_model ===
+              comparisonClimatologicalModel)) ||
             ('series_elaboration' in item.info &&
-              item.info.processing_method.indexOf(snsfltr) >= 0))
+              item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0))
         );
       }),
     ];
@@ -530,79 +557,79 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp26' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         x.info.uncertainty_type === 'lower_bound',
     )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp26' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         !('undertainty_type' in x.info),
     )[0],
-    mfltr === smfltr
+    baseClimatologicalModel === comparisonClimatologicalModel
       ? null
       : pseriesObj.filter(
         x =>
           x.info.scenario === 'rcp26' &&
-          x.info.climatological_model === smfltr &&
+          x.info.climatological_model === comparisonClimatologicalModel &&
           !('undertainty_type' in x.info),
       )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp26' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         x.info.uncertainty_type === 'upper_bound',
     )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp45' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         x.info.uncertainty_type === 'lower_bound',
     )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp45' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         !('undertainty_type' in x.info),
     )[0],
-    mfltr === smfltr
+    baseClimatologicalModel === comparisonClimatologicalModel
       ? null
       : pseriesObj.filter(
         x =>
           x.info.scenario === 'rcp45' &&
-          x.info.climatological_model === smfltr &&
+          x.info.climatological_model === comparisonClimatologicalModel &&
           !('undertainty_type' in x.info),
       )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp45' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         x.info.uncertainty_type === 'upper_bound',
     )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp85' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         x.info.uncertainty_type === 'lower_bound',
     )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp85' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         !('undertainty_type' in x.info),
     )[0],
-    mfltr === smfltr
+    baseClimatologicalModel === comparisonClimatologicalModel
       ? null
       : pseriesObj.filter(
         x =>
           x.info.scenario === 'rcp85' &&
-          x.info.climatological_model === smfltr &&
+          x.info.climatological_model === comparisonClimatologicalModel &&
           !('undertainty_type' in x.info),
       )[0],
     pseriesObj.filter(
       x =>
         x.info.scenario === 'rcp85' &&
-        x.info.climatological_model === mfltr &&
+        x.info.climatological_model === baseClimatologicalModel &&
         x.info.uncertainty_type === 'upper_bound',
     )[0],
     pseriesObj.filter(x => 'station' in x.info)[0],
@@ -923,18 +950,18 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const setSensorSmoothing = v => {
     if (v === 0) {
-      setSnsfltr('NO_SMOOTHING');
+      setSensorProcessingMethod('NO_SMOOTHING');
     } else if (v === 1) {
-      setSnsfltr('MOVING_AVERAGE_5_YEARS');
+      setSensorProcessingMethod('MOVING_AVERAGE_5_YEARS');
     }
   };
   const setModelSmoothing = v => {
     if (v === 0) {
-      setNfltr('NO_SMOOTHING');
+      setPRocessingMethod('NO_SMOOTHING');
     } else if (v === 1) {
-      setNfltr('MOVING_AVERAGE_11_YEARS');
+      setPRocessingMethod('MOVING_AVERAGE_11_YEARS');
     } else if (v === 2) {
-      setNfltr('LOESS_SMOOTHING');
+      setPRocessingMethod('LOESS_SMOOTHING');
     }
   };
 
@@ -957,10 +984,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             <Select
               labelId="SelectedModel"
               id="SelectedModel"
-              value={smfltr}
+              value={comparisonClimatologicalModel}
               label={t('app.map.timeSeriesDialog.comparisonModel')}
               onChange={e =>
-                setSMfltr(
+                setComparisonClimatologicalModel(
                   (e.target.value as string).toLowerCase().replaceAll('-', '_'),
                 )
               }

@@ -9,6 +9,7 @@ export interface LegendBarProps {
   data: any;
   unit: string;
   label: string;
+  precision?: number;
 }
 
 const lightOrDark = color => {
@@ -46,7 +47,7 @@ const lightOrDark = color => {
 };
 
 export const LegendBar = (props: LegendBarProps) => {
-  const { className, isMobile, unit, label } = props;
+  const { className, isMobile, unit, label, precision = 2 } = props;
   const data = props.data || { color_entries: [] };
   const colors = data.color_entries?.sort((a, b) => b.value - a.value);
 
@@ -94,7 +95,7 @@ export const LegendBar = (props: LegendBarProps) => {
                   color: fg,
                 }}
               >
-                {itm.value.toFixed(1).replaceAll('.', ',')} {unit}
+                {itm.value.toFixed(precision).replaceAll('.', ',')} {unit}
               </div>
             );
           })}

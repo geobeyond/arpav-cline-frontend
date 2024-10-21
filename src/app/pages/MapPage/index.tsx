@@ -100,47 +100,79 @@ export function MapPage(props: MapPageProps) {
     return name ?? '';
   };
 
+  const merge = (...objs) =>
+    [...objs].reduce(
+      (acc, obj) =>
+        Object.keys(obj).reduce((a, k) => {
+          acc[k] = acc.hasOwnProperty(k)
+            ? [].concat(acc[k]).concat(obj[k])
+            : obj[k];
+          return acc;
+        }, {}),
+      {},
+    );
+
   useEffect(() => {
     api.getAttributes().then(x => {
-      setCombinations(
-        x.combinations.reduce((prev, cur) => {
-          for (let k of Object.keys(defaultMap)) {
-            if (!(k in cur.other_parameters)) {
-              cur.other_parameters[k] = [];
-              if (k in cur) {
-                cur.other_parameters[k].push(cur[k]);
-              }
+      let combos = x.combinations.reduce((prev, cur) => {
+        for (let k of Object.keys(defaultMap)) {
+          if (!(k in cur.other_parameters)) {
+            cur.other_parameters[k] = [];
+            if (k in cur) {
+              cur.other_parameters[k].push(cur[k]);
             }
           }
-          const kk = cur.variable + '::' + cur.aggregation_period;
-          const ki = cur.variable;
-          cur.kk = kk;
-          cur.ki = ki;
-          if (ki in prev) {
-            prev[ki].other_parameters.aggregation_period.push(
-              cur.aggregation_period,
-            );
-            prev[ki].other_parameters.measure.push(cur.measure);
+        }
+        const kk = cur.variable + '::' + cur.aggregation_period;
+        const km = cur.variable + '::' + cur.measure;
+        const ki = cur.variable;
+        cur.kk = kk;
+        cur.ki = ki;
+        if (ki in prev) {
+          prev[ki].aggregation_period.push(cur.aggregation_period);
+          prev[ki].measure.push(cur.measure);
+        } else {
+          prev[ki] = { ...cur.other_parameters };
+          prev[ki].aggregation_period = [cur.aggregation_period];
+          prev[ki].measure = [cur.measure];
+        }
+        if (kk in prev) {
+          prev[kk][cur.measure] = cur.other_parameters;
+        } else {
+          prev = {
+            ...prev,
+            [cur.variable + '::' + cur.aggregation_period]: {
+              [cur.measure]: cur.other_parameters,
+            },
+          };
+        }
+        if (km in prev) {
+          prev[kk][cur.aggregation_period] = cur.other_parameters;
+        } else {
+          prev = {
+            ...prev,
+            [cur.variable + '::' + cur.measure]: {
+              [cur.aggregation_period]: cur.other_parameters,
+            },
+          };
+        }
+        return prev;
+      }, {});
+      for (let k of Object.keys(combos)) {
+        if (k.indexOf('::') >= 0) {
+          let nc: any = {};
+          let kks = Object.keys(combos[k]);
+          if (kks.length === 1) {
+            combos[k] = combos[k][kks[0]];
           } else {
-            prev[ki] = { ...cur };
-            prev[ki].other_parameters.aggregation_period = [
-              cur.aggregation_period,
-            ];
-            prev[ki].other_parameters.measure = [cur.measure];
+            for (let kk of kks) {
+              nc = merge(nc, combos[k][kk]);
+            }
+            combos[k] = nc;
           }
-          if (kk in prev) {
-            prev[kk][cur.measure] = cur;
-          } else {
-            prev = {
-              ...prev,
-              [cur.variable + '::' + cur.aggregation_period]: {
-                [cur.measure]: cur,
-              },
-            };
-          }
-          return prev;
-        }, {}),
-      );
+        }
+      }
+      setCombinations(combos);
       setMenus(x.items);
     });
 
@@ -172,19 +204,18 @@ export function MapPage(props: MapPageProps) {
               currentMap.climatological_variable +
               '::' +
               currentMap.aggregation_period;
-            let opts = combinations[kk][currentMap.measure]?.other_parameters;
-            console.log(opts);
-            if (opts) {
-              if (Object.keys(opts).indexOf(currentMap.measure) >= 0) {
-                opts = opts[currentMap.measure];
-                console.log(opts);
+            if (currentMap.measure in combinations[kk]) {
+              let opts = combinations[kk][currentMap.measure]?.other_parameters;
+              console.log(opts);
+              if (opts) {
+                if (Object.keys(opts).indexOf(currentMap.measure) >= 0) {
+                  opts = opts[currentMap.measure];
+                  console.log(opts);
+                }
               }
             } else {
-              opts =
-                combinations[currentMap.climatological_variable]
-                  .other_parameters;
-              nm.measure = opts.measure[0];
-              console.log(opts);
+              nm.measure = Object.keys(combinations[kk])[0];
+              setCurrentMap(nm);
             }
           }
         });

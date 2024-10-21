@@ -66,9 +66,9 @@ export interface MapMenuBar {
 
 const MAP_MODES = {
   future: 'Proiezioni',
-  past: 'Dati Storici',
-  advanced: 'Vista avanzata',
-  simple: 'Vista semplificata',
+  past: 'Storica',
+  advanced: 'avanzata',
+  simple: 'semplificata',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -183,7 +183,7 @@ export function MapMenuBar(props: MapMenuBar) {
             ...mapParameters('aggregation_period', 'aggregation_period'),
             disableable: true && current_map.climatological_value !== '',
             criteria: x => {
-              return x.other_parameters?.aggregation_period;
+              return x?.aggregation_period;
             },
           },
           {
@@ -191,14 +191,14 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: t('app.map.menu.valueTypes'),
             ...mapParameters('measure', 'measure'),
             disableable: true,
-            criteria: x => x.other_parameters?.measure,
+            criteria: x => x?.measure,
           },
           {
             key: 'time_window',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters('time_window', 'time_window'),
             disableable: true,
-            criteria: x => x.other_parameters?.time_window,
+            criteria: x => x?.time_window,
           },
         ],
       },
@@ -212,7 +212,7 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: '',
             ...mapParameters('year_period', 'year_period'),
             disableable: true,
-            criteria: x => x.other_parameters?.year_period,
+            criteria: x => x?.year_period,
           },
         ],
       },
@@ -246,31 +246,31 @@ export function MapMenuBar(props: MapMenuBar) {
 
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
   const handleChange = (key: string, value: string) => {
-    const steps = ['climatological_variable', 'aggregation_period'];
+    const steps = ['climatological_variable', 'aggregation_period', 'measure'];
     console.log('handleChange', key, value);
     console.log(combinations);
     const idx = steps.indexOf(key);
     let ckey = '{climatological_variable}';
     if (idx >= 0) {
-      if (idx === 1) ckey = ckey + '::{aggregation_period}';
-      if (idx === 1) {
+      if (idx > 0) ckey = ckey + '::{metric}';
+      if (idx > 0) {
         ckey = ckey.replace(
           '{climatological_variable}',
           current_map.climatological_variable,
         );
-        ckey = ckey.replace('{aggregation_period}', value);
+        ckey = ckey.replace('{metric}', value);
       } else {
         ckey = ckey.replace('{climatological_variable}', value);
       }
       if (Object.keys(combinations).indexOf(ckey) >= 0) {
-        if (current_map.measure in combinations[ckey]) {
-          console.log(
-            'activating Combo',
-            ckey,
-            combinations[ckey][current_map.measure],
-          );
-          setActiveCombinations(combinations[ckey][current_map.measure]);
-        }
+        //if (current_map[key] in combinations[ckey]) {
+        console.log(
+          'activating Combo',
+          ckey,
+          combinations[ckey][current_map[key]],
+        );
+        setActiveCombinations(combinations[ckey]);
+        //}
       } else if (
         Object.keys(combinations).indexOf(
           current_map.climatological_variable,

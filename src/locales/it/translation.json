@@ -51,7 +51,7 @@
   "app.map.downloadDataDialog.map.south": "Sud",
   "app.map.downloadDataDialog.map.west": "Ovest",
   "app.map.downloadDataDialog.map.east": "Est",
-  "app.map.timeSeries.unavailable": "Non è disponibile la serie temporale per i la media trentennale",
+  "app.map.timeSeries.unavailable": "Non è disponibile la serie temporale per la media trentennale",
   "app.map.timeSeries.available": "Visualizza la serie temporale per il punto selezionato",
   "app.map.timeSeriesDialog.title": "Serie temporale",
   "app.map.timeSeriesDialog.lat": "LAT",

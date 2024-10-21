@@ -215,6 +215,7 @@ const Map = (props: MapProps) => {
               ? layerConf.unit_italian
               : layerConf.unit_english
           }
+          precision={layerConf.data_precision}
         />
       </CustomControlMap>
       <MousePositionComponent
