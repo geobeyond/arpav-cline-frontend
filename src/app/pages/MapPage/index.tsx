@@ -252,11 +252,13 @@ export function MapPage(props: MapPageProps) {
               console.log(opts);
               if (opts) {
                 for (let k of Object.keys(currentMap)) {
-                  if (opts[k].indexOf(currentMap[k]) < 0) {
-                    if (opts[k].length > 0) {
-                      nm[k] = opts[k][0];
-                    } else {
-                      nm[k] = null;
+                  if (k !== 'climatological_variable') {
+                    if (opts[k].indexOf(currentMap[k]) < 0) {
+                      if (opts[k].length > 0) {
+                        nm[k] = opts[k][0];
+                      } else {
+                        nm[k] = null;
+                      }
                     }
                   }
                 }
