@@ -109,8 +109,9 @@ export class RequestApi extends Http {
       });
   };
 
-  public getLayerConf = (conf: string) => {
-    return this.instance.get<any>(conf);
+  public getLayerConf = (conf: any) => {
+    let ret = this.instance.get<any>(conf.related_coverage_configuration_url);
+    return ret;
   };
 
   public cartesianProduct = (input, current?) => {

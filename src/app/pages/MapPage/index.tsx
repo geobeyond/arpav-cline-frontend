@@ -6,7 +6,14 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  Backdrop,
+  CircularProgress,
+  useMediaQuery,
+  Modal,
+  Typography,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MapLoadingContainerStyle, mapStyle } from './styles';
 import Map from '../../components/Map';
@@ -46,6 +53,18 @@ const defaultMap: any = {
 
 //let currentMap = defaultMap;
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 export function MapPage(props: MapPageProps) {
   const map_mode = props.map_mode;
   const map_data = props.map_data;
@@ -77,6 +96,10 @@ export function MapPage(props: MapPageProps) {
   const [currentLayer, setCurrentLayer] = useState('');
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
   const [currentTimeSerie, setCurrentTimeSerie] = useState({});
+
+  const [error, setError] = useState(false);
+  const openError = () => setError(true);
+  const closeError = () => setError(false);
 
   const [foundLayers, setFoundLayers] = useState(0);
 
@@ -192,13 +215,12 @@ export function MapPage(props: MapPageProps) {
           console.log(x);
           setFoundLayers(x.items.length);
           if (x.items.length === 1) {
-            api
-              .getLayerConf(x.items[0].related_coverage_configuration_url)
-              .then(conf => {
-                setCurrentLayer(x.items[0].identifier);
-                setCurrentLayerConfig(conf);
-              });
+            api.getLayerConf(x.items[0]).then(conf => {
+              setCurrentLayer(x.items[0].identifier);
+              setCurrentLayerConfig(conf);
+            });
           } else {
+            openError();
             let nm = { ...currentMap };
             const kk =
               currentMap.climatological_variable +
@@ -358,6 +380,21 @@ export function MapPage(props: MapPageProps) {
 
   return (
     <Box sx={mapStyle}>
+      <Modal
+        open={error}
+        onClose={closeError}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+        </Box>
+      </Modal>
       <HeaderBar />
       <MapMenuBar
         onDownloadMapImg={handleDownloadMapImg}
