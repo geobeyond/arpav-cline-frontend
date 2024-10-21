@@ -388,7 +388,7 @@ export function MapPage(props: MapPageProps) {
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Configurazione sbagliata
+            Configurazione non presente
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             La configurazione di parametri scelta non ha trovato corrispondenze.
