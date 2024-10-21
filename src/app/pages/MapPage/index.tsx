@@ -388,10 +388,11 @@ export function MapPage(props: MapPageProps) {
       >
         <Box sx={modalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
+            Configurazione sbagliata
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            La configurazione di parametri scelta non ha trovato corrispondenze.
+            Verrà applicata una configurazione di default.
           </Typography>
         </Box>
       </Modal>
