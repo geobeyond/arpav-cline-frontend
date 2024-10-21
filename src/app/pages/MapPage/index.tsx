@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   Modal,
   Typography,
+  Button,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MapLoadingContainerStyle, mapStyle } from './styles';
@@ -394,6 +395,7 @@ export function MapPage(props: MapPageProps) {
             La configurazione di parametri scelta non ha trovato corrispondenze.
             Verrà applicata una configurazione di default.
           </Typography>
+          <Button onClick={closeError}>Ok</Button>
         </Box>
       </Modal>
       <HeaderBar />
