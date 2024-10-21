@@ -297,6 +297,12 @@ export function MapMenuBar(props: MapMenuBar) {
     );
   };
 
+  useEffect(() => {
+    if (foundLayers === 0) {
+      setActiveCombinations(combinations[current_map.climatological_variable]);
+    }
+  }, [foundLayers]);
+
   return (
     <FormControl sx={MenuFormControlStyle}>
       <Toolbar disableGutters sx={MapMenuBarStyle}>
