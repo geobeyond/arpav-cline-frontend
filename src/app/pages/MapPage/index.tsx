@@ -225,7 +225,25 @@ export function MapPage(props: MapPageProps) {
       setCombinations(combos);
       setMenus(x.items);
     });
+  }, []);
 
+  useEffect(() => {
+    const all_meas = ['absolute', 'anomaly'];
+    const all_pers = ['annual', '30yr'];
+    const all_indx = [
+      'tas',
+      'cdds',
+      'hdds',
+      'pr',
+      'snwdays',
+      'su30',
+      'tasmax',
+      'tasmin',
+      'tr',
+      'fd',
+    ];
+
+    const changeables = ['measure', 'year_period', 'time_window'];
     setSearchParams(currentMap);
     try {
       api
@@ -247,42 +265,6 @@ export function MapPage(props: MapPageProps) {
               setCurrentLayerConfig(conf);
             });
           } else {
-            let nm = { ...currentMap };
-            let kk = currentMap.climatological_variable;
-            let pkk = kk + '::' + currentMap.aggregation_period;
-            let mkk = kk + '::' + currentMap.measure;
-            if (kk in combinations) {
-              let opts = { ...combinations[kk] };
-              if (pkk in combinations) {
-                opts = { ...combinations[pkk] };
-              } else if (mkk in combinations) {
-              }
-              console.log(opts);
-              if (opts) {
-                for (let k of Object.keys(currentMap)) {
-                  if (changeables.indexOf(k) >= 0) {
-                    if (
-                      opts[k].indexOf(currentMap[k]) < 0 ||
-                      k.indexOf('measure') >= 0
-                    ) {
-                      if (opts[k].length > 0) {
-                        nm[k] = opts[k][opts[k].length - 1];
-                      } else {
-                        nm[k] = null;
-                      }
-                    } else {
-                      opts[k] = all_meas.filter(
-                        gg => gg !== currentMap.measure,
-                      )[0];
-                    }
-                  }
-                }
-              }
-              console.log(nm);
-              setCurrentMap(nm);
-            } else {
-              openError('wrong_index');
-            }
           }
         });
     } catch (e) {

@@ -80,7 +80,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const current_map = props.current_map;
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
-  const setCurrentmap = props.setCurrentMap;
+  const setCurrentMap = props.setCurrentMap;
   const combinations = props.combinations || [];
   const openError = props.openError;
 
@@ -242,45 +242,83 @@ export function MapMenuBar(props: MapMenuBar) {
   const [isDownloadDataOpen, setDownloadDataOpen] =
     React.useState<boolean>(false);
 
+  const all_meas = ['absolute', 'anomaly'];
+  const all_pers = ['annual', '30yr'];
+  const all_indx = [
+    'tas',
+    'cdds',
+    'hdds',
+    'pr',
+    'snwdays',
+    'su30',
+    'tasmax',
+    'tasmin',
+    'tr',
+    'fd',
+  ];
+
+  const changeables = ['measure', 'year_period', 'time_window'];
   /* ********************************************************************************************************** */
   // MENU 0
   /* ********************************************************************************************************** */
 
+  const toDefault = object => {
+    let ret = {};
+    for (let k of Object.keys(object)) {
+      if (object[k].length > 0) {
+        ret[k] = object[k][0];
+      } else {
+        ret[k] = null;
+      }
+    }
+    return ret;
+  };
+
   // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
   const handleChange = (key: string, value: string) => {
-    const steps = ['climatological_variable', 'aggregation_period', 'measure'];
-    console.log('handleChange', key, value);
-    console.log(combinations);
-    const idx = steps.indexOf(key);
-    let ckey = '{climatological_variable}';
-    if (idx >= 0) {
-      if (idx > 0) ckey = ckey + '::{metric}';
-      if (idx > 0) {
-        ckey = ckey.replace(
-          '{climatological_variable}',
-          current_map.climatological_variable,
-        );
-        ckey = ckey.replace('{metric}', value);
-      } else {
-        ckey = ckey.replace('{climatological_variable}', value);
-      }
-      if (Object.keys(combinations).indexOf(ckey) >= 0) {
-        //if (current_map[key] in combinations[ckey]) {
-        console.log(
-          'activating Combo',
-          ckey,
-          combinations[ckey][current_map[key]],
-        );
-        setActiveCombinations(combinations[ckey]);
-        //}
-      } else if (
-        Object.keys(combinations).indexOf(
-          current_map.climatological_variable,
-        ) >= 0
-      ) {
-        setActiveCombinations(
-          combinations[current_map.climatological_variable],
-        );
+    if (key === 'climatological_variable') {
+      console.log('activatingCV', value, combinations[value]);
+      setCurrentMap(toDefault(combinations[value]));
+      setActiveCombinations(combinations[value]);
+    } else {
+      const steps = [
+        'climatological_variable',
+        'aggregation_period',
+        'measure',
+      ];
+      console.log('handleChange', key, value);
+      console.log(combinations);
+      const idx = steps.indexOf(key);
+      let ckey = '{climatological_variable}';
+      if (idx >= 0) {
+        if (idx > 0) ckey = ckey + '::{metric}';
+        if (idx > 0) {
+          ckey = ckey.replace(
+            '{climatological_variable}',
+            current_map.climatological_variable,
+          );
+          ckey = ckey.replace('{metric}', value);
+        } else {
+          ckey = ckey.replace('{climatological_variable}', value);
+        }
+        if (Object.keys(combinations).indexOf(ckey) >= 0) {
+          //if (current_map[key] in combinations[ckey]) {
+          console.log(
+            'activating Combo',
+            ckey,
+            combinations[ckey][current_map[key]],
+          );
+          setActiveCombinations(combinations[ckey]);
+          //}
+        } else if (
+          Object.keys(combinations).indexOf(
+            current_map.climatological_variable,
+          ) >= 0
+        ) {
+          setActiveCombinations(
+            combinations[current_map.climatological_variable],
+          );
+        }
       }
     }
     if (onMenuChange) {
@@ -308,6 +346,42 @@ export function MapMenuBar(props: MapMenuBar) {
       } else {
         setFirst(false);
       }
+
+      let nm = { ...current_map };
+      let kk = current_map.climatological_variable;
+      let pkk = kk + '::' + current_map.aggregation_period;
+      let mkk = kk + '::' + current_map.measure;
+      if (kk in combinations) {
+        let opts = { ...combinations[kk] };
+        if (pkk in combinations) {
+          opts = { ...combinations[pkk] };
+        } else if (mkk in combinations) {
+        }
+        console.log(opts);
+        if (opts) {
+          for (let k of Object.keys(current_map)) {
+            if (changeables.indexOf(k) >= 0) {
+              if (
+                opts[k].indexOf(current_map[k]) < 0 ||
+                k.indexOf('measure') >= 0
+              ) {
+                if (opts[k].length > 0) {
+                  nm[k] = opts[k][opts[k].length - 1];
+                } else {
+                  nm[k] = null;
+                }
+              } else {
+                opts[k] = all_meas.filter(gg => gg !== current_map.measure)[0];
+              }
+            }
+          }
+        }
+        console.log(nm);
+        setCurrentMap(nm);
+      } else {
+        openError('wrong_index');
+      }
+
       setActiveCombinations(combinations[current_map.climatological_variable]);
     }
   }, [foundLayers]);
