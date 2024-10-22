@@ -279,7 +279,7 @@ export const CompactValueRenderer = ({ time, value, unit, precision }) => {
       {/*</div>*/}
       <div style={{ padding: '0', margin: 0 }}>
         <GpsFixedOutlinedIcon fontSize={'small'} />{' '}
-        {value !== null ? value.toFixed(precision) : '-'}
+        {value !== null ? value?.toFixed(precision) : '-'}
         {unit}
       </div>
       <span style={{ flex: '1 1 1px' }}></span>

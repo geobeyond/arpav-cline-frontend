@@ -92,7 +92,7 @@ export function MapMenuBar(props: MapMenuBar) {
     activeCombinations.current = { ...combo };
   };
 
-  const onDownloadMapImg = props.onDownloadMapImg ?? (() => {});
+  const onDownloadMapImg = props.onDownloadMapImg ?? (() => { });
   //const {
   //  selected_map,
   //  forecast_parameters,
@@ -148,33 +148,33 @@ export function MapMenuBar(props: MapMenuBar) {
       map_data === 'past'
         ? []
         : [
-            // COLUMNS:
-            {
-              rows: [
-                {
-                  key: 'climatological_model',
-                  groupName: t('app.map.menu.models'),
-                  ...mapParameters(
-                    'climatological_model',
-                    'climatological_model',
-                  ),
-                  disableable: false,
-                  criteria: x => [],
-                },
-              ],
-            },
-            {
-              rows: [
-                {
-                  key: 'scenario',
-                  disableable: false,
-                  groupName: t('app.map.menu.scenarios'),
-                  ...mapParameters('scenario', 'scenario'),
-                  criteria: x => [],
-                },
-              ],
-            },
-          ],
+          // COLUMNS:
+          {
+            rows: [
+              {
+                key: 'climatological_model',
+                groupName: t('app.map.menu.models'),
+                ...mapParameters(
+                  'climatological_model',
+                  'climatological_model',
+                ),
+                disableable: false,
+                criteria: x => [],
+              },
+            ],
+          },
+          {
+            rows: [
+              {
+                key: 'scenario',
+                disableable: false,
+                groupName: t('app.map.menu.scenarios'),
+                ...mapParameters('scenario', 'scenario'),
+                criteria: x => [],
+              },
+            ],
+          },
+        ],
     periodMenuSet: [
       // COLUMNS:
       {
@@ -263,7 +263,7 @@ export function MapMenuBar(props: MapMenuBar) {
   /* ********************************************************************************************************** */
 
   const toDefault = object => {
-    let ret = {};
+    let ret: any = {};
     for (let k of Object.keys(object)) {
       if (object[k].length > 0) {
         ret[k] = object[k][0];
@@ -271,6 +271,11 @@ export function MapMenuBar(props: MapMenuBar) {
         ret[k] = null;
       }
     }
+
+    ret.aggregation_period = '30yr';
+    ret.measure = 'anomaly';
+    ret.time_window = 'tw1';
+
     return ret;
   };
 
@@ -348,6 +353,7 @@ export function MapMenuBar(props: MapMenuBar) {
 
       let nm = { ...current_map };
       let kk = current_map.climatological_variable;
+
       let pkk = kk + '::' + current_map.aggregation_period;
       let mkk = kk + '::' + current_map.measure;
       if (kk in combinations) {
@@ -496,7 +502,7 @@ export function MapMenuBar(props: MapMenuBar) {
               }
               activeCombinations={activeCombinations.current}
               label={t('app.map.menuBar.season')}
-              // label={'Season'}
+            // label={'Season'}
             />
           </Grid>
           <Grid xs={1} def={2} sx={SecondRowStyle}>
