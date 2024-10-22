@@ -52,6 +52,7 @@ export interface MapPopupProps {
   openCharts: Function;
   currentTimeserie: any;
   unit: string;
+  precision: number;
 }
 
 export const ValueRenderer = ({ time, value, unit }) => {
@@ -266,7 +267,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   );
 };
 
-export const CompactValueRenderer = ({ time, value, unit }) => {
+export const CompactValueRenderer = ({ time, value, unit, precision }) => {
   // console.log({timeserie});
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -278,7 +279,7 @@ export const CompactValueRenderer = ({ time, value, unit }) => {
       {/*</div>*/}
       <div style={{ padding: '0', margin: 0 }}>
         <GpsFixedOutlinedIcon fontSize={'small'} />{' '}
-        {value !== null ? roundTo4(value, 1) : '-'}
+        {value !== null ? value.toFixed(precision) : '-'}
         {unit}
       </div>
       <span style={{ flex: '1 1 1px' }}></span>
@@ -287,8 +288,15 @@ export const CompactValueRenderer = ({ time, value, unit }) => {
 };
 
 export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
-  const { value, setPoint, openCharts, className, unit, currentTimeserie } =
-    props;
+  const {
+    value,
+    setPoint,
+    openCharts,
+    className,
+    unit,
+    precision,
+    currentTimeserie,
+  } = props;
   const { cities, selected_map } = useSelector((state: any) => state.map);
 
   const timeserie = currentTimeserie.values;
@@ -360,7 +368,14 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie && <CompactValueRenderer time={tt} value={tv} unit={unit} />}
+      {timeserie && (
+        <CompactValueRenderer
+          time={tt}
+          value={tv}
+          unit={unit}
+          precision={precision}
+        />
+      )}
       <span style={{ flex: '1 1 1px' }}></span>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <span style={{ flex: '1 1 1px' }}></span>

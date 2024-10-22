@@ -18,7 +18,7 @@ export const VectorWrapperLayer = (props: any) => {
   let popupRef: any = useRef();
 
   const { selected_map } = useSelector((state: any) => state.map);
-  const { selectCallback, selectedPoint, openCharts, unit } = props;
+  const { selectCallback, selectedPoint, openCharts, unit, precision } = props;
   const map = useMap();
   const context = useLeafletContext();
 
@@ -101,6 +101,7 @@ export const VectorWrapperLayer = (props: any) => {
                 value={selectedPoint}
                 currentTimeserie={currentTimeSerie}
                 unit={unit}
+                precision={precision}
               ></MapPopup>
             </Box>
           </Popup>

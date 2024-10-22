@@ -749,7 +749,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                 getBoundsLabel(x.seriesId) +
                 ': ' +
                 dataValues[x.seriesId][x.dataIndex]?.value
-                  ?.toFixed(1)
+                  ?.toFixed(currentLayer?.data_precision)
                   .replace('.', i18n.language === 'en' ? '.' : ',') +
                 ' ' +
                 (i18n.language === 'en'
