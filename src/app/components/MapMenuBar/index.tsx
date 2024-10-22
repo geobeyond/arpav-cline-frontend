@@ -104,6 +104,8 @@ export function MapMenuBar(props: MapMenuBar) {
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
+  const [first, setFirst] = useState(true);
+
   const mapParameters = (mapKey, parameterListKey) => {
     if (forecast_parameters) {
       const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
@@ -301,7 +303,11 @@ export function MapMenuBar(props: MapMenuBar) {
 
   useEffect(() => {
     if (foundLayers !== 1) {
-      openError('wrong_config');
+      if (!first) {
+        openError('wrong_config');
+      } else {
+        setFirst(false);
+      }
       setActiveCombinations(combinations[current_map.climatological_variable]);
     }
   }, [foundLayers]);

@@ -252,9 +252,9 @@ export function MapPage(props: MapPageProps) {
             let pkk = kk + '::' + currentMap.aggregation_period;
             let mkk = kk + '::' + currentMap.measure;
             if (kk in combinations) {
-              let opts = combinations[kk];
+              let opts = { ...combinations[kk] };
               if (pkk in combinations) {
-                opts = combinations[pkk];
+                opts = { ...combinations[pkk] };
               } else if (mkk in combinations) {
               }
               console.log(opts);
@@ -262,8 +262,8 @@ export function MapPage(props: MapPageProps) {
                 for (let k of Object.keys(currentMap)) {
                   if (changeables.indexOf(k) >= 0) {
                     if (
-                      opts[k].indexOf(currentMap[k]) < 0 &&
-                      opts[k].indexOf('measure') >= 0
+                      opts[k].indexOf(currentMap[k]) < 0 ||
+                      k.indexOf('measure') >= 0
                     ) {
                       if (opts[k].length > 0) {
                         nm[k] = opts[k][opts[k].length - 1];
@@ -272,7 +272,7 @@ export function MapPage(props: MapPageProps) {
                       }
                     } else {
                       opts[k] = all_meas.filter(
-                        x => x !== currentMap.measure,
+                        gg => gg !== currentMap.measure,
                       )[0];
                     }
                   }
