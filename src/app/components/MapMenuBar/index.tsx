@@ -378,8 +378,6 @@ export function MapMenuBar(props: MapMenuBar) {
         }
         console.log(nm);
         setCurrentMap(nm);
-      } else {
-        openError('wrong_index');
       }
 
       setActiveCombinations(combinations[current_map.climatological_variable]);
