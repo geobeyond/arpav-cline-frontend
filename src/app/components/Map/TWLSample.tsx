@@ -67,6 +67,7 @@ export const TWLSample = (props: any) => {
         const options = {
           opacity: opacity,
           zIndex: zIndex,
+          display: true,
           attribution:
             '&copy; <a target="_blank" rel="noopener" href="https://www.arpa.veneto.it/">ARPAV</a>',
         };
