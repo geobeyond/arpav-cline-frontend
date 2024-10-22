@@ -149,7 +149,10 @@ export function MapPage(props: MapPageProps) {
       'tasmax',
       'tasmin',
       'tr',
+      'fd',
     ];
+
+    const changeables = ['measure', 'year_period', 'time_window'];
     api.getAttributes().then(x => {
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
@@ -244,21 +247,33 @@ export function MapPage(props: MapPageProps) {
               setCurrentLayerConfig(conf);
             });
           } else {
-            openError('wrong_config');
             let nm = { ...currentMap };
-            const kk = currentMap.climatological_variable;
+            let kk = currentMap.climatological_variable;
+            let pkk = kk + '::' + currentMap.aggregation_period;
+            let mkk = kk + '::' + currentMap.measure;
             if (kk in combinations) {
               let opts = combinations[kk];
+              if (pkk in combinations) {
+                opts = combinations[pkk];
+              } else if (mkk in combinations) {
+              }
               console.log(opts);
               if (opts) {
                 for (let k of Object.keys(currentMap)) {
-                  if (k !== 'climatological_variable') {
-                    if (opts[k].indexOf(currentMap[k]) < 0) {
+                  if (changeables.indexOf(k) >= 0) {
+                    if (
+                      opts[k].indexOf(currentMap[k]) < 0 &&
+                      opts[k].indexOf('measure') >= 0
+                    ) {
                       if (opts[k].length > 0) {
-                        nm[k] = opts[k][0];
+                        nm[k] = opts[k][opts[k].length - 1];
                       } else {
                         nm[k] = null;
                       }
+                    } else {
+                      opts[k] = all_meas.filter(
+                        x => x !== currentMap.measure,
+                      )[0];
                     }
                   }
                 }
@@ -436,6 +451,7 @@ export function MapPage(props: MapPageProps) {
         current_map={currentMap}
         foundLayers={foundLayers}
         setCurrentMap={setCurrentMap}
+        openError={openError}
       />
 
       <Map

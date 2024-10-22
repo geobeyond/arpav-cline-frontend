@@ -62,6 +62,7 @@ export interface MapMenuBar {
   current_map?: any;
   foundLayers: number;
   setCurrentMap: Function;
+  openError: Function;
 }
 
 const MAP_MODES = {
@@ -81,6 +82,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const foundLayers = props.foundLayers;
   const setCurrentmap = props.setCurrentMap;
   const combinations = props.combinations || [];
+  const openError = props.openError;
 
   const activeCombinations = useRef(
     Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
@@ -298,7 +300,8 @@ export function MapMenuBar(props: MapMenuBar) {
   };
 
   useEffect(() => {
-    if (foundLayers === 0) {
+    if (foundLayers !== 1) {
+      openError('wrong_config');
       setActiveCombinations(combinations[current_map.climatological_variable]);
     }
   }, [foundLayers]);
