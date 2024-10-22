@@ -81,6 +81,7 @@ export const TWLSample = (props: any) => {
           // @ts-ignore
           const tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
             requestTimeFromCapabilities: true,
+            updateTimeDimension: true,
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,
