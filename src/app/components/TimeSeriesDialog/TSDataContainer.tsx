@@ -829,7 +829,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     yAxis: {
       type: 'value',
       scale: true,
-      name: currentLayer?.unit_english ?? '',
+      name:
+        (i18n.language === 'en'
+          ? currentLayer?.unit_english
+          : currentLayer?.unit_italian) || '',
       nameTextStyle: {
         align: 'center',
         padding: 15,
