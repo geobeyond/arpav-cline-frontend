@@ -126,6 +126,12 @@ export const TWLSample = (props: any) => {
         }
         map.addLayer(layer.current);
 
+        const lyrs = document.getElementsByClassName('leaflet-layer');
+        for (let i = 0; i < lyrs.length; i++) {
+          const el: any = lyrs[i];
+          el.style.display = '';
+        }
+
         return () => {
           map.removeLayer(layer.current);
         };
