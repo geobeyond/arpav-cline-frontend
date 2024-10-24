@@ -281,6 +281,7 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const handleChange = (key: string, value: string) => {
     if (key === 'climatological_variable') {
+      setFirst(true);
       console.log('activatingCV', value, combinations[value]);
       setCurrentMap(toDefault(combinations[value]));
       setActiveCombinations(combinations[value]);
