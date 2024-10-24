@@ -90,7 +90,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const cities = api.getCities();
   const map = useMap();
   const context = useLeafletContext();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const resetMap = () => context.map.flyTo(defaultCenter, defaultZoom);
 
   const onChange = (event, value) => {
@@ -268,6 +268,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
 };
 
 export const CompactValueRenderer = ({ time, value, unit, precision }) => {
+  const { t, i18n } = useTranslation();
   // console.log({timeserie});
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -279,7 +280,11 @@ export const CompactValueRenderer = ({ time, value, unit, precision }) => {
       {/*</div>*/}
       <div style={{ padding: '0', margin: 0 }}>
         <GpsFixedOutlinedIcon fontSize={'small'} />{' '}
-        {value !== null ? value?.toFixed(precision) : '-'}
+        {value !== null
+          ? value
+            ?.toFixed(precision)
+            .replaceAll('.', i18n.language === 'it' ? ',' : '.')
+          : '-'}
         {unit}
       </div>
       <span style={{ flex: '1 1 1px' }}></span>

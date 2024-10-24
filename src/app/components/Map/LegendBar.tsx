@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { WMS_PROXY_URL, V2_WMS_PROXY_URL } from '../../../utils/constants';
+import { useTranslation } from 'react-i18next';
 
 export interface LegendBarProps {
   className?: string;
@@ -51,6 +52,7 @@ export const LegendBar = (props: LegendBarProps) => {
   const data = props.data || { color_entries: [] };
   const colors = data.color_entries?.sort((a, b) => b.value - a.value);
 
+  const { t, i18n } = useTranslation();
   const hex2rgb = c => `rgb(${c.match(/\w\w/g).map(x => +`0x${x}`)})`;
 
   return (
@@ -95,7 +97,10 @@ export const LegendBar = (props: LegendBarProps) => {
                   color: fg,
                 }}
               >
-                {itm.value.toFixed(precision).replaceAll('.', ',')} {unit}
+                {itm.value
+                  .toFixed(precision)
+                  .replaceAll('.', i18n.language === 'it' ? ',' : '.')}{' '}
+                {unit}
               </div>
             );
           })}
