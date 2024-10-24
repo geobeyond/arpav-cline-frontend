@@ -67,9 +67,9 @@ export interface MapMenuBar {
 
 const MAP_MODES = {
   future: 'Proiezioni',
-  past: 'Storica',
-  advanced: 'avanzata',
-  simple: 'semplificata',
+  past: 'Storico',
+  advanced: 'Avanzata',
+  simple: 'Semplice',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
