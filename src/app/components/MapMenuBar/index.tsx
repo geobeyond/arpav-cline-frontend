@@ -266,7 +266,7 @@ export function MapMenuBar(props: MapMenuBar) {
     let ret: any = {};
     for (let k of Object.keys(object)) {
       if (object[k].length > 0) {
-        ret[k] = object[k][0];
+        ret[k] = object[k][object[k].length - 1];
       } else {
         ret[k] = null;
       }
@@ -283,8 +283,9 @@ export function MapMenuBar(props: MapMenuBar) {
     if (key === 'climatological_variable') {
       setFirst(true);
       console.log('activatingCV', value, combinations[value]);
-      setCurrentMap(toDefault(combinations[value]));
       setActiveCombinations(combinations[value]);
+      setCurrentMap(toDefault(combinations[value]));
+      setFirst(false);
     } else {
       const steps = [
         'climatological_variable',
