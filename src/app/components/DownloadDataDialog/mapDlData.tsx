@@ -164,7 +164,8 @@ const MapDlData = (props: MapDlDataProps) => {
             {t('app.map.menuBar.model')}
           </Typography>
           <Select
-            defaultValue={configuration.climatological_model}
+            defaultValue={[configuration.climatological_model]}
+            isMulti={true}
             name="climatological_model"
             options={getOptions('climatological_model')}
           ></Select>
@@ -174,7 +175,8 @@ const MapDlData = (props: MapDlDataProps) => {
             {t('app.map.menuBar.scenario')}
           </Typography>
           <Select
-            defaultValue={configuration.scenario}
+            defaultValue={[configuration.scenario]}
+            isMulti={true}
             name="scenario"
             options={getOptions('scenario')}
           ></Select>

@@ -106,6 +106,8 @@ export function MapMenuBar(props: MapMenuBar) {
   const localCM = useRef<any>(current_map);
 
   const changingParameter = useRef<string>('climatological_variable');
+  const changingValue = useRef<string>('tas');
+  const prevValue = useRef<string | null>('tas');
   const showModal = useRef<boolean>(true);
 
   const mapParameters = (mapKey, parameterListKey) => {
@@ -284,7 +286,9 @@ export function MapMenuBar(props: MapMenuBar) {
   };
 
   const handleChange = (key: string, value: string) => {
+    prevValue.current = localCM.current[key];
     changingParameter.current = key;
+    changingValue.current = value;
     localCM.current = { ...localCM.current, ...{ [key]: value } };
     if (key === 'climatological_variable') {
       showModal.current = false;
@@ -354,40 +358,48 @@ export function MapMenuBar(props: MapMenuBar) {
         openError('wrong_config');
       }
       let nm = { ...localCM.current };
-      let kk = localCM.current.climatological_variable;
 
-      let pkk = kk + '::' + localCM.current.aggregation_period;
-      let mkk = kk + '::' + localCM.current.measure;
-
-      if (kk in combinations) {
-        let opts = { ...combinations[kk] };
-        if (pkk in combinations) {
-          opts = { ...combinations[pkk] };
-        } else if (mkk in combinations) {
+      if (changingParameter.current === 'year_period') {
+        if (prevValue.current) {
+          nm.year_period = prevValue.current;
+          prevValue.current = null;
         }
-        console.log(opts);
-        if (opts) {
-          for (let k of Object.keys(localCM.current)) {
-            if (changeables.indexOf(k) >= 0) {
-              if (
-                opts[k].indexOf(localCM.current[k]) < 0 ||
-                k.indexOf('measure') >= 0
-              ) {
-                if (opts[k].length > 0) {
-                  nm[k] = opts[k].filter(x => localCM.current[k] !== x)[0];
+      } else {
+        let kk = localCM.current.climatological_variable;
+
+        let pkk = kk + '::' + localCM.current.aggregation_period;
+        let mkk = kk + '::' + localCM.current.measure;
+
+        if (kk in combinations) {
+          let opts = { ...combinations[kk] };
+          if (pkk in combinations) {
+            opts = { ...combinations[pkk] };
+          } else if (mkk in combinations) {
+          }
+          console.log(opts);
+          if (opts) {
+            for (let k of Object.keys(localCM.current)) {
+              if (changeables.indexOf(k) >= 0) {
+                if (
+                  opts[k].indexOf(localCM.current[k]) < 0 ||
+                  k.indexOf('measure') >= 0
+                ) {
+                  if (opts[k].length > 0) {
+                    nm[k] = opts[k].filter(x => localCM.current[k] !== x)[0];
+                  } else {
+                    nm[k] = null;
+                  }
                 } else {
-                  nm[k] = null;
+                  opts[k] = all_meas.filter(gg => gg !== localCM.current[k])[0];
                 }
-              } else {
-                opts[k] = all_meas.filter(gg => gg !== localCM.current[k])[0];
               }
             }
           }
         }
-        localCM.current = { ...nm };
-        console.log(localCM.current);
-        setCurrentMap(localCM.current);
       }
+      localCM.current = { ...nm };
+      console.log(localCM.current);
+      setCurrentMap(localCM.current);
 
       setActiveCombinations(
         combinations[localCM.current.climatological_variable],
