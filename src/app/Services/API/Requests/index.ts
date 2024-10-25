@@ -124,13 +124,15 @@ export class RequestApi extends Http {
     var output: any[] = [];
 
     for (var key in head) {
-      for (var i = 0; i < head[key].length; i++) {
-        var newCurrent = this.copy(current);
-        newCurrent[key] = head[key][i];
-        if (tail.length) {
-          var productOfTail = this.cartesianProduct(tail, newCurrent);
-          output = output.concat(productOfTail);
-        } else output.push(newCurrent);
+      if (head[key]) {
+        for (var i = 0; i < head[key].length; i++) {
+          var newCurrent = this.copy(current);
+          newCurrent[key] = head[key][i];
+          if (tail.length) {
+            var productOfTail = this.cartesianProduct(tail, newCurrent);
+            output = output.concat(productOfTail);
+          } else output.push(newCurrent);
+        }
       }
     }
     return output;
