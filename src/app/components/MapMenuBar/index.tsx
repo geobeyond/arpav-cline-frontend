@@ -105,7 +105,6 @@ export function MapMenuBar(props: MapMenuBar) {
   const actions = useMapSlice();
   const localCM = useRef<any>(current_map);
 
-  const [first, setFirst] = useState(true);
   const changingParameter = useRef<string>('climatological_variable');
   const showModal = useRef<boolean>(true);
 
@@ -288,7 +287,6 @@ export function MapMenuBar(props: MapMenuBar) {
     changingParameter.current = key;
     localCM.current = { ...localCM.current, ...{ [key]: value } };
     if (key === 'climatological_variable') {
-      setFirst(true);
       showModal.current = false;
       console.log('activatingCV', value, combinations[value]);
       setActiveCombinations(combinations[value]);
@@ -386,8 +384,9 @@ export function MapMenuBar(props: MapMenuBar) {
             }
           }
         }
-        console.log(nm);
-        setCurrentMap(nm);
+        localCM.current = { ...nm };
+        console.log(localCM.current);
+        setCurrentMap(localCM.current);
       }
 
       setActiveCombinations(
