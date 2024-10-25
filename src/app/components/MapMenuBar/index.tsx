@@ -106,7 +106,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const localCM = useRef<any>(current_map);
 
   const [first, setFirst] = useState(true);
-  const changingParameter = useRef<string>('');
+  const changingParameter = useRef<string>('climatological_variable');
   const showModal = useRef<boolean>(true);
 
   const mapParameters = (mapKey, parameterListKey) => {
@@ -292,7 +292,7 @@ export function MapMenuBar(props: MapMenuBar) {
       showModal.current = false;
       console.log('activatingCV', value, combinations[value]);
       setActiveCombinations(combinations[value]);
-      localCM.current = toDefault(combinations[value]);
+      localCM.current = toDefault(combinations[value + '::30yr']);
       setCurrentMap(localCM.current);
     } else {
       const steps = [
@@ -330,10 +330,11 @@ export function MapMenuBar(props: MapMenuBar) {
           );
         }
       }
+      setCurrentMap(localCM.current);
     }
-    if (onMenuChange) {
-      onMenuChange({ key, value });
-    }
+    //if (onMenuChange) {
+    //  onMenuChange({ key, value });
+    //}
   };
 
   //setActiveCombinations(combinations['tas']);

@@ -215,14 +215,14 @@ export function MapPage(props: MapPageProps) {
           if (all_indx.indexOf(m) >= 0) {
             combos[k].measure = all_meas;
             combos[k].aggregation_period = all_pers;
-            combos[k].climatological_variable = [m];
           }
+          combos[k].climatological_variable = [m];
         } else {
           if (all_indx.indexOf(k) >= 0) {
             combos[k].measure = all_meas;
             combos[k].aggregation_period = all_pers;
-            combos[k].climatological_variable = [k];
           }
+          combos[k].climatological_variable = [k];
         }
       }
       setCombinations(combos);
