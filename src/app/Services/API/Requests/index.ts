@@ -71,6 +71,52 @@ export class RequestApi extends Http {
     aggregation_period?,
     season?,
   ) => {
+    if (model !== 'model_ensemble') {
+      return Promise.all([
+        this.doGetLayer(
+          variable,
+          model,
+          scenario,
+          measure,
+          time_period,
+          aggregation_period,
+          season,
+        ),
+        this.doGetLayer(
+          variable,
+          'model_ensemble',
+          scenario,
+          measure,
+          time_period,
+          aggregation_period,
+          season,
+        ),
+      ]).then(x => {
+        x[0].items[0]['ensemble_data'] = x[1].items[0];
+        return x[0];
+      });
+    } else {
+      return this.doGetLayer(
+        variable,
+        model,
+        scenario,
+        measure,
+        time_period,
+        aggregation_period,
+        season,
+      );
+    }
+  };
+
+  public doGetLayer = (
+    variable?,
+    model?,
+    scenario?,
+    measure?,
+    time_period?,
+    aggregation_period?,
+    season?,
+  ) => {
     let filter = '';
     if (variable) {
       filter += 'possible_value=climatological_variable:' + variable + '&';
@@ -110,8 +156,20 @@ export class RequestApi extends Http {
   };
 
   public getLayerConf = (conf: any) => {
-    let ret = this.instance.get<any>(conf.related_coverage_configuration_url);
-    return ret;
+    if ('ensemble_data' in conf) {
+      return Promise.all([
+        this.instance.get<any>(conf.related_coverage_configuration_url),
+        this.instance.get<any>(
+          conf.ensemble_data.related_coverage_configuration_url,
+        ),
+      ]).then(x => {
+        x[0].ensemble_data = x[1];
+        return x[0];
+      });
+    } else {
+      let ret = this.instance.get<any>(conf.related_coverage_configuration_url);
+      return ret;
+    }
   };
 
   public cartesianProduct = (input, current?) => {

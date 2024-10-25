@@ -174,7 +174,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //    });
     //  })
     //  .flat();
-    const ids = api.createIds(
+
+    let ids = api.createIds(
       //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
       currentLayer.coverage_id_pattern,
       {
@@ -185,6 +186,20 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         },
       },
     );
+    if (currentLayer.ensemble_data) {
+      ids = api.createIds(
+        //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
+        currentLayer.ensemble_data.coverage_id_pattern,
+        {
+          ...currentMap,
+          ...{ name: currentLayer.ensemble_data.name },
+          ...{ climatological_model: ['model_ensemble'] },
+          ...{
+            scenario: ['rcp26', 'rcp45', 'rcp85'],
+          },
+        },
+      );
+    }
     console.log(ids);
     setIds(ids);
     api
