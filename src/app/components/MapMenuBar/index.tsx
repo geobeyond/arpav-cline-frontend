@@ -103,8 +103,11 @@ export function MapMenuBar(props: MapMenuBar) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
+  const localCM = useRef<any>(current_map);
 
   const [first, setFirst] = useState(true);
+  const changingParameter = useRef<string>('');
+  const showModal = useRef<boolean>(true);
 
   const mapParameters = (mapKey, parameterListKey) => {
     if (forecast_parameters) {
@@ -272,6 +275,8 @@ export function MapMenuBar(props: MapMenuBar) {
       }
     }
 
+    ret.climatological_model = 'model_ensemble';
+    ret.scenario = 'rcp85';
     ret.aggregation_period = '30yr';
     ret.measure = 'anomaly';
     ret.time_window = 'tw1';
@@ -280,12 +285,15 @@ export function MapMenuBar(props: MapMenuBar) {
   };
 
   const handleChange = (key: string, value: string) => {
+    changingParameter.current = key;
+    localCM.current = { ...localCM.current, ...{ [key]: value } };
     if (key === 'climatological_variable') {
       setFirst(true);
+      showModal.current = false;
       console.log('activatingCV', value, combinations[value]);
       setActiveCombinations(combinations[value]);
-      setCurrentMap(toDefault(combinations[value]));
-      setFirst(false);
+      localCM.current = toDefault(combinations[value]);
+      setCurrentMap(localCM.current);
     } else {
       const steps = [
         'climatological_variable',
@@ -296,17 +304,13 @@ export function MapMenuBar(props: MapMenuBar) {
       console.log(combinations);
       const idx = steps.indexOf(key);
       let ckey = '{climatological_variable}';
-      if (idx >= 0) {
-        if (idx > 0) ckey = ckey + '::{metric}';
-        if (idx > 0) {
-          ckey = ckey.replace(
-            '{climatological_variable}',
-            current_map.climatological_variable,
-          );
-          ckey = ckey.replace('{metric}', value);
-        } else {
-          ckey = ckey.replace('{climatological_variable}', value);
-        }
+      if (idx > 0) {
+        ckey = ckey + '::{metric}';
+        ckey = ckey.replace(
+          '{climatological_variable}',
+          current_map.climatological_variable,
+        );
+        ckey = ckey.replace('{metric}', value);
         if (Object.keys(combinations).indexOf(ckey) >= 0) {
           //if (current_map[key] in combinations[ckey]) {
           console.log(
@@ -346,18 +350,16 @@ export function MapMenuBar(props: MapMenuBar) {
   };
 
   useEffect(() => {
-    if (foundLayers !== 1) {
-      if (!first) {
+    if (foundLayers === 0) {
+      if (changingParameter.current !== 'climatological_variable') {
         openError('wrong_config');
-      } else {
-        setFirst(false);
       }
+      let nm = { ...localCM.current };
+      let kk = localCM.current.climatological_variable;
 
-      let nm = { ...current_map };
-      let kk = current_map.climatological_variable;
+      let pkk = kk + '::' + localCM.current.aggregation_period;
+      let mkk = kk + '::' + localCM.current.measure;
 
-      let pkk = kk + '::' + current_map.aggregation_period;
-      let mkk = kk + '::' + current_map.measure;
       if (kk in combinations) {
         let opts = { ...combinations[kk] };
         if (pkk in combinations) {
@@ -366,19 +368,19 @@ export function MapMenuBar(props: MapMenuBar) {
         }
         console.log(opts);
         if (opts) {
-          for (let k of Object.keys(current_map)) {
+          for (let k of Object.keys(localCM.current)) {
             if (changeables.indexOf(k) >= 0) {
               if (
-                opts[k].indexOf(current_map[k]) < 0 ||
+                opts[k].indexOf(localCM.current[k]) < 0 ||
                 k.indexOf('measure') >= 0
               ) {
                 if (opts[k].length > 0) {
-                  nm[k] = opts[k][opts[k].length - 1];
+                  nm[k] = opts[k].filter(x => localCM.current[k] !== x)[0];
                 } else {
                   nm[k] = null;
                 }
               } else {
-                opts[k] = all_meas.filter(gg => gg !== current_map.measure)[0];
+                opts[k] = all_meas.filter(gg => gg !== localCM.current[k])[0];
               }
             }
           }
@@ -387,7 +389,9 @@ export function MapMenuBar(props: MapMenuBar) {
         setCurrentMap(nm);
       }
 
-      setActiveCombinations(combinations[current_map.climatological_variable]);
+      setActiveCombinations(
+        combinations[localCM.current.climatological_variable],
+      );
     }
   }, [foundLayers]);
 

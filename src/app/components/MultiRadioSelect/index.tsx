@@ -122,6 +122,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     )
     .flat()
     .filter(x => x);
+
   const renderSelectedValue = (mode: string = 'label') => {
     let ret: any = valueSet.map((rs, index) =>
       rs.rows.map((row, iindex) =>

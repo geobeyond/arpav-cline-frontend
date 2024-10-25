@@ -154,6 +154,7 @@ export function MapPage(props: MapPageProps) {
 
     const changeables = ['measure', 'year_period', 'time_window'];
     api.getAttributes().then(x => {
+      setMenus(x.items);
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
           if (!(k in cur.other_parameters)) {
@@ -225,7 +226,6 @@ export function MapPage(props: MapPageProps) {
         }
       }
       setCombinations(combos);
-      setMenus(x.items);
     });
   }, []);
 
@@ -260,6 +260,7 @@ export function MapPage(props: MapPageProps) {
         )
         .then((x: any) => {
           console.log(x);
+          setCurrentMap(currentMap);
           setFoundLayers(x.items.length);
           if (x.items.length === 1) {
             api.getLayerConf(x.items[0]).then(conf => {
