@@ -472,10 +472,7 @@ export function MapPage(props: MapPageProps) {
       />
 
       {/*TODO Backdrop only for debug?*/}
-      <Backdrop
-        sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-        open={inProgress}
-      >
+      <Backdrop open={inProgress}>
         <CircularProgress color="inherit" size={80} />
       </Backdrop>
     </Box>
