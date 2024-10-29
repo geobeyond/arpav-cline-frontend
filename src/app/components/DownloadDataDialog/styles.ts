@@ -69,8 +69,10 @@ export const CloseButtonContStyle = theme => ({
 export const FieldContainerStyle = theme => ({
   ml: 0,
   mr: 0,
-  mt: 4,
-  mb: 4,
+  width: '100%',
+});
+export const FullWidthStyle = theme => ({
+  width: '100%',
 });
 
 export const MapDataContainerStyle = theme => ({
@@ -78,7 +80,7 @@ export const MapDataContainerStyle = theme => ({
   flexDirection: 'row',
   flexWrap: 'wrap',
   justifyContent: 'flex-start',
-  gap: 16,
+  gap: 8,
   [theme.breakpoints.down('xl')]: {
     justifyContent: 'space-between',
     gap: 0,
@@ -89,13 +91,6 @@ export const FieldsStyle = theme => ({
   display: 'flex',
   flexDirection: 'column',
   flexWrap: 'wrap',
-  justifyContent: 'flex-start',
-  gap: 16,
-
-  [theme.breakpoints.down('xl')]: {
-    justifyContent: 'space-between',
-    gap: 0,
-  },
 });
 
 export const MapDataSectionTextStyle = theme => ({
@@ -115,12 +110,21 @@ export const SliderContainerStyle = theme => ({
   marginTop: 4,
 });
 
+export const MapColStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'column',
+  flexWrap: 'nowrap',
+  marginTop: 4,
+  gap: '16px',
+  width: '40%',
+});
+
 export const RowStyle = theme => ({
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  alignItems: 'center',
   marginTop: 4,
+  gap: '16px',
 });
 
 export const YearsSliderStyle = theme => ({
@@ -147,7 +151,6 @@ export const ImgButtonContainerStyle = theme => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  gap: 3,
   m: 3,
   [theme.breakpoints.down('def')]: {
     flexDirection: 'column',
@@ -157,5 +160,4 @@ export const ImgButtonContainerStyle = theme => ({
 export const ImgDoubleButtonContainerStyle = theme => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: 3,
 });

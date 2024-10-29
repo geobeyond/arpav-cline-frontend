@@ -216,6 +216,28 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           actions.actions.genericError({ error: 'app.error.dlTimeSeries' }),
         );
       });
+  }, [
+    selected_map,
+    selectactable_parameters,
+    models,
+    setIds,
+    api,
+    latLng.lat,
+    latLng.lng,
+    scenarios,
+    layers,
+    dispatch,
+    actions.actions,
+    currentLayer.coverage_id_pattern,
+    currentLayer.name,
+    currentMap,
+    setToDownload,
+    currentLayer.ensemble_data,
+    timeseries,
+    setFilledSeries,
+  ]);
+
+  useEffect(() => {
     const dataValues = timeseries.reduce((prev, curr) => {
       return {
         ...prev,
@@ -229,7 +251,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     }
     for (let k of Object.keys(dataValues)) {
       let vv: any[] = [];
-      for (let y of range(baseValue, 2099)) {
+      for (let y of range(baseValue, 2100)) {
         let found: boolean | any = false;
         for (let kk of dataValues[k]) {
           if (y.toString() === kk.datetime) {
@@ -250,24 +272,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     }
     console.log(dataValues);
     setFilledSeries(dataValues);
-    setDataValues({ ...dataValues });
-  }, [
-    selected_map,
-    selectactable_parameters,
-    models,
-    setIds,
-    api,
-    latLng.lat,
-    latLng.lng,
-    scenarios,
-    layers,
-    dispatch,
-    actions.actions,
-    currentLayer.coverage_id_pattern,
-    currentLayer.name,
-    currentMap,
-    setToDownload,
-  ]);
+    setDataValues(dataValues);
+  }, [timeseries]);
 
   const { t, i18n } = useTranslation();
   console.debug(i18n);

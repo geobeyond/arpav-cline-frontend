@@ -543,14 +543,15 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
-                <IconButton
+                <></>
+              ) : (
+                /*</Grid><IconButton
                   onClick={() => setDownloadDataOpen(true)}
                   disabled={true}
                   aria-label={t('app.map.menuBar.downloadData')}
                 >
                   <FileDownloadIcon />
-                </IconButton>
-              ) : (
+                </IconButton>*/
                 <Button
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}

@@ -11,6 +11,7 @@ import {
   Button,
   MenuItem,
   Select,
+  Modal,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -24,6 +25,9 @@ import {
   SliderContainerStyle,
   InputYearStyle,
   FieldsStyle,
+  RowStyle,
+  MapColStyle,
+  FullWidthStyle,
 } from './styles';
 import { DownloadMap } from './DownloadMap';
 import { roundTo4 } from '../../../utils/json_manipulations';
@@ -156,44 +160,51 @@ const MapDlData = (props: MapDlDataProps) => {
   return (
     <Box sx={MapDataContainerStyle}>
       <Box sx={FieldsStyle}>
-        {/*Column1*/}
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.menuBar.indicator')}
-          </Typography>
-          <Select
-            defaultValue={configuration.climatological_variable}
-            name="climatological_variable"
-          >
-            {getOptions('climatological_variable').map(item => (
-              <MenuItem key={item.value} value={item.value}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-        <Box>
+        <Box sx={RowStyle}>
+          {/*Column1*/}
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.menuBar.model')}
+              {t('app.map.downloader.indicator')}
             </Typography>
             <Select
-              defaultValue={[configuration.climatological_model]}
-              multiple
-              name="climatological_model"
+              sx={FullWidthStyle}
+              defaultValue={configuration.climatological_variable}
+              name="climatological_variable"
             >
-              {getOptions('climatological_model').map(item => (
+              {getOptions('climatological_variable').map(item => (
                 <MenuItem key={item.value} value={item.value}>
                   {item.label}
                 </MenuItem>
               ))}
             </Select>
           </Box>
+        </Box>
+        <Box sx={RowStyle}>
+          <Box>
+            <Box sx={FieldContainerStyle}>
+              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                {t('app.map.downloader.model')}
+              </Typography>
+              <Select
+                sx={FullWidthStyle}
+                defaultValue={[configuration.climatological_model]}
+                multiple
+                name="climatological_model"
+              >
+                {getOptions('climatological_model').map(item => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+          </Box>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.menuBar.scenario')}
+              {t('app.map.downloader.scenario')}
             </Typography>
             <Select
+              sx={FullWidthStyle}
               defaultValue={[configuration.scenario]}
               multiple
               name="scenario"
@@ -206,12 +217,13 @@ const MapDlData = (props: MapDlDataProps) => {
             </Select>
           </Box>
         </Box>
-        <Box>
+        <Box sx={RowStyle}>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.menuBar.period')}
+              {t('app.map.downloader.average')}
             </Typography>
             <Select
+              sx={FullWidthStyle}
               defaultValue={configuration.aggregation_period}
               name="aggregation_period"
             >
@@ -224,9 +236,26 @@ const MapDlData = (props: MapDlDataProps) => {
           </Box>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.menuBar.period')}
+              {t('app.map.downloader.measure')}
             </Typography>
             <Select
+              sx={FullWidthStyle}
+              defaultValue={configuration.measure}
+              name="measure"
+            >
+              {getOptions('measure').map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+          <Box sx={FieldContainerStyle}>
+            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+              {t('app.map.downloader.quantity')}
+            </Typography>
+            <Select
+              sx={FullWidthStyle}
               disabled={configuration.aggregation_period !== '30yr'}
               defaultValue={configuration.time_window}
               name="time_window"
@@ -239,56 +268,27 @@ const MapDlData = (props: MapDlDataProps) => {
             </Select>
           </Box>
         </Box>
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.menuBar.measure')}
-          </Typography>
-          <Select defaultValue={configuration.measure} name="measure">
-            {getOptions('measure').map(item => (
-              <MenuItem key={item.value} value={item.value}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.menuBar.season')}
-          </Typography>
-          <Select defaultValue={configuration.year_period} name="year_period">
-            {getOptions('year_period').map(item => (
-              <MenuItem key={item.value} value={item.value}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.downloadDataDialog.map.timeRange')}
-          </Typography>
-          <Box sx={SliderContainerStyle}>
-            <span>{times[0]}</span>
-            <Slider
-              sx={YearsSliderStyle}
-              getAriaValueText={() =>
-                t('app.map.downloadDataDialog.map.timeRangeLabel')
-              }
-              valueLabelDisplay="on"
-              step={1}
-              min={0}
-              max={times.length - 1}
-              value={[0, years[1]]}
-              onChange={yearsHandleChange}
-              valueLabelFormat={index => times[index]}
-              disableSwap
-            />
-            <span>{times[times.length - 1]}</span>
+        <Box sx={RowStyle}>
+          <Box sx={FieldContainerStyle}>
+            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+              {t('app.map.downloader.season')}
+            </Typography>
+            <Select
+              sx={FullWidthStyle}
+              defaultValue={configuration.year_period}
+              name="year_period"
+            >
+              {getOptions('year_period').map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
           </Box>
         </Box>
       </Box>
-      <Box>
+
+      <Box sx={MapColStyle}>
         {/*Column2*/}
         <Box sx={FieldContainerStyle}>
           <DownloadMap
@@ -396,6 +396,30 @@ const MapDlData = (props: MapDlDataProps) => {
             </Button>
           )}
           {/*{JSON.stringify(downLoadBounds)}*/}
+        </Box>
+
+        <Box sx={FieldContainerStyle}>
+          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+            {t('app.map.downloadDataDialog.map.timeRange')}
+          </Typography>
+          <Box sx={SliderContainerStyle}>
+            <span>{times[0]}</span>
+            <Slider
+              sx={YearsSliderStyle}
+              getAriaValueText={() =>
+                t('app.map.downloadDataDialog.map.timeRangeLabel')
+              }
+              valueLabelDisplay="on"
+              step={1}
+              min={0}
+              max={times.length - 1}
+              value={[0, years[1]]}
+              onChange={yearsHandleChange}
+              valueLabelFormat={index => times[index]}
+              disableSwap
+            />
+            <span>{times[times.length - 1]}</span>
+          </Box>
         </Box>
       </Box>
     </Box>

@@ -56,3 +56,13 @@ export const MapLoadingContainerStyle = theme => ({
   justifyContent: 'center',
   alignItems: 'center',
 });
+
+export const SpinnerStyle = theme => ({
+  position: 'fixed',
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  top: 0,
+});

@@ -77,7 +77,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
         <Grid xs={1}></Grid>
         <Grid xs={26}>
           <Typography variant={'h6'} sx={TitleDownloadStyle}>
-            {t('app.header.acronymMeaning')}
+            {t('app.header.acronymMeaning')} - Modulo scarica dati
           </Typography>
         </Grid>
         <Grid xs={1} sx={CloseIconContStyle}>

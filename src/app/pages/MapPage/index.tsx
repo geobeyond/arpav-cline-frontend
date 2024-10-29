@@ -16,7 +16,7 @@ import {
   Button,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { MapLoadingContainerStyle, mapStyle } from './styles';
+import { MapLoadingContainerStyle, mapStyle, SpinnerStyle } from './styles';
 import Map from '../../components/Map';
 import MapMenuBar from '../../components/MapMenuBar';
 import { LatLng, Map as LMap } from 'leaflet';
@@ -458,11 +458,7 @@ export function MapPage(props: MapPageProps) {
         currentTimeserie={currentTimeSerie}
         setCurrentMap={setCurrentMap}
       />
-      {loading && (
-        <Box sx={MapLoadingContainerStyle}>
-          <CircularProgress size={80} />
-        </Box>
-      )}
+
       <TimeSeriesDialog
         selectedPoint={selectedPoint}
         open={tSOpen}
@@ -472,9 +468,9 @@ export function MapPage(props: MapPageProps) {
       />
 
       {/*TODO Backdrop only for debug?*/}
-      <Backdrop open={inProgress}>
+      <Modal open={loading} sx={SpinnerStyle}>
         <CircularProgress color="inherit" size={80} />
-      </Backdrop>
+      </Modal>
     </Box>
   );
 }
