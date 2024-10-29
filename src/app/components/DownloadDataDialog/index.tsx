@@ -19,6 +19,7 @@ import UserDlData from '../UserDlData/userDlData';
 import { saveAs } from 'file-saver';
 import { useMapSlice } from '../../pages/MapPage/slice';
 import { API_URL } from '../../../utils/constants';
+import { RequestApi } from 'app/Services/API/Requests';
 
 export interface DownloadDataDialogProps {
   open: boolean;
@@ -34,6 +35,8 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
+  const r = RequestApi.getInstance();
+
   const dataSet = React.useRef<any>({});
   const [downloadDisabled, setDownloadDisabled] = React.useState(true);
 
@@ -46,6 +49,8 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   const userValidityHandleChange = (isValid: boolean) => {
     setDownloadDisabled(!isValid);
   };
+
+  const [downloads, setDownloads] = React.useState([]);
 
   const handleChange = values => {
     dataSet.current = { ...dataSet.current, ...values };

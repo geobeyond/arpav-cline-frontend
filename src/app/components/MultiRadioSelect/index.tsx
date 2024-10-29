@@ -86,6 +86,7 @@ export interface MultiRadioSelectProps {
   label: string;
   current_map?: any;
   activeCombinations?: any;
+  disabled?: boolean;
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
@@ -98,6 +99,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   const className = props.className ?? '';
   const MobileIcon = () => props.mobileIcon ?? <></>;
   const activeCombinations = props.activeCombinations ?? {};
+  const disabled = props.disabled ?? false;
 
   const { t, i18n } = useTranslation();
 
@@ -162,6 +164,18 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
       return r;
     }
     return row.items.map(x => x.name);
+  };
+  const getDisabledByCriteria = (row, current) => {
+    try {
+      const r = row.disabled(current);
+      if (r) {
+        return r;
+      }
+    } catch (ex) {
+      return false;
+    } finally {
+      return false;
+    }
   };
 
   return (
@@ -236,11 +250,12 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           key={item.name}
                           disableGutters
                           disabled={
-                            row.disableable &&
-                            getFieldsByCriteria(
-                              row,
-                              activeCombinations,
-                            ).indexOf(item.name) < 0
+                            getDisabledByCriteria(row, current_map) ||
+                            (row.disableable &&
+                              getFieldsByCriteria(
+                                row,
+                                activeCombinations,
+                              ).indexOf(item.name) < 0)
                           }
                         >
                           <FormControlLabel

@@ -10,6 +10,7 @@ import {
   TextField,
   Button,
   MenuItem,
+  Select,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,13 +23,14 @@ import {
   MapDataContainerStyle,
   SliderContainerStyle,
   InputYearStyle,
+  FieldsStyle,
 } from './styles';
 import { DownloadMap } from './DownloadMap';
 import { roundTo4 } from '../../../utils/json_manipulations';
 import { LatLngBounds } from 'leaflet';
 
 import { RequestApi } from 'app/Services';
-import Select from 'react-select';
+//import Select from 'react-select';
 
 export function range(stop: number): number[];
 export function range(start: number, stop: number, step?: number): number[];
@@ -60,7 +62,7 @@ const MapDlData = (props: MapDlDataProps) => {
   const onChange = props.onChange ?? (() => { });
   const configuration = props.configuration;
   const featureGroupRef: any = useRef();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   //@ts-ignore
   const { selected_map, forecast_parameters, timeserie } = useSelector(
@@ -139,7 +141,13 @@ const MapDlData = (props: MapDlDataProps) => {
     let x = attributes.filter(x => x.name === field);
     if (x) {
       return x[0].allowed_values.map(xx => {
-        return { value: xx.name, label: xx.display_name_italian };
+        return {
+          value: xx.name,
+          label:
+            i18n.language === 'it'
+              ? xx.display_name_italian
+              : xx.display_name_english,
+        };
       });
     }
     return {};
@@ -147,7 +155,7 @@ const MapDlData = (props: MapDlDataProps) => {
 
   return (
     <Box sx={MapDataContainerStyle}>
-      <Box>
+      <Box sx={FieldsStyle}>
         {/*Column1*/}
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
@@ -156,60 +164,104 @@ const MapDlData = (props: MapDlDataProps) => {
           <Select
             defaultValue={configuration.climatological_variable}
             name="climatological_variable"
-            options={getOptions('climatological_variable')}
-          ></Select>
+          >
+            {getOptions('climatological_variable').map(item => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.menuBar.model')}
-          </Typography>
-          <Select
-            defaultValue={[configuration.climatological_model]}
-            isMulti={true}
-            name="climatological_model"
-            options={getOptions('climatological_model')}
-          ></Select>
+        <Box>
+          <Box sx={FieldContainerStyle}>
+            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+              {t('app.map.menuBar.model')}
+            </Typography>
+            <Select
+              defaultValue={[configuration.climatological_model]}
+              multiple
+              name="climatological_model"
+            >
+              {getOptions('climatological_model').map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+          <Box sx={FieldContainerStyle}>
+            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+              {t('app.map.menuBar.scenario')}
+            </Typography>
+            <Select
+              defaultValue={[configuration.scenario]}
+              multiple
+              name="scenario"
+            >
+              {getOptions('scenario').map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
         </Box>
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.menuBar.scenario')}
-          </Typography>
-          <Select
-            defaultValue={[configuration.scenario]}
-            isMulti={true}
-            name="scenario"
-            options={getOptions('scenario')}
-          ></Select>
-        </Box>
-        <Box sx={FieldContainerStyle}>
-          <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-            {t('app.map.menuBar.period')}
-          </Typography>
-          <Select
-            defaultValue={configuration.aggregation_period}
-            name="aggregation_period"
-            options={getOptions('aggregation_period')}
-          ></Select>
+        <Box>
+          <Box sx={FieldContainerStyle}>
+            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+              {t('app.map.menuBar.period')}
+            </Typography>
+            <Select
+              defaultValue={configuration.aggregation_period}
+              name="aggregation_period"
+            >
+              {getOptions('aggregation_period').map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+          <Box sx={FieldContainerStyle}>
+            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+              {t('app.map.menuBar.period')}
+            </Typography>
+            <Select
+              disabled={configuration.aggregation_period !== '30yr'}
+              defaultValue={configuration.time_window}
+              name="time_window"
+            >
+              {getOptions('time_window').map(item => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
         </Box>
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.menuBar.measure')}
           </Typography>
-          <Select
-            defaultValue={configuration.measure}
-            name="measure"
-            options={getOptions('measure')}
-          ></Select>
+          <Select defaultValue={configuration.measure} name="measure">
+            {getOptions('measure').map(item => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
         <Box sx={FieldContainerStyle}>
           <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
             {t('app.map.menuBar.season')}
           </Typography>
-          <Select
-            defaultValue={configuration.year_period}
-            name="year_period"
-            options={getOptions('year_period')}
-          ></Select>
+          <Select defaultValue={configuration.year_period} name="year_period">
+            {getOptions('year_period').map(item => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
 
         <Box sx={FieldContainerStyle}>

@@ -63,6 +63,7 @@ export interface MapMenuBar {
   foundLayers: number;
   setCurrentMap: Function;
   openError: Function;
+  showLoader?: Function;
 }
 
 const MAP_MODES = {
@@ -83,6 +84,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const setCurrentMap = props.setCurrentMap;
   const combinations = props.combinations || [];
   const openError = props.openError;
+  const showLoader = props.showLoader;
 
   const activeCombinations = useRef(
     Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
@@ -164,6 +166,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 ),
                 disableable: false,
                 criteria: x => [],
+                disabled: x => false,
               },
             ],
           },
@@ -175,6 +178,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 groupName: t('app.map.menu.scenarios'),
                 ...mapParameters('scenario', 'scenario'),
                 criteria: x => [],
+                disabled: x => false,
               },
             ],
           },
@@ -188,6 +192,7 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters('aggregation_period', 'aggregation_period'),
             disableable: true,
+            disabled: x => false,
             criteria: x => {
               return x?.aggregation_period;
             },
@@ -197,6 +202,7 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: t('app.map.menu.valueTypes'),
             ...mapParameters('measure', 'measure'),
             disableable: true,
+            disabled: x => false,
             criteria: x => x?.measure,
           },
           {
@@ -204,6 +210,7 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters('time_window', 'time_window'),
             disableable: true,
+            disabled: x => x.aggregation_period !== '30yr',
             criteria: x => x?.time_window,
           },
         ],
@@ -218,6 +225,7 @@ export function MapMenuBar(props: MapMenuBar) {
             groupName: '',
             ...mapParameters('year_period', 'year_period'),
             disableable: true,
+            disabled: x => false,
             criteria: x => x?.year_period,
           },
         ],
@@ -286,6 +294,11 @@ export function MapMenuBar(props: MapMenuBar) {
   };
 
   const handleChange = (key: string, value: string) => {
+    if (showLoader) {
+      if (onMenuChange) {
+        onMenuChange(true);
+      }
+    }
     prevValue.current = localCM.current[key];
     changingParameter.current = key;
     changingValue.current = value;
@@ -334,9 +347,9 @@ export function MapMenuBar(props: MapMenuBar) {
       }
       setCurrentMap(localCM.current);
     }
-    //if (onMenuChange) {
-    //  onMenuChange({ key, value });
-    //}
+    if (onMenuChange) {
+      onMenuChange(true);
+    }
   };
 
   //setActiveCombinations(combinations['tas']);
@@ -404,6 +417,10 @@ export function MapMenuBar(props: MapMenuBar) {
       setActiveCombinations(
         combinations[localCM.current.climatological_variable],
       );
+    } else {
+      if (onMenuChange) {
+        onMenuChange(false);
+      }
     }
   }, [foundLayers]);
 

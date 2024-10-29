@@ -148,6 +148,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [localEnd, setLocalEnd] = useState<any>(100);
   const [localStartYear, setLocalStartYear] = useState<any>(null);
   const [localEndYear, setLocalEndYear] = useState<any>(null);
+  const [dataValues, setDataValues] = useState<any>(null);
 
   useEffect(() => {
     setTimeseries([]);
@@ -215,6 +216,41 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           actions.actions.genericError({ error: 'app.error.dlTimeSeries' }),
         );
       });
+    const dataValues = timeseries.reduce((prev, curr) => {
+      return {
+        ...prev,
+        ...{ [curr.name + '__' + curr.info.processing_method]: curr.values },
+      };
+    }, {});
+    for (let k of Object.keys(dataValues)) {
+      for (let kk of dataValues[k]) {
+        kk.datetime = kk.datetime.split('-')[0];
+      }
+    }
+    for (let k of Object.keys(dataValues)) {
+      let vv: any[] = [];
+      for (let y of range(baseValue, 2099)) {
+        let found: boolean | any = false;
+        for (let kk of dataValues[k]) {
+          if (y.toString() === kk.datetime) {
+            found = kk;
+            break;
+          }
+        }
+        if (found) {
+          vv.push(found);
+        } else {
+          vv.push({
+            value: null,
+            datetime: y.toString(),
+          });
+        }
+      }
+      dataValues[k] = vv;
+    }
+    console.log(dataValues);
+    setFilledSeries(dataValues);
+    setDataValues({ ...dataValues });
   }, [
     selected_map,
     selectactable_parameters,
@@ -282,41 +318,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     }
     return ret;
   };
-
-  const dataValues = timeseries.reduce((prev, curr) => {
-    return {
-      ...prev,
-      ...{ [curr.name + '__' + curr.info.processing_method]: curr.values },
-    };
-  }, {});
-  for (let k of Object.keys(dataValues)) {
-    for (let kk of dataValues[k]) {
-      kk.datetime = kk.datetime.split('-')[0];
-    }
-  }
-  for (let k of Object.keys(dataValues)) {
-    let vv: any[] = [];
-    for (let y of range(baseValue, 2099)) {
-      let found: boolean | any = false;
-      for (let kk of dataValues[k]) {
-        if (y.toString() === kk.datetime) {
-          found = kk;
-          break;
-        }
-      }
-      if (found) {
-        vv.push(found);
-      } else {
-        vv.push({
-          value: null,
-          datetime: y.toString(),
-        });
-      }
-    }
-    dataValues[k] = vv;
-  }
-  console.log(dataValues);
-  setFilledSeries(dataValues);
 
   const getLegend = () => {
     //TODO names lookup

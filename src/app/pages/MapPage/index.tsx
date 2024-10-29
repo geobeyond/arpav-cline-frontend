@@ -103,6 +103,7 @@ export function MapPage(props: MapPageProps) {
   const closeError = () => setError('');
 
   const [foundLayers, setFoundLayers] = useState(0);
+  //const [loading, showLoader] = useState(false);
 
   const handleMapReady = (map: LMap) => {
     mapRef.current = map;
@@ -268,6 +269,7 @@ export function MapPage(props: MapPageProps) {
           setCurrentMap(currentMap);
           setFoundLayers(x.items.length);
           if (x.items.length === 1) {
+            setLoading(false);
             api.getLayerConf(x.items[0]).then(conf => {
               setCurrentLayer(x.items[0].identifier);
               setCurrentLayerConfig(conf);
@@ -336,10 +338,11 @@ export function MapPage(props: MapPageProps) {
     captionOffset: 5,
   };
 
-  const updateCurrentMap = ({ key, value }) => {
-    let cm = { ...currentMap };
-    cm[key] = value;
-    setCurrentMap(cm);
+  const updateCurrentMap = status => {
+    setLoading(status);
+    //let cm = { ...currentMap };
+    //cm[key] = value;
+    //setCurrentMap(cm);
   };
 
   const handleDownloadMapImg = () => {

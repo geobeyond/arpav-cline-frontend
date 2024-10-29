@@ -85,6 +85,19 @@ export const MapDataContainerStyle = theme => ({
   },
 });
 
+export const FieldsStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'column',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-start',
+  gap: 16,
+
+  [theme.breakpoints.down('xl')]: {
+    justifyContent: 'space-between',
+    gap: 0,
+  },
+});
+
 export const MapDataSectionTextStyle = theme => ({
   color: 'success.dark',
   fontWeight: 'bold',
@@ -95,6 +108,14 @@ export const MapDataValueTextStyle = theme => ({
 });
 
 export const SliderContainerStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  alignItems: 'center',
+  marginTop: 4,
+});
+
+export const RowStyle = theme => ({
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'nowrap',
