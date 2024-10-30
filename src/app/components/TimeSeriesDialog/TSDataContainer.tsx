@@ -148,7 +148,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [localEnd, setLocalEnd] = useState<any>(100);
   const [localStartYear, setLocalStartYear] = useState<any>(null);
   const [localEndYear, setLocalEndYear] = useState<any>(null);
-  const [dataValues, setDataValues] = useState<any>(null);
+  const [realDataValues, setRealDataValues] = useState<any>({});
 
   useEffect(() => {
     setTimeseries([]);
@@ -209,6 +209,44 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         //@ts-ignore
         setTimeseries(res.series);
         setToDownload(res);
+
+        const dataValues = res.series.reduce((prev, curr) => {
+          return {
+            ...prev,
+            ...{
+              [curr.name + '__' + curr.info.processing_method]: curr.values,
+            },
+          };
+        }, {});
+        for (let k of Object.keys(dataValues)) {
+          for (let kk of dataValues[k]) {
+            kk.datetime = kk.datetime.split('-')[0];
+          }
+        }
+        for (let k of Object.keys(dataValues)) {
+          let vv: any[] = [];
+          for (let y of range(baseValue, 2100)) {
+            let found: boolean | any = false;
+            for (let kk of dataValues[k]) {
+              if (y.toString() === kk.datetime) {
+                found = kk;
+                break;
+              }
+            }
+            if (found) {
+              vv.push(found);
+            } else {
+              vv.push({
+                value: null,
+                datetime: y.toString(),
+              });
+            }
+          }
+          dataValues[k] = vv;
+        }
+        console.log(dataValues);
+        setFilledSeries(dataValues);
+        setRealDataValues(dataValues);
       })
       .catch(err => {
         console.log(err);
@@ -233,47 +271,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     currentMap,
     setToDownload,
     currentLayer.ensemble_data,
-    timeseries,
     setFilledSeries,
   ]);
-
-  useEffect(() => {
-    const dataValues = timeseries.reduce((prev, curr) => {
-      return {
-        ...prev,
-        ...{ [curr.name + '__' + curr.info.processing_method]: curr.values },
-      };
-    }, {});
-    for (let k of Object.keys(dataValues)) {
-      for (let kk of dataValues[k]) {
-        kk.datetime = kk.datetime.split('-')[0];
-      }
-    }
-    for (let k of Object.keys(dataValues)) {
-      let vv: any[] = [];
-      for (let y of range(baseValue, 2100)) {
-        let found: boolean | any = false;
-        for (let kk of dataValues[k]) {
-          if (y.toString() === kk.datetime) {
-            found = kk;
-            break;
-          }
-        }
-        if (found) {
-          vv.push(found);
-        } else {
-          vv.push({
-            value: null,
-            datetime: y.toString(),
-          });
-        }
-      }
-      dataValues[k] = vv;
-    }
-    console.log(dataValues);
-    setFilledSeries(dataValues);
-    setDataValues(dataValues);
-  }, [timeseries]);
 
   const { t, i18n } = useTranslation();
   console.debug(i18n);
@@ -288,6 +287,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [sensorProcessingMehtod, setSensorProcessingMethod] =
     useState<string>('NO_SMOOTHING');
   const [uncert, setUncert] = useState<boolean>(true);
+
+  const [pseriesObj, setPseriesObj] = useState<any>([]);
 
   useEffect(() => {
     setFilters(
@@ -349,7 +350,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         name: getName(x, 'station'),
         itemStyle: { color: 'black', opacity: 1 },
       }));
-    return [...series, ...station];
+    if (series && station) {
+      return [...series, ...station];
+    } else {
+      return [];
+    }
   };
 
   const getSelectedLegend = () => {
@@ -431,20 +436,21 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
         if (lbitem.length > 0) {
-          for (let i in dataValues[
+          for (let i in realDataValues[
             item.name + '__' + item.info.processing_method
           ]) {
             if (
-              dataValues[item.name + '__' + item.info.processing_method][i]
+              realDataValues[item.name + '__' + item.info.processing_method][i]
                 .value ||
-              dataValues[
+              realDataValues[
                 lbitem[0].name + '__' + lbitem[0].info.processing_method
               ][i].value
             ) {
               ret.push(
-                dataValues[item.name + '__' + item.info.processing_method][i]
-                  .value -
-                dataValues[
+                realDataValues[item.name + '__' + item.info.processing_method][
+                  i
+                ].value -
+                realDataValues[
                   lbitem[0].name + '__' + lbitem[0].info.processing_method
                 ][i].value,
               );
@@ -456,7 +462,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         return ret;
       }
     }
-    return dataValues[item.name + '__' + item.info.processing_method].map(
+    return realDataValues[item.name + '__' + item.info.processing_method].map(
       x => x.value,
     );
   };
@@ -497,7 +503,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     const cats = timeseries?.map(item => {
       return item.values.map(x => x.datetime.split('-')[0]);
     });
-    return cats[0];
+    if (cats) {
+      if (cats.length > 0) {
+        return cats[0];
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   };
 
   /*{
@@ -523,27 +537,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     else return `${tdata.station}`;
   };
 
-  let pseriesObj = [
-    ...timeseries?.filter(item => {
-      return (
-        //no uncertainty
-        !('uncertainty_type' in item.info) &&
-        ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
-          (item.info.climatological_model === baseClimatologicalModel ||
-            item.info.climatological_model ===
-            comparisonClimatologicalModel)) ||
-          ('series_elaboration' in item.info &&
-            item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0))
-      );
-    }),
-  ];
-  if (uncert)
-    pseriesObj = [
-      ...pseriesObj,
+  useEffect(() => {
+    let pseriesObj = [
       ...timeseries?.filter(item => {
         return (
           //no uncertainty
-          'uncertainty_type' in item.info &&
+          !('uncertainty_type' in item.info) &&
           ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
             (item.info.climatological_model === baseClimatologicalModel ||
               item.info.climatological_model ===
@@ -553,6 +552,25 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         );
       }),
     ];
+    if (uncert)
+      pseriesObj = [
+        ...pseriesObj,
+        ...timeseries?.filter(item => {
+          return (
+            //no uncertainty
+            'uncertainty_type' in item.info &&
+            ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
+              (item.info.climatological_model === baseClimatologicalModel ||
+                item.info.climatological_model ===
+                comparisonClimatologicalModel)) ||
+              ('series_elaboration' in item.info &&
+                item.info.processing_method.indexOf(sensorProcessingMehtod) >=
+                0))
+          );
+        }),
+      ];
+    setPseriesObj(pseriesObj);
+  }, [timeseries]);
 
   let seriesFilter = pseriesObj.reduce((prev, item) => {
     const onV = getName(item);
@@ -697,18 +715,19 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       };
   });
 
-  const titleText =
-    timeseries.length === 0
+  const titleText = timeseries
+    ? timeseries?.length === 0
       ? ''
       : `
   ${timeseries[0].translations.parameter_values.climatological_variable[
       i18n.language
       ]
       }
-  `;
+  `
+    : '';
 
-  const subText =
-    timeseries.length === 0
+  const subText = timeseries
+    ? timeseries?.length === 0
       ? ''
       : `
     ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${timeseries[0].translations.parameter_values.year_period[i18n.language]
@@ -718,7 +737,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
       )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
-  Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`;
+  Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`
+    : '';
 
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
@@ -762,15 +782,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       formatter: p => {
         if (!p.length) p = [p]; // default trigger:'item'
         let tt = p.map(x => {
-          if (dataValues[x.seriesId].length > x.dataIndex) {
-            if (!isNaN(dataValues[x.seriesId][x.dataIndex].value)) {
+          if (realDataValues[x.seriesId].length > x.dataIndex) {
+            if (!isNaN(realDataValues[x.seriesId][x.dataIndex].value)) {
               return (
                 '<br>' +
                 x.marker +
                 x.seriesName +
                 getBoundsLabel(x.seriesId) +
                 ': ' +
-                dataValues[x.seriesId][x.dataIndex]?.value
+                realDataValues[x.seriesId][x.dataIndex]?.value
                   ?.toFixed(currentLayer?.data_precision)
                   .replace('.', i18n.language === 'en' ? '.' : ',') +
                 ' ' +
@@ -897,7 +917,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .filter((x: any) => allIds.indexOf(x.name) >= 0)
       .map((x: any) => x.series);
     setSeriesFilter(sf);
-    setIds(timeseries.filter(x => !allIds.includes(x.name)).map(x => x.name));
+    setIds(timeseries?.filter(x => !allIds.includes(x.name)).map(x => x.name));
   };
 
   const str = (start, end) => {

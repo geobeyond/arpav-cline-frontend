@@ -148,7 +148,7 @@ export class RequestApi extends Http {
         if (x.items.length > 0) {
           let xx = x.items.filter(
             itm =>
-              JSON.stringify(itm.possible_values).indexOf('uncertainty') <= 0,
+              JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
           );
           return { items: xx };
         } else return x;
