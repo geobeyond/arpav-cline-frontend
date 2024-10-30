@@ -556,6 +556,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
                   aria-label={t('app.map.menuBar.downloadData')}
+                  disabled={foundLayers === 0}
                 >
                   {t('app.map.menuBar.downloadData')}
                 </Button>
@@ -573,6 +574,7 @@ export function MapMenuBar(props: MapMenuBar) {
               {isMobile ? (
                 <IconButton
                   onClick={() => onDownloadMapImg()}
+                  disabled={foundLayers === 0}
                   aria-label={t('app.map.menuBar.downloadMap')}
                 >
                   <PhotoCameraIcon />
@@ -582,6 +584,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   startIcon={<PhotoCameraIcon />}
                   onClick={() => onDownloadMapImg()}
                   aria-label={t('app.map.menuBar.downloadMap')}
+                  disabled={foundLayers === 0}
                 >
                   {t('app.map.menuBar.downloadMap')}
                 </Button>

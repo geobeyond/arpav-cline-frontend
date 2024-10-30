@@ -27,6 +27,19 @@ export interface iNetcdfDownload {
 }
 
 export class RequestApi extends Http {
+  getForecastData(configuration: any, dataSet: any) {
+    return this.instance
+      .get<any>('https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?', {
+        params: { offset: 0, limit: 20, ...configuration },
+      })
+      .then((found: any) => {
+        return found.coverage_download_links.map(x => ({
+          url:
+            x +
+            `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31 `,
+        }));
+      });
+  }
   protected static classInstance?: RequestApi;
   public static getInstance() {
     if (!this.classInstance) {

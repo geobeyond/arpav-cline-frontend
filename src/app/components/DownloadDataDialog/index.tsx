@@ -1,6 +1,16 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, IconButton, Button, Typography } from '@mui/material';
+import {
+  Modal,
+  IconButton,
+  Button,
+  Typography,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Box,
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import ExitIcon from '@mui/icons-material/HighlightOff';
 // import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -35,7 +45,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
-  const r = RequestApi.getInstance();
+  const api = RequestApi.getInstance();
 
   const dataSet = React.useRef<any>({});
   const [downloadDisabled, setDownloadDisabled] = React.useState(true);
@@ -43,11 +53,25 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   const [loader, setLoader] = React.useState(false);
   const [downloadUrl, setDownloadUrl] = React.useState('');
 
+  const [showLinks, setShowLinks] = React.useState(false);
+  const [links, setLinks] = React.useState([]);
+
   //@ts-ignore
   const { selected_map } = useSelector(state => state?.map as MapState);
 
   const userValidityHandleChange = (isValid: boolean) => {
     setDownloadDisabled(!isValid);
+  };
+
+  const setList = links => {
+    setLinks(links);
+    setShowLinks(true);
+  };
+
+  const getLinks = configuration => {
+    api.getForecastData(configuration, dataSet.current).then((finds: any) => {
+      setList(finds);
+    });
   };
 
   const [downloads, setDownloads] = React.useState([]);
@@ -66,79 +90,96 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   };
 
   return (
-    <Modal open={open} sx={DownloadModalStyle}>
-      <Grid
-        container
-        rowSpacing={0}
-        columnSpacing={{ xs: 0 }}
-        columns={{ xs: 28, def: 28 }}
-        sx={DownloadContainerStyle}
-      >
-        <Grid xs={1}></Grid>
-        <Grid xs={26}>
-          <Typography variant={'h6'} sx={TitleDownloadStyle}>
-            {t('app.header.acronymMeaning')} - Modulo scarica dati
-          </Typography>
-        </Grid>
-        <Grid xs={1} sx={CloseIconContStyle}>
-          <IconButton
-            color={'secondary'}
-            aria-label={t('app.common.close')}
-            component={'label'}
-            onClick={() => setOpen(false)}
-          >
-            <ExitIcon fontSize={'large'} />
-          </IconButton>
-        </Grid>
-        <Grid xs={1}></Grid>
-        <Grid xs={26}>
-          <Grid
-            container
-            rowSpacing={0}
-            columnSpacing={{ xs: 0 }}
-            columns={{ xs: 26, def: 26 }}
-            sx={MapUserContainerStyle}
-          >
-            <Grid xs={26}>
-              <MapDlData
-                menus={menus}
-                onChange={handleChange}
-                configuration={configuration}
-              />
-            </Grid>
-            <Grid xs={26}>
-              <UserDlData
-                onChange={handleChange}
-                onValidityChange={userValidityHandleChange}
-              />
+    <>
+      <Modal open={open} sx={DownloadModalStyle}>
+        <Grid
+          container
+          rowSpacing={0}
+          columnSpacing={{ xs: 0 }}
+          columns={{ xs: 28, def: 28 }}
+          sx={DownloadContainerStyle}
+        >
+          <Grid xs={1}></Grid>
+          <Grid xs={26}>
+            <Typography variant={'h6'} sx={TitleDownloadStyle}>
+              {t('app.header.acronymMeaning')} - Modulo scarica dati
+            </Typography>
+          </Grid>
+          <Grid xs={1} sx={CloseIconContStyle}>
+            <IconButton
+              color={'secondary'}
+              aria-label={t('app.common.close')}
+              component={'label'}
+              onClick={() => setOpen(false)}
+            >
+              <ExitIcon fontSize={'large'} />
+            </IconButton>
+          </Grid>
+          <Grid xs={1}></Grid>
+          <Grid xs={26}>
+            <Grid
+              container
+              rowSpacing={0}
+              columnSpacing={{ xs: 0 }}
+              columns={{ xs: 26, def: 26 }}
+              sx={MapUserContainerStyle}
+            >
+              <Grid xs={26}>
+                <MapDlData
+                  menus={menus}
+                  onChange={handleChange}
+                  configuration={configuration}
+                />
+              </Grid>
+              <Grid xs={26}>
+                <UserDlData
+                  onChange={handleChange}
+                  onValidityChange={userValidityHandleChange}
+                />
+              </Grid>
             </Grid>
           </Grid>
+          <Grid xs={1}></Grid>
+          <Grid xs={0} def={1}></Grid>
+          <Grid xs={28} def={11} sx={DLButtonContStyle}>
+            <Button
+              color={'primary'}
+              variant={'contained'}
+              disabled={downloadDisabled || loader}
+              onClick={() => {
+                getLinks(configuration);
+              }}
+            >
+              {t('app.map.downloadDataDialog.DLNetCDF')}
+            </Button>
+          </Grid>
+          <Grid xs={28} def={11} sx={CloseButtonContStyle}>
+            <Button
+              variant={'contained'}
+              color={'secondary'}
+              onClick={() => setOpen(false)}
+            >
+              {t('app.common.close')}
+            </Button>
+          </Grid>
+          <Grid xs={0} def={1}></Grid>
+          <Grid xs={10} def={10} xsOffset={1} defOffset={1}>
+            <Box>
+              <Typography variant={'h6'}>Estrazioni scaricabili</Typography>
+              <List dense={true}>
+                {links.map((x: any) => (
+                  <ListItem disablePadding>
+                    <ListItemButton href={x.url}>
+                      <ListItemText primary={x.url} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid xs={1}></Grid>
-        <Grid xs={0} def={1}></Grid>
-        <Grid xs={28} def={11} sx={DLButtonContStyle}>
-          <Button
-            color={'primary'}
-            variant={'contained'}
-            disabled={downloadDisabled || loader}
-            href={downloadUrl}
-            target={'_blank'}
-          >
-            {t('app.map.downloadDataDialog.DLNetCDF')}
-          </Button>
-        </Grid>
-        <Grid xs={28} def={11} sx={CloseButtonContStyle}>
-          <Button
-            variant={'contained'}
-            color={'secondary'}
-            onClick={() => setOpen(false)}
-          >
-            {t('app.common.close')}
-          </Button>
-        </Grid>
-        <Grid xs={0} def={1}></Grid>
-      </Grid>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 

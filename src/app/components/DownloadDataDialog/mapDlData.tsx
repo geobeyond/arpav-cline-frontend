@@ -298,29 +298,31 @@ const MapDlData = (props: MapDlDataProps) => {
             setBoundsFromMap={setBoundsFromMap}
             resetBounds={resetBounds}
           />
-          <Box sx={ImgButtonContainerStyle}>
-            <TextField
-              id="outlined-number"
-              label={t('app.map.downloadDataDialog.map.west')}
-              type="number"
-              value={downLoadBounds[0][1]}
-              onChange={e => {
-                changeBounds([
-                  [
-                    downLoadBounds[0][0],
-                    Number(e.target.value.replace(',', '.')),
-                  ],
-                  [downLoadBounds[1][0], downLoadBounds[1][1]],
-                ]);
-              }}
-              InputProps={{
-                inputProps: {
-                  max: mapBounds[1][1],
-                  min: mapBounds[0][1],
-                  step: 0.001,
-                },
-              }}
-            />
+          <Box sx={RowStyle}>
+            <Box sx={ImgButtonContainerStyle}>
+              <TextField
+                id="outlined-number"
+                label={t('app.map.downloadDataDialog.map.west')}
+                type="number"
+                value={downLoadBounds[0][1]}
+                onChange={e => {
+                  changeBounds([
+                    [
+                      downLoadBounds[0][0],
+                      Number(e.target.value.replace(',', '.')),
+                    ],
+                    [downLoadBounds[1][0], downLoadBounds[1][1]],
+                  ]);
+                }}
+                InputProps={{
+                  inputProps: {
+                    max: mapBounds[1][1],
+                    min: mapBounds[0][1],
+                    step: 0.001,
+                  },
+                }}
+              />
+            </Box>
             <Box sx={ImgDoubleButtonContainerStyle}>
               <TextField
                 id="outlined-number"
@@ -367,28 +369,30 @@ const MapDlData = (props: MapDlDataProps) => {
                 }}
               />
             </Box>
-            <TextField
-              id="outlined-number"
-              label={t('app.map.downloadDataDialog.map.east')}
-              type="number"
-              value={downLoadBounds[1][1]}
-              onChange={e => {
-                changeBounds([
-                  [downLoadBounds[0][0], downLoadBounds[0][1]],
-                  [
-                    downLoadBounds[1][0],
-                    Number(e.target.value.replace(',', '.')),
-                  ],
-                ]);
-              }}
-              InputProps={{
-                inputProps: {
-                  max: mapBounds[1][1],
-                  min: mapBounds[0][1],
-                  step: 0.001,
-                },
-              }}
-            />
+            <Box sx={ImgButtonContainerStyle}>
+              <TextField
+                id="outlined-number"
+                label={t('app.map.downloadDataDialog.map.east')}
+                type="number"
+                value={downLoadBounds[1][1]}
+                onChange={e => {
+                  changeBounds([
+                    [downLoadBounds[0][0], downLoadBounds[0][1]],
+                    [
+                      downLoadBounds[1][0],
+                      Number(e.target.value.replace(',', '.')),
+                    ],
+                  ]);
+                }}
+                InputProps={{
+                  inputProps: {
+                    max: mapBounds[1][1],
+                    min: mapBounds[0][1],
+                    step: 0.001,
+                  },
+                }}
+              />
+            </Box>
           </Box>
           {showReset && (
             <Button size={'small'} onClick={resetBounds}>

@@ -70,6 +70,7 @@ export const FieldContainerStyle = theme => ({
   ml: 0,
   mr: 0,
   width: '100%',
+  maxWidth: '450px',
 });
 export const FullWidthStyle = theme => ({
   width: '100%',
@@ -148,10 +149,12 @@ export const InputYearStyle = theme => ({
 });
 
 export const ImgButtonContainerStyle = theme => ({
+  width: '100%',
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  m: 3,
+
+  gap: 2,
   [theme.breakpoints.down('def')]: {
     flexDirection: 'column',
   },
@@ -160,4 +163,6 @@ export const ImgButtonContainerStyle = theme => ({
 export const ImgDoubleButtonContainerStyle = theme => ({
   display: 'flex',
   flexDirection: 'column',
+  width: '100%',
+  gap: 2,
 });
