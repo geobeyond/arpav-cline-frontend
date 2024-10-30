@@ -185,6 +185,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         ...{
           scenario: ['rcp26', 'rcp45', 'rcp85'],
         },
+        ...{ data_series: true },
       },
     );
     if (currentLayer.ensemble_data) {
@@ -198,6 +199,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           ...{
             scenario: ['rcp26', 'rcp45', 'rcp85'],
           },
+          ...{ data_series: true },
         },
       );
     }

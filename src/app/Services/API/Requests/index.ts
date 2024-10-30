@@ -177,9 +177,9 @@ export class RequestApi extends Http {
       return [];
     }
 
-    var head = input[0];
-    var tail = input.slice(1);
-    var output: any[] = [];
+    let head = input[0];
+    let tail = input.slice(1);
+    let output: any[] = [];
 
     for (var key in head) {
       if (head[key]) {
