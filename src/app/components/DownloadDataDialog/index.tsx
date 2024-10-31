@@ -10,6 +10,7 @@ import {
   ListItemButton,
   ListItemText,
   Box,
+  FormControl,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import ExitIcon from '@mui/icons-material/HighlightOff';
@@ -56,6 +57,9 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
 
   const [showLinks, setShowLinks] = React.useState(false);
   const [links, setLinks] = React.useState([]);
+
+  const [activeConfiguration, setActiveConfiguration] =
+    React.useState(configuration);
 
   //@ts-ignore
   const { selected_map } = useSelector(state => state?.map as MapState);
@@ -129,8 +133,9 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
                 <MapDlData
                   menus={menus}
                   onChange={handleChange}
-                  configuration={configuration}
+                  configuration={activeConfiguration}
                   combinations={combinations}
+                  setActive={setActiveConfiguration}
                 />
               </Grid>
               <Grid xs={26}>
@@ -149,7 +154,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
               variant={'contained'}
               disabled={downloadDisabled || loader}
               onClick={() => {
-                getLinks(configuration);
+                getLinks(activeConfiguration);
               }}
             >
               {t('app.map.downloadDataDialog.DLNetCDF')}

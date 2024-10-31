@@ -12,6 +12,7 @@ import {
   MenuItem,
   Select,
   Modal,
+  FormControl,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -59,6 +60,7 @@ export interface MapDlDataProps {
   onChange?: (values: any) => void;
   configuration: any;
   menus: any;
+  setActive: Function;
   combinations: any;
 }
 
@@ -66,9 +68,16 @@ const MapDlData = (props: MapDlDataProps) => {
   const attributes: any = props.menus;
   const combinations: any = props.combinations;
   const onChange = props.onChange ?? (() => { });
+  const setActive = props.setActive;
   const configuration = props.configuration;
   const featureGroupRef: any = useRef();
   const { t, i18n } = useTranslation();
+
+  const api = RequestApi.getInstance();
+
+  const activeConfiguration: any = useRef({
+    ...configuration,
+  });
 
   const [activeCombination, setActiveCombination] = React.useState<any>(
     combinations[configuration.climatological_variable],
@@ -163,6 +172,42 @@ const MapDlData = (props: MapDlDataProps) => {
     return {};
   };
 
+  const toDefault = object => {
+    let ret: any = {};
+    for (let k of Object.keys(object)) {
+      if (object[k].length > 0) {
+        ret[k] = object[k][object[k].length - 1];
+      } else {
+        ret[k] = null;
+      }
+    }
+
+    ret.climatological_model = 'model_ensemble';
+    ret.scenario = 'rcp85';
+    ret.aggregation_period = '30yr';
+    ret.measure = 'anomaly';
+    ret.time_window = 'tw1';
+
+    return ret;
+  };
+
+  const handleChange = (field, value) => {
+    if (field === 'climatological_variable') {
+      setActiveCombination(combinations[value]);
+      const conf = toDefault(combinations[value]);
+      activeConfiguration.current = conf;
+      setActive(activeConfiguration.current);
+    } else {
+      const conf = { ...activeConfiguration.current, ...{ [field]: value } };
+      activeConfiguration.current = conf;
+      setActive(activeConfiguration.current);
+    }
+
+    api.getForecastData(activeConfiguration).then(x => {
+      console.log('found netcdf', x);
+    });
+  };
+
   return (
     <Box sx={MapDataContainerStyle}>
       <Box sx={FieldsStyle}>
@@ -172,17 +217,22 @@ const MapDlData = (props: MapDlDataProps) => {
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
               {t('app.map.downloader.indicator')}
             </Typography>
-            <Select
-              sx={FullWidthStyle}
-              defaultValue={configuration.climatological_variable}
-              name="climatological_variable"
-            >
-              {getOptions('climatological_variable').map(item => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl>
+              <Select
+                sx={FullWidthStyle}
+                value={activeConfiguration.current.climatological_variable}
+                onChange={e =>
+                  handleChange('climatological_variable', e.target.value)
+                }
+                name="climatological_variable"
+              >
+                {getOptions('climatological_variable').map(item => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </Box>
         <Box sx={RowStyle}>
@@ -191,36 +241,40 @@ const MapDlData = (props: MapDlDataProps) => {
               <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
                 {t('app.map.downloader.model')}
               </Typography>
-              <Select
-                sx={FullWidthStyle}
-                defaultValue={[configuration.climatological_model]}
-                multiple
-                name="climatological_model"
-              >
-                {getOptions('climatological_model').map(item => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
+              <FormControl>
+                <Select
+                  sx={FullWidthStyle}
+                  value={[activeConfiguration.current.climatological_model]}
+                  multiple
+                  name="climatological_model"
+                >
+                  {getOptions('climatological_model').map(item => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
           </Box>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
               {t('app.map.downloader.scenario')}
             </Typography>
-            <Select
-              sx={FullWidthStyle}
-              defaultValue={[configuration.scenario]}
-              multiple
-              name="scenario"
-            >
-              {getOptions('scenario').map(item => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl>
+              <Select
+                sx={FullWidthStyle}
+                value={[activeConfiguration.current.scenario]}
+                multiple
+                name="scenario"
+              >
+                {getOptions('scenario').map(item => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </Box>
         <Box sx={RowStyle}>
@@ -228,56 +282,80 @@ const MapDlData = (props: MapDlDataProps) => {
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
               {t('app.map.downloader.average')}
             </Typography>
-            <Select
-              sx={FullWidthStyle}
-              defaultValue={configuration.aggregation_period}
-              name="aggregation_period"
-            >
-              {getOptions('aggregation_period').map(item => (
-                <MenuItem
-                  key={item.value}
-                  disabled={
-                    activeCombination.aggregation_period.indexOf(item.value) < 0
-                  }
-                  value={item.value}
-                >
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl>
+              <Select
+                sx={FullWidthStyle}
+                value={activeConfiguration.current.aggregation_period}
+                onChange={e =>
+                  handleChange('aggregation_period', e.target.value)
+                }
+                name="aggregation_period"
+              >
+                {getOptions('aggregation_period').map(item => (
+                  <MenuItem
+                    key={item.value}
+                    disabled={
+                      activeCombination.aggregation_period.indexOf(item.value) <
+                      0
+                    }
+                    value={item.value}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
               {t('app.map.downloader.measure')}
             </Typography>
-            <Select
-              sx={FullWidthStyle}
-              defaultValue={configuration.measure}
-              name="measure"
-            >
-              {getOptions('measure').map(item => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl>
+              <Select
+                sx={FullWidthStyle}
+                value={activeConfiguration.current.measure}
+                onChange={e => handleChange('measure', e.target.value)}
+                name="measure"
+              >
+                {getOptions('measure').map(item => (
+                  <MenuItem
+                    key={item.value}
+                    disabled={activeCombination.measure.indexOf(item.value) < 0}
+                    value={item.value}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
               {t('app.map.downloader.quantity')}
             </Typography>
-            <Select
-              sx={FullWidthStyle}
-              disabled={configuration.aggregation_period !== '30yr'}
-              defaultValue={configuration.time_window}
-              name="time_window"
-            >
-              {getOptions('time_window').map(item => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl>
+              <Select
+                sx={FullWidthStyle}
+                disabled={
+                  activeConfiguration.current.aggregation_period !== '30yr'
+                }
+                value={activeConfiguration.current.time_window}
+                onChange={e => handleChange('time_window', e.target.value)}
+                name="time_window"
+              >
+                {getOptions('time_window').map(item => (
+                  <MenuItem
+                    key={item.value}
+                    disabled={
+                      activeCombination.time_window.indexOf(item.value) < 0
+                    }
+                    value={item.value}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </Box>
         <Box sx={RowStyle}>
@@ -285,17 +363,25 @@ const MapDlData = (props: MapDlDataProps) => {
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
               {t('app.map.downloader.season')}
             </Typography>
-            <Select
-              sx={FullWidthStyle}
-              defaultValue={configuration.year_period}
-              name="year_period"
-            >
-              {getOptions('year_period').map(item => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl>
+              <Select
+                sx={FullWidthStyle}
+                value={activeConfiguration.current.year_period}
+                name="year_period"
+              >
+                {getOptions('year_period').map(item => (
+                  <MenuItem
+                    key={item.value}
+                    disabled={
+                      activeCombination.year_period.indexOf(item.value) < 0
+                    }
+                    value={item.value}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </Box>
       </Box>
