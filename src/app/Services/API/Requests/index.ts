@@ -360,11 +360,6 @@ export class RequestApi extends Http {
       )
       .then((d: any) => {
         return d.items;
-      })
-      .then((d: any) => {
-        let dd = d;
-        dd[2].allowed_values = dd[2].allowed_values.slice(1);
-        return dd;
       });
     reqs.push(ret);
     if (mode === 'forecast') {

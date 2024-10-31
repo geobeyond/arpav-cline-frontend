@@ -59,14 +59,20 @@ export interface MapDlDataProps {
   onChange?: (values: any) => void;
   configuration: any;
   menus: any;
+  combinations: any;
 }
 
 const MapDlData = (props: MapDlDataProps) => {
   const attributes: any = props.menus;
+  const combinations: any = props.combinations;
   const onChange = props.onChange ?? (() => { });
   const configuration = props.configuration;
   const featureGroupRef: any = useRef();
   const { t, i18n } = useTranslation();
+
+  const [activeCombination, setActiveCombination] = React.useState<any>(
+    combinations[configuration.climatological_variable],
+  );
 
   //@ts-ignore
   const { selected_map, forecast_parameters, timeserie } = useSelector(
@@ -228,7 +234,13 @@ const MapDlData = (props: MapDlDataProps) => {
               name="aggregation_period"
             >
               {getOptions('aggregation_period').map(item => (
-                <MenuItem key={item.value} value={item.value}>
+                <MenuItem
+                  key={item.value}
+                  disabled={
+                    activeCombination.aggregation_period.indexOf(item.value) < 0
+                  }
+                  value={item.value}
+                >
                   {item.label}
                 </MenuItem>
               ))}

@@ -82,7 +82,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
   const setCurrentMap = props.setCurrentMap;
-  const combinations = props.combinations || [];
+  const combinations = props.combinations || {};
   const openError = props.openError;
   const showLoader = props.showLoader;
 
@@ -565,6 +565,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 menus={forecast_parameters}
                 open={isDownloadDataOpen}
                 setOpen={setDownloadDataOpen}
+                combinations={combinations}
                 configuration={current_map}
               />
             </Box>
