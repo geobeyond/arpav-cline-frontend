@@ -37,6 +37,7 @@ export class RequestApi extends Http {
           url:
             x +
             `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31 `,
+          label: x.split('/')[x.split('/').length - 1],
         }));
       });
   }

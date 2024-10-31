@@ -170,7 +170,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
                 {links.map((x: any) => (
                   <ListItem disablePadding>
                     <ListItemButton href={x.url}>
-                      <ListItemText primary={x.url} />
+                      <ListItemText primary={x.label} />
                     </ListItemButton>
                   </ListItem>
                 ))}
