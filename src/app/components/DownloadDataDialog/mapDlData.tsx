@@ -120,7 +120,7 @@ const MapDlData = (props: MapDlDataProps) => {
     ]);
   };
 
-  const times: number[] = range(1979, 2100, 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
+  const times: number[] = range(1976, 2100, 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
 
   const [years, setYears] = React.useState<number[]>([0, times.length - 1]);
 

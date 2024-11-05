@@ -269,10 +269,10 @@ export function MapPage(props: MapPageProps) {
           setCurrentMap(currentMap);
           setFoundLayers(x.items.length);
           if (x.items.length === 1) {
-            setLoading(false);
             api.getLayerConf(x.items[0]).then(conf => {
               setCurrentLayer(x.items[0].identifier);
               setCurrentLayerConfig(conf);
+              setLoading(false);
             });
           } else {
           }
