@@ -573,7 +573,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         }),
       ];
     setPseriesObj(pseriesObj);
-  }, [timeseries]);
+  }, [
+    timeseries,
+    processingMethod,
+    comparisonClimatologicalModel,
+    sensorProcessingMehtod,
+  ]);
 
   let seriesFilter = pseriesObj.reduce((prev, item) => {
     const onV = getName(item);
