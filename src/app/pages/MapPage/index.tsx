@@ -226,11 +226,6 @@ export function MapPage(props: MapPageProps) {
           combos[k].climatological_variable = [k];
         }
       }
-      for (let k of Object.keys(combos)) {
-        if (combos[k].aggregation_period.indexOf('30yr') >= 0) {
-          combos[k].time_window = ['tw1', 'tw2'];
-        }
-      }
       setCombinations(combos);
     });
   }, []);

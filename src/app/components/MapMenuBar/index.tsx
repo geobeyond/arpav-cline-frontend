@@ -145,7 +145,7 @@ export function MapMenuBar(props: MapMenuBar) {
               'climatological_variable',
             ),
             disableable: false,
-            criteria: x => [],
+            criteria: (x, c) => [],
           },
         ],
       },
@@ -165,7 +165,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   'climatological_model',
                 ),
                 disableable: false,
-                criteria: x => [],
+                criteria: (x, c) => [],
                 disabled: x => false,
               },
             ],
@@ -177,7 +177,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 disableable: false,
                 groupName: t('app.map.menu.scenarios'),
                 ...mapParameters('scenario', 'scenario'),
-                criteria: x => [],
+                criteria: (x, c) => [],
                 disabled: x => false,
               },
             ],
@@ -193,7 +193,7 @@ export function MapMenuBar(props: MapMenuBar) {
             ...mapParameters('aggregation_period', 'aggregation_period'),
             disableable: true,
             disabled: x => false,
-            criteria: x => {
+            criteria: (x, c) => {
               return x?.aggregation_period;
             },
           },
@@ -203,7 +203,7 @@ export function MapMenuBar(props: MapMenuBar) {
             ...mapParameters('measure', 'measure'),
             disableable: true,
             disabled: x => false,
-            criteria: x => x?.measure,
+            criteria: (x, c) => x?.measure,
           },
           {
             key: 'time_window',
@@ -211,7 +211,8 @@ export function MapMenuBar(props: MapMenuBar) {
             ...mapParameters('time_window', 'time_window'),
             disableable: true,
             disabled: x => x.aggregation_period !== '30yr',
-            criteria: x => x?.time_window,
+            criteria: (x, c) =>
+              c.aggregation_period !== '30yr' ? [] : ['tw1', 'tw2'],
           },
         ],
       },
@@ -226,7 +227,7 @@ export function MapMenuBar(props: MapMenuBar) {
             ...mapParameters('year_period', 'year_period'),
             disableable: true,
             disabled: x => false,
-            criteria: x => x?.year_period,
+            criteria: (x, c) => x?.year_period,
           },
         ],
       },

@@ -62,7 +62,7 @@ export type TSelectedValue = IGrpItm[];
 export type TValueSet = { columns: { group: IGroup; items: IItem[] }[] }[];
 
 export interface RowMenuProps {
-  criteria(activeCombinations: any): string[];
+  criteria?: (activeCombinations: any, current: any) => string[];
   needsSelection: Boolean;
   key: string;
   groupName: string;
@@ -155,11 +155,11 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     }
   };
 
-  const getFieldsByCriteria = (row, setting) => {
+  const getFieldsByCriteria = (row, setting, current) => {
     if (JSON.stringify(setting) === JSON.stringify({})) {
       return row.items.map(x => x.name);
     }
-    const r = row.criteria(setting);
+    const r = row.criteria(setting, current);
     if (r) {
       return r;
     }
@@ -250,12 +250,12 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           key={item.name}
                           disableGutters
                           disabled={
-                            getDisabledByCriteria(row, current_map) ||
-                            (row.disableable &&
-                              getFieldsByCriteria(
-                                row,
-                                activeCombinations,
-                              ).indexOf(item.name) < 0)
+                            row.disableable &&
+                            getFieldsByCriteria(
+                              row,
+                              activeCombinations,
+                              current_map,
+                            ).indexOf(item.name) < 0
                           }
                         >
                           <FormControlLabel
