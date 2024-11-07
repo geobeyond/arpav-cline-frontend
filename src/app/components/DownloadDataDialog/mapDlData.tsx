@@ -221,7 +221,12 @@ const MapDlData = (props: MapDlDataProps) => {
         if (x.items.length === 0) {
           activeConfiguration.current = {
             ...activeConfiguration.current,
-            ...{ measure: 'absolute' },
+            ...{
+              measure:
+                activeConfiguration.cuurent.measure === 'absolute'
+                  ? 'anomaly'
+                  : 'absolute',
+            },
           };
           setActive(activeConfiguration.current);
         }
@@ -527,6 +532,9 @@ const MapDlData = (props: MapDlDataProps) => {
           <Box sx={SliderContainerStyle}>
             <span>{times[0]}</span>
             <Slider
+              disabled={
+                activeConfiguration.current.aggregation_period === '30yr'
+              }
               sx={YearsSliderStyle}
               getAriaValueText={() =>
                 t('app.map.downloadDataDialog.map.timeRangeLabel')
