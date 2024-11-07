@@ -222,10 +222,12 @@ export class RequestApi extends Http {
     let titems: any[] = [];
 
     for (let k of Object.keys(items)) {
-      if (typeof items[k] !== 'object') {
-        titems.push({ [k]: [items[k]] });
-      } else {
-        titems.push({ [k]: items[k] });
+      if (items[k]) {
+        if (typeof items[k] !== 'object') {
+          titems.push({ [k]: [items[k]] });
+        } else {
+          titems.push({ [k]: items[k] });
+        }
       }
     }
     const combs = this.cartesianProduct(titems);
