@@ -78,6 +78,9 @@ const MapDlData = (props: MapDlDataProps) => {
   const activeConfiguration: any = useRef({
     ...configuration,
   });
+  const previousConfiguration: any = useRef({
+    ...configuration,
+  });
 
   const [activeCombination, setActiveCombination] = React.useState<any>(
     combinations[configuration.climatological_variable],
@@ -192,6 +195,7 @@ const MapDlData = (props: MapDlDataProps) => {
   };
 
   const handleChange = (field, value) => {
+    previousConfiguration.current = { ...activeConfiguration.current };
     if (field === 'climatological_variable') {
       setActiveCombination(combinations[value]);
       const conf = toDefault(combinations[value]);
@@ -203,9 +207,25 @@ const MapDlData = (props: MapDlDataProps) => {
       setActive(activeConfiguration.current);
     }
 
-    api.getForecastData(activeConfiguration).then(x => {
-      console.log('found netcdf', x);
-    });
+    api
+      .getLayer(
+        activeConfiguration.current.climatological_variable,
+        activeConfiguration.current.climatological_model,
+        activeConfiguration.current.scenario,
+        activeConfiguration.current.measure,
+        activeConfiguration.current.time_period,
+        activeConfiguration.current.aggregation_period,
+        activeConfiguration.current.season,
+      )
+      .then(x => {
+        if (x.items.length === 0) {
+          activeConfiguration.current = {
+            ...activeConfiguration.current,
+            ...{ measure: 'absolute' },
+          };
+          setActive(activeConfiguration.current);
+        }
+      });
   };
 
   return (
