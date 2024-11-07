@@ -73,18 +73,16 @@ const HeaderBar = (props: HeaderBarProps) => {
     <Headers>
       <Header theme="light" type="slim" style={HeaderStyle}>
         <HeaderContent>
-          <HeaderBrand style={HeaderBrandStyle} href="/">
-            <b className="green">{t('app.header.acronymMeaning')}</b>
-          </HeaderBrand>
           {isMobile ? (
             <>
-              <b className="green">{t('app.header.acronymMeaning')}</b>
-
+              <a style={HeaderBrandStyle} href="/">
+                <b className="green">{t('app.header.acronymMeaning')}</b>
+              </a>
               <Dropdown className="me-3">
                 <DropdownToggle tag="a" color="primary">
                   <MenuIcon />
                 </DropdownToggle>
-                <DropdownMenu>
+                <DropdownMenu style={{ width: 200 }}>
                   <LinkList>
                     <LinkListItem href="/info" style={LinkStyle}>
                       {t('app.header.menu.info')}
@@ -100,21 +98,26 @@ const HeaderBar = (props: HeaderBarProps) => {
               </Dropdown>
             </>
           ) : (
-            <HeaderRightZone>
-              <HeaderLinkZone>
-                <LinkList>
-                  <LinkListItem href="/info" style={LinkStyle}>
-                    {t('app.header.menu.info')}
-                  </LinkListItem>
-                  <LinkListItem href="/privacy" style={LinkStyle}>
-                    {t('app.header.menu.privacyPolicy')}
-                  </LinkListItem>
-                  <LinkListItem href="/data" style={LinkStyle}>
-                    {t('app.header.menu.dataPolicy')}
-                  </LinkListItem>
-                </LinkList>
-              </HeaderLinkZone>
-            </HeaderRightZone>
+            <>
+              <HeaderBrand style={HeaderBrandStyle} href="/">
+                <b className="green">{t('app.header.acronymMeaning')}</b>
+              </HeaderBrand>
+              <HeaderRightZone>
+                <HeaderLinkZone>
+                  <LinkList>
+                    <LinkListItem href="/info" style={LinkStyle}>
+                      {t('app.header.menu.info')}
+                    </LinkListItem>
+                    <LinkListItem href="/privacy" style={LinkStyle}>
+                      {t('app.header.menu.privacyPolicy')}
+                    </LinkListItem>
+                    <LinkListItem href="/data" style={LinkStyle}>
+                      {t('app.header.menu.dataPolicy')}
+                    </LinkListItem>
+                  </LinkList>
+                </HeaderLinkZone>
+              </HeaderRightZone>
+            </>
           )}
         </HeaderContent>
       </Header>
