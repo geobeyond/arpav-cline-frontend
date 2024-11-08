@@ -27,21 +27,35 @@ export interface iNetcdfDownload {
 }
 
 export class RequestApi extends Http {
+  /**
+   * Fetches forecast data from the API.
+   * @param {any} configuration Configuration of the request.
+   * @param {any} dataSet Additional data to be used in the request.
+   * @returns {Promise<AxiosResponse<any>>} The response of the request.
+   */
   getForecastData(configuration: any, dataSet?: any) {
     return this.instance
       .get<any>('https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?', {
         params: { offset: 0, limit: 20, ...configuration },
       })
       .then((found: any) => {
-        return found.coverage_download_links.map(x => ({
-          url:
+        /**
+         * Maps the array of coverage download links to an array of objects containing the URL and label of the coverage.
+         * @param {string} x The coverage download link.
+         * @returns {object} An object containing the URL and label of the coverage.
+         */
+        const mapCoverageLinks = (x: string) => {
+          const url =
             x + dataSet
-              ? `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31 `
-              : '',
-          label: x.split('/')[x.split('/').length - 1],
-        }));
+              ? `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31`
+              : '';
+          const label = x.split('/')[x.split('/').length - 1];
+          return { url, label };
+        };
+        return found.coverage_download_links.map(mapCoverageLinks);
       });
   }
+
   protected static classInstance?: RequestApi;
   public static getInstance() {
     if (!this.classInstance) {
@@ -123,15 +137,27 @@ export class RequestApi extends Http {
     }
   };
 
+  /**
+   * Fetches the layer configuration from the API, based on the given filters.
+   * @param {string} [variable] The variable to filter by.
+   * @param {string} [model] The model to filter by.
+   * @param {string} [scenario] The scenario to filter by.
+   * @param {string} [measure] The measure to filter by.
+   * @param {string} [time_period] The time period to filter by.
+   * @param {string} [aggregation_period] The aggregation period to filter by.
+   * @param {string} [season] The season to filter by.
+   * @returns {Promise<AxiosResponse<any>>} The response of the request.
+   */
   public doGetLayer = (
-    variable?,
-    model?,
-    scenario?,
-    measure?,
-    time_period?,
-    aggregation_period?,
-    season?,
+    variable?: string,
+    model?: string,
+    scenario?: string,
+    measure?: string,
+    time_period?: string,
+    aggregation_period?: string,
+    season?: string,
   ) => {
+    // Create the filter string based on the given parameters.
     let filter = '';
     if (variable) {
       filter += 'possible_value=climatological_variable:' + variable + '&';
@@ -154,12 +180,14 @@ export class RequestApi extends Http {
     if (season) {
       filter += 'possible_value=year_period:' + season + '&';
     }
+    // Make the request to the API.
     return this.instance
       .get<any>(
         'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
           filter,
       )
       .then((x: any) => {
+        // If the response contains items, filter out the ones with uncertainty.
         if (x.items.length > 0) {
           let xx = x.items.filter(
             itm =>
@@ -170,20 +198,27 @@ export class RequestApi extends Http {
       });
   };
 
-  public getLayerConf = (conf: any) => {
+  /**
+   * Retrieves layer configuration from the API.
+   * @param {any} conf The configuration object containing URLs for fetching data.
+   * @returns {Promise<any>} The resolved configuration data, potentially with ensemble data included.
+   */
+  public getLayerConf = (conf: any): Promise<any> => {
     if ('ensemble_data' in conf) {
+      // Fetch both the main and ensemble data configurations concurrently
       return Promise.all([
         this.instance.get<any>(conf.related_coverage_configuration_url),
         this.instance.get<any>(
           conf.ensemble_data.related_coverage_configuration_url,
         ),
-      ]).then(x => {
-        x[0].ensemble_data = x[1];
-        return x[0];
+      ]).then(responses => {
+        // Attach ensemble data to the main configuration
+        responses[0].ensemble_data = responses[1];
+        return responses[0];
       });
     } else {
-      let ret = this.instance.get<any>(conf.related_coverage_configuration_url);
-      return ret;
+      // Fetch only the main data configuration
+      return this.instance.get<any>(conf.related_coverage_configuration_url);
     }
   };
 

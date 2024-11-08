@@ -402,6 +402,7 @@ const MapDlData = (props: MapDlDataProps) => {
               <Select
                 sx={FullWidthStyle}
                 value={activeConfiguration.current.year_period}
+                onChange={e => handleChange('year_period', e.target.value)}
                 name="year_period"
               >
                 {getOptions('year_period').map(item => (

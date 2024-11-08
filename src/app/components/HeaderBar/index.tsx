@@ -185,7 +185,3 @@ const HeaderBar = (props: HeaderBarProps) => {
   );
 };
 export default HeaderBar;
-
-//
-
-//
