@@ -221,12 +221,22 @@ const MapDlData = (props: MapDlDataProps) => {
         if (x.items.length === 0) {
           activeConfiguration.current = {
             ...activeConfiguration.current,
-            ...{
-              measure:
-                activeConfiguration.cuurent.measure === 'absolute'
-                  ? 'anomaly'
-                  : 'absolute',
-            },
+            ...(field === 'aggregation_period'
+              ? {
+                measure:
+                  activeConfiguration.current.measure === 'absolute'
+                    ? 'anomaly'
+                    : 'absolute',
+              }
+              : {}),
+            ...(field === 'measure'
+              ? {
+                aggregation_period:
+                  activeConfiguration.current.aggregation_period === 'annual'
+                    ? '30yr'
+                    : 'annual',
+              }
+              : {}),
           };
           setActive(activeConfiguration.current);
         }
