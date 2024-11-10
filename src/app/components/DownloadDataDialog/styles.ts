@@ -74,6 +74,7 @@ export const FieldContainerStyle = theme => ({
 });
 export const FullWidthStyle = theme => ({
   width: '100%',
+  maxWidth: '24vw',
 });
 
 export const MapDataContainerStyle = theme => ({

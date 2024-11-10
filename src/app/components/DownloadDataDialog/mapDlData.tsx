@@ -78,9 +78,7 @@ const MapDlData = (props: MapDlDataProps) => {
   const activeConfiguration: any = useRef({
     ...configuration,
   });
-  const previousConfiguration: any = useRef({
-    ...configuration,
-  });
+  const previousSeason: any = useRef('');
 
   const [activeCombination, setActiveCombination] = React.useState<any>(
     combinations[configuration.climatological_variable],
@@ -196,7 +194,7 @@ const MapDlData = (props: MapDlDataProps) => {
   };
 
   const handleChange = (field, value) => {
-    previousConfiguration.current = { ...activeConfiguration.current };
+    previousSeason.current = activeConfiguration.current.year_period;
     if (field === 'climatological_variable') {
       setActiveCombination(combinations[value]);
       const conf = toDefault(combinations[value]);
@@ -209,19 +207,32 @@ const MapDlData = (props: MapDlDataProps) => {
     }
 
     api
-      .getLayer(
+      .getLayers(
         activeConfiguration.current.climatological_variable,
         activeConfiguration.current.climatological_model,
         activeConfiguration.current.scenario,
         activeConfiguration.current.measure,
         activeConfiguration.current.time_period,
         activeConfiguration.current.aggregation_period,
-        activeConfiguration.current.season,
+        activeConfiguration.current.year_period,
       )
       .then(x => {
         if (x.items.length === 0) {
           activeConfiguration.current = {
             ...activeConfiguration.current,
+            ...(field === 'climatological_model' && value.length === 0
+              ? { climatological_model: ['model_ensemble'] }
+              : {
+                climatological_model:
+                  activeConfiguration.current.climatological_model,
+              }),
+            ...(field === 'year_period'
+              ? {
+                year_period: previousSeason.current,
+              }
+              : {
+                year_period: activeConfiguration.current.year_period,
+              }),
             ...(field === 'aggregation_period'
               ? {
                 measure:
@@ -280,9 +291,17 @@ const MapDlData = (props: MapDlDataProps) => {
               <FormControl>
                 <Select
                   sx={FullWidthStyle}
-                  value={[activeConfiguration.current.climatological_model]}
+                  value={
+                    typeof activeConfiguration.current.climatological_model ===
+                      'object'
+                      ? activeConfiguration.current.climatological_model
+                      : [activeConfiguration.current.climatological_model]
+                  }
                   multiple
                   name="climatological_model"
+                  onChange={e =>
+                    handleChange('climatological_model', e.target.value)
+                  }
                 >
                   {getOptions('climatological_model').map(item => (
                     <MenuItem key={item.value} value={item.value}>
@@ -300,9 +319,14 @@ const MapDlData = (props: MapDlDataProps) => {
             <FormControl>
               <Select
                 sx={FullWidthStyle}
-                value={[activeConfiguration.current.scenario]}
+                value={
+                  typeof activeConfiguration.current.scenario === 'object'
+                    ? activeConfiguration.current.scenario
+                    : [activeConfiguration.current.scenario]
+                }
                 multiple
                 name="scenario"
+                onChange={e => handleChange('scenario', e.target.value)}
               >
                 {getOptions('scenario').map(item => (
                   <MenuItem key={item.value} value={item.value}>

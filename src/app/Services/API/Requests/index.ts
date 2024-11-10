@@ -91,6 +91,7 @@ export class RequestApi extends Http {
       return JSON.parse(localStorage.getItem('municipality-centroids'));
     }
   };
+
   public getLayer = (
     variable?,
     model?,
@@ -100,7 +101,7 @@ export class RequestApi extends Http {
     aggregation_period?,
     season?,
   ) => {
-    if (model !== 'model_ensemble') {
+    if (model.indexOf('model_ensemble') < 0) {
       return Promise.all([
         this.doGetLayer(
           variable,
@@ -135,6 +136,60 @@ export class RequestApi extends Http {
         season,
       );
     }
+  };
+
+  public getLayers = (
+    variable?: string,
+    model?: string | string[],
+    scenario?: string | string[],
+    measure?: string,
+    time_period?: string,
+    aggregation_period?: string,
+    season?: string,
+  ) => {
+    const items = {
+      climatological_variable: variable,
+      climatological_model: model,
+      scenario: scenario,
+      measure: measure,
+      time_period: time_period,
+      aggregation_period: aggregation_period,
+      year_period: season,
+    };
+    let titems: any[] = [];
+
+    for (let k of Object.keys(items)) {
+      if (items[k]) {
+        if (typeof items[k] !== 'object') {
+          titems.push({ [k]: [items[k]] });
+        } else {
+          titems.push({ [k]: items[k] });
+        }
+      }
+    }
+    const combs: any[] = this.cartesianProduct(titems);
+    let reqs: any = [];
+    for (let c of combs) {
+      reqs.push(
+        this.doGetLayer(
+          c.variable,
+          c.model,
+          c.scenario,
+          c.measure,
+          c.time_period,
+          c.aggregation_period,
+          c.season,
+        ),
+      );
+    }
+
+    return Promise.all(reqs).then(lyrs => {
+      let ret = [];
+      for (let lyr of lyrs) {
+        ret = { ...ret, ...lyr.items };
+      }
+      return { ...lyrs[0], ...{ items: ret } };
+    });
   };
 
   /**
@@ -180,6 +235,27 @@ export class RequestApi extends Http {
     if (season) {
       filter += 'possible_value=year_period:' + season + '&';
     }
+
+    const fullUrl =
+      'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+      filter;
+
+    console.log(fullUrl);
+    const d = localStorage.getItem(fullUrl);
+    if (d) {
+      return Promise.resolve(JSON.parse(d)).then((x: any) => {
+        console.log(x);
+        // If the response contains items, filter out the ones with uncertainty.
+        if (x.items.length > 0) {
+          let xx = x.items.filter(
+            itm =>
+              JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
+          );
+          return { items: xx };
+        } else return x;
+      });
+    }
+
     // Make the request to the API.
     return this.instance
       .get<any>(
@@ -187,6 +263,8 @@ export class RequestApi extends Http {
           filter,
       )
       .then((x: any) => {
+        localStorage.setItem(fullUrl, JSON.stringify(x));
+        console.log(x);
         // If the response contains items, filter out the ones with uncertainty.
         if (x.items.length > 0) {
           let xx = x.items.filter(
@@ -197,13 +275,14 @@ export class RequestApi extends Http {
         } else return x;
       });
   };
-
   /**
    * Retrieves layer configuration from the API.
    * @param {any} conf The configuration object containing URLs for fetching data.
    * @returns {Promise<any>} The resolved configuration data, potentially with ensemble data included.
    */
   public getLayerConf = (conf: any): Promise<any> => {
+    console.log('getLayerConf');
+    console.log(conf);
     if ('ensemble_data' in conf) {
       // Fetch both the main and ensemble data configurations concurrently
       return Promise.all([
@@ -212,13 +291,30 @@ export class RequestApi extends Http {
           conf.ensemble_data.related_coverage_configuration_url,
         ),
       ]).then(responses => {
+        console.log('getLayerConf: Fetched both main and ensemble data');
+        console.log(responses);
         // Attach ensemble data to the main configuration
         responses[0].ensemble_data = responses[1];
         return responses[0];
       });
     } else {
-      // Fetch only the main data configuration
-      return this.instance.get<any>(conf.related_coverage_configuration_url);
+      const lc = localStorage.getItem(conf.related_coverage_configuration_url);
+      if (lc) {
+        return Promise.resolve(JSON.parse(lc));
+      } else {
+        // Fetch only the main data configuration
+        return this.instance
+          .get<any>(conf.related_coverage_configuration_url)
+          .then(response => {
+            localStorage.setItem(
+              conf.related_coverage_configuration_url,
+              JSON.stringify(response),
+            );
+            console.log('getLayerConf: Fetched only main data');
+            console.log(response);
+            return response;
+          });
+      }
     }
   };
 

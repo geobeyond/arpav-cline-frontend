@@ -9,6 +9,7 @@ export const TopHeroStyle: React.CSSProperties = {
 
 export const HeroStyle = {
   backgroundColor: 'white',
+  flexDirection: 'column',
 };
 
 export const TitleTSStyle = theme => ({
@@ -118,4 +119,11 @@ export const ChartLoaderContainerStyle = theme => ({
   display: 'flex',
   justifyContent: 'center',
   paddingTop: 18,
+});
+
+export const AttStyle = theme => ({
+  top: '100%',
+  position: 'relative',
+  fontFamily: "'Titillium Web', sans-serif",
+  fontSize: 'small',
 });

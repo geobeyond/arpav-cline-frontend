@@ -26,9 +26,10 @@ import {
   Section,
 } from 'design-react-kit';
 
-import { HeroStyle, TopHeroStyle } from './styles';
+import { AttStyle, HeroStyle, TopHeroStyle } from './styles';
 import HeaderBar from 'app/components/HeaderBar';
 import Graph from './Graph';
+import { Typography } from '@mui/material';
 
 const IndexPage = () => {
   const { t } = useTranslation();
@@ -70,11 +71,11 @@ const IndexPage = () => {
       <Container color="muted" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }}>
           <Col sm={6}>
-            <Hero overlay="dark" style={HeroStyle}>
+            <Hero overlay="dark">
               <HeroBackground
-                alt="imagealt"
+                alt="Giuseppe Ghedina Basilio (1937)"
                 src={require('../../../assets/img/puntapenia_1937.jpg')}
-                title="image title"
+                title="Giuseppe Ghedina Basilio (1937)"
               />
               <HeroBody>
                 <HeroTitle>{t('app.index.sections.hist')}</HeroTitle>
@@ -98,9 +99,14 @@ const IndexPage = () => {
                 </HeroButton>
               </HeroBody>
             </Hero>
+            <Container>
+              <Typography sx={AttStyle}>
+                Giuseppe Ghedina Basilio (1937)
+              </Typography>
+            </Container>
           </Col>
           <Col sm={6}>
-            <Hero overlay="dark" style={HeroStyle}>
+            <Hero overlay="dark">
               <HeroBackground
                 alt="imagealt"
                 src={require('../../../assets/img/punta_penia2022_cielo2.jpg')}
@@ -124,6 +130,9 @@ const IndexPage = () => {
                 </HeroButton>
               </HeroBody>
             </Hero>
+            <Container>
+              <Typography sx={AttStyle}>Mauro Valt (2022)</Typography>
+            </Container>
           </Col>
         </Row>
       </Container>
