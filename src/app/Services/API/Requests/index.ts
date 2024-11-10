@@ -46,9 +46,10 @@ export class RequestApi extends Http {
          */
         const mapCoverageLinks = (x: string) => {
           const url =
-            x + dataSet
+            x +
+            (dataSet
               ? `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31`
-              : '';
+              : '');
           const label = x.split('/')[x.split('/').length - 1];
           return { url, label };
         };
