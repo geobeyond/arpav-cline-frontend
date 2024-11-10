@@ -128,7 +128,6 @@ const MapDlData = (props: MapDlDataProps) => {
   // const [netCdf, setNetCdf] = React.useState<any>(null);
 
   const yearsHandleChange = (event, newValue: number | number[]) => {
-    console.log(newValue);
     setYears(newValue as number[]);
   };
 
@@ -579,8 +578,9 @@ const MapDlData = (props: MapDlDataProps) => {
               step={1}
               min={0}
               max={times.length - 1}
-              value={[0, years[1]]}
+              value={[years[0], years[1]]}
               onChangeCommitted={yearsHandleChange}
+              onChange={yearsHandleChange}
               valueLabelFormat={index => times[index]}
               disableSwap
             />
