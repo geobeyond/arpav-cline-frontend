@@ -200,6 +200,7 @@ export function MapPage(props: MapPageProps) {
         }
         return prev;
       }, {});
+      // TODO: copiare configurazione year_period dell'indicatore su tutte le altre combo;
       for (let k of Object.keys(combos)) {
         if (k.indexOf('::') >= 0) {
           const m = k.split('::')[0];

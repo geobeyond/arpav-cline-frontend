@@ -167,3 +167,17 @@ export const ImgDoubleButtonContainerStyle = theme => ({
   width: '100%',
   gap: 2,
 });
+
+export const ModalStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '800px',
+  height: '600px',
+  p: 0,
+  m: 0,
+  bgcolor: 'background.paper',
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: 12,
+});

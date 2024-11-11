@@ -26,6 +26,8 @@ export interface iNetcdfDownload {
   accept_disclaimer?: boolean;
 }
 
+const zip = (a, b) => a.map((k, i) => [k, b[i]]);
+
 export class RequestApi extends Http {
   /**
    * Fetches forecast data from the API.
@@ -51,7 +53,21 @@ export class RequestApi extends Http {
               ? `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31`
               : '');
           const label = x.split('/')[x.split('/').length - 1];
-          return { url, label };
+          const tlabel = label.split('-');
+          const sequence = [
+            'name',
+            'aggregation_period',
+            'archive',
+            'climatological_model',
+            'climatological_variable',
+            'measure',
+            'time_window',
+            'year_period',
+          ];
+
+          const partial = zip(sequence, tlabel);
+
+          return { url, label, partial };
         };
         return found.coverage_download_links.map(mapCoverageLinks);
       });
@@ -173,21 +189,21 @@ export class RequestApi extends Http {
     for (let c of combs) {
       reqs.push(
         this.doGetLayer(
-          c.variable,
-          c.model,
+          c.climatological_variable,
+          c.climatological_model,
           c.scenario,
           c.measure,
           c.time_period,
           c.aggregation_period,
-          c.season,
+          c.year_period,
         ),
       );
     }
 
     return Promise.all(reqs).then(lyrs => {
-      let ret = [];
+      let ret: any[] = [];
       for (let lyr of lyrs) {
-        ret = { ...ret, ...lyr.items };
+        ret = [...ret, ...lyr.items];
       }
       return { ...lyrs[0], ...{ items: ret } };
     });

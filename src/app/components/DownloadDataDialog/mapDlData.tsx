@@ -125,6 +125,11 @@ const MapDlData = (props: MapDlDataProps) => {
 
   const [years, setYears] = React.useState<number[]>([0, times.length - 1]);
 
+  const [found, setFound] = React.useState<number>(1);
+
+  const [error, setError] = React.useState<string>('');
+  const openError = type => setError(type);
+  const closeError = () => setError('');
   // const [netCdf, setNetCdf] = React.useState<any>(null);
 
   const yearsHandleChange = (event, newValue: number | number[]) => {
@@ -216,7 +221,9 @@ const MapDlData = (props: MapDlDataProps) => {
         activeConfiguration.current.year_period,
       )
       .then(x => {
+        setFound(x.items.length);
         if (x.items.length === 0) {
+          openError('wrong_config');
           activeConfiguration.current = {
             ...activeConfiguration.current,
             ...(field === 'climatological_model' && value.length === 0
@@ -234,7 +241,7 @@ const MapDlData = (props: MapDlDataProps) => {
               }),
             ...(field === 'aggregation_period'
               ? {
-                measure:
+                aggregation_period:
                   activeConfiguration.current.measure === 'absolute'
                     ? 'anomaly'
                     : 'absolute',
@@ -243,15 +250,27 @@ const MapDlData = (props: MapDlDataProps) => {
             ...(field === 'measure'
               ? {
                 aggregation_period:
-                  activeConfiguration.current.aggregation_period === 'annual'
-                    ? '30yr'
-                    : 'annual',
+                  activeConfiguration.current.measure === 'absolute'
+                    ? 'anomaly'
+                    : 'absolute',
               }
               : {}),
           };
           setActive(activeConfiguration.current);
         }
       });
+  };
+
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
   };
 
   return (
@@ -588,6 +607,23 @@ const MapDlData = (props: MapDlDataProps) => {
           </Box>
         </Box>
       </Box>
+
+      <Modal
+        open={error.length > 0}
+        onClose={closeError}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {t(error + '.title')}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            {t(error + '.message')}
+          </Typography>
+          <Button onClick={closeError}>Ok</Button>
+        </Box>
+      </Modal>
     </Box>
   );
 };

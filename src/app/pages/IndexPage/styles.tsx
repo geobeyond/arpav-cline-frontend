@@ -127,3 +127,12 @@ export const AttStyle = theme => ({
   fontFamily: "'Titillium Web', sans-serif",
   fontSize: 'small',
 });
+
+export const AttributionStyle = theme => ({
+  top: '-20px',
+  position: 'relative',
+  background: 'rgba(255, 255, 255, 0.6)',
+  width: 'calc( 100% + 24px)',
+  paddingLeft: '10px',
+  left: '-12px',
+});

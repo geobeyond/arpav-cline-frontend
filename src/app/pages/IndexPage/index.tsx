@@ -26,10 +26,10 @@ import {
   Section,
 } from 'design-react-kit';
 
-import { AttStyle, HeroStyle, TopHeroStyle } from './styles';
+import { AttStyle, HeroStyle, TopHeroStyle, AttributionStyle } from './styles';
 import HeaderBar from 'app/components/HeaderBar';
 import Graph from './Graph';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const IndexPage = () => {
   const { t } = useTranslation();
@@ -99,10 +99,12 @@ const IndexPage = () => {
                 </HeroButton>
               </HeroBody>
             </Hero>
-            <Container>
-              <Typography sx={AttStyle}>
-                Giuseppe Ghedina Basilio (1937)
-              </Typography>
+            <Container sx={AttributionStyle}>
+              <Box sx={AttributionStyle}>
+                <Typography sx={AttStyle}>
+                  Giuseppe Ghedina Basilio (1937)
+                </Typography>
+              </Box>
             </Container>
           </Col>
           <Col sm={6}>
@@ -130,8 +132,10 @@ const IndexPage = () => {
                 </HeroButton>
               </HeroBody>
             </Hero>
-            <Container>
-              <Typography sx={AttStyle}>Mauro Valt (2022)</Typography>
+            <Container sx={AttributionStyle}>
+              <Box sx={AttributionStyle}>
+                <Typography sx={AttStyle}>Mauro Valt (2022)</Typography>
+              </Box>
             </Container>
           </Col>
         </Row>

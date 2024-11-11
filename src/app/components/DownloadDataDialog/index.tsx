@@ -23,6 +23,7 @@ import {
   DownloadContainerStyle,
   DownloadModalStyle,
   MapUserContainerStyle,
+  ModalStyle,
   TitleDownloadStyle,
 } from './styles';
 import MapDlData from './mapDlData';
@@ -171,18 +172,20 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           </Grid>
           <Grid xs={0} def={1}></Grid>
           <Grid xs={10} def={10} xsOffset={1} defOffset={1}>
-            <Box>
-              <Typography variant={'h6'}>Estrazioni scaricabili</Typography>
-              <List dense={true}>
-                {links.map((x: any) => (
-                  <ListItem disablePadding>
-                    <ListItemButton href={x.url}>
-                      <ListItemText primary={x.label} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
+            <Modal open={showLinks} sx={ModalStyle} onClose={() => setShowLinks(false)}>
+              <Box>
+                <Typography variant={'h6'}>Estrazioni scaricabili</Typography>
+                <List dense={true}>
+                  {links.map((x: any) => (
+                    <ListItem disablePadding>
+                      <ListItemButton href={x.url}>
+                        <ListItemText primary={x.label} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </Modal>
           </Grid>
         </Grid>
       </Modal>
