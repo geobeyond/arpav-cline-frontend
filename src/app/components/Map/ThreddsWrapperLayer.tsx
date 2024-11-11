@@ -76,7 +76,7 @@ export const ThreddsWrapperLayer = (props: any) => {
       const options = {
         opacity: 0.85,
         attribution:
-          '&copy; <a target="_blank" rel="noopener" href="https://www.arpa.veneto.it/">ARPAV - Arpa FVG</a>',
+          '&copy; <a target="_blank" rel="noopener" href="/">ARPAV - Arpa FVG</a>',
       };
       // @ts-ignore
       const wmsLayer = new TileLayer.WMS(
