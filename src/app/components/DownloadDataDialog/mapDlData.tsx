@@ -609,6 +609,7 @@ const MapDlData = (props: MapDlDataProps) => {
       </Box>
 
       <Modal
+        sx={{ left: '50%', right: '50%' }}
         open={error.length > 0}
         onClose={closeError}
         aria-labelledby="modal-modal-title"

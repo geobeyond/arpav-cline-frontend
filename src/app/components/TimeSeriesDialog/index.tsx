@@ -82,6 +82,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     tsSmoothing,
     sensorSmoothing,
     uncertainty,
+    series?,
   ) => {
     filter.current = {
       mainModel,
@@ -89,6 +90,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
       tsSmoothing,
       sensorSmoothing,
       uncertainty,
+      series,
     };
   };
 

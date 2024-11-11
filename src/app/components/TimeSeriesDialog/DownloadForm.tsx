@@ -184,8 +184,8 @@ export const DownloadForm = props => {
       if (fdata[f]) {
         const ffdata = fdata[f] as any;
         if (
-          ffdata.name in filter.current.series?.flat() ||
-          filter.current.series === undefined
+          filter.current.series === undefined ||
+          ffdata.name in filter.current.series?.flat()
         )
           ffdata.values =
             filledSeries.current[

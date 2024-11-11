@@ -177,7 +177,7 @@ export const ModalStyle = theme => ({
   height: '600px',
   p: 0,
   m: 0,
-  bgcolor: 'background.paper',
+  bgcolor: 'white',
   borderRadius: theme.shape.borderRadius,
   boxShadow: 12,
 });
