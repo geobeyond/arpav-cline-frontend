@@ -7,7 +7,7 @@ import {
 } from './styles';
 import { Button, Box, Typography, CircularProgress } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RequestApi } from '../../Services';
 import { saveAs } from 'file-saver';
@@ -26,6 +26,7 @@ export const DownloadForm = props => {
 
   const [jsonLoader, setJsonLoader] = React.useState(false);
   const [csvLoader, setCsvLoader] = React.useState(false);
+  const [seriesObject, setSeriesObject] = React.useState<any>({});
 
   const [downloadDisabled, setDownloadDisabled] = React.useState(true);
   const userValidityHandleChange = (isValid: boolean) => {
@@ -44,7 +45,122 @@ export const DownloadForm = props => {
     setUserData({ ...userData, ...values });
   };
 
+  useEffect(() => {
+    let opseriesObj = [
+      filter.current.uncertainty
+        ? data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp26' &&
+            x.info.climatological_model === filter.current.mainModel &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.uncertainty_type === 'lower_bound',
+        )[0]
+        : null,
+      data.current?.series?.filter(
+        x =>
+          x.info.scenario === 'rcp26' &&
+          x.info.processing_method === filter.current.tsSmoothing &&
+          x.info.climatological_model === filter.current.mainModel &&
+          !('uncertainty_type' in x.info),
+      )[0],
+      filter.current.mainModel === filter.current.secondaryModel
+        ? null
+        : data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp26' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.secondaryModel &&
+            !('uncertainty_type' in x.info),
+        )[0],
+      filter.current.uncertainty
+        ? data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp26' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.mainModel &&
+            x.info.uncertainty_type === 'upper_bound',
+        )[0]
+        : null,
+      filter.current.uncertainty
+        ? data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp45' &&
+            x.info.climatological_model === filter.current.mainModel &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.uncertainty_type === 'lower_bound',
+        )[0]
+        : null,
+      data.current?.series?.filter(
+        x =>
+          x.info.scenario === 'rcp45' &&
+          x.info.processing_method === filter.current.tsSmoothing &&
+          x.info.climatological_model === filter.current.mainModel &&
+          !('uncertainty_type' in x.info),
+      )[0],
+      filter.current.mainModel === filter.current.secondaryModel
+        ? null
+        : data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp45' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.secondaryModel &&
+            !('uncertainty_type' in x.info),
+        )[0],
+      filter.current.uncertainty
+        ? data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp45' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.mainModel &&
+            x.info.uncertainty_type === 'upper_bound',
+        )[0]
+        : null,
+      filter.current.uncertainty
+        ? data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp85' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.mainModel &&
+            x.info.uncertainty_type === 'lower_bound',
+        )[0]
+        : null,
+      data.current?.series?.filter(
+        x =>
+          x.info.scenario === 'rcp85' &&
+          x.info.processing_method === filter.current.tsSmoothing &&
+          x.info.climatological_model === filter.current.mainModel &&
+          !('uncertainty_type' in x.info),
+      )[0],
+      filter.current.mainModel === filter.current.secondaryModel
+        ? null
+        : data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp85' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.secondaryModel &&
+            !('uncertainty_type' in x.info),
+        )[0],
+      filter.current.uncertainty
+        ? data.current?.series?.filter(
+          x =>
+            x.info.scenario === 'rcp85' &&
+            x.info.processing_method === filter.current.tsSmoothing &&
+            x.info.climatological_model === filter.current.mainModel &&
+            x.info.uncertainty_type === 'upper_bound',
+        )[0]
+        : null,
+      data.current?.series?.filter(
+        x =>
+          'station' in x.info &&
+          x.info.processing_method === filter.current.sensorSmoothing,
+      )[0],
+    ];
+
+    setSeriesObject(opseriesObj);
+  }, [filter.current, data.current]);
+
   const download = () => {
+    console.log(seriesObject);
     console.log('download');
     if (!latLng || !ids) {
       console.log(latLng, ids);
@@ -61,51 +177,26 @@ export const DownloadForm = props => {
       sfs: filter.current?.series?.flat(),
     };
     setCsvLoader(true);
-    let fdata: any[] = [];
-    fdata.push(
-      ...data.current.series.filter(
-        x =>
-          !('uncertainty_type' in x.info) &&
-          [
-            filterParams.fitms.mainModel,
-            filterParams.fitms.secondaryModel,
-          ].indexOf(x.info.climatological_model) >= 0 &&
-          x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >= 0,
-      ),
-    );
-    if (filterParams.fitms.uncertainty) {
-      fdata.push(
-        ...data.current.series.filter(
-          x =>
-            'uncertainty_type' in x.info &&
-            [
-              filterParams.fitms.mainModel,
-              filterParams.fitms.secondaryModel,
-            ].indexOf(x.info.climatological_model) >= 0 &&
-            x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >=
-            0,
-        ),
-      );
-    }
-
-    if (filterParams.sfs) {
-      fdata = fdata.filter(x => filterParams.sfs.indexOf(x.name) >= 0);
-    }
-
-    fdata.push(
-      ...data.current.series.filter(x => 'series_elaboration' in x.info),
-    );
+    let fdata = [...seriesObject];
 
     let z = new JSZip();
     for (let f in fdata) {
-      const ffdata = fdata[f] as any;
-      ffdata.values =
-        filledSeries[ffdata.name + '__' + ffdata.info.processing_method];
-      console.log(fdata[f]);
-      const pu = PapaParse.unparse(
-        ffdata.values.slice(filterParams.start, filterParams.end + 1),
-      );
-      z.file(ffdata.name + '.csv', pu);
+      if (fdata[f]) {
+        const ffdata = fdata[f] as any;
+        if (
+          ffdata.name in filter.current.series?.flat() ||
+          filter.current.series === undefined
+        )
+          ffdata.values =
+            filledSeries.current[
+            ffdata.name + '__' + ffdata.info.processing_method
+            ];
+        console.log(fdata[f]);
+        const pu = PapaParse.unparse(
+          ffdata.values.slice(filterParams.start, filterParams.end + 1),
+        );
+        z.file(ffdata.name + '.csv', pu);
+      }
     }
     z.generateAsync({ type: 'blob' }).then(function (content) {
       // see FileSaver.js
@@ -133,51 +224,23 @@ export const DownloadForm = props => {
       sfs: filter.current?.series?.flat(),
     };
     setJsonLoader(true);
-    let fdata: any[] = [];
-    fdata.push(
-      ...data.current.series.filter(
-        x =>
-          !('uncertainty_type' in x.info) &&
-          [
-            filterParams.fitms.mainModel,
-            filterParams.fitms.secondaryModel,
-          ].indexOf(x.info.climatological_model) >= 0 &&
-          x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >= 0,
-      ),
-    );
-    if (filterParams.fitms.uncertainty) {
-      fdata.push(
-        ...data.current.series.filter(
-          x =>
-            'uncertainty_type' in x.info &&
-            [
-              filterParams.fitms.mainModel,
-              filterParams.fitms.secondaryModel,
-            ].indexOf(x.info.climatological_model) >= 0 &&
-            x.info.processing_method.indexOf(filterParams.fitms.tsSmoothing) >=
-            0,
-        ),
-      );
-    }
+    let fdata = [...seriesObject];
 
-    if (filterParams.sfs) {
-      fdata = fdata.filter(x => filterParams.sfs.indexOf(x.name) >= 0);
-    }
-
-    fdata.push(
-      ...data.current.series.filter(x => 'series_elaboration' in x.info),
-    );
     let z = new JSZip();
     for (let f in fdata) {
-      const ffdata = fdata[f] as any;
-      console.log(fdata[f]);
-      ffdata.values =
-        filledSeries[ffdata.name + '__' + ffdata.info.processing_method];
-      ffdata.values = ffdata.values.slice(
-        filterParams.start,
-        filterParams.end + 1,
-      );
-      z.file(ffdata.name + '.json', JSON.stringify(ffdata));
+      if (fdata[f]) {
+        const ffdata = fdata[f] as any;
+        console.log(fdata[f]);
+        ffdata.values =
+          filledSeries.current[
+          ffdata.name + '__' + ffdata.info.processing_method
+          ];
+        ffdata.values = ffdata.values.slice(
+          filterParams.start,
+          filterParams.end + 1,
+        );
+        z.file(ffdata.name + '.json', JSON.stringify(ffdata));
+      }
     }
     z.generateAsync({ type: 'blob' }).then(function (content) {
       // see FileSaver.js

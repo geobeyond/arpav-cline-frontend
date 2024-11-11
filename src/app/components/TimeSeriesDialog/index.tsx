@@ -47,24 +47,33 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
 
   const ids = useRef<number[]>([]);
   const data = useRef<any[]>([]);
-  const filter = useRef<any>({});
+  const filter = useRef<any>({
+    mainModel: 'model_ensemble',
+    secondaryModel:
+      currentMap.climatological_model === 'model_ensemble'
+        ? 'model_ensemble'
+        : currentMap.climatological_model,
+    tsSmoothing: 'MOVING_AVERAGE_11_YEARS',
+    sensorSmoothing: 'NO_SMOOTHING',
+    uncertainty: true,
+  });
   const timeRange = useRef<TimeRangeProps | null>();
   // console.log(timeRange);
   const setIds = newIds => (ids.current = newIds);
   let filledSeries = useRef<any[]>([]);
   const setFilledSeries = f => {
-    filledSeries.current = f;
+    filledSeries.current = { ...f };
   };
   const setTimeRange = tr => {
     timeRange.current = tr;
   };
 
   const setToDownload = d => {
-    data.current = d;
+    data.current = { ...d };
   };
 
   const setSeriesFilter = f => {
-    filter.current.series = f;
+    filter.current = { ...filter.current, ...{ series: f } };
   };
 
   const setFilters = (
@@ -82,6 +91,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
       uncertainty,
     };
   };
+
   useEffect(() => {
     if (timeserie.length === 0) return;
     const ts = timeserie[0].values;
@@ -138,8 +148,8 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
           ids={ids}
           timeRange={timeRange}
           data={data}
-          filter={filter.current}
-          filledSeries={filledSeries.current}
+          filter={filter}
+          filledSeries={filledSeries}
         />
       </Grid>
     </Modal>
