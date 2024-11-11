@@ -55,8 +55,8 @@ export const DownloadForm = props => {
       ids: ids.current,
       latitude: latLng.lat,
       longitude: latLng.lng,
-      start: Math.floor((timeRange?.current?.start / 100) * 124),
-      end: Math.ceil((timeRange?.current?.end / 100) * 124),
+      start: Math.floor(((timeRange?.current?.start || 0) / 100) * 124),
+      end: Math.ceil(((timeRange?.current?.end || 100) / 100) * 124),
       fitms: filter,
       sfs: filter.current?.series?.flat(),
     };
@@ -127,8 +127,8 @@ export const DownloadForm = props => {
       ids: ids.current,
       latitude: latLng.lat,
       longitude: latLng.lng,
-      start: Math.floor((timeRange?.current?.start / 100) * 124),
-      end: Math.ceil((timeRange?.current?.end / 100) * 124),
+      start: Math.floor(((timeRange?.current?.start || 0) / 100) * 124),
+      end: Math.ceil(((timeRange?.current?.end || 100) / 100) * 124),
       fitms: filter,
       sfs: filter.current?.series?.flat(),
     };
