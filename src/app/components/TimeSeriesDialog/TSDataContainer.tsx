@@ -210,7 +210,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .then(res => {
         //@ts-ignore
         setTimeseries(res.series);
-        setToDownload(res);
+        setToDownload({ ...res });
 
         const dataValues = res.series.reduce((prev, curr) => {
           return {

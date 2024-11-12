@@ -45,7 +45,7 @@ export const DownloadForm = props => {
     setUserData({ ...userData, ...values });
   };
 
-  useEffect(() => {
+  const refreshSeriesObject = () => {
     let opseriesObj = [
       filter.current.uncertainty
         ? data.current?.series?.filter(
@@ -157,9 +157,14 @@ export const DownloadForm = props => {
     ];
 
     setSeriesObject(opseriesObj);
+  };
+
+  useEffect(() => {
+    refreshSeriesObject();
   }, [filter.current, data.current]);
 
   const download = () => {
+    refreshSeriesObject();
     console.log(seriesObject);
     console.log('download');
     if (!latLng || !ids) {
@@ -184,18 +189,19 @@ export const DownloadForm = props => {
       if (fdata[f]) {
         const ffdata = fdata[f] as any;
         if (
-          filter.current.series === undefined ||
-          ffdata.name in filter.current.series?.flat()
-        )
+          filterParams.sfs === undefined ||
+          filterParams.sfs.indexOf(ffdata.name) >= 0
+        ) {
           ffdata.values =
             filledSeries.current[
             ffdata.name + '__' + ffdata.info.processing_method
             ];
-        console.log(fdata[f]);
-        const pu = PapaParse.unparse(
-          ffdata.values.slice(filterParams.start, filterParams.end + 1),
-        );
-        z.file(ffdata.name + '.csv', pu);
+          console.log(fdata[f]);
+          const pu = PapaParse.unparse(
+            ffdata.values.slice(filterParams.start, filterParams.end + 1),
+          );
+          z.file(ffdata.name + '.csv', pu);
+        }
       }
     }
     z.generateAsync({ type: 'blob' }).then(function (content) {
@@ -208,6 +214,7 @@ export const DownloadForm = props => {
   };
 
   const downloadJson = () => {
+    refreshSeriesObject();
     console.log('download');
     if (!latLng || !ids) {
       console.log(latLng, ids);
@@ -231,15 +238,20 @@ export const DownloadForm = props => {
       if (fdata[f]) {
         const ffdata = fdata[f] as any;
         console.log(fdata[f]);
-        ffdata.values =
-          filledSeries.current[
-          ffdata.name + '__' + ffdata.info.processing_method
-          ];
-        ffdata.values = ffdata.values.slice(
-          filterParams.start,
-          filterParams.end + 1,
-        );
-        z.file(ffdata.name + '.json', JSON.stringify(ffdata));
+        if (
+          filterParams.sfs === undefined ||
+          filterParams.sfs.indexOf(ffdata.name) >= 0
+        ) {
+          ffdata.values =
+            filledSeries.current[
+            ffdata.name + '__' + ffdata.info.processing_method
+            ];
+          ffdata.values = ffdata.values.slice(
+            filterParams.start,
+            filterParams.end + 1,
+          );
+          z.file(ffdata.name + '.json', JSON.stringify(ffdata));
+        }
       }
     }
     z.generateAsync({ type: 'blob' }).then(function (content) {
