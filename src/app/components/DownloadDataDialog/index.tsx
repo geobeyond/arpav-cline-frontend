@@ -171,23 +171,49 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
             </Button>
           </Grid>
           <Grid xs={0} def={1}></Grid>
-          <Grid xs={10} def={10} xsOffset={1} defOffset={1}>
-            <Modal open={showLinks} sx={ModalStyle} onClose={() => setShowLinks(false)}>
-              <Box>
-                <Typography variant={'h6'}>Estrazioni scaricabili</Typography>
-                <List dense={true}>
-                  {links.map((x: any) => (
-                    <ListItem disablePadding>
-                      <ListItemButton href={x.url}>
-                        <ListItemText primary={x.label} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            </Modal>
-          </Grid>
+          <Grid xs={10} def={10} xsOffset={1} defOffset={1}></Grid>
         </Grid>
+      </Modal>{' '}
+      <Modal
+        open={showLinks}
+        onClose={() => setShowLinks(false)}
+        BackdropProps={{ open: false }}
+      >
+        <Box>
+          <Grid
+            container
+            rowSpacing={0}
+            columnSpacing={{ xs: 0 }}
+            columns={{ xs: 28, def: 28 }}
+            sx={DownloadContainerStyle}
+          >
+            <Grid xs={1}></Grid>
+            <Grid xs={26}>
+              <Typography variant={'h6'}>Estrazioni scaricabili</Typography>
+            </Grid>
+            <Grid xs={1} sx={CloseIconContStyle}>
+              <IconButton
+                color={'secondary'}
+                aria-label={t('app.common.close')}
+                component={'label'}
+                onClick={() => setShowLinks(false)}
+              >
+                <ExitIcon fontSize={'large'} />
+              </IconButton>
+            </Grid>
+            <Grid xs={28}>
+              <List dense={true}>
+                {links.map((x: any) => (
+                  <ListItem disablePadding>
+                    <ListItemButton href={x.url}>
+                      <ListItemText primary={x.label} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+          </Grid>
+        </Box>
       </Modal>
     </>
   );
