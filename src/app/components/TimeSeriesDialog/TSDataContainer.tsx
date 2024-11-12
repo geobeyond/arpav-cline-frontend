@@ -968,8 +968,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const str = (start, end) => {
     console.log('[STF] str()', start, end);
     const range = {
-      start: parseInt(localStartYear) - baseValue,
-      end: parseInt(localEndYear) - baseValue,
+      start: parseInt(start) - baseValue,
+      end: parseInt(end) - baseValue,
     };
     setTimeRange(range);
   };
@@ -994,7 +994,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       setLocalEndYear(chart.getOption().xAxis[0].data[endValue]);
     }
 
-    str(start, end);
+    str(
+      chart.getOption().xAxis[0].data[startValue],
+      chart.getOption().xAxis[0].data[endValue],
+    );
   };
 
   const onStartValueChange = e => {
