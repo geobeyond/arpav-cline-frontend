@@ -372,11 +372,11 @@ const MapDlData = (props: MapDlDataProps) => {
                 {getOptions('aggregation_period').map(item => (
                   <MenuItem
                     key={item.value}
+                    value={item.value}
                     disabled={
                       activeCombination.aggregation_period.indexOf(item.value) <
                       0
                     }
-                    value={item.value}
                   >
                     {item.label}
                   </MenuItem>
@@ -422,13 +422,7 @@ const MapDlData = (props: MapDlDataProps) => {
                 name="time_window"
               >
                 {getOptions('time_window').map(item => (
-                  <MenuItem
-                    key={item.value}
-                    disabled={
-                      activeCombination.time_window.indexOf(item.value) < 0
-                    }
-                    value={item.value}
-                  >
+                  <MenuItem key={item.value} value={item.value}>
                     {item.label}
                   </MenuItem>
                 ))}
