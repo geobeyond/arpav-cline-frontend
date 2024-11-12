@@ -171,8 +171,8 @@ export const DownloadForm = props => {
       ids: ids.current,
       latitude: latLng.lat,
       longitude: latLng.lng,
-      start: timeRange?.current?.start,
-      end: timeRange?.current?.end,
+      start: timeRange?.current?.start || 0,
+      end: timeRange?.current?.end || 124,
       fitms: filter,
       sfs: filter.current?.series?.flat(),
     };
@@ -218,8 +218,8 @@ export const DownloadForm = props => {
       ids: ids.current,
       latitude: latLng.lat,
       longitude: latLng.lng,
-      start: timeRange?.current?.start,
-      end: timeRange?.current?.end,
+      start: timeRange?.current?.start || 0,
+      end: timeRange?.current?.end || 124,
       fitms: filter,
       sfs: filter.current?.series?.flat(),
     };

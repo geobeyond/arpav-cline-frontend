@@ -12,6 +12,7 @@
   "app.error.dlTimeSeries": "Errore nel download dei dati.",
   "app.error.dlNetcdf": "Errore nel download del NetCDF.",
   "app.header.acronymMeaning": "Piattaforma Clima Nord-Est",
+  "app.header.timeseries": "Modulo Serie Temporale",
   "app.header.menu.info": "Info e avvertenze",
   "app.header.menu.privacyPolicy": "Privacy Policy",
   "app.header.menu.dataPolicy": "Data Policy",

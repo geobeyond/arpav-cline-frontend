@@ -874,6 +874,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               sensorProcessingMehtod,
               uv,
             );
+            setTimeRange({
+              start: 0,
+              end: 2100 - baseValue,
+            });
           },
         },
         saveAsImage: {
@@ -922,7 +926,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           : currentLayer?.unit_italian) || '',
       nameTextStyle: {
         align: 'center',
-        padding: 15,
+        padding: 5,
       },
     },
     dataZoom: [

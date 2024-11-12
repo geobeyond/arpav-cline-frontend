@@ -113,7 +113,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         <Grid xs={1} />
         <Grid xs={22}>
           <Typography variant={'h6'} sx={TitleTSStyle}>
-            {t('app.header.acronymMeaning')}
+            {t('app.header.timeseries')}
           </Typography>
         </Grid>
         <Grid xs={1} sx={CloseIconContStyle}>
