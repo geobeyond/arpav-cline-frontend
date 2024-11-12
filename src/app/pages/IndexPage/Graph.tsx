@@ -558,7 +558,9 @@ const Graph = (props: any) => {
 
   const subText = `
     Barometro Climatico © ARPAV - Arpa FVG
-  Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`;
+  Si tratta di proiezioni climatiche e non di previsioni 
+  a lungo termine. Il valore annuale ha validità in un 
+  contesto di trend trentennale.`;
 
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
@@ -578,7 +580,7 @@ const Graph = (props: any) => {
       textStyle: isMobile ? { width: 400, overflow: 'break' } : {},
       subtextStyle: isMobile ? { width: 400, overflow: 'break' } : {},
       itemGap: 0,
-      top: '5%',
+      top: '2%',
       left: 'center',
     },
     color: seriesObj.map(x => x?.lineStyle.color),
@@ -624,11 +626,11 @@ const Graph = (props: any) => {
     legend: {
       data: getLegend(),
       selected: getSelectedLegend(),
-      top: '15%',
+      top: '16%',
       icon: 'roundRect',
     },
     grid: {
-      top: '30%',
+      top: '32%',
       left: '3%',
       right: '4%',
       bottom: '3%',
@@ -636,7 +638,7 @@ const Graph = (props: any) => {
     },
     toolbox: {
       itemSize: 30,
-      left: isMobile ? 'center' : 'right',
+      left: 'right',
       feature: {
         saveAsImage: {
           name: `Barometro Climatico`,
