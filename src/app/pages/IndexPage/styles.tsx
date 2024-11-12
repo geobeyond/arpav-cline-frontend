@@ -131,7 +131,8 @@ export const AttStyle = theme => ({
 export const AttributionStyle = theme => ({
   top: '-20px',
   position: 'relative',
-  background: 'rgba(255, 255, 255, 0.6)',
+  background: 'rgba(0, 0, 0, 0)',
+  color: 'white',
   width: 'calc( 100% + 24px)',
   paddingLeft: '10px',
   left: '-12px',
