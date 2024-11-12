@@ -38,7 +38,7 @@ export class RequestApi extends Http {
   getForecastData(configuration: any, dataSet?: any) {
     return this.instance
       .get<any>('https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?', {
-        params: { offset: 0, limit: 20, ...configuration },
+        params: { offset: 0, limit: 100, ...configuration },
       })
       .then((found: any) => {
         /**

@@ -241,7 +241,7 @@ const MapDlData = (props: MapDlDataProps) => {
               }),
             ...(field === 'aggregation_period'
               ? {
-                aggregation_period:
+                measure:
                   activeConfiguration.current.measure === 'absolute'
                     ? 'anomaly'
                     : 'absolute',
