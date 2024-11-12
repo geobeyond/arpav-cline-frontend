@@ -387,7 +387,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       .map(x => (ret[getName(x)] = true));
     timeseries
       ?.filter(x => Object.keys(x.info).indexOf('station') > 0)
-      .filter(x => x.name.indexOf(sensorProcessingMehtod) >= 0)
+      .filter(x => x.info.processing_method === sensorProcessingMehtod)
       .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
     return ret;
