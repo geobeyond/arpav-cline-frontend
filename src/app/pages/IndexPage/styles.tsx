@@ -1,6 +1,6 @@
 export const TopHeroStyle: React.CSSProperties = {
   backgroundColor: 'white',
-  height: '700px',
+  height: '750px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -41,6 +41,7 @@ export const TSContainerStyle = theme => ({
 });
 
 export const TSDataContainerStyle = theme => ({
+  maxWidth: '1320px',
   width: '100%',
   height: '300px',
 });

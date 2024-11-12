@@ -48,11 +48,15 @@ const IndexPage = () => {
       <Hero overlay="dark" style={TopHeroStyle}>
         <h2>Barometro del clima</h2>
 
-        <i>La temperatura misurata in Veneto e le proiezioni per il futuro</i>
-
         <p>
-          Il barometro utilizza la temperatura media annuale come indicatore
-          dell'evoluzione del clima. Nel grafico:
+          <i>
+            La temperatura misurata in Veneto e le proiezioni per il futuro.
+            Dove stiamo andando?
+          </i>
+        </p>
+        <p>
+          Il barometro utilizza la temperatura media annuale come indicatore dei
+          cambiamenti climatici in atto e attesi. Nel grafico:
           <ul>
             <li>
               la temperatura registrata sul Veneto negli ultimi decenni (linea
@@ -68,6 +72,7 @@ const IndexPage = () => {
         <Graph></Graph>
       </Hero>
       <Section></Section>
+      <Container></Container>
       <Container color="muted" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }}>
           <Col sm={6}>

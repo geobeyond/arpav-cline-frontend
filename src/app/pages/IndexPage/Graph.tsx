@@ -553,11 +553,10 @@ const Graph = (props: any) => {
   });
 
   const titleText = `
-     Barometro Climatico
+     Barometro del clima
   `;
 
-  const subText = `
-    Barometro Climatico © ARPAV - Arpa FVG
+  const subText = `Barometro del clima © ARPAV - Arpa FVG
   Si tratta di proiezioni climatiche e non di previsioni 
   a lungo termine. Il valore annuale ha validità in un 
   contesto di trend trentennale.`;
@@ -672,8 +671,8 @@ const Graph = (props: any) => {
       scale: true,
       name: '°C',
       nameTextStyle: {
-        align: 'center',
-        padding: 15,
+        align: 'right',
+        padding: 5,
       },
     },
     series: seriesObj,
