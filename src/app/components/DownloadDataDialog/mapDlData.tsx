@@ -250,9 +250,9 @@ const MapDlData = (props: MapDlDataProps) => {
             ...(field === 'measure'
               ? {
                 aggregation_period:
-                  activeConfiguration.current.measure === 'absolute'
-                    ? 'anomaly'
-                    : 'absolute',
+                  activeConfiguration.current.aggregation_period === '30yr'
+                    ? 'annual'
+                    : '30yr',
               }
               : {}),
           };
