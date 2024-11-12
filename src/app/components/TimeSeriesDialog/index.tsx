@@ -59,13 +59,13 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
   });
   const timeRange = useRef<TimeRangeProps | null>();
   // console.log(timeRange);
-  const setIds = newIds => (ids.current = newIds);
+  const setIds = newIds => (ids.current = [...newIds]);
   let filledSeries = useRef<any[]>([]);
   const setFilledSeries = f => {
     filledSeries.current = { ...f };
   };
   const setTimeRange = tr => {
-    timeRange.current = tr;
+    timeRange.current = { ...tr };
   };
 
   const setToDownload = d => {

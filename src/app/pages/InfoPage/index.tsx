@@ -35,8 +35,11 @@ const InfoPage = () => {
 
 
 <style>
+p {
+font-family: 'Titillium Web', sans-serif;
+}
 table {
-  font-family: arial, sans-serif;
+  font-family: 'Titillium Web', arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }

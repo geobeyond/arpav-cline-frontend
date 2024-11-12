@@ -308,13 +308,26 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     uncert,
   ]);
 
-  setFilters(
-    baseClimatologicalModel,
-    comparisonClimatologicalModel,
-    processingMethod,
-    sensorProcessingMehtod,
-    uncert,
-  );
+  useEffect(() => {
+    setFilters(
+      baseClimatologicalModel,
+      comparisonClimatologicalModel,
+      processingMethod,
+      sensorProcessingMehtod,
+      uncert,
+    );
+
+    setTimeRange({
+      ...{
+        start: 0,
+        end: 2100 - baseValue,
+      },
+      ...{
+        start: localStartYear - baseValue,
+        end: localEndYear - baseValue,
+      },
+    });
+  });
 
   const toDisplay = x => {
     return x.name.indexOf('uncertainty');
@@ -874,10 +887,6 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               sensorProcessingMehtod,
               uv,
             );
-            setTimeRange({
-              start: 0,
-              end: 2100 - baseValue,
-            });
           },
         },
         saveAsImage: {
@@ -975,7 +984,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       start: parseInt(start) - baseValue,
       end: parseInt(end) - baseValue,
     };
-    setTimeRange(range);
+
+    if (range.start > 0 && range.end > 0) {
+      setTimeRange({ ...range });
+    }
   };
 
   const dataZoomHandle = (params, chart) => {
