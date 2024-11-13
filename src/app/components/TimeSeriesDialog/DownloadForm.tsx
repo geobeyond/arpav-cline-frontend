@@ -45,7 +45,7 @@ export const DownloadForm = props => {
     setUserData({ ...userData, ...values });
   };
 
-  const refreshSeriesObject = () => {
+  const refreshSeriesObject = async () => {
     let opseriesObj = [
       filter.current.uncertainty
         ? data.current?.series?.filter(
@@ -156,15 +156,16 @@ export const DownloadForm = props => {
       )[0],
     ];
 
-    setSeriesObject(opseriesObj);
+    await setSeriesObject(opseriesObj);
+    return opseriesObj;
   };
 
   useEffect(() => {
     refreshSeriesObject();
   }, [filter.current, data.current]);
 
-  const download = () => {
-    refreshSeriesObject();
+  const download = async () => {
+    const seriesObj = await refreshSeriesObject();
     console.log(seriesObject);
     console.log('download');
     if (!latLng || !ids) {
@@ -182,7 +183,7 @@ export const DownloadForm = props => {
       sfs: filter.current?.series?.flat(),
     };
     setCsvLoader(true);
-    let fdata = [...seriesObject];
+    let fdata = [...seriesObj];
 
     let z = new JSZip();
     for (let f in fdata) {
