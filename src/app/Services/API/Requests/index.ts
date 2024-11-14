@@ -67,11 +67,8 @@ export class RequestApi extends Http {
           const label = x.split('/')[x.split('/').length - 1];
           const tlabel = label.split('-');
           const flabel = tlabel.map(x => {
-            try {
-              return labels[x];
-            } catch (ex) {
-              return x;
-            }
+            if (Object.keys(labels).indexOf(x) >= 0) return labels[x];
+            else return x;
           });
           return { url, rawLabel: label, label: flabel.join(' - ') };
         };
