@@ -48,6 +48,11 @@ export class RequestApi extends Http {
       ]),
     );
     const labels = Object.fromEntries(labelsf.flat());
+    const innerConf = { ...configuration };
+    delete innerConf.archive;
+    if (innerConf.aggregation_period === 'annual') {
+      delete innerConf.time_window;
+    }
     return this.instance
       .get<any>('https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?', {
         params: { offset: 0, limit: 100, ...configuration },
@@ -68,7 +73,7 @@ export class RequestApi extends Http {
           const tlabel = label.split('-');
           const flabel = tlabel.map(x => {
             if (Object.keys(labels).indexOf(x) >= 0) return labels[x];
-            else return x;
+            else return '';
           });
           return { url, rawLabel: label, label: flabel.join(' - ') };
         };
