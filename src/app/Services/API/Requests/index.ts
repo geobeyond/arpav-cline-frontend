@@ -35,7 +35,19 @@ export class RequestApi extends Http {
    * @param {any} dataSet Additional data to be used in the request.
    * @returns {Promise<AxiosResponse<any>>} The response of the request.
    */
-  getForecastData(configuration: any, dataSet?: any) {
+  getForecastData(configuration: any, dataSet?: any, language: string = 'it') {
+    let configs = [];
+    const cstr = localStorage.getItem('configs');
+    if (cstr) {
+      configs = JSON.parse(cstr);
+    }
+    const labelsf = configs.map((config: any) =>
+      config.allowed_values.map(x => [
+        x.name,
+        language === 'it' ? x.display_name_italian : x.display_name_english,
+      ]),
+    );
+    const labels = Object.fromEntries(labelsf.flat());
     return this.instance
       .get<any>('https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?', {
         params: { offset: 0, limit: 100, ...configuration },
@@ -54,20 +66,14 @@ export class RequestApi extends Http {
               : '');
           const label = x.split('/')[x.split('/').length - 1];
           const tlabel = label.split('-');
-          const sequence = [
-            'name',
-            'aggregation_period',
-            'archive',
-            'climatological_model',
-            'climatological_variable',
-            'measure',
-            'time_window',
-            'year_period',
-          ];
-
-          const partial = zip(sequence, tlabel);
-
-          return { url, label, partial };
+          const flabel = tlabel.map(x => {
+            try {
+              return labels[x];
+            } catch (ex) {
+              return x;
+            }
+          });
+          return { url, rawLabel: label, label: flabel.join(' - ') };
         };
         return found.coverage_download_links.map(mapCoverageLinks);
       });
@@ -526,6 +532,7 @@ export class RequestApi extends Http {
     }
 
     const p = Promise.all(reqs).then(x => {
+      localStorage.setItem('configs', JSON.stringify(x[0]));
       return {
         items: x[0],
         combinations: x[1].combinations,

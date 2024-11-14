@@ -25,6 +25,7 @@ import {
   MapUserContainerStyle,
   ModalStyle,
   TitleDownloadStyle,
+  ExtractionStyle
 } from './styles';
 import MapDlData from './mapDlData';
 import UserDlData from '../UserDlData/userDlData';
@@ -94,6 +95,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
     ).toString()}`;
     setDownloadUrl(url);
   };
+  
 
   return (
     <>
@@ -178,6 +180,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
         open={showLinks}
         onClose={() => setShowLinks(false)}
         BackdropProps={{ open: false }}
+        sx={ExtractionStyle}
       >
         <Box>
           <Grid

@@ -181,3 +181,14 @@ export const ModalStyle = theme => ({
   borderRadius: theme.shape.borderRadius,
   boxShadow: 12,
 });
+
+export const ExtractionStyle = theme => ({
+  bottom: '40px',
+  position: 'absolute',
+  left: '25%',
+  right: '25%',
+  width: '50%',
+  maxWidth: '800px',
+})
+
+
