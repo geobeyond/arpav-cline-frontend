@@ -78,6 +78,8 @@ export const TWLSample = (props: any) => {
           ...withPane(options, { __version: 1, map: context.map }),
         });
 
+        let currentLayer: any = null;
+
         if (selected_map_path && isTimeseries) {
           // @ts-ignore
           const tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
@@ -103,7 +105,38 @@ export const TWLSample = (props: any) => {
               // console.log(e)
             }
             layer.current = tdWmsLayer;
+            currentLayer = tdWmsLayer;
             setTLayer(tdWmsLayer);
+            map.addLayer(tdWmsLayer);
+            map.removeLayer(tdWmsLayer);
+          }
+          // @ts-ignore
+          const tdWmsLayer2 = L.timeDimension.layer.wms(wmsLayer, {
+            requestTimeFromCapabilities: true,
+            updateTimeDimension: true,
+            cache: 0,
+            cacheBackward: 0,
+            cacheForward: 0,
+          });
+          if (tdWmsLayer2) {
+            setLayer(tdWmsLayer2);
+            try {
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-bar-timecontrol',
+              )[0].style.display = 'flex';
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-time-info',
+              )[0].style.display = 'flex';
+              setTimestatus('flex');
+            } catch (e) {
+              // console.log(e)
+            }
+            layer.current = tdWmsLayer2;
+            currentLayer = tdWmsLayer2;
+            setTLayer(tdWmsLayer2);
+            map.addLayer(tdWmsLayer2);
           }
         } else {
           setLayer(wmsLayer);
@@ -121,10 +154,11 @@ export const TWLSample = (props: any) => {
             // console.log(e)
           }
           layer.current = wmsLayer;
+          currentLayer = wmsLayer;
           setTLayer(wmsLayer);
           //}
+          map.addLayer(wmsLayer);
         }
-        map.addLayer(layer.current);
 
         const lyrs = document.getElementsByClassName('leaflet-layer');
         for (let i = 0; i < lyrs.length; i++) {
@@ -133,7 +167,7 @@ export const TWLSample = (props: any) => {
         }
 
         return () => {
-          map.removeLayer(layer.current);
+          map.removeLayer(currentLayer);
         };
       }
     }
