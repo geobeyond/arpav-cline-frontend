@@ -12,7 +12,7 @@
   "app.error.dlTimeSeries": "Errore nel download dei dati.",
   "app.error.dlNetcdf": "Errore nel download del NetCDF.",
   "app.header.acronymMeaning": "Piattaforma Clima Nord-Est",
-  "app.header.timeseries": "Modulo Serie Temporale",
+  "app.header.timeseries": "Piattaforma Clima Nord-Est: modulo serie temporale",
   "app.header.menu.info": "Info e avvertenze",
   "app.header.menu.privacyPolicy": "Privacy Policy",
   "app.header.menu.dataPolicy": "Data Policy",
@@ -85,7 +85,7 @@
   "app.map.search.lng": "Long",
   "app.footer": "",
   "wrong_config.title": "Configurazione non valida",
-  "wrong_config.message": "La configurazione scelta non corrisponde a nessun dataset del sistema. Verrà impostata una configurazione di default.",
+  "wrong_config.message": "Dataset non presente nel sistema. Verrà impostata la configurazione disponibile più rispondente a quella richiesta.",
   "wrong_index.title": "Indicatore non valido",
   "wrong_index.message": "L'indicatore scelto non ha configurazioni valide."
 }
