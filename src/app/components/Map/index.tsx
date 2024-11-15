@@ -115,10 +115,7 @@ const Map = (props: MapProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
   const { i18n } = useTranslation();
 
-  const timeDimensionOptions = {
-    requestTimeFromCapabilities: true,
-    updateTimeDimension: true,
-  };
+  const timeDimensionOptions = {};
 
   const [click, setClick] = React.useState();
 
@@ -286,7 +283,7 @@ const Map = (props: MapProps) => {
             : layerConf.wms_secondary_layer_name
         }
         stl={layerConf.palette}
-        useTime="setTimestatus"
+        useTime={setTimeStatus}
         isTimeseries={currentMap.aggregation_period === 'annual'}
       />
       <CustomControlMap
