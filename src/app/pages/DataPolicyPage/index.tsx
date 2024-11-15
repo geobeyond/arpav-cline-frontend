@@ -11,7 +11,7 @@ const DataPolicyPage = () => {
         <h1>Data policy</h1>
         <p>
           La piattaforma web denominata "Piattaforma Clima Nord-Est", di seguito
-          denominata "Piattaforma", accessibile dal link pubblico
+          denominata "Piattaforma", accessibile dal link pubblico{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -35,9 +35,22 @@ const DataPolicyPage = () => {
 
         <p>
           ARPAV ha commissionato lo sviluppo e la realizzazione della
-          Piattaforma e del relativo software alla ditta INKODE Soc. Coop. e
-          successivamente ha commissionato una manutenzione evolutiva a
-          Geobeyond srl. acquisendone, al termine dell'esecuzione della
+          Piattaforma e del relativo software alla ditta{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://inkode.it/"
+          >
+            <u>INKODE Soc. Coop.</u>
+          </a>{' '}
+          e successivamente ha commissionato una manutenzione evolutiva a{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="http://www.geobeyond.it/"
+          >
+            <u>Geobeyond Srl</u>
+          </a>. acquisendone, al termine dell'esecuzione della
           fornitura, la sua titolarità comprensiva di tutti i diritti di
           proprietà intellettuale e industriale.
         </p>
@@ -99,7 +112,7 @@ const DataPolicyPage = () => {
           Istituto Meteorologico e Idrologico Svedese, Istituto per la
           Meteorologia Max-Planck, CLM-Community, ARPAV, Arpa FVG, Arpae
           Emilia-Romagna, Provincia Autonoma zdi Trento, Provincia Autonoma di
-          Bolzano, Aeronautica Militare; deve essere riportato altresì l'URL
+          Bolzano, Aeronautica Militare; deve essere riportato altresì l'URL{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -142,7 +155,19 @@ const DataPolicyPage = () => {
           </ul>
         </p>
         <p>
-          Ogni qualvolta vengano usati o distribuiti i contenuti del sito{' '}
+          A riguardo si precisa che nella home page della Piattaforma è pubblicata
+          la foto della Marmolada-Punta Penia del 1937, scattata da
+          Giuseppe Ghedina Basilio (1898 - 1986). Nel caso di specie la pubblicazione
+          è consentita, in deroga al diritto d'autore, sussistendo le condizioni
+          consentite ex art.70 1-bis L. 633/1941 (Legge sul diritto d'autore):
+          l'immagine è pubblicata infatti esclusivamente per finalità d'interesse
+          pubblico, ad uso scientifico, senza alcun scopo di lucro, per fare conoscere
+          alla cittadinanza l'impatto dei cambiamenti climatici in atto nell'ambito
+          dell'area del Nord-est del territorio nazionale.
+        </p>
+        <p>
+          Al di fuori di tale eccezione, ogni qualvolta vengano usati o distribuiti
+          i contenuti del sito{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"

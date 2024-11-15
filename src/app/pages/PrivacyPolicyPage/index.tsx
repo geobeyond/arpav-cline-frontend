@@ -127,9 +127,9 @@ const PrivacyPolicyPage = () => {
           Il trattamento è finalizzato ad assicurare agli utenti, cittadini e
           portatori d'interesse, una navigazione sicura ed efficiente
           all'interno della Piattaforma, con l'obiettivo di mettere loro a
-          disposizione dati e strumenti operativi idonei a fare comprendere gli
-          scenari dei futuri cambiamenti climatici nell'ambito del territorio
-          del Nord-Est Italia.
+          disposizione dati e strumenti operativi idonei a fare comprendere
+          l'entità dei cambiamenti climatici in atto e gli scenari dei futuri
+          cambiamenti climatici nell'ambito del territorio del Nord-Est Italia.
         </p>
         <br />
         <p>
