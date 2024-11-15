@@ -407,7 +407,7 @@ media esterna supera i 24°C
 </p>
 
 <h3>Link utili</h3>
-    <p>PDF di approfondimento <a href="/cline_approfondimento.pdf" target="_blank">CliNE: senzione Proiezoni Climatiche</a></p>
+    <p>PDF di approfondimento <a href="/cline_approfondimento.pdf" target="_blank">CliNE: sezione Proiezioni Climatiche</a></p>
     <p><a href="https://github.com/venetoarpa/Arpav-PPCV-backend/wiki/Manuale-utente" target="_blank">Manuale d'uso della Piattaforma</a></p>
     <p>Codice sorgente disponibile su <a href="https://github.com/venetoarpa/Arpav-PPCV" target="_blank">Github</a></p>
     <p>Indirizzo per informazioni e segnalazioni: <a href="mailto:cmt.rete@arpa.veneto.it" target="_blank"><u>cmt.rete@arpa.veneto.it</u></a></p>
