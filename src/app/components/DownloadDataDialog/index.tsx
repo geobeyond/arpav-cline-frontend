@@ -33,6 +33,7 @@ import { saveAs } from 'file-saver';
 import { useMapSlice } from '../../pages/MapPage/slice';
 import { API_URL } from '../../../utils/constants';
 import { RequestApi } from 'app/Services/API/Requests';
+import { Icon, LinkList, LinkListItem } from 'design-react-kit';
 
 export interface DownloadDataDialogProps {
   open: boolean;
@@ -95,7 +96,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
     ).toString()}`;
     setDownloadUrl(url);
   };
-  
+
 
   return (
     <>
@@ -192,7 +193,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           >
             <Grid xs={1}></Grid>
             <Grid xs={26}>
-              <Typography variant={'h6'}>Estrazioni scaricabili</Typography>
+              <Typography variant={'h6'} sx={TitleDownloadStyle}>Estrazioni scaricabili</Typography>
             </Grid>
             <Grid xs={1} sx={CloseIconContStyle}>
               <IconButton
@@ -205,15 +206,14 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
               </IconButton>
             </Grid>
             <Grid xs={28}>
-              <List dense={true}>
+              <LinkList>
                 {links.map((x: any) => (
-                  <ListItem disablePadding>
-                    <ListItemButton href={x.url}>
-                      <ListItemText primary={x.label} />
-                    </ListItemButton>
-                  </ListItem>
+                  <LinkListItem className='icon-left' href={x.url}>
+                    <Icon color='primary' icon='it-chevron-right' aria-hidden />
+                    {x.label}
+                  </LinkListItem>
                 ))}
-              </List>
+              </LinkList>
             </Grid>
           </Grid>
         </Box>

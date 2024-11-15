@@ -189,6 +189,4 @@ export const ExtractionStyle = theme => ({
   right: '25%',
   width: '50%',
   maxWidth: '800px',
-})
-
-
+});
