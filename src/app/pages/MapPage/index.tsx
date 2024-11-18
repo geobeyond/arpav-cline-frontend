@@ -342,61 +342,45 @@ export function MapPage(props: MapPageProps) {
   };
 
   const handleDownloadMapImg = () => {
-    //    const format = 'image';
-    //    let year = '';
-    //    try {
-    //      year =
-    //        currentMap.data_series === 'yes'
-    //          ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
-    //            .getFullYear()
-    //            .toString()
-    //          : '';
-    //    } catch (e) {
-    //      // console.log('no year');
-    //    }
-    //
-    //    setInProgress(true);
-    //    const caption = `${isMobile
-    //        ? currentMap.climatological_variable
-    //        : findValueName('variable', 'variables')
-    //      }
-    //- ${joinNames([
-    //        findValueName('forecast_model', 'forecast_models'),
-    //        findValueName('scenario', 'scenarios'),
-    //      ])}
-    //- ${joinNames([
-    //        findValueName('data_series', 'data_series'),
-    //        findValueName('value_type', 'value_types'),
-    //        findValueName('time_window', 'time_windows'),
-    //      ])}
-    //- ${findValueName('year_period', 'year_periods')}
-    //${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-    //    const filename = `Screenshot ${findValueName(
-    //      'variable',
-    //      'variables',
-    //    )} - ${joinNames([
-    //      findValueName('forecast_model', 'forecast_models'),
-    //      findValueName('scenario', 'scenarios'),
-    //    ])} - ${joinNames([
-    //      findValueName('data_series', 'data_series'),
-    //      findValueName('value_type', 'value_types'),
-    //      findValueName('time_window', 'time_windows'),
-    //    ])} - ${findValueName('year_period', 'year_periods')} ${year ? ` Anno ${year}` : ''
-    //      }.png`;
-    //    mapScreen
-    //      .takeScreen(format, {
-    //        captionFontSize: isMobile ? 10 : 12,
-    //        screenName: `${findValueName('variable', 'variables')}`,
-    //        caption: caption,
-    //      })
-    //      .then(blob => {
-    //        setInProgress(false);
-    //        saveAs(blob as Blob, filename);
-    //      })
-    //      .catch(e => {
-    //        setInProgress(false);
-    //        console.error(e);
-    //      });
+    const format = 'image';
+    let year = '';
+    try {
+      year =
+        currentMap.data_series === 'yes'
+          ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
+            .getFullYear()
+            .toString()
+          : '';
+    } catch (e) {
+      // console.log('no year');
+    }
+
+    setInProgress(true);
+    const caption = `${currentMap.climatological_variable}
+    - ${joinNames([currentMap.climatological_model, currentMap.scenario])}
+    - ${joinNames([currentMap.data_series, currentMap.time_window])}
+    - ${currentMap.year_period}
+    ${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
+    const filename = `Screenshot ${currentMap.climatological_variable
+      } - ${joinNames([
+        currentMap.climatological_model,
+        currentMap.scenario,
+      ])} - ${joinNames([currentMap.data_series, currentMap.time_window])} - ${currentMap.year_period
+      }} ${year ? ` Anno ${year}` : ''}.png`;
+    mapScreen
+      .takeScreen(format, {
+        captionFontSize: isMobile ? 10 : 12,
+        screenName: `${currentMap.climatological_variable}`,
+        caption: caption,
+      })
+      .then(blob => {
+        setInProgress(false);
+        saveAs(blob as Blob, filename);
+      })
+      .catch(e => {
+        setInProgress(false);
+        console.error(e);
+      });
   };
 
   const openCharts = (latLng: LatLng) => {

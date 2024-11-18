@@ -44,7 +44,10 @@ export class RequestApi extends Http {
     const labelsf = configs.map((config: any) =>
       config.allowed_values.map(x => [
         x.name,
-        language === 'it' ? x.display_name_italian : x.display_name_english,
+        [
+          config.name,
+          language === 'it' ? x.display_name_italian : x.display_name_english,
+        ],
       ]),
     );
     const labels = Object.fromEntries(labelsf.flat());
@@ -72,11 +75,21 @@ export class RequestApi extends Http {
               : '');
           const label = x.split('/')[x.split('/').length - 1];
           const tlabel = label.split('-');
-          const flabel = tlabel.map(x => {
-            if (Object.keys(labels).indexOf(x) >= 0) return labels[x];
-            else return '';
-          });
-          return { url, rawLabel: label, label: flabel.join(' - ') };
+          const flabel = tlabel
+            .map(x => {
+              if (Object.keys(labels).indexOf(x) >= 0) return labels[x];
+              else return null;
+            })
+            .filter(x => x);
+          const dconf: any = {
+            ...{ time_period: null },
+            ...Object.fromEntries(flabel),
+          };
+          const labelout =
+            `${dconf.climatological_variable} - ${dconf.archive} - ${dconf.climatological_model} - ${dconf.scenario} - ${dconf.aggregation_period} - ${dconf.measure} - ` +
+            (dconf.time_period ? `${dconf.time_period} - ` : '') +
+            `${dconf.year_period}`;
+          return { url, rawLabel: label, label: labelout };
         };
         return found.coverage_download_links.map(mapCoverageLinks);
       });

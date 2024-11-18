@@ -183,10 +183,12 @@ export const ModalStyle = theme => ({
 });
 
 export const ExtractionStyle = theme => ({
-  bottom: '40px',
+  bottom: '110px',
   position: 'absolute',
-  left: '25%',
-  right: '25%',
+  left: '20%',
+  right: '20%',
   width: '50%',
-  maxWidth: '800px',
+  top: 'calc(100% - 260px)',
+  minWidth: '600px',
+  maxWidth: '1700px',
 });

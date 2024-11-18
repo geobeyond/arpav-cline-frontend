@@ -476,7 +476,7 @@ export function MapMenuBar(props: MapMenuBar) {
               </Grid>
               <Grid xs={1} sx={FirstRowStyle}>
                 <Box>
-                  <Typography sx={MenuLabelStyle}>{foundLayers}</Typography>
+                  <Typography sx={MenuLabelStyle}></Typography>
                 </Box>
               </Grid>
             </>
