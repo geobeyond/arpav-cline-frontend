@@ -117,6 +117,21 @@ export function MapPage(props: MapPageProps) {
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 
+  const labelFor = (itm: string) => {
+    const configs = localStorage.getItem('configs');
+    const rcps = configs ? JSON.parse(configs) : {};
+    const labelsf = rcps.map((config: any) =>
+      config.allowed_values.map(x => [
+        x.name,
+        i18n.language === 'it'
+          ? x.display_name_italian
+          : x.display_name_english,
+      ]),
+    );
+    const labels = Object.fromEntries(labelsf.flat());
+    return labels[itm];
+  };
+
   const findValueName = (key: string, listKey: string) => {
     //const id = selected_map[key];
     let name = '';
@@ -356,17 +371,27 @@ export function MapPage(props: MapPageProps) {
     }
 
     setInProgress(true);
-    const caption = `${currentMap.climatological_variable}
-    - ${joinNames([currentMap.climatological_model, currentMap.scenario])}
-    - ${joinNames([currentMap.data_series, currentMap.time_window])}
-    - ${currentMap.year_period}
-    ${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-    const filename = `Screenshot ${currentMap.climatological_variable
-      } - ${joinNames([
-        currentMap.climatological_model,
-        currentMap.scenario,
-      ])} - ${joinNames([currentMap.data_series, currentMap.time_window])} - ${currentMap.year_period
-      }} ${year ? ` Anno ${year}` : ''}.png`;
+    const caption = `${labelFor(currentMap.climatological_variable)}
+    - ${joinNames([
+      labelFor(currentMap.climatological_model),
+      labelFor(currentMap.scenario),
+    ])}
+    - ${joinNames([
+      labelFor(currentMap.data_series),
+      labelFor(currentMap.time_window),
+    ])}
+    - ${labelFor(currentMap.year_period)}
+    ${year ? ` - Anno ${year}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
+    const filename = `Screenshot ${labelFor(
+      currentMap.climatological_variable,
+    )} - ${joinNames([
+      labelFor(currentMap.climatological_model),
+      labelFor(currentMap.scenario),
+    ])} - ${joinNames([
+      labelFor(currentMap.data_series),
+      labelFor(currentMap.time_window),
+    ])} - ${labelFor(currentMap.year_period)} ${year ? ` Anno ${year}` : ''
+      }.png`;
     mapScreen
       .takeScreen(format, {
         captionFontSize: isMobile ? 10 : 12,
