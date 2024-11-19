@@ -380,7 +380,7 @@ export function MapPage(props: MapPageProps) {
         labelFor(currentMap.scenario),
       ])}
     - ${joinNames([
-        labelFor(currentMap.data_series),
+        labelFor(currentMap.aggregation_period),
         labelFor(currentMap.time_window),
       ])}
     - ${labelFor(currentMap.year_period)}
@@ -392,7 +392,7 @@ export function MapPage(props: MapPageProps) {
         labelFor(currentMap.climatological_model),
         labelFor(currentMap.scenario),
       ])} - ${joinNames([
-        labelFor(currentMap.data_series),
+        labelFor(currentMap.aggregation_period),
         labelFor(currentMap.time_window),
       ])} - ${labelFor(currentMap.year_period)} ${year ? ` Anno ${year}` : ''
       }.png`;
