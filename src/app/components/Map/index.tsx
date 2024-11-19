@@ -215,13 +215,15 @@ const Map = (props: MapProps) => {
           precision={layerConf.data_precision}
         />
       </CustomControlMap>
-      <MousePositionComponent
-        position={'bottomright'}
-        customComponent={
-          isMobile ? MobileMousePositionDisplay : MousePositionDisplay
-        }
-      // onClick={onMapClick}
-      />
+      {!isMobile && (
+        <MousePositionComponent
+          position={'bottomright'}
+          customComponent={
+            isMobile ? MobileMousePositionDisplay : MousePositionDisplay
+          }
+        // onClick={onMapClick}
+        />
+      )}
       <CustomControlMap position={'topleft'}>
         <MapSearch
           className={'leaflet-control-search'}
