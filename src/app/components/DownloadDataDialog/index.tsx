@@ -25,7 +25,8 @@ import {
   MapUserContainerStyle,
   ModalStyle,
   TitleDownloadStyle,
-  ExtractionStyle
+  ExtractionStyle,
+  BoxExtractionStyle
 } from './styles';
 import MapDlData from './mapDlData';
 import UserDlData from '../UserDlData/userDlData';
@@ -183,7 +184,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
         BackdropProps={{ open: false }}
         sx={ExtractionStyle}
       >
-        <Box>
+        <Box sx={BoxExtractionStyle}>
           <Grid
             container
             rowSpacing={0}

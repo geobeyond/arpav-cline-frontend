@@ -184,14 +184,19 @@ export const ModalStyle = theme => ({
   boxShadow: 12,
 });
 
+export const BoxExtractionStyle = theme => ({
+  height: '400px',
+});
+
 export const ExtractionStyle = theme => ({
-  bottom: '110px',
+  //bottom: '300px',
   position: 'absolute',
   left: '20%',
   right: '20%',
   width: 'fit-content',
   height: 'fit-content',
-  top: 'calc(100% - 460px)',
-  minWidth: '600px',
-  maxWidth: '1700px',
+  top: 'calc(100% - 650px)',
+  //minWidth: '600px',
+  //maxWidth: '1700px',
+  //maxHeight: '500',
 });

@@ -170,7 +170,7 @@ cambiando e della possibile evoluzione nel futuro.</p>
                 </td>
                 <td>
                     <p>
-                        Numero di giorni con temperatura minima maggiore di 20 °C
+                        Numero di notti con temperatura minima maggiore di 20 °C
                     </p>
                 </td>
             </tr>
