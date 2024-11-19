@@ -10,6 +10,7 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  Tooltip,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
@@ -544,7 +545,14 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
-                <></>
+                <Tooltip title={t('app.tools.disabledOnMobile')}>
+                  <IconButton
+                    disabled={true}
+                    aria-label={t('app.map.menuBar.downloadMap')}
+                  >
+                    <FileDownloadIcon />
+                  </IconButton>
+                </Tooltip>
               ) : (
                 /*</Grid><IconButton
                   onClick={() => setDownloadDataOpen(true)}

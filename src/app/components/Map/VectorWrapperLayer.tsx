@@ -24,7 +24,7 @@ export const VectorWrapperLayer = (props: any) => {
 
   let selected = false;
 
-  const url = `${VECTORTILES_URL}/public.places_cities.geometry/{z}/{x}/{y}.pbf`;
+  const url = `https://arpav.geobeyond.dev/vector-tiles/municipalities/{z}/{x}/{y}`;
 
   useEffect(() => {
     context.map.createPane('municipalities');
