@@ -372,8 +372,8 @@ export function MapPage(props: MapPageProps) {
 
     setInProgress(true);
     const caption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
+      ? currentMap.climatological_variable
+      : labelFor(currentMap.climatological_variable)
       }
     - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -381,20 +381,24 @@ export function MapPage(props: MapPageProps) {
       ])}
     - ${joinNames([
         labelFor(currentMap.aggregation_period),
-        labelFor(currentMap.time_window),
+        labelFor(currentMap.measure),
       ])}
+      ${currentMap.time_window ? labelFor(currentMap.time_window) : ''}
     - ${labelFor(currentMap.year_period)}
     ${year ? ` - Anno ${year}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-    const filename = `Screenshot ${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
-      } - ${joinNames([
+    const filename = `Screenshot ${labelFor(currentMap.climatological_variable)
+      }
+  - ${joinNames([
         labelFor(currentMap.climatological_model),
         labelFor(currentMap.scenario),
-      ])} - ${joinNames([
+      ])}
+  - ${joinNames([
         labelFor(currentMap.aggregation_period),
-        labelFor(currentMap.time_window),
-      ])} - ${labelFor(currentMap.year_period)} ${year ? ` Anno ${year}` : ''
+        labelFor(currentMap.measure),
+      ])}
+    ${currentMap.time_window ? labelFor(currentMap.time_window) : ''}
+  - ${labelFor(currentMap.year_period)}
+  ${year ? ` - Anno ${year}` : ''
       }.png`;
     mapScreen
       .takeScreen(format, {
