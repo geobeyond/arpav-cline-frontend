@@ -371,26 +371,30 @@ export function MapPage(props: MapPageProps) {
     }
 
     setInProgress(true);
-    const caption = `${labelFor(currentMap.climatological_variable)}
+    const caption = `${isMobile
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
+      }
     - ${joinNames([
-      labelFor(currentMap.climatological_model),
-      labelFor(currentMap.scenario),
-    ])}
+        labelFor(currentMap.climatological_model),
+        labelFor(currentMap.scenario),
+      ])}
     - ${joinNames([
-      labelFor(currentMap.data_series),
-      labelFor(currentMap.time_window),
-    ])}
+        labelFor(currentMap.data_series),
+        labelFor(currentMap.time_window),
+      ])}
     - ${labelFor(currentMap.year_period)}
     ${year ? ` - Anno ${year}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-    const filename = `Screenshot ${labelFor(
-      currentMap.climatological_variable,
-    )} - ${joinNames([
-      labelFor(currentMap.climatological_model),
-      labelFor(currentMap.scenario),
-    ])} - ${joinNames([
-      labelFor(currentMap.data_series),
-      labelFor(currentMap.time_window),
-    ])} - ${labelFor(currentMap.year_period)} ${year ? ` Anno ${year}` : ''
+    const filename = `Screenshot ${isMobile
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
+      } - ${joinNames([
+        labelFor(currentMap.climatological_model),
+        labelFor(currentMap.scenario),
+      ])} - ${joinNames([
+        labelFor(currentMap.data_series),
+        labelFor(currentMap.time_window),
+      ])} - ${labelFor(currentMap.year_period)} ${year ? ` Anno ${year}` : ''
       }.png`;
     mapScreen
       .takeScreen(format, {
