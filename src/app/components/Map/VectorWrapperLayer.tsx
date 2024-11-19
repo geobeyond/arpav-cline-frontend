@@ -36,7 +36,7 @@ export const VectorWrapperLayer = (props: any) => {
         interactive: true,
         pane: 'municipalities',
         vectorTileLayerStyles: {
-          'public.places_cities.geometry': {
+          'municipalities': {
             color: '#b6b6b6',
             weight: 1,
             radius: 1,
