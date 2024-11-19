@@ -59,7 +59,7 @@ const IndexPage = () => {
           cambiamenti climatici in atto e attesi. Nel grafico:
           <ul>
             <li>
-              la temperatura registrata sul Veneto negli ultimi decenni (linea
+              la temperatura registrata in Veneto negli ultimi decenni (linea
               nera);
             </li>
             <li>

@@ -84,7 +84,7 @@
   "app.map.search.lat": "Lat",
   "app.map.search.lng": "Long",
   "app.footer": "",
-  "app.tools.disabledOnMobile": "La funzionalità non è disponibile su dispositivi mobile.",
+  "app.tools.disabledOnMobile": "Funzionalità disponibile solo in modalità desktop",
   "wrong_config.title": "Configurazione non valida",
   "wrong_config.message": "Dataset non presente nel sistema. Verrà impostata la configurazione disponibile più rispondente a quella richiesta.",
   "wrong_index.title": "Indicatore non valido",
