@@ -1,3 +1,5 @@
+import { Height } from '@mui/icons-material';
+
 export const TitleDownloadStyle = theme => ({
   color: 'success.dark',
   fontWeight: 'bold',
@@ -187,8 +189,9 @@ export const ExtractionStyle = theme => ({
   position: 'absolute',
   left: '20%',
   right: '20%',
-  width: '50%',
-  top: 'calc(100% - 260px)',
+  width: 'fit-content',
+  height: 'fit-content',
+  top: 'calc(100% - 460px)',
   minWidth: '600px',
   maxWidth: '1700px',
 });
