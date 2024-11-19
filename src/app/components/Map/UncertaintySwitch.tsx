@@ -38,9 +38,9 @@ export const UncertaintySwitch = props => {
                     title={
                         currentUncertainty
                             ? enabled
-                                ? 'Attuale: Con incertezza. Passa a: Senza incertezza'
+                                ? 'Aree incertezza: ON'
                                 : 'Con incertezza'
-                            : 'Attuale: Senza incertezza. Passa a: Con incertezza'
+                            : 'Aree incertezza: OFF'
                     }
                 >
                     <LensBlur></LensBlur>

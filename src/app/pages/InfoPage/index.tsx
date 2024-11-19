@@ -93,14 +93,14 @@ Le informazioni presentate nella Piattaforma sono di utilità per decisori polit
 cittadini, al fine di supportare la pianificazione del territorio, le misure di adattamento ai cambiamenti
 climatici e, più in generale, aumentare la conoscenza e la consapevolezza sui cambiamenti climatici in
 corso.</p>
-<p>Per informazioni sull'utilizzo  di CliNE è possibile consultare il Manuale d'uso.</p>
+<p>Per informazioni sull'utilizzo  di CliNE è possibile consultare il <a href="https://github.com/venetoarpa/Arpav-PPCV-backend/wiki/Manuale-utente" target="_blank">Manuale d'uso.</a></p>
 
 <h1>
  Gli elementi della piattaforma
 </h1>
 
 <h3>1. Barometro del clima</h3>
-<p>Il barometro del clima, analogamente al barometro che misura la pressione atmosferica usato per descrivere 
+<p>Il <a href="https://clima.arpav.veneto.it" target="_blank">barometro del clima</a>, analogamente al barometro che misura la pressione atmosferica usato per descrivere 
 e prevedere l'evoluzione meteorologica, vuole essere uno strumento semplice e diretto per descrivere e prevedere 
 il clima che cambia.</p>
 <p>In questo contesto, la temperatura media annua misurata dalle stazioni meteorologiche regionali racconta 
@@ -218,7 +218,7 @@ cambiando e della possibile evoluzione nel futuro.</p>
                 </td>
                 <td>
                     <p>
-                        Somma delle differenze tra la temperatura dell’ambiente (20°C) e la
+                        Somma delle differenze tra la temperatura dell'ambiente (20°C) e la
 temperatura media giornaliera esterna nell'anno solare (1 gennaio - 31
 dicembre); vengono conteggiate solo le differenze superiori allo zero
                     </p>
