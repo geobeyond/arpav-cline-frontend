@@ -890,17 +890,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           },
         },
         saveAsImage: {
-          name: `Serie temporale ${findValueName(
-            'variable',
-            'variables',
-          )} - ${joinNames([
-            findValueName('forecast_model', 'forecast_models'),
-            // findValueName('scenario', 'scenarios'),
-          ])} - ${joinNames([
-            findValueName('data_series', 'data_series'),
-            findValueName('value_type', 'value_types'),
-            findValueName('time_window', 'time_windows'),
-          ])} - ${findValueName('year_period', 'year_periods')}`,
+          name: `Serie temporale ${joinNames([
+            currentMap.climatological_variable,
+            currentMap.climatological_model,
+            currentMap.scenario,
+            currentMap.measure,
+            currentMap.time_window,
+            currentMap.year_window,
+            currentMap.aggregation_period,
+          ])}`,
           title: t('app.map.timeSeriesDialog.saveAsImage'),
           icon: photoCameraIconPath,
           iconStyle: {
