@@ -82,11 +82,17 @@ export class RequestApi extends Http {
             })
             .filter(x => x);
           const dconf: any = {
-            ...{ time_period: null },
+            ...{ time_window: null },
             ...Object.fromEntries(flabel),
           };
           const labelout =
-            `${dconf.climatological_variable} - ${dconf.archive} - ${dconf.climatological_model} - ${dconf.scenario} - ${dconf.aggregation_period} - ${dconf.measure} - ` +
+            `${
+              dconf.climatological_variable
+                ? dconf.climatological_variable
+                : dconf.historical_variable
+            } - ${dconf.archive} - ${dconf.climatological_model} - ${
+              dconf.scenario
+            } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
             (dconf.time_period ? `${dconf.time_period} - ` : '') +
             `${dconf.year_period}`;
           return { url, rawLabel: label, label: labelout };
