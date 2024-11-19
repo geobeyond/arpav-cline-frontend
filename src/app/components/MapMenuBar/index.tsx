@@ -546,12 +546,14 @@ export function MapMenuBar(props: MapMenuBar) {
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
                 <Tooltip title={t('app.tools.disabledOnMobile')}>
-                  <IconButton
-                    disabled={true}
-                    aria-label={t('app.map.menuBar.downloadMap')}
-                  >
-                    <FileDownloadIcon />
-                  </IconButton>
+                  <span>
+                    <IconButton
+                      disabled={true}
+                      aria-label={t('app.map.menuBar.downloadMap')}
+                    >
+                      <FileDownloadIcon />
+                    </IconButton>
+                  </span>
                 </Tooltip>
               ) : (
                 /*</Grid><IconButton
