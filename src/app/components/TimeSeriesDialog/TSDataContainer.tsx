@@ -888,6 +888,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               uv,
             );
           },
+          ontouchstart: () => {
+            console.log('touch start');
+          },
+          ontouchend: () => {
+            console.log('touch end');
+          },
         },
         saveAsImage: {
           name: `Serie temporale ${joinNames([

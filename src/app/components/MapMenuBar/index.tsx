@@ -103,7 +103,7 @@ export function MapMenuBar(props: MapMenuBar) {
   //  timeserie,
   //  // @ts-ignore
   //} = useSelector(state => state?.map as MapState);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
   const localCM = useRef<any>(current_map);
@@ -426,6 +426,25 @@ export function MapMenuBar(props: MapMenuBar) {
     }
   }, [foundLayers]);
 
+  const labelFor = (itm: string) => {
+    const configs = localStorage.getItem('configs');
+    const rcps = configs ? JSON.parse(configs) : {};
+    const labelsf = rcps.map((config: any) =>
+      config.allowed_values.map(x => [
+        x.name,
+        i18n.language === 'it'
+          ? x.display_name_italian
+          : x.display_name_english,
+      ]),
+    );
+    const labels = Object.fromEntries(labelsf.flat());
+    return labels[itm];
+  };
+
+  const selectedValueToString = () => {
+    return '';
+  };
+
   return (
     <FormControl sx={MenuFormControlStyle}>
       <Toolbar disableGutters sx={MapMenuBarStyle}>
@@ -641,7 +660,7 @@ export function MapMenuBar(props: MapMenuBar) {
       </Toolbar>
       {isMobile && (
         <Toolbar sx={MenuSelectionMobileStyle}>
-          <Typography variant={'caption'}></Typography>
+          <Typography variant={'caption'}>{selectedValueToString()}</Typography>
         </Toolbar>
       )}
     </FormControl>

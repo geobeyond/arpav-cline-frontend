@@ -167,7 +167,9 @@ export class RequestApi extends Http {
           season,
         ),
       ]).then(x => {
-        x[0].items[0]['ensemble_data'] = x[1].items[0];
+        if (x[0].items.length > 0) {
+          x[0].items[0]['ensemble_data'] = x[1].items[0];
+        }
         return x[0];
       });
     } else {
