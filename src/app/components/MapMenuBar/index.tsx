@@ -574,7 +574,10 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
-                <Tooltip title={t('app.map.menuBar.downloadData')}>
+                <Tooltip
+                  title={t('app.map.menuBar.downloadData')}
+                  enterTouchDelay={0}
+                >
                   <IconButton
                     onClick={() => setDownloadDataOpen(true)}
                     aria-label={t('app.map.menuBar.downloadMap')}

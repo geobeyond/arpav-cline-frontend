@@ -65,7 +65,7 @@ export interface MultiRadioSelectProps {
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
-  const handleChange = props.onChange ? props.onChange : () => {};
+  const handleChange = props.onChange ? props.onChange : () => { };
   const value = props.value ? props.value : [];
   const valueSet = props.valueSet;
   const sx = props.sx;
@@ -192,11 +192,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                       return (
                         <MenuItem key={item.id} disableGutters>
                           <FormControlLabel
-                            className={`MultiRadioSelectMenuItem ${
-                              isSelected
+                            className={`MultiRadioSelectMenuItem ${isSelected
                                 ? 'MultiRadioSelectMenuItem-selected'
                                 : ''
-                            }`}
+                              }`}
                             //See Sorting fields note.
                             value={itemValue}
                             control={<Radio />}
@@ -209,7 +208,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                     {item.description}
                                   </Typography>
                                 ) : (
-                                  <Tooltip title={item.description}>
+                                  <Tooltip
+                                    title={item.description}
+                                    enterTouchDelay={0}
+                                  >
                                     <InfoIcon fontSize={'small'} />
                                   </Tooltip>
                                 )}

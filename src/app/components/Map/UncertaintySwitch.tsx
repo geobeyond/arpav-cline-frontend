@@ -42,6 +42,7 @@ export const UncertaintySwitch = props => {
                                 : 'Con incertezza'
                             : 'Aree incertezza: OFF'
                     }
+                    enterTouchDelay={0}
                 >
                     <LensBlur></LensBlur>
                 </Tooltip>

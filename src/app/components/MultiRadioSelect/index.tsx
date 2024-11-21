@@ -279,6 +279,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                 ) : (
                                   <Tooltip
                                     title={translate(item, 'description')}
+                                    enterTouchDelay={0}
                                   >
                                     <InfoIcon fontSize={'small'} />
                                   </Tooltip>

@@ -390,6 +390,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
               ? t('app.map.timeSeries.unavailable')
               : t('app.map.timeSeries.available')
           }
+          enterTouchDelay={0}
         >
           <span>
             <IconButton
