@@ -94,7 +94,8 @@ export class RequestApi extends Http {
               dconf.scenario
             } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
             (dconf.time_period ? `${dconf.time_period} - ` : '') +
-            `${dconf.year_period}`;
+            `${dconf.year_period}` +
+            (dconf.uncertainty_type ? ` - ${dconf.uncertainty_type}` : '');
           return { url, rawLabel: label, label: labelout };
         };
         return found.coverage_download_links.map(mapCoverageLinks);
