@@ -442,7 +442,17 @@ export function MapMenuBar(props: MapMenuBar) {
   };
 
   const selectedValueToString = () => {
-    return '';
+    const caption = `${labelFor(localCM.current.climatological_variable)}
+    - ${labelFor(localCM.current.climatological_model)}
+    - ${labelFor(localCM.current.scenario)}
+    - ${labelFor(localCM.current.aggregation_period)}
+    - ${labelFor(localCM.current.measure)}
+    ${localCM.current.time_window
+        ? ' - ' + labelFor(localCM.current.time_window)
+        : ''
+      }
+    - ${labelFor(localCM.current.year_period)}`;
+    return caption;
   };
 
   return (
@@ -564,15 +574,13 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
-                <Tooltip title={t('app.tools.disabledOnMobile')}>
-                  <span>
-                    <IconButton
-                      disabled={true}
-                      aria-label={t('app.map.menuBar.downloadMap')}
-                    >
-                      <FileDownloadIcon />
-                    </IconButton>
-                  </span>
+                <Tooltip title={t('app.map.menuBar.downloadData')}>
+                  <IconButton
+                    onClick={() => setDownloadDataOpen(true)}
+                    aria-label={t('app.map.menuBar.downloadMap')}
+                  >
+                    <FileDownloadIcon />
+                  </IconButton>
                 </Tooltip>
               ) : (
                 /*</Grid><IconButton
