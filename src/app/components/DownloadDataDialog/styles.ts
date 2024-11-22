@@ -120,7 +120,6 @@ export const MapColStyle = theme => ({
   flexWrap: 'nowrap',
   marginTop: 4,
   gap: '16px',
-  width: '40%',
 });
 
 export const RowStyle = theme => ({
