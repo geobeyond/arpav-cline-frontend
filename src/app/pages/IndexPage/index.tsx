@@ -75,7 +75,7 @@ const IndexPage = () => {
       <Container></Container>
       <Container color="muted" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }}>
-          <Col sm={12} md={6}>
+          <Col lg={12} xl={6}>
             <Hero overlay="dark">
               <HeroBackground
                 alt="Giuseppe Ghedina Basilio (1937)"
@@ -83,7 +83,9 @@ const IndexPage = () => {
                 title="Giuseppe Ghedina Basilio (1937)"
               />
               <HeroBody>
-                <HeroTitle>{t('app.index.sections.hist')}</HeroTitle>
+                <HeroTitle style={{ paddingRight: '20px' }}>
+                  {t('app.index.sections.hist')}
+                </HeroTitle>
                 <p className="d-none d-lg-block"></p>
                 <HeroButton
                   disabled={true}
@@ -112,7 +114,7 @@ const IndexPage = () => {
               </Box>
             </Container>
           </Col>
-          <Col sm={12} md={6}>
+          <Col lg={12} xl={6}>
             <Hero overlay="dark">
               <HeroBackground
                 alt="imagealt"
