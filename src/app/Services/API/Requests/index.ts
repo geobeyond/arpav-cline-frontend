@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { Http } from '../Http';
+import { P } from 'app/pages/NotFoundPage/P';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -37,69 +38,70 @@ export class RequestApi extends Http {
    */
   getForecastData(configuration: any, dataSet?: any, language: string = 'it') {
     let configs = [];
-    const cstr = localStorage.getItem('configs');
-    if (cstr) {
-      configs = JSON.parse(cstr);
-    }
-    const labelsf = configs.map((config: any) =>
-      config.allowed_values.map(x => [
-        x.name,
-        [
-          config.name,
-          language === 'it' ? x.display_name_italian : x.display_name_english,
-        ],
-      ]),
-    );
-    const labels = Object.fromEntries(labelsf.flat());
-    const innerConf = { ...configuration };
-    delete innerConf.archive;
-    if (innerConf.aggregation_period === 'annual') {
-      delete innerConf.time_window;
-    }
-    return this.instance
-      .get<any>('https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?', {
-        params: { offset: 0, limit: 100, ...innerConf },
-        paramsSerializer: { indexes: null },
-      })
-      .then((found: any) => {
-        /**
-         * Maps the array of coverage download links to an array of objects containing the URL and label of the coverage.
-         * @param {string} x The coverage download link.
-         * @returns {object} An object containing the URL and label of the coverage.
-         */
-        const mapCoverageLinks = (x: string) => {
-          const url =
-            x +
-            (dataSet
-              ? `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31`
-              : '');
-          const label = x.split('/')[x.split('/').length - 1];
-          const tlabel = label.split('-');
-          const flabel = tlabel
-            .map(x => {
-              if (Object.keys(labels).indexOf(x) >= 0) return labels[x];
-              else return null;
-            })
-            .filter(x => x);
-          const dconf: any = {
-            ...{ time_window: null },
-            ...Object.fromEntries(flabel),
+    return this.getConfigurationParams().then(configs => {
+      const labelsf = configs.map((config: any) =>
+        config.allowed_values.map(x => [
+          x.name,
+          [
+            config.name,
+            language === 'it' ? x.display_name_italian : x.display_name_english,
+          ],
+        ]),
+      );
+      const labels = Object.fromEntries(labelsf.flat());
+      const innerConf = { ...configuration };
+      delete innerConf.archive;
+      if (innerConf.aggregation_period === 'annual') {
+        delete innerConf.time_window;
+      }
+      return this.instance
+        .get<any>(
+          'https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?',
+          {
+            params: { offset: 0, limit: 100, ...innerConf },
+            paramsSerializer: { indexes: null },
+          },
+        )
+        .then((found: any) => {
+          /**
+           * Maps the array of coverage download links to an array of objects containing the URL and label of the coverage.
+           * @param {string} x The coverage download link.
+           * @returns {object} An object containing the URL and label of the coverage.
+           */
+          const mapCoverageLinks = (x: string) => {
+            const url =
+              x +
+              (dataSet
+                ? `?coords=POLYGON ((${dataSet.east} ${dataSet.south}, ${dataSet.west} ${dataSet.south}, ${dataSet.west} ${dataSet.north}, ${dataSet.east} ${dataSet.north}, ${dataSet.east} ${dataSet.south}))&datetime=${dataSet.time_start}-01-01/${dataSet.time_end}-12-31`
+                : '');
+            const label = x.split('/')[x.split('/').length - 1];
+            const tlabel = label.split('-');
+            const flabel = tlabel
+              .map(x => {
+                if (Object.keys(labels).indexOf(x) >= 0) return labels[x];
+                else return null;
+              })
+              .filter(x => x);
+            const dconf: any = {
+              ...{ time_window: null },
+              ...Object.fromEntries(flabel),
+            };
+            const labelout =
+              `${
+                dconf.climatological_variable
+                  ? dconf.climatological_variable
+                  : dconf.historical_variable
+              } - ${dconf.archive} - ${dconf.climatological_model} - ${
+                dconf.scenario
+              } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
+              (dconf.time_period ? `${dconf.time_period} - ` : '') +
+              `${dconf.year_period}` +
+              (dconf.uncertainty_type ? ` - ${dconf.uncertainty_type}` : '');
+            return { url, rawLabel: label, label: labelout };
           };
-          const labelout =
-            `${
-              dconf.climatological_variable
-                ? dconf.climatological_variable
-                : dconf.historical_variable
-            } - ${dconf.archive} - ${dconf.climatological_model} - ${
-              dconf.scenario
-            } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
-            (dconf.time_period ? `${dconf.time_period} - ` : '') +
-            `${dconf.year_period}` +
-            (dconf.uncertainty_type ? ` - ${dconf.uncertainty_type}` : '');
-          return { url, rawLabel: label, label: labelout };
-        };
-        return found.coverage_download_links.map(mapCoverageLinks);
-      });
+          return found.coverage_download_links.map(mapCoverageLinks);
+        });
+    });
   }
 
   protected static classInstance?: RequestApi;
@@ -533,7 +535,28 @@ export class RequestApi extends Http {
   //   return this.instance.get<any>(`/maps/ncss/netcdf/?${(new URLSearchParams(params)).toString()}`, {responseType: 'blob'});
   // }
 
-  public getAttributes = (mode: string = 'forecast') => {
+  public getConfigurationParams = (force: boolean = false) => {
+    const c = localStorage.getItem('configs');
+    if (c) {
+      return Promise.resolve(JSON.parse(c));
+    }
+    return this.instance
+      .get<any>(
+        'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+      )
+      .then((d: any) => {
+        return d.items;
+      })
+      .then((d: any) => {
+        localStorage.setItem('configs', JSON.stringify(d));
+        return d;
+      });
+  };
+
+  public getAttributes = (
+    mode: string = 'forecast',
+    force: boolean = false,
+  ) => {
     let reqs: any[] = [];
 
     const ret = this.instance
@@ -558,6 +581,7 @@ export class RequestApi extends Http {
 
     const p = Promise.all(reqs).then(x => {
       localStorage.setItem('configs', JSON.stringify(x[0]));
+      localStorage.setItem('combs::' + mode, JSON.stringify(x[1]));
       return {
         items: x[0],
         combinations: x[1].combinations,

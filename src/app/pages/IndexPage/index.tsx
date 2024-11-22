@@ -75,7 +75,7 @@ const IndexPage = () => {
       <Container></Container>
       <Container color="muted" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }}>
-          <Col sm={6}>
+          <Col sm={12} md={6}>
             <Hero overlay="dark">
               <HeroBackground
                 alt="Giuseppe Ghedina Basilio (1937)"
@@ -112,7 +112,7 @@ const IndexPage = () => {
               </Box>
             </Container>
           </Col>
-          <Col sm={6}>
+          <Col sm={12} md={6}>
             <Hero overlay="dark">
               <HeroBackground
                 alt="imagealt"

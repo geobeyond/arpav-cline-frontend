@@ -52,6 +52,7 @@ import {
   LinkList,
   LinkListItem,
 } from 'design-react-kit';
+import { RequestApi } from 'app/Services';
 
 export interface MapMenuBar {
   onDownloadMapImg?: Function;
@@ -112,6 +113,8 @@ export function MapMenuBar(props: MapMenuBar) {
   const changingValue = useRef<string>('tas');
   const prevValue = useRef<string | null>('tas');
   const showModal = useRef<boolean>(true);
+
+  const api = RequestApi.getInstance();
 
   const mapParameters = (mapKey, parameterListKey) => {
     if (forecast_parameters) {
@@ -426,10 +429,9 @@ export function MapMenuBar(props: MapMenuBar) {
     }
   }, [foundLayers]);
 
-  const labelFor = (itm: string) => {
-    const configs = localStorage.getItem('configs');
-    const rcps = configs ? JSON.parse(configs) : {};
-    const labelsf = rcps.map((config: any) =>
+  const labelFor = async (itm: string) => {
+    const configs = await api.getConfigurationParams();
+    const labelsf = configs.map((config: any) =>
       config.allowed_values.map(x => [
         x.name,
         i18n.language === 'it'
