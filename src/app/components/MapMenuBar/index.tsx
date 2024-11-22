@@ -429,8 +429,13 @@ export function MapMenuBar(props: MapMenuBar) {
     }
   }, [foundLayers]);
 
-  const labelFor = async (itm: string) => {
-    const configs = await api.getConfigurationParams();
+  const labelFor = (itm: string) => {
+    api.getConfigurationParams().then(x => console.log(x));
+    const confs = localStorage.getItem('configs');
+    let configs = [];
+    if (confs) {
+      configs = JSON.parse(confs);
+    }
     const labelsf = configs.map((config: any) =>
       config.allowed_values.map(x => [
         x.name,
