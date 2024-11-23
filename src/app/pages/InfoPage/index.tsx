@@ -100,7 +100,7 @@ corso.</p>
 </h1>
 
 <h3>1. Barometro del clima</h3>
-<p>Il <a href="https://clima.arpav.veneto.it" target="_blank">barometro del clima</a>, analogamente al barometro che misura la pressione atmosferica usato per descrivere 
+<p>Il <a href="https://clima.arpa.veneto.it" target="_blank">barometro del clima</a>, analogamente al barometro che misura la pressione atmosferica usato per descrivere 
 e prevedere l'evoluzione meteorologica, vuole essere uno strumento semplice e diretto per descrivere e prevedere 
 il clima che cambia.</p>
 <p>In questo contesto, la temperatura media annua misurata dalle stazioni meteorologiche regionali racconta 
