@@ -56,7 +56,9 @@ export class RequestApi extends Http {
       }
       return this.instance
         .get<any>(
-          'https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?',
+          //'https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?',
+          process.env.REACT_APP_BACKEND_PUBLIC_URL +
+            '/api/v2/coverages/forecast-data?',
           {
             params: { offset: 0, limit: 100, ...innerConf },
             paramsSerializer: { indexes: null },
@@ -119,7 +121,9 @@ export class RequestApi extends Http {
     } else {
       this.instance
         .get<any>(
-          'https://arpav.geobeyond.dev/api/v2/municipalities/municipality-centroids',
+          //'https://arpav.geobeyond.dev/api/v2/municipalities/municipality-centroids',
+          process.env.REACT_APP_BACKEND_PUBLIC_URL +
+            '/api/v2/municipalities/municipality-centroids',
         )
         .then((x: any) => x.features)
         .then(x => {
@@ -287,7 +291,9 @@ export class RequestApi extends Http {
     }
 
     const fullUrl =
-      'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+      //'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+      process.env.REACT_APP_BACKEND_PUBLIC_URL +
+      '/api/v2/coverages/coverage-identifiers?' +
       filter;
 
     console.log(fullUrl);
@@ -309,7 +315,9 @@ export class RequestApi extends Http {
     // Make the request to the API.
     return this.instance
       .get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+        //'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
+        process.env.REACT_APP_BACKEND_PUBLIC_URL +
+          '/api/v2/coverages/coverage-identifiers?' +
           filter,
       )
       .then((x: any) => {
@@ -461,11 +469,14 @@ export class RequestApi extends Http {
     smoothing: boolean = true,
     uncertainty: boolean = true,
   ) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
-      4,
-    )} ${lat.toFixed(
-      4,
-    )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING`;
+    //let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    let url =
+      process.env.REACT_APP_BACKEND_PUBLIC_URL +
+      `/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+        4,
+      )} ${lat.toFixed(
+        4,
+      )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING`;
     if (smoothing) {
       url +=
         '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
@@ -500,24 +511,32 @@ export class RequestApi extends Http {
     lng: number,
     year: number,
   ) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
-      4,
-    )} ${lat.toFixed(4)})&datetime=${year + 1}%2F${
-      year - 1
-    }&include_coverage_data=true&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_related_data=true`;
+    //let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    let url =
+      process.env.REACT_APP_BACKEND_PUBLIC_URL +
+      `/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+        4,
+      )} ${lat.toFixed(4)})&datetime=${year + 1}%2F${
+        year - 1
+      }&include_coverage_data=true&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&include_coverage_related_data=true`;
 
     return this.instance.get<any>(url);
   };
 
   public getBarometroClimatico = () => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/climate-barometer?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
+    //let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/climate-barometer?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
+    let url =
+      process.env.REACT_APP_BACKEND_PUBLIC_URL +
+      `/api/v2/coverages/time-series/climate-barometer?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
     console.log(url);
     return this.instance.get<any>(url);
   };
 
   public findMunicipality = (lat, lng) => {
     return this.instance.get<any>(
-      `https://arpav.geobeyond.dev/api/v2/municipalities/municipalities?coords=POINT(${lng} ${lat})`,
+      //`https://arpav.geobeyond.dev/api/v2/municipalities/municipalities?coords=POINT(${lng} ${lat})`,
+      process.env.REACT_APP_BACKEND_PUBLIC_URL +
+        `/api/v2/municipalities/municipalities?coords=POINT(${lng} ${lat})`,
     );
   };
 
@@ -542,7 +561,9 @@ export class RequestApi extends Http {
     }
     return this.instance
       .get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+        //'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+        process.env.REACT_APP_BACKEND_PUBLIC_URL +
+          '/api/v2/coverages/configuration-parameters?offset=0&limit=100',
       )
       .then((d: any) => {
         return d.items;
@@ -561,7 +582,9 @@ export class RequestApi extends Http {
 
     const ret = this.instance
       .get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+        //'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+        process.env.REACT_APP_BACKEND_PUBLIC_URL +
+          '/api/v2/coverages/configuration-parameters?offset=0&limit=100',
       )
       .then((d: any) => {
         return d.items;
@@ -569,12 +592,16 @@ export class RequestApi extends Http {
     reqs.push(ret);
     if (mode === 'forecast') {
       const cret = this.instance.get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/forecast-variable-combinations',
+        //'https://arpav.geobeyond.dev/api/v2/coverages/forecast-variable-combinations',
+        process.env.REACT_APP_BACKEND_PUBLIC_URL +
+          '/api/v2/coverages/forecast-variable-combinations',
       );
       reqs.push(cret);
     } else {
       const cret = this.instance.get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/historical-variable-combinations',
+        //'https://arpav.geobeyond.dev/api/v2/coverages/historical-variable-combinations',
+        process.env.REACT_APP_BACKEND_PUBLIC_URL +
+          '/api/v2/coverages/historical-variable-combinations',
       );
       reqs.push(cret);
     }
