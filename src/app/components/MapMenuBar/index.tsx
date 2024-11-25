@@ -454,7 +454,8 @@ export function MapMenuBar(props: MapMenuBar) {
     - ${labelFor(localCM.current.scenario)}
     - ${labelFor(localCM.current.aggregation_period)}
     - ${labelFor(localCM.current.measure)}
-    ${localCM.current.time_window
+    ${localCM.current.time_window &&
+        localCM.current.aggregation_period === '30yr'
         ? ' - ' + labelFor(localCM.current.time_window)
         : ''
       }
