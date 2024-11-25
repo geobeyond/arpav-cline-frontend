@@ -115,7 +115,9 @@ const Map = (props: MapProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
   const { i18n } = useTranslation();
 
-  const timeDimensionOptions = {};
+  const timeDimensionOptions = {
+    times: '1976-01-01T00:00:00Z/2100-01-01T23:59:59Z/P1Y',
+  };
 
   const [click, setClick] = React.useState();
 

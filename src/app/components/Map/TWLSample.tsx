@@ -83,8 +83,8 @@ export const TWLSample = (props: any) => {
         if (selected_map_path && isTimeseries) {
           // @ts-ignore
           const tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
-            requestTimeFromCapabilities: true,
-            updateTimeDimension: true,
+            //requestTimeFromCapabilities: true,
+            //updateTimeDimension: true,
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,
@@ -120,8 +120,8 @@ export const TWLSample = (props: any) => {
           );
           //@ts-ignore
           const tdWmsLayer_tmp = L.timeDimension.layer.wms(wmsLayer_tmp, {
-            requestTimeFromCapabilities: true,
-            updateTimeDimension: true,
+            //requestTimeFromCapabilities: true,
+            //updateTimeDimension: true,
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,
@@ -149,8 +149,8 @@ export const TWLSample = (props: any) => {
           }
           // @ts-ignore
           const tdWmsLayer2 = L.timeDimension.layer.wms(wmsLayer, {
-            requestTimeFromCapabilities: true,
-            updateTimeDimension: true,
+            //requestTimeFromCapabilities: true,
+            //updateTimeDimension: true,
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,

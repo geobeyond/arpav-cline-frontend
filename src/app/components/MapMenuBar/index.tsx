@@ -11,6 +11,7 @@ import {
   Typography,
   useMediaQuery,
   Tooltip,
+  CircularProgress,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
@@ -66,6 +67,8 @@ export interface MapMenuBar {
   setCurrentMap: Function;
   openError: Function;
   showLoader?: Function;
+
+  inProgress?: boolean;
 }
 
 const MAP_MODES = {
@@ -87,6 +90,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const combinations = props.combinations || {};
   const openError = props.openError;
   const showLoader = props.showLoader;
+  const inProgress = props.inProgress || false;
 
   const activeCombinations = useRef(
     Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
@@ -624,17 +628,27 @@ export function MapMenuBar(props: MapMenuBar) {
               {isMobile ? (
                 <IconButton
                   onClick={() => onDownloadMapImg()}
-                  disabled={foundLayers === 0}
+                  disabled={foundLayers === 0 || inProgress}
                   aria-label={t('app.map.menuBar.downloadMap')}
                 >
-                  <PhotoCameraIcon />
+                  {inProgress ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <PhotoCameraIcon />
+                  )}
                 </IconButton>
               ) : (
                 <Button
-                  startIcon={<PhotoCameraIcon />}
+                  startIcon={
+                    inProgress ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <PhotoCameraIcon />
+                    )
+                  }
                   onClick={() => onDownloadMapImg()}
                   aria-label={t('app.map.menuBar.downloadMap')}
-                  disabled={foundLayers === 0}
+                  disabled={foundLayers === 0 || inProgress}
                 >
                   {t('app.map.menuBar.downloadMap')}
                 </Button>

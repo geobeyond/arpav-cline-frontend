@@ -468,6 +468,7 @@ export function MapPage(props: MapPageProps) {
         foundLayers={foundLayers}
         setCurrentMap={setCurrentMap}
         openError={openError}
+        inProgress={inProgress}
       />
 
       <Map

@@ -304,7 +304,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   } = props;
   const { cities, selected_map } = useSelector((state: any) => state.map);
 
-  const timeserie = currentTimeserie.values;
+  const timeserie = useRef<any[]>(currentTimeserie.values);
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
@@ -337,15 +337,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     if (oyr !== yr) {
       oyr = yr;
 
-      if (timeserie) {
-        if (timeserie.length > 0) {
-          if (timeserie.length > 1) {
+      if (timeserie.current) {
+        if (timeserie.current.length > 0) {
+          if (timeserie.current.length > 1) {
             tsindex = yr - baseYear;
           } else {
             tsindex = 0;
           }
-          att = timeserie[tsindex]?.datetime;
-          atv = timeserie[tsindex]?.value;
+          att = timeserie.current[tsindex]?.datetime;
+          atv = timeserie.current[tsindex]?.value;
         }
       }
 
@@ -362,8 +362,8 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       otsindex = tsindex;
       tsindex = dt - baseYear;
       if (otsindex != tsindex) {
-        let ctt = timeserie[Math.max(tsindex, timeserie.length)]?.datetime;
-        let ctv = timeserie[Math.max(tsindex, timeserie.length)]?.value;
+        let ctt = timeserie.current[tsindex]?.datetime;
+        let ctv = timeserie.current[tsindex]?.value;
 
         setTt(ctt);
         setTv(ctv);
@@ -373,7 +373,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie && (
+      {timeserie.current && (
         <CompactValueRenderer
           time={tt}
           value={tv}
@@ -386,7 +386,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         <span style={{ flex: '1 1 1px' }}></span>
         <Tooltip
           title={
-            timeserie?.length === 1
+            timeserie.current?.length === 1
               ? t('app.map.timeSeries.unavailable')
               : t('app.map.timeSeries.available')
           }
@@ -396,7 +396,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
             <IconButton
               onClick={() => openCharts(value)}
               aria-label={'Mostra serie temporale'}
-              disabled={timeserie?.length === 1}
+              disabled={timeserie.current?.length === 1}
             >
               <LineAxisIcon />
             </IconButton>
