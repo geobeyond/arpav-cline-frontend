@@ -403,7 +403,13 @@ export function MapPage(props: MapPageProps) {
         : ''
       }
   - ${labelFor(currentMap.year_period)}
-  ${year ? ` - Anno ${year}` : ''}.png`;
+  
+  ${year ? ` - Anno ${year}` : ''}.${
+      //@ts-ignore
+      navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
+        ? 'jpg'
+        : 'png'
+      }`;
     mapScreen
       .takeScreen(format, {
         captionFontSize: isMobile ? 10 : 12,
