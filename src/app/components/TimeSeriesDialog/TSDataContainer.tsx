@@ -902,7 +902,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             currentMap.scenario,
             currentMap.measure,
             currentMap.aggregation_period,
-            currentMap.year_window,
+            currentMap.year_period,
           ])}`,
           title: t('app.map.timeSeriesDialog.saveAsImage'),
           icon: photoCameraIconPath,

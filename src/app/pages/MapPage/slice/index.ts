@@ -126,132 +126,30 @@ const slice = createSlice({
   initialState,
   reducers: {
     someAction(state, action: PayloadAction<any>) {},
-    loadParameters(state) {
-      state.loading = true;
-      state.error = null;
-      // state.forecast_parameters = {};
-    },
+    loadParameters(state) {},
     loadLayers(state) {
-      state.loading = true;
-      state.error = null;
       // state.forecast_parameters = {};
     },
-    loadCities(state) {
-      state.loading = true;
-      state.error = null;
-      // state.forecast_parameters = {};
-    },
-    citiesLoaded(state, action: PayloadAction<any>) {
-      state.loading = false;
-      state.error = null;
-      state.cities = action.payload.map(x => ({ ...x, label: x.name }));
-    },
+    loadCities(state) {},
+    citiesLoaded(state, action: PayloadAction<any>) {},
     parametersLoaded: function (
       state,
       action: PayloadAction<iBaseParameterItem[][]>,
-    ) {
-      const [
-        variables,
-        forecast_models,
-        scenarios,
-        data_series,
-        year_periods,
-        time_windows,
-        value_types,
-      ] = action.payload;
-      state.forecast_parameters = {
-        variables,
-        forecast_models,
-        scenarios,
-        data_series,
-        year_periods,
-        time_windows,
-        value_types,
-      };
-      state.loading = false;
-    },
-    layerLoaded: function (state, action: PayloadAction<iLayerItem[]>) {
-      state.layers = action.payload;
-      state.loading = false;
-      state.selectactable_parameters = setSelectable(state)[0];
-    },
-    genericError(state, action: PayloadAction<GenericErrorType>) {
-      state.error = action.payload.error;
-      state.loading = false;
-    },
-    setMap(state, action: PayloadAction<Filters>) {
-      const filterDict = Object.fromEntries(
-        Object.entries(action.payload).filter(([key]) =>
-          full_find_keys.includes(key),
-        ),
-      );
-      const filtered = findItemByFilters(
-        JSON.parse(JSON.stringify(state.layers)),
-        filterDict,
-      );
-      if (filtered.length > 0) {
-        state.selected_map = filtered[0];
-        if (filtered.length === 1)
-          state.selectactable_parameters = setSelectable(state)[0];
-      }
-    },
-    changeSelection(state, action: PayloadAction<ChangeMapSelectionPatyload>) {
-      state.selected_map.id = null;
-      // console.log(action.payload)
-      const { key, value } = action.payload;
-      state.selected_map[action.payload.key] = action.payload.value;
-      if (state.selected_map.data_series === 'yes') {
-        state.selected_map.time_window = null;
-      }
-      const [newselectables, selected_map] = setSelectable(state);
-      state.selectactable_parameters = newselectables;
-      state.selected_map = selected_map;
-      const filterDict = Object.fromEntries(
-        Object.entries(selected_map).filter(([key]) =>
-          full_find_keys.includes(key),
-        ),
-      );
-      const filtered = findItemByFilters(
-        JSON.parse(JSON.stringify(state.layers)),
-        filterDict,
-      );
-      if (filtered.length > 0) {
-        if (filtered.length === 1) {
-          // console.log('found', filtered[0]);
-          console.log('found');
-          state.selected_map = filtered[0];
-        } else {
-          // console.log('More than one layer found', filtered);
-          console.log('More than one layer found');
-          state.selected_map = filterDict;
-          // TODO: warning for selection!
-        }
-      } else {
-        console.log('No layer found');
-        // TODO: warning for selection!
-      }
-      // console.log(newselectables?.time_windows)
-      state.loading = false;
-    },
+    ) {},
+    layerLoaded: function (state, action: PayloadAction<iLayerItem[]>) {},
+    genericError(state, action: PayloadAction<GenericErrorType>) {},
+    setMap(state, action: PayloadAction<Filters>) {},
+    changeSelection(
+      state,
+      action: PayloadAction<ChangeMapSelectionPatyload>,
+    ) {},
     requestTimeserie(
       state,
       action: PayloadAction<{ id: number; lat?: number; lng?: number }>,
-    ) {
-      // console.log({action})
-      state.error = false;
-      state.loading = false;
-    },
-    setTimeserie(state, action: PayloadAction<any>) {
-      // console.log('setTimeserie', action.payload)
-      state.timeserie = action.payload;
-    },
-    setOpacity(state, action: PayloadAction<number>) {
-      // console.log('setTimeserie', action.payload)
-      state.opacity = action.payload;
-    },
-    setCity(state, action: PayloadAction<iCityItem>) {
-      state.city = action.payload;
-    },
+    ) {},
+    setTimeserie(state, action: PayloadAction<any>) {},
+    setOpacity(state, action: PayloadAction<number>) {},
+    setCity(state, action: PayloadAction<iCityItem>) {},
   },
 });
 
