@@ -110,6 +110,43 @@ export const TWLSample = (props: any) => {
             map.addLayer(tdWmsLayer);
             map.removeLayer(tdWmsLayer);
           }
+
+          const wmsLayer_tmp = new TileLayer.WMS(
+            tlUrl.replace('winter', 'summer'),
+            {
+              ...params,
+              ...withPane(options, { __version: 1, map: context.map }),
+            },
+          );
+          //@ts-ignore
+          const tdWmsLayer_tmp = L.timeDimension.layer.wms(wmsLayer_tmp, {
+            requestTimeFromCapabilities: true,
+            updateTimeDimension: true,
+            cache: 0,
+            cacheBackward: 0,
+            cacheForward: 0,
+          });
+          if (tdWmsLayer_tmp) {
+            setLayer(tdWmsLayer_tmp);
+            try {
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-bar-timecontrol',
+              )[0].style.display = 'flex';
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-time-info',
+              )[0].style.display = 'flex';
+              setTimestatus('flex');
+            } catch (e) {
+              // console.log(e)
+            }
+            layer.current = tdWmsLayer_tmp;
+            currentLayer = tdWmsLayer_tmp;
+            setTLayer(tdWmsLayer_tmp);
+            map.addLayer(tdWmsLayer_tmp);
+            map.removeLayer(tdWmsLayer_tmp);
+          }
           // @ts-ignore
           const tdWmsLayer2 = L.timeDimension.layer.wms(wmsLayer, {
             requestTimeFromCapabilities: true,

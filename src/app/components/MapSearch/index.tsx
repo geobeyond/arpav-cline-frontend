@@ -362,8 +362,8 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       otsindex = tsindex;
       tsindex = dt - baseYear;
       if (otsindex != tsindex) {
-        let ctt = timeserie[tsindex]?.datetime;
-        let ctv = timeserie[tsindex]?.value;
+        let ctt = timeserie[Math.max(tsindex, timeserie.length)]?.datetime;
+        let ctv = timeserie[Math.max(tsindex, timeserie.length)]?.value;
 
         setTt(ctt);
         setTv(ctv);
