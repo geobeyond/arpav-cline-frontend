@@ -304,13 +304,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   } = props;
   const { cities, selected_map } = useSelector((state: any) => state.map);
 
-  const timeserie = useRef<any[]>(currentTimeserie.values);
+  const [timeserie, setTimeSerie] = useState<any[]>([]);
   const map = useMap();
   const context = useLeafletContext();
   const { t } = useTranslation();
 
   let [tt, setTt] = useState(2024);
   let [tv, setTv] = useState(0);
+  const [tsIndex, setTsIndex] = useState(0);
+  const [otsIndex, setOTsIndex] = useState(0);
 
   let tsindex = 0;
   const baseYear = 1976;
@@ -320,6 +322,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let otsindex = 0;
 
   useEffect(() => {
+    setTimeSerie([...currentTimeserie.values]);
     let att = yr;
     let atv = 0;
     let yrfield = document.getElementsByClassName('timecontrol-date');
@@ -337,20 +340,16 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     if (oyr !== yr) {
       oyr = yr;
 
-      if (timeserie.current) {
-        if (timeserie.current.length > 0) {
-          if (timeserie.current.length > 1) {
+      if (timeserie) {
+        if (timeserie.length > 0) {
+          if (timeserie.length > 1) {
             tsindex = yr - baseYear;
           } else {
             tsindex = 0;
           }
-          att = timeserie.current[tsindex]?.datetime;
-          atv = timeserie.current[tsindex]?.value;
+          setTsIndex(tsindex);
         }
       }
-
-      setTt(att);
-      setTv(atv);
     }
   });
 
@@ -359,21 +358,23 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     map.timeDimension.on('timeloading', data => {
       let dt = new Date(+data.time).getFullYear();
       console.log(dt);
-      otsindex = tsindex;
-      tsindex = dt - baseYear;
-      if (otsindex != tsindex) {
-        let ctt = timeserie.current[tsindex]?.datetime;
-        let ctv = timeserie.current[tsindex]?.value;
-
-        setTt(ctt);
-        setTv(ctv);
-      }
+      setOTsIndex(tsIndex);
+      const index = dt - baseYear;
+      setTsIndex(index);
     });
   });
 
+  useEffect(() => {
+    let ctt = timeserie[tsIndex]?.datetime;
+    let ctv = timeserie[tsIndex]?.value;
+
+    setTt(ctt);
+    setTv(ctv);
+  }, [tsIndex, timeserie]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie.current && (
+      {timeserie && (
         <CompactValueRenderer
           time={tt}
           value={tv}
@@ -386,7 +387,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         <span style={{ flex: '1 1 1px' }}></span>
         <Tooltip
           title={
-            timeserie.current?.length === 1
+            timeserie?.length === 1
               ? t('app.map.timeSeries.unavailable')
               : t('app.map.timeSeries.available')
           }
@@ -396,7 +397,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
             <IconButton
               onClick={() => openCharts(value)}
               aria-label={'Mostra serie temporale'}
-              disabled={timeserie.current?.length === 1}
+              disabled={timeserie?.length === 1}
             >
               <LineAxisIcon />
             </IconButton>
