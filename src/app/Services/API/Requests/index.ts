@@ -60,6 +60,7 @@ export class RequestApi extends Http {
           {
             params: { offset: 0, limit: 100, ...innerConf },
             paramsSerializer: { indexes: null },
+            timeout: 30000,
           },
         )
         .then((found: any) => {

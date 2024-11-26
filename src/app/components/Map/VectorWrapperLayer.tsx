@@ -36,7 +36,7 @@ export const VectorWrapperLayer = (props: any) => {
         interactive: true,
         pane: 'municipalities',
         vectorTileLayerStyles: {
-          'municipalities': {
+          municipalities: {
             color: '#b6b6b6',
             weight: 1,
             radius: 1,
@@ -81,6 +81,16 @@ export const VectorWrapperLayer = (props: any) => {
       });
     map.addLayer(_vectorLayer);
   }, []);
+
+  useEffect(() => {
+    if (currentTimeSerie?.values?.length === 0) {
+      try {
+        popupRef.current.closePopup();
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
+  }, [currentTimeSerie]);
 
   // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))
   // const [selected, setSelected] = useState<any>(null);

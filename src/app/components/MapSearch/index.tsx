@@ -322,7 +322,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let otsindex = 0;
 
   useEffect(() => {
-    if (currentTimeserie) {
+    if (currentTimeserie && currentTimeserie.values) {
       setTimeSerie([...currentTimeserie.values]);
     }
     let att = yr;
