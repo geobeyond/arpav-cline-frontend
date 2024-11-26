@@ -322,7 +322,9 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let otsindex = 0;
 
   useEffect(() => {
-    setTimeSerie([...currentTimeserie.values]);
+    if (currentTimeserie) {
+      setTimeSerie([...currentTimeserie.values]);
+    }
     let att = yr;
     let atv = 0;
     let yrfield = document.getElementsByClassName('timecontrol-date');
