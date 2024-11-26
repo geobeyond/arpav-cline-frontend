@@ -103,7 +103,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     // @ts-ignore
     const found = Object.values(map._layers).find(
       // @ts-ignore
-      x => x._url && x._url.includes('public.places_cities.geometry'),
+      x => x._url && x._url.includes('municipalities'),
     );
     // @ts-ignore
     if (found && value?.latlng) {
