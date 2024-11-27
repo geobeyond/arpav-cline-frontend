@@ -185,6 +185,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
         aria-label={label}
         aria-hidden={false}
         multiple
+        disabled={disabled}
         value={values}
         renderValue={() =>
           isMobile ? (

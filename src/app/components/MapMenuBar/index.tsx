@@ -532,6 +532,7 @@ export function MapMenuBar(props: MapMenuBar) {
               menuSx={SelectMenuStyle}
               mobileIcon={<ThermostatIcon />}
               label={t('app.map.menuBar.indicator')}
+              disabled={inProgress}
             />
           </Grid>
           <Grid xs={1} def={4} sx={SecondRowStyle}>
@@ -549,6 +550,7 @@ export function MapMenuBar(props: MapMenuBar) {
               }
               // label={'Model and Scenario'}
               label={t('app.map.menuBar.model')}
+              disabled={inProgress}
             />
           </Grid>
           <Grid xs={1} def={4} sx={SecondRowStyle}>
@@ -565,6 +567,7 @@ export function MapMenuBar(props: MapMenuBar) {
               }
               // label={'Period'}
               label={t('app.map.menuBar.period')}
+              disabled={inProgress}
             />
           </Grid>
           <Grid xs={1} def={4} sx={SecondRowStyle}>
@@ -580,7 +583,8 @@ export function MapMenuBar(props: MapMenuBar) {
               }
               activeCombinations={activeCombinations.current}
               label={t('app.map.menuBar.season')}
-            // label={'Season'}
+              // label={'Season'}
+              disabled={inProgress}
             />
           </Grid>
           <Grid xs={1} def={2} sx={SecondRowStyle}>
@@ -593,6 +597,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   <IconButton
                     onClick={() => setDownloadDataOpen(true)}
                     aria-label={t('app.map.menuBar.downloadMap')}
+                    disabled={foundLayers === 0 || inProgress}
                   >
                     <FileDownloadIcon />
                   </IconButton>
@@ -609,7 +614,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
                   aria-label={t('app.map.menuBar.downloadData')}
-                  disabled={foundLayers === 0}
+                  disabled={foundLayers === 0 || inProgress}
                 >
                   {t('app.map.menuBar.downloadData')}
                 </Button>
