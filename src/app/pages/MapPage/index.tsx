@@ -103,6 +103,8 @@ export function MapPage(props: MapPageProps) {
   const closeError = () => setError('');
 
   const [foundLayers, setFoundLayers] = useState(0);
+
+  const [currentYear, setCurrentYear] = useState(2036);
   //const [loading, showLoader] = useState(false);
 
   const handleMapReady = (map: LMap) => {
@@ -388,7 +390,7 @@ export function MapPage(props: MapPageProps) {
         : ''
       }
     - ${labelFor(currentMap.year_period)}
-    ${year ? ` - Anno ${year}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
+    ${currentYear ? ` - Anno ${currentYear}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
     const filename = `Screenshot ${labelFor(currentMap.climatological_variable)}
   - ${joinNames([
       labelFor(currentMap.climatological_model),
@@ -399,7 +401,7 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.measure),
     ])}
     ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? labelFor(currentMap.time_window)
+        ? ' - ' + labelFor(currentMap.time_window)
         : ''
       }
   - ${labelFor(currentMap.year_period)}
@@ -409,7 +411,7 @@ export function MapPage(props: MapPageProps) {
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
         ? 'jpg'
         : 'png'
-      }`;
+      }`.replace('_', '');
     mapScreen
       .takeScreen(format, {
         captionFontSize: isMobile ? 10 : 12,
@@ -481,6 +483,7 @@ export function MapPage(props: MapPageProps) {
         currentMap={currentMap}
         currentTimeserie={currentTimeSerie}
         setCurrentMap={setCurrentMap}
+        setCurrentYear={setCurrentYear}
       />
 
       <TimeSeriesDialog

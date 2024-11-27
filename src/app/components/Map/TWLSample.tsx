@@ -27,6 +27,7 @@ export const TWLSample = (props: any) => {
   const show = props.show;
   const style = props.stl;
   const opacity = props.opacity;
+  const setCurrentYear = props.setCurrentYear;
 
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
@@ -34,14 +35,14 @@ export const TWLSample = (props: any) => {
       item => typeof obj[item] === 'function',
     );
 
-  // @ts-ignore
-  useMapEvent('timeload', time => console.log(time));
-  // @ts-ignore
-  useMapEvent('timeloading', time => console.log(time));
-
   useEffect(() => {
     if (lyr && show) {
       const map = context.map;
+      // @ts-ignore
+      map.timeDimension.on('timeloading', data => {
+        let dt = new Date(+data.time).getFullYear();
+        setCurrentYear(dt);
+      });
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
       // @ts-ignore

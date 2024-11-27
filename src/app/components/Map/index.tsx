@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import L from 'leaflet';
-import { ScaleControl } from 'react-leaflet';
+import { ScaleControl, useMapEvent } from 'react-leaflet';
 
 import {
   MapContainer,
@@ -94,6 +94,7 @@ interface MapProps {
   currentLayer?: string;
   currentTimeserie?: any;
   setCurrentMap?: Function;
+  setCurrentYear?: Function;
 }
 
 const Map = (props: MapProps) => {
@@ -109,6 +110,7 @@ const Map = (props: MapProps) => {
     currentLayer = '',
     currentTimeserie = {},
     setCurrentMap = () => { },
+    setCurrentYear = () => { },
   } = props;
 
   const theme = useTheme();
@@ -292,6 +294,7 @@ const Map = (props: MapProps) => {
         stl={layerConf.palette}
         useTime={setTimeStatus}
         isTimeseries={currentMap.aggregation_period === 'annual'}
+        setCurrentYear={setCurrentYear}
       />
       <CustomControlMap
         position="bottomleft"
