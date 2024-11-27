@@ -70,13 +70,19 @@ export const VectorWrapperLayer = (props: any) => {
           };
           // console.log(payload)
           selectCallback(payload);
-          setTimeout(() => {
-            try {
-              popupRef.current.openPopup();
-            } catch (ex) {
-              console.log(ex);
-            }
-          }, 250);
+          if (
+            currentTimeSerie &&
+            currentTimeSerie.values &&
+            currentTimeSerie.values.length > 0
+          ) {
+            setTimeout(() => {
+              try {
+                popupRef.current.openPopup();
+              } catch (ex) {
+                console.log(ex);
+              }
+            }, 550);
+          }
         }
       });
     map.addLayer(_vectorLayer);
@@ -102,24 +108,28 @@ export const VectorWrapperLayer = (props: any) => {
   return (
     selectedPoint && (
       <Pane name="custom" style={{ zIndex: 1000 }}>
-        <CircleMarker
-          ref={popupRef}
-          center={[selectedPoint.latlng.lat, selectedPoint.latlng.lng]}
-          radius={2}
-          pathOptions={{ color: '#164d36' }}
-        >
-          <Popup>
-            <Box sx={PopupStyle}>
-              <MapPopup
-                openCharts={openCharts}
-                value={selectedPoint}
-                currentTimeserie={currentTimeSerie}
-                unit={unit}
-                precision={precision}
-              ></MapPopup>
-            </Box>
-          </Popup>
-        </CircleMarker>
+        {currentTimeSerie &&
+          currentTimeSerie.values &&
+          currentTimeSerie.values.length > 0 && (
+            <CircleMarker
+              ref={popupRef}
+              center={[selectedPoint.latlng.lat, selectedPoint.latlng.lng]}
+              radius={2}
+              pathOptions={{ color: '#164d36' }}
+            >
+              <Popup>
+                <Box sx={PopupStyle}>
+                  <MapPopup
+                    openCharts={openCharts}
+                    value={selectedPoint}
+                    currentTimeserie={currentTimeSerie}
+                    unit={unit}
+                    precision={precision}
+                  ></MapPopup>
+                </Box>
+              </Popup>
+            </CircleMarker>
+          )}
       </Pane>
     )
   );
