@@ -399,7 +399,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
             <IconButton
               onClick={() => openCharts(value)}
               aria-label={'Mostra serie temporale'}
-              disabled={timeserie?.length === 1}
+              disabled={timeserie?.length <= 1}
             >
               <LineAxisIcon />
             </IconButton>

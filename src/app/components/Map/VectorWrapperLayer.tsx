@@ -83,7 +83,11 @@ export const VectorWrapperLayer = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (currentTimeSerie?.values?.length === 0) {
+    if (
+      currentTimeSerie === undefined ||
+      currentTimeSerie?.values === undefined ||
+      currentTimeSerie?.values?.length === 0
+    ) {
       try {
         popupRef.current.closePopup();
       } catch (ex) {

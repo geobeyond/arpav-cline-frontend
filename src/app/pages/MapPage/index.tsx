@@ -390,7 +390,10 @@ export function MapPage(props: MapPageProps) {
         : ''
       }
     - ${labelFor(currentMap.year_period)}
-    ${currentYear ? ` - Anno ${currentYear}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
+    ${currentMap.aggregation_period != '30yr' && currentYear
+        ? ` - Anno ${currentYear - 1}`
+        : ''
+      } © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
 
     let filename = `Screenshot ${labelFor(
       currentMap.climatological_variable,
@@ -403,7 +406,9 @@ export function MapPage(props: MapPageProps) {
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
         ? ' - ' + labelFor(currentMap.time_window)
         : ''
-      } - ${labelFor(currentMap.year_period)} ${currentYear ? ` - Anno ${currentYear}` : ''
+      } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
+        ? ` - Anno ${currentYear - 1}`
+        : ''
       }.${
       //@ts-ignore
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
