@@ -330,6 +330,7 @@ export function MapPage(props: MapPageProps) {
       '.leaflet-control-coordinates',
       '.leaflet-bar-timecontrol',
       '.leaflet-control-layers',
+      '.leaflet-time-info',
     ], // by default hide map controls All els must be child of _map._container
     mimeType: 'image/jpeg', // used if format == image,
     caption: `${findValueName('variable', 'variables')}
