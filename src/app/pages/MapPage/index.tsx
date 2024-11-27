@@ -391,27 +391,26 @@ export function MapPage(props: MapPageProps) {
       }
     - ${labelFor(currentMap.year_period)}
     ${currentYear ? ` - Anno ${currentYear}` : ''} © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-    const filename = `Screenshot ${labelFor(currentMap.climatological_variable)}
-  - ${joinNames([
+    let filename = `Screenshot ${labelFor(
+      currentMap.climatological_variable,
+    )} - ${joinNames([
       labelFor(currentMap.climatological_model),
       labelFor(currentMap.scenario),
-    ])}
-  - ${joinNames([
+    ])} - ${joinNames([
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])}
     ${currentMap.time_window && currentMap.aggregation_period === '30yr'
         ? ' - ' + labelFor(currentMap.time_window)
         : ''
-      }
-  - ${labelFor(currentMap.year_period)}
-  
-  ${year ? ` - Anno ${year}` : ''}.${
+      } - ${labelFor(currentMap.year_period)} ${currentYear ? ` - Anno ${currentYear}` : ''
+      }.${
       //@ts-ignore
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
         ? 'jpg'
         : 'png'
-      }`.replaceAll('_', '');
+      }`;
+    filename = filename.replaceAll('_', '');
     mapScreen
       .takeScreen(format, {
         captionFontSize: isMobile ? 10 : 12,
