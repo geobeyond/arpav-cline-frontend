@@ -411,7 +411,7 @@ export function MapPage(props: MapPageProps) {
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
         ? 'jpg'
         : 'png'
-      }`.replace('_', '');
+      }`.replaceAll('_', '');
     mapScreen
       .takeScreen(format, {
         captionFontSize: isMobile ? 10 : 12,
