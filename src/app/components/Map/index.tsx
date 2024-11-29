@@ -118,7 +118,7 @@ const Map = (props: MapProps) => {
   const { i18n } = useTranslation();
 
   const timeDimensionOptions = {
-    times: '1976-01-01T00:00:00Z/2100-01-01T23:59:59Z/P1Y',
+    times: '1976-01-01T00:00:00Z/2099-01-01T23:59:59Z/P1Y',
   };
 
   const [click, setClick] = React.useState();

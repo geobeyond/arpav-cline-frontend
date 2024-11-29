@@ -369,6 +369,7 @@ export function MapPage(props: MapPageProps) {
             .getFullYear()
             .toString()
           : '';
+      console.log('showing yrar', year);
     } catch (e) {
       // console.log('no year');
     }

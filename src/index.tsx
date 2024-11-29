@@ -7,6 +7,7 @@
 
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
+import chalk from 'chalk';
 
 import * as React from 'react';
 import ReactDOM, { createRoot } from 'react-dom/client';
@@ -29,7 +30,7 @@ import { ThemeProvider } from 'styles/theme/ThemeProvider';
 
 import reportWebVitals from 'reportWebVitals';
 
-import { Tolgee, DevTools, TolgeeProvider, FormatSimple } from "@tolgee/react";
+import { Tolgee, DevTools, TolgeeProvider, FormatSimple } from '@tolgee/react';
 
 // Initialize languages
 import './locales/i18n';
@@ -46,28 +47,26 @@ const { store } = configureAppStore();
 // console.log({store})
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container!);
-const tolgee = Tolgee()
-  .use(DevTools())
-  .use(FormatSimple())
-  .init({
-    language: 'en',
-    apiUrl: 'https://tolgee.arpav.geobeyond.dev/',
-    apiKey: process.env.REACT_APP_TOLGEE_API_KEY,
-  });
+const tolgee = Tolgee().use(DevTools()).use(FormatSimple()).init({
+  language: 'en',
+  apiUrl: 'https://tolgee.arpav.geobeyond.dev/',
+  apiKey: process.env.REACT_APP_TOLGEE_API_KEY,
+});
+//require('@dotenvx/dotenvx').config({ path: ['.env.staging', '.env'] });
+
+console.log(chalk.blue(`USING >> ${process.env.REACT_APP_BACKEND_PUBLIC_URL}`));
 
 root.render(
   <Provider store={store}>
     <ThemeProvider>
       <HelmetProvider>
         <React.StrictMode>
-        <TolgeeProvider
-  tolgee={tolgee}
-  fallback="Loading..." // loading fallback
->
-          <App />
+          <TolgeeProvider
+            tolgee={tolgee}
+            fallback="Loading..." // loading fallback
+          >
+            <App />
           </TolgeeProvider>
-
-
         </React.StrictMode>
       </HelmetProvider>
     </ThemeProvider>

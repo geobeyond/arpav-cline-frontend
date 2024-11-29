@@ -309,7 +309,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const context = useLeafletContext();
   const { t } = useTranslation();
 
-  let [tt, setTt] = useState(2024);
+  let [tt, setTt] = useState(2035);
   let [tv, setTv] = useState(0);
   const [tsIndex, setTsIndex] = useState(0);
   const [otsIndex, setOTsIndex] = useState(0);
@@ -317,7 +317,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let tsindex = 0;
   const baseYear = 1976;
 
-  let yr = 2024;
+  let yr = 2035;
   let oyr = 0;
   let otsindex = 0;
 
@@ -328,15 +328,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     let att = yr;
     let atv = 0;
     let yrfield = document.getElementsByClassName('timecontrol-date');
-    let yrstring = '2024';
+    let yrstring = '2035';
     if (yrfield.length > 0) {
       yrstring = yrfield[0].textContent!;
     }
     try {
       yr = parseInt(yrstring, 10);
-      if (isNaN(yr)) yr = 2024;
+      if (isNaN(yr)) yr = 2035;
     } catch (ex) {
-      yr = 2024;
+      yr = 2035;
     }
 
     if (oyr !== yr) {
