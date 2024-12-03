@@ -399,7 +399,7 @@ media esterna supera i 24°C
     temperatura il bias-correction è stato eseguito utilizzando esclusivamente le stazioni di 
     Veneto e Friuli-Venezia Giulia, pertanto il dato è fornito solo su quest'area. In una versione 
     futura della Piattaforma si cercherà di integrare le proiezioni con la bias-correction eseguita 
-    con i dati da stazione del Trentino-Altro Adige.
+    con i dati da stazione del Trentino-Alto Adige.
 </p>
 <p>
     Sebbene gli output dei dati di origine EURO-CORDEX siano stati sottoposti a procedure di 
