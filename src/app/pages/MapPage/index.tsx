@@ -377,8 +377,8 @@ export function MapPage(props: MapPageProps) {
 
     setInProgress(true);
     const caption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
+      ? currentMap.climatological_variable
+      : labelFor(currentMap.climatological_variable)
       }
     - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -407,8 +407,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? ' - ' + labelFor(currentMap.time_window)
-        : ''
+      ? ' - ' + labelFor(currentMap.time_window)
+      : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''

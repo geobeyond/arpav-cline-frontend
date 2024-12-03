@@ -44,10 +44,25 @@ export const TWLSample = (props: any) => {
         setCurrentYear(dt);
 
         let layers = document.getElementsByClassName('leaflet-layer');
+        let tx = false;
         //@ts-ignore
         for (const t of layers) {
           if (t.style.display === 'none') {
-            t.style.display = 'block';
+            tx = true;
+          }
+        }
+
+        if (tx) {
+          let first = true;
+          //@ts-ignore
+          for (const t of layers) {
+            if (t.style['z-index'] === '500') {
+              if (t.outerHTML.indexOf((dt - 1).toString())) {
+                t.style.display = 'block';
+              } else {
+                t.style.displey = 'none';
+              }
+            }
           }
         }
       });
