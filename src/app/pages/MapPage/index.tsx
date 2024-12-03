@@ -364,12 +364,12 @@ export function MapPage(props: MapPageProps) {
     let year = '';
     try {
       year =
-        currentMap.data_series === 'yes'
+        currentMap.aggregation_period === 'annual'
           ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
             .getFullYear()
             .toString()
           : '';
-      console.log('showing yrar', year);
+      console.log('showing year', year);
     } catch (e) {
       // console.log('no year');
     }
@@ -393,7 +393,7 @@ export function MapPage(props: MapPageProps) {
       }
     - ${labelFor(currentMap.year_period)}
     ${currentMap.aggregation_period != '30yr' && currentYear
-        ? ` - Anno ${currentYear - 1}`
+        ? ` - Anno ${year}`
         : ''
       } © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
 
@@ -409,7 +409,7 @@ export function MapPage(props: MapPageProps) {
         ? ' - ' + labelFor(currentMap.time_window)
         : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
-        ? ` - Anno ${currentYear - 1}`
+        ? ` - Anno ${year}`
         : ''
       }.${
       //@ts-ignore

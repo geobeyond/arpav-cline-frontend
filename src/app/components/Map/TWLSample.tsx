@@ -42,6 +42,14 @@ export const TWLSample = (props: any) => {
       map.timeDimension.on('timeloading', data => {
         let dt = new Date(+data.time).getFullYear();
         setCurrentYear(dt);
+
+        let layers = document.getElementsByClassName('leaflet-layer');
+        //@ts-ignore
+        for (const t of layers) {
+          if (t.style.display === 'none') {
+            t.style.display = 'block';
+          }
+        }
       });
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;

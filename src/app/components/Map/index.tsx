@@ -119,6 +119,7 @@ const Map = (props: MapProps) => {
 
   const timeDimensionOptions = {
     times: '1976-01-01T00:00:00Z/2099-01-01T23:59:59Z/P1Y',
+    minBufferReady: 0,
   };
 
   const [click, setClick] = React.useState();
@@ -136,6 +137,8 @@ const Map = (props: MapProps) => {
     type: 'FeatureCollection',
     features: [],
   });
+
+  const player = useRef();
   const [opacity, doSetOpacity] = React.useState(0.85);
 
   useEffect(() => {
@@ -170,9 +173,25 @@ const Map = (props: MapProps) => {
         backwardButton: true,
         forwardButton: true,
         playButton: false,
+        player: player.current,
+      }}
+      timeDimensionPlayerOptions={{
+        minBufferReady: 0,
       }}
       //@ts-ignore
-      whenReady={obj => onReady(obj.target)}
+      whenReady={obj => {
+        onReady(obj.target);
+        //@ts-ignore
+        player.current = new L.TimeDimension.Player(
+          {
+            buffer: 0,
+            minBufferReady: 0,
+          },
+          obj.target.timeDimension,
+        ).on('play', () => {
+          console.log('play!!');
+        });
+      }}
     >
       <ScaleControl imperial={false} />
 

@@ -320,7 +320,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setTimeRange({
       ...{
         start: 0,
-        end: 2100 - baseValue,
+        end: 2099 - baseValue,
       },
       ...{
         start: localStartYear - baseValue,
