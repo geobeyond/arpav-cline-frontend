@@ -57,10 +57,10 @@ export const TWLSample = (props: any) => {
           //@ts-ignore
           for (const t of layers) {
             if (t.style['z-index'] === '500') {
-              if (t.outerHTML.indexOf((dt - 1).toString())) {
+              if (t.innerHTML.indexOf('time=' + (dt - 1).toString())) {
                 t.style.display = 'block';
               } else {
-                t.style.displey = 'none';
+                t.style.display = 'none';
               }
             }
           }
