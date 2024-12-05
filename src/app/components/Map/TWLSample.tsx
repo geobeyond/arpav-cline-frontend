@@ -43,28 +43,30 @@ export const TWLSample = (props: any) => {
         let dt = new Date(+data.time).getFullYear();
         setCurrentYear(dt);
 
-        let layers = document.getElementsByClassName('leaflet-layer');
-        let tx = false;
-        //@ts-ignore
-        for (const t of layers) {
-          if (t.style.display === 'none') {
-            tx = true;
-          }
-        }
-
-        if (tx) {
-          let first = true;
+        setTimeout(() => {
+          let layers = document.getElementsByClassName('leaflet-layer');
+          let tx = false;
           //@ts-ignore
           for (const t of layers) {
-            if (t.style['z-index'] === '500') {
-              if (t.innerHTML.indexOf('time=' + (dt - 1).toString())) {
-                t.style.display = 'block';
-              } else {
-                t.style.display = 'none';
+            if (t.style.display === 'none') {
+              tx = true;
+            }
+          }
+
+          if (tx) {
+            let first = true;
+            //@ts-ignore
+            for (const t of layers) {
+              if (t.style['z-index'] === '500') {
+                if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
+                  t.style.display = 'block';
+                } else {
+                  t.style.display = 'none';
+                }
               }
             }
           }
-        }
+        }, 250);
       });
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
