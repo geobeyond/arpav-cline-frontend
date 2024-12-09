@@ -22,7 +22,7 @@ export const VectorWrapperLayer = (props: any) => {
   const map = useMap();
   const context = useLeafletContext();
 
-  let selected = false;
+  let selected = useRef<any>();
 
   const url = `https://arpav.geobeyond.dev/vector-tiles/municipalities/{z}/{x}/{y}`;
 
@@ -51,9 +51,13 @@ export const VectorWrapperLayer = (props: any) => {
         },
       })
       .on('click', function (e) {
-        _vectorLayer.resetFeatureStyle(selected);
-        selected = e.layer.properties.name;
-        _vectorLayer.setFeatureStyle(e.layer.properties.name, {
+        const ls = localStorage.getItem('muni');
+        if (ls) {
+          _vectorLayer.resetFeatureStyle(ls);
+        }
+        selected.current = e.layer.properties.name;
+        localStorage.setItem('muni', e.layer.properties.name);
+        _vectorLayer.setFeatureStyle(selected.current, {
           color: '#164d36',
           weight: 2,
           radius: 1,
@@ -62,7 +66,7 @@ export const VectorWrapperLayer = (props: any) => {
           opacity: 1,
         });
         _vectorLayer.bringToFront();
-        if (selected && e.layer) {
+        if (selected.current && e.layer) {
           const payload = {
             ...e.layer.properties,
             latlng: e.latlng,

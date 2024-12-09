@@ -4,7 +4,7 @@
  * MapPage
  *
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -106,6 +106,9 @@ export function MapPage(props: MapPageProps) {
 
   const [currentYear, setCurrentYear] = useState(2036);
   //const [loading, showLoader] = useState(false);
+
+  const currentInfo = useRef(false);
+  const currentHide = useRef<any>();
 
   const handleMapReady = (map: LMap) => {
     mapRef.current = map;
@@ -293,6 +296,32 @@ export function MapPage(props: MapPageProps) {
     } catch (e) {
       console.log(e);
     }
+
+    //@ts-ignore
+    mapRef.current.on(
+      'simpleMapScreenshoter.takeScreen',
+      () => {
+        currentInfo.current = document
+          .getElementsByClassName('leaflet-time-info')[0]
+          //@ts-ignore
+          .checkVisibility();
+        currentHide.current = setInterval(() => {
+          document
+            //@ts-ignore
+            .getElementsByClassName('leaflet-time-info')[0].style.display =
+            'none';
+        });
+      },
+      250,
+    );
+    //@ts-ignore
+    mapRef.current.on('simpleMapScreenshoter.done', () => {
+      clearInterval(currentHide.current);
+      document
+        //@ts-ignore
+        .getElementsByClassName('leaflet-time-info')[0].style.display =
+        currentInfo.current ? 'flex' : 'none';
+    });
   }, [currentMap]);
 
   useEffect(() => {
@@ -330,7 +359,6 @@ export function MapPage(props: MapPageProps) {
       '.leaflet-control-coordinates',
       '.leaflet-bar-timecontrol',
       '.leaflet-control-layers',
-      '.leaflet-time-info',
     ], // by default hide map controls All els must be child of _map._container
     mimeType: 'image/jpeg', // used if format == image,
     caption: `${findValueName('variable', 'variables')}
@@ -377,8 +405,8 @@ export function MapPage(props: MapPageProps) {
 
     setInProgress(true);
     const caption = `${isMobile
-      ? currentMap.climatological_variable
-      : labelFor(currentMap.climatological_variable)
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
       }
     - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -407,8 +435,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-      ? ' - ' + labelFor(currentMap.time_window)
-      : ''
+        ? ' - ' + labelFor(currentMap.time_window)
+        : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''
