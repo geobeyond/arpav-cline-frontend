@@ -146,8 +146,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const [localStart, setLocalStart] = useState<any>(0);
   const [localEnd, setLocalEnd] = useState<any>(100);
-  const [localStartYear, setLocalStartYear] = useState<any>(null);
-  const [localEndYear, setLocalEndYear] = useState<any>(null);
+  const [localStartYear, setLocalStartYear] = useState<any>(1976);
+  const [localEndYear, setLocalEndYear] = useState<any>(2099);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
   useEffect(() => {
