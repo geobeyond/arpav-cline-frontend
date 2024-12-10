@@ -51,12 +51,19 @@ export const VectorWrapperLayer = (props: any) => {
         },
       })
       .on('click', function (e) {
-        const ls = localStorage.getItem('muni');
+        const ls = selected.current;
         if (ls) {
-          _vectorLayer.resetFeatureStyle(ls);
+          _vectorLayer.setFeatureStyle(ls, {
+            color: '#b6b6b6',
+            weight: 1,
+            radius: 1,
+            fill: true,
+            fillOpacity: 0,
+            opacity: 0.2,
+          });
         }
-        selected.current = e.layer.properties.name;
-        localStorage.setItem('muni', e.layer.properties.name);
+        selected.current = e.layer.properties.name || e.layer.properties.label;
+        //localStorage.setItem('muni', selected.current);
         _vectorLayer.setFeatureStyle(selected.current, {
           color: '#164d36',
           weight: 2,

@@ -107,11 +107,15 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     );
     // @ts-ignore
     if (found && value?.latlng) {
-      if (localStorage.getItem('muni')) {
-        // @ts-ignore
-        found.resetFeatureStyle(localStorage.getItem('muni'));
-      }
-      localStorage.setItem('muni', value.label);
+      //if (localStorage.getItem('muni')) {
+      //  // @ts-ignore
+      //  found.resetFeatureStyle(localStorage.getItem('muni'));
+      //}
+      //if (localStorage.getItem('muni2')) {
+      //  // @ts-ignore
+      //  found.resetFeatureStyle(localStorage.getItem('muni2'));
+      //}
+      //localStorage.setItem('muni2', value.label);
       context.map.flyTo(
         [value.latlng.lat, value.latlng.lng],
         context.map.getZoom() - 1,

@@ -301,26 +301,26 @@ export function MapPage(props: MapPageProps) {
     mapRef.current.on(
       'simpleMapScreenshoter.takeScreen',
       () => {
-        currentInfo.current = document
-          .getElementsByClassName('leaflet-time-info')[0]
-          //@ts-ignore
-          .checkVisibility();
-        currentHide.current = setInterval(() => {
-          document
-            //@ts-ignore
-            .getElementsByClassName('leaflet-time-info')[0].style.display =
-            'none';
-        });
+        //currentInfo.current = document
+        //  .getElementsByClassName('leaflet-time-info')[0]
+        //  //@ts-ignore
+        //  .checkVisibility();
+        //currentHide.current = setInterval(() => {
+        //  document
+        //    //@ts-ignore
+        //    .getElementsByClassName('leaflet-time-info')[0].style.display =
+        //    'none';
+        //});
       },
       250,
     );
     //@ts-ignore
     mapRef.current.on('simpleMapScreenshoter.done', () => {
-      clearInterval(currentHide.current);
-      document
-        //@ts-ignore
-        .getElementsByClassName('leaflet-time-info')[0].style.display =
-        currentInfo.current ? 'flex' : 'none';
+      //clearInterval(currentHide.current);
+      //document
+      //  //@ts-ignore
+      //  .getElementsByClassName('leaflet-time-info')[0].style.display =
+      //  currentInfo.current ? 'flex' : 'none';
     });
   }, [currentMap]);
 
