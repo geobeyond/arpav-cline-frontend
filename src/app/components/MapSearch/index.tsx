@@ -93,6 +93,8 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const { t, i18n } = useTranslation();
   const resetMap = () => context.map.flyTo(defaultCenter, defaultZoom);
 
+  const currCity = useRef<string | null>();
+
   const onChange = (event, value) => {
     console.log('Ricerca per comune', event, value);
     typeof setPoint === 'function' && setPoint(value);
@@ -116,6 +118,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
       //  found.resetFeatureStyle(localStorage.getItem('muni2'));
       //}
       //localStorage.setItem('muni2', value.label);
+      localStorage.setItem('currentCityLabel', value.label);
       context.map.flyTo(
         [value.latlng.lat, value.latlng.lng],
         context.map.getZoom() - 1,
@@ -137,6 +140,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
         layer: {
           properties: value,
         },
+        label: value.label,
       });
 
       setTimeout(() => {
@@ -226,6 +230,11 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           onChange={onChange}
           value={value}
           isOptionEqualToValue={(option, value) => option.label === value.label}
+          getOptionLabel={option =>
+            option.name ??
+            option.label ??
+            localStorage.getItem('currentCityLabel')
+          }
         />
       </Box>
 
