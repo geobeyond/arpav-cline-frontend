@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { WMS_PROXY_URL, V2_WMS_PROXY_URL } from '../../../utils/constants';
 import { useTranslation } from 'react-i18next';
 
 export interface LegendBarProps {

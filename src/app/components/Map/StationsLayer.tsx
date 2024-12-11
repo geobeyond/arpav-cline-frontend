@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLeafletContext, withPane } from '@react-leaflet/core';
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet.vectorgrid';
-import { VECTORTILES_URL } from '../../../utils/constants';
+import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants';
 
 import { Button, Paper, Box, IconButton, Typography } from '@mui/material';
 import { MapPopup } from '../MapSearch';
@@ -23,7 +23,7 @@ export const StationsLayer = (props: any) => {
     let selected = false;
     // let hovered = false;
     const container = context.layerContainer || context.map;
-    const url = 'https://arpav.geobeyond.dev/vector-tiles/stations/{z}/{x}/{y}';
+    const url = BACKEND_VECTOR_TILES_URL + '/stations/{z}/{x}/{y}';
 
     context.map.createPane('stations');
     // @ts-ignore

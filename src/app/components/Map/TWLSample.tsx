@@ -1,6 +1,6 @@
 import L, { TileLayer } from 'leaflet';
 import { WMSTileLayer, useMap, useMapEvent } from 'react-leaflet';
-import { WMS_PROXY_URL, V2_WMS_PROXY_URL } from '../../../utils/constants';
+import { BACKEND_WMS_BASE_URL } from '../../../utils/constants';
 import { useSelector } from 'react-redux';
 import {
   useLeafletContext,
@@ -97,7 +97,7 @@ export const TWLSample = (props: any) => {
           attribution:
             '&copy; <a target="_blank" rel="noopener" href="/data">ARPAV - Arpa FVG</a>',
         };
-        const tlUrl = `${V2_WMS_PROXY_URL}${selected_map_path}`;
+        const tlUrl = `${BACKEND_WMS_BASE_URL}/${selected_map_path}`;
         // @ts-ignore
         const wmsLayer = new TileLayer.WMS(tlUrl, {
           ...params,

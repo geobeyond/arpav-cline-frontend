@@ -119,7 +119,8 @@
     "extract-messages": "i18next-scanner --config=internals/extractMessages/i18next-scanner.config.js",
     "build:production": "docker build -t ppcv_frontend -f production.Dockerfile .",
     "ghpredeploy": "npm run build",
-    "ghdeploy": "gh-pages -b gh-pages -d build"
+    "ghdeploy": "gh-pages -b gh-pages -d build",
+    "inject-env": "sh ./injectEnv.sh"
   },
   "eslintConfig": {
     "extends": "react-app"

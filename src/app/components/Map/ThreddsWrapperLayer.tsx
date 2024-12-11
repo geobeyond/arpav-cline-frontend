@@ -1,6 +1,6 @@
 import L, { TileLayer } from 'leaflet';
 import { WMSTileLayer, useMap, useMapEvent } from 'react-leaflet';
-import { WMS_PROXY_URL, V2_WMS_PROXY_URL } from '../../../utils/constants';
+import { BACKEND_WMS_BASE_URL } from '../../../utils/constants';
 import { useSelector } from 'react-redux';
 import {
   useLeafletContext,
@@ -80,7 +80,7 @@ export const ThreddsWrapperLayer = (props: any) => {
       };
       // @ts-ignore
       const wmsLayer = new TileLayer.WMS(
-        `${V2_WMS_PROXY_URL}${selected_map_path}`,
+        `${BACKEND_WMS_BASE_URL}/${selected_map_path}`,
         { ...params, ...withPane(options, { __version: 1, map: context.map }) },
       );
       if (selected_map.id && selected_map.data_series === 'yes') {
