@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLeafletContext, withPane } from '@react-leaflet/core';
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet.vectorgrid';
-import { VECTORTILES_URL } from '../../../utils/constants';
+import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants'
 
 import { Button, Paper, Box, IconButton, Typography } from '@mui/material';
 import { MapPopup } from '../MapSearch';
@@ -24,7 +24,7 @@ export const VectorWrapperLayer = (props: any) => {
 
   let selected = useRef<any>();
 
-  const url = `https://arpav.geobeyond.dev/vector-tiles/municipalities/{z}/{x}/{y}`;
+  const url = BACKEND_VECTOR_TILES_URL + '/municipalities/{z}/{x}/{y}';
 
   useEffect(() => {
     context.map.createPane('municipalities');

@@ -19,6 +19,8 @@ import 'bootstrap-italia/dist/css/bootstrap-italia.min.css';
 
 import 'typeface-titillium-web';
 
+import { TOLGEE_BASE_URL } from 'utils/constants';
+
 import { App } from 'app';
 
 import { HelmetProvider } from 'react-helmet-async';
@@ -40,7 +42,7 @@ const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container!);
 const tolgee = Tolgee().use(DevTools()).use(FormatSimple()).init({
   language: 'en',
-  apiUrl: 'https://tolgee.arpav.geobeyond.dev/',
+  apiUrl: TOLGEE_BASE_URL,
   apiKey: process.env.REACT_APP_TOLGEE_API_KEY,
 });
 //require('@dotenvx/dotenvx').config({ path: ['.env.staging', '.env'] });
