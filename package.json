@@ -1,8 +1,8 @@
 {
   "name": "PPCV-frontend",
-  "version": "1.0.0",
+  "version": "2.0.0-rc1",
   "license": "CC-BY-SA-3.0",
-  "author": "Giorgio Resci - INKODE SOC COOP <info@inkode.it> (https://inkode.it/)",
+  "author": "Geobeyond <info@geobeyond.it> (http://www.geobeyond.it/)",
   "homepage": ".",
   "dependencies": {
     "@emotion/react": "11.10.4",
