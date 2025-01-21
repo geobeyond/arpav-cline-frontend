@@ -1,6 +1,7 @@
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Http } from '../Http';
 import { P } from 'app/pages/NotFoundPage/P';
+import { V2_WMS_PROXY_URL } from 'utils/constants';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -30,6 +31,17 @@ export interface iNetcdfDownload {
 const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export class RequestApi extends Http {
+  getCapabilities(wms) {
+    return this.instance.get<string>(
+      'https://arpav.geobeyond.dev/api/v2/coverages/wms/' +
+        wms +
+        '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0',
+      {
+        responseType: 'text',
+      },
+    );
+  }
+
   /**
    * Fetches forecast data from the API.
    * @param {any} configuration Configuration of the request.

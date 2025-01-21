@@ -41,7 +41,6 @@ import {
   MenuR1Style,
   MenuR2Style,
 } from './styles';
-import { MapState } from '../../pages/MapPage/slice/types';
 import DownloadDataDialog from '../DownloadDataDialog';
 import { useEffect, useState, useRef } from 'react';
 import { useMapSlice } from '../../pages/MapPage/slice';

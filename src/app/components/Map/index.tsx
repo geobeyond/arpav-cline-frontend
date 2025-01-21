@@ -117,8 +117,12 @@ const Map = (props: MapProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
   const { i18n } = useTranslation();
 
+  const [wmsTimeDimension, setWmsTimeDimension] = React.useState<string>(
+    '1976-07-01T00:00:00Z/2099-07-01T23:59:59Z/P1Y',
+  );
+
   const timeDimensionOptions = {
-    times: '1976-07-01T00:00:00Z/2099-07-01T23:59:59Z/P1Y',
+    times: wmsTimeDimension,
     minBufferReady: 0,
   };
 
@@ -144,6 +148,19 @@ const Map = (props: MapProps) => {
   useEffect(() => {
     console.log(layerConf);
     setShowUncertainty(true);
+    console.log('getting capabilities for ', currentLayer);
+
+    api.getCapabilities(currentLayer).then(x => {
+      let xml = x.data;
+      try {
+        let dim = xml.split('Dimension')[1];
+        dim = dim.split('>')[1];
+        dim = dim.split('<')[0];
+        return setWmsTimeDimension(dim);
+      } catch (ex) {
+        console.log(ex);
+      }
+    });
     if (
       layerConf.wms_secondary_layer_name == null ||
       layerConf.wms_secondary_layer_name.length === 0

@@ -52,8 +52,6 @@ const defaultMap: any = {
   data_series: 'no',
 };
 
-//let currentMap = defaultMap;
-
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -93,7 +91,6 @@ export function MapPage(props: MapPageProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
   const api = new RequestApi();
 
-  const [currentMap, setCurrentMap] = useState(defaultMap);
   const [currentLayer, setCurrentLayer] = useState('');
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
   const [currentTimeSerie, setCurrentTimeSerie] = useState({});
@@ -118,7 +115,14 @@ export function MapPage(props: MapPageProps) {
     setMapScreen(mapScreenPlugin);
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [initialSearchParams] = useSearchParams();
+
+  const isp = Object.fromEntries(initialSearchParams.entries());
+
+  let ncmap = { ...defaultMap, ...isp };
+
+  const [searchParams, setSearchParams] = useState<any>({});
+  const [currentMap, setCurrentMap] = useState({ ...ncmap });
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 
@@ -268,7 +272,13 @@ export function MapPage(props: MapPageProps) {
     ];
 
     const changeables = ['measure', 'year_period', 'time_window'];
+
+    //setSearchParams(currentMap);
+
     setSearchParams(currentMap);
+
+    console.log('currentMap', currentMap);
+
     try {
       api
         .getLayer(
