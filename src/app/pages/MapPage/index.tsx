@@ -122,7 +122,7 @@ export function MapPage(props: MapPageProps) {
   let ncmap = { ...defaultMap, ...isp };
 
   const [searchParams, setSearchParams] = useState<any>({});
-  const [currentMap, setCurrentMap] = useState({ ...ncmap });
+  const [currentMap, setCurrentMap] = useState({ ...defaultMap, ...isp });
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 

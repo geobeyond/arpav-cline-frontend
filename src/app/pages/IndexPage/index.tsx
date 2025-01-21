@@ -97,11 +97,7 @@ const IndexPage = () => {
                 <br />
                 <br />
                 <br />
-                <HeroButton
-                  disabled={true}
-                  href="/storico-avanzata"
-                  color="secondary"
-                >
+                <HeroButton href="/storico-avanzata" color="secondary">
                   {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
