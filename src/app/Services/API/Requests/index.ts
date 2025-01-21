@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { Http } from '../Http';
 import { P } from 'app/pages/NotFoundPage/P';
-import { V2_WMS_PROXY_URL } from 'utils/constants';
+import { BACKEND_API_URL } from '../../../../utils/constants';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -67,14 +67,11 @@ export class RequestApi extends Http {
         delete innerConf.time_window;
       }
       return this.instance
-        .get<any>(
-          'https://arpav.geobeyond.dev/api/v2/coverages/forecast-data?',
-          {
-            params: { offset: 0, limit: 100, ...innerConf },
-            paramsSerializer: { indexes: null },
-            timeout: 30000,
-          },
-        )
+        .get<any>(BACKEND_API_URL + '/coverages/forecast-data?', {
+          params: { offset: 0, limit: 100, ...innerConf },
+          paramsSerializer: { indexes: null },
+          timeout: 30000,
+        })
         .then((found: any) => {
           /**
            * Maps the array of coverage download links to an array of objects containing the URL and label of the coverage.
@@ -131,9 +128,7 @@ export class RequestApi extends Http {
       return JSON.parse(localStorage.getItem('municipality-centroids'));
     } else {
       this.instance
-        .get<any>(
-          'https://arpav.geobeyond.dev/api/v2/municipalities/municipality-centroids',
-        )
+        .get<any>(BACKEND_API_URL + '/municipalities/municipality-centroids')
         .then((x: any) => x.features)
         .then(x => {
           return x.map(c => ({
@@ -300,8 +295,7 @@ export class RequestApi extends Http {
     }
 
     const fullUrl =
-      'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
-      filter;
+      BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter;
 
     console.log(fullUrl);
     const d = localStorage.getItem(fullUrl);
@@ -321,10 +315,7 @@ export class RequestApi extends Http {
 
     // Make the request to the API.
     return this.instance
-      .get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/coverage-identifiers?' +
-          filter,
-      )
+      .get<any>(BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter)
       .then((x: any) => {
         localStorage.setItem(fullUrl, JSON.stringify(x));
         console.log(x);
@@ -474,7 +465,7 @@ export class RequestApi extends Http {
     smoothing: boolean = true,
     uncertainty: boolean = true,
   ) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    let url = `${BACKEND_API_URL}/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
@@ -513,7 +504,7 @@ export class RequestApi extends Http {
     lng: number,
     year: number,
   ) => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    let url = `${BACKEND_API_URL}/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(4)})&datetime=${year + 1}%2F${
       year - 1
@@ -523,14 +514,14 @@ export class RequestApi extends Http {
   };
 
   public getBarometroClimatico = () => {
-    let url = `https://arpav.geobeyond.dev/api/v2/coverages/time-series/climate-barometer?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
+    let url = `${BACKEND_API_URL}/coverages/time-series/climate-barometer?data_smoothing=MOVING_AVERAGE_11_YEARS&include_uncertainty=true`;
     console.log(url);
     return this.instance.get<any>(url);
   };
 
   public findMunicipality = (lat, lng) => {
     return this.instance.get<any>(
-      `https://arpav.geobeyond.dev/api/v2/municipalities/municipalities?coords=POINT(${lng} ${lat})`,
+      `${BACKEND_API_URL}/municipalities/municipalities?coords=POINT(${lng} ${lat})`,
     );
   };
 
@@ -555,7 +546,7 @@ export class RequestApi extends Http {
     }
     return this.instance
       .get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+        `${BACKEND_API_URL}/coverages/configuration-parameters?offset=0&limit=100`,
       )
       .then((d: any) => {
         return d.items;
@@ -574,7 +565,7 @@ export class RequestApi extends Http {
 
     const ret = this.instance
       .get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/configuration-parameters?offset=0&limit=100',
+        `${BACKEND_API_URL}/coverages/configuration-parameters?offset=0&limit=100`,
       )
       .then((d: any) => {
         return d.items;
@@ -582,12 +573,12 @@ export class RequestApi extends Http {
     reqs.push(ret);
     if (mode === 'forecast') {
       const cret = this.instance.get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/forecast-variable-combinations',
+        `${BACKEND_API_URL}/coverages/forecast-variable-combinations`,
       );
       reqs.push(cret);
     } else {
       const cret = this.instance.get<any>(
-        'https://arpav.geobeyond.dev/api/v2/coverages/historical-variable-combinations',
+        `${BACKEND_API_URL}/coverages/historical-variable-combinations`,
       );
       reqs.push(cret);
     }

@@ -32,7 +32,7 @@ import MapDlData from './mapDlData';
 import UserDlData from '../UserDlData/userDlData';
 import { saveAs } from 'file-saver';
 import { useMapSlice } from '../../pages/MapPage/slice';
-import { API_URL } from '../../../utils/constants';
+import { BACKEND_API_URL } from '../../../utils/constants';
 import { RequestApi } from 'app/Services/API/Requests';
 import { Icon, LinkList, LinkListItem } from 'design-react-kit';
 
@@ -92,7 +92,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
       ...dataSet.current,
       ...values,
     };
-    const url = `${API_URL}/maps/ncss/netcdf/?${new URLSearchParams(
+    const url = `${BACKEND_API_URL}/maps/ncss/netcdf/?${new URLSearchParams(
       params,
     ).toString()}`;
     setDownloadUrl(url);

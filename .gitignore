@@ -5,6 +5,7 @@ node_modules
 stats.json
 .pnp
 .pnp.js
+public/injectedEnv.js
 
 # misc
 .DS_Store

@@ -1,9 +1,8 @@
 {
   "name": "PPCV-frontend",
-  "version": "1.0.0",
+  "version": "2.0.0-rc1",
   "license": "CC-BY-SA-3.0",
-  "author": "Giorgio Resci - INKODE SOC COOP <info@inkode.it> (https://inkode.it/)",
-  "private": false,
+  "author": "Geobeyond <info@geobeyond.it> (http://www.geobeyond.it/)",
   "homepage": ".",
   "dependencies": {
     "@emotion/react": "11.10.4",
@@ -41,7 +40,6 @@
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react-hooks": "4.6.0",
-    "fontfaceobserver": "2.3.0",
     "formik": "2.2.9",
     "formik-mui": "5.0.0-alpha.0",
     "geojson-utils": "1.1.0",
@@ -122,7 +120,8 @@
     "extract-messages": "i18next-scanner --config=internals/extractMessages/i18next-scanner.config.js",
     "build:production": "docker build -t ppcv_frontend -f production.Dockerfile .",
     "ghpredeploy": "npm run build",
-    "ghdeploy": "gh-pages -b gh-pages -d build"
+    "ghdeploy": "gh-pages -b gh-pages -d build",
+    "inject-env": "sh ./injectEnv.sh"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -167,5 +166,6 @@
         "statements": 90
       }
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
