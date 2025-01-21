@@ -115,14 +115,15 @@ export function MapPage(props: MapPageProps) {
     setMapScreen(mapScreenPlugin);
   };
 
-  const [initialSearchParams] = useSearchParams();
+  const [sp, setSearchParams] = useSearchParams();
+  const searchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(searchParams);
 
-  const isp = Object.fromEntries(initialSearchParams.entries());
-
-  let ncmap = { ...defaultMap, ...isp };
-
-  const [searchParams, setSearchParams] = useState<any>({});
-  const [currentMap, setCurrentMap] = useState({ ...defaultMap, ...isp });
+  let ncmap = { ...defaultMap, ...params };
+  const [currentMap, setCurrentMap] = useState({
+    ...defaultMap,
+    ...params,
+  });
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 
@@ -178,6 +179,7 @@ export function MapPage(props: MapPageProps) {
     ];
 
     const changeables = ['measure', 'year_period', 'time_window'];
+    setCurrentMap({ ...searchParams });
     api.getAttributes().then(x => {
       setMenus(x.items);
       let combos = x.combinations.reduce((prev, cur) => {
@@ -253,6 +255,7 @@ export function MapPage(props: MapPageProps) {
       }
       setCombinations(combos);
     });
+    setCurrentMap({ ...searchParams });
   }, []);
 
   useEffect(() => {

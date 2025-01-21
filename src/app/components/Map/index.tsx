@@ -151,7 +151,7 @@ const Map = (props: MapProps) => {
     console.log('getting capabilities for ', currentLayer);
 
     api.getCapabilities(currentLayer).then(x => {
-      let xml = x.data;
+      let xml = x.toString();
       try {
         let dim = xml.split('Dimension')[1];
         dim = dim.split('>')[1];
