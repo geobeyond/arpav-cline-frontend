@@ -339,6 +339,10 @@ export function MapPage(props: MapPageProps) {
 
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {
+      setSearchParams({
+        ...searchParams,
+        ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
+      });
       api
         .getTimeserieV2(
           currentLayer,
@@ -478,6 +482,7 @@ export function MapPage(props: MapPageProps) {
 
   const openCharts = (latLng: LatLng) => {
     coordRef.current = latLng;
+
     setTSOpen(true);
   };
 

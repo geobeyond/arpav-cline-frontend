@@ -118,7 +118,7 @@ const Map = (props: MapProps) => {
   const { i18n } = useTranslation();
 
   const [wmsTimeDimension, setWmsTimeDimension] = React.useState<string>(
-    '1976-07-01T00:00:00Z/2099-07-01T23:59:59Z/P1Y',
+    '1976-01-01T00:00:00Z/2099-01-01T23:59:59Z/P1Y',
   );
 
   const timeDimensionOptions = {
@@ -156,6 +156,7 @@ const Map = (props: MapProps) => {
         let dim = xml.split('Dimension')[1];
         dim = dim.split('>')[1];
         dim = dim.split('<')[0];
+        dim = dim.replaceAll('365D', '1Y').replaceAll('360D', '1Y');
         return setWmsTimeDimension(dim);
       } catch (ex) {
         console.log(ex);

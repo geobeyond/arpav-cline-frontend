@@ -32,14 +32,15 @@ const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export class RequestApi extends Http {
   getCapabilities(wms) {
-    return this.instance.get<string>(
+    const fullUrl =
       'https://arpav.geobeyond.dev/api/v2/coverages/wms/' +
-        wms +
-        '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0',
-      {
-        responseType: 'text',
-      },
-    );
+      wms +
+      '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&verbose=true';
+
+    const d = localStorage.getItem(fullUrl);
+    return this.instance.get<string>(fullUrl, {
+      responseType: 'text',
+    });
   }
 
   /**
