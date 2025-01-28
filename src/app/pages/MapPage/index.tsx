@@ -69,7 +69,11 @@ export function MapPage(props: MapPageProps) {
   const map_data = props.map_data;
   if (map_data === 'future') {
     defaultMap['archive'] = 'forecast';
+  } else {
+    defaultMap['archive'] = 'historical';
   }
+
+  console.log(map_mode, map_data);
   //const actions = useMapSlice();
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -340,7 +344,7 @@ export function MapPage(props: MapPageProps) {
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {
       setSearchParams({
-        ...searchParams,
+        ...sp,
         ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
       });
       api

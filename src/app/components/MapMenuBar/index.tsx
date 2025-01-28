@@ -80,8 +80,8 @@ const MAP_MODES = {
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export function MapMenuBar(props: MapMenuBar) {
   const map_mode = props.mode;
-  const onMenuChange = props.onMenuChange;
   const map_data = props.data;
+  const onMenuChange = props.onMenuChange;
   const current_map = props.current_map;
   const forecast_parameters = props.menus;
   const foundLayers = props.foundLayers;
@@ -148,8 +148,12 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'climatological_variable',
             groupName: '',
             ...mapParameters(
-              'climatological_variable',
-              'climatological_variable',
+              map_data === 'future'
+                ? 'climatological_variable'
+                : 'historical_variable',
+              map_data === 'future'
+                ? 'climatological_variable'
+                : 'historical_variable',
             ),
             disableable: false,
             criteria: (x, c) => [],
@@ -197,7 +201,13 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
-            ...mapParameters('aggregation_period', 'aggregation_period'),
+            ...mapParameters(
+              map_data === 'future'
+                ? 'aggregation_period'
+                : 'historical_variable',
+              map_data === 'future'
+                ? 'aggregation_period'
+                : 'historical_variable',),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => {
@@ -231,7 +241,10 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             key: 'year_period',
             groupName: '',
-            ...mapParameters('year_period', 'year_period'),
+            ...mapParameters(
+              map_data === 'future' ? 'year_period' : 'historical_year_period',
+              map_data === 'future' ? 'year_period' : 'historical_year_period',
+            ),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => x?.year_period,
