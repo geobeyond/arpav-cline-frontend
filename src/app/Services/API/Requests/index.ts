@@ -37,18 +37,13 @@ export class RequestApi extends Http {
       wms +
       '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&verbose=true';
 
-    const d = localStorage.getItem(fullUrl);
-    if (d) {
-      return new Promise<string>(resolve => {
-        return JSON.parse(d);
-      });
-    }
     return this.instance
       .get<string>(fullUrl, {
         responseType: 'text',
       })
       .then(x => {
         localStorage.setItem(fullUrl, JSON.stringify(x));
+        return x;
       });
   }
 

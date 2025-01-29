@@ -89,6 +89,7 @@ export const TWLSample = (props: any) => {
           transparent: true,
           crs: L.CRS.EPSG3857,
           //bounds: selected_map.bbox,
+          verbose: true,
         };
         const options = {
           opacity: opacity,
@@ -109,8 +110,9 @@ export const TWLSample = (props: any) => {
         if (selected_map_path && isTimeseries) {
           // @ts-ignore
           const tdWmsLayer = L.timeDimension.layer.wms(wmsLayer, {
-            //requestTimeFromCapabilities: true,
-            //updateTimeDimension: true,
+            requestTimeFromCapabilities: false,
+            updateTimeDimension: false,
+            getCapabilitiesParams: { verbose: 'true' },
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,
@@ -146,8 +148,11 @@ export const TWLSample = (props: any) => {
           );
           //@ts-ignore
           const tdWmsLayer_tmp = L.timeDimension.layer.wms(wmsLayer_tmp, {
-            //requestTimeFromCapabilities: true,
-            //updateTimeDimension: true,
+            requestTimeFromCapabilities: false,
+            updateTimeDimension: false,
+            updateTimeDimensionMode: 'replace',
+            period: 'P1Y',
+            getCapabilitiesParams: { verbose: 'true' },
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,
@@ -175,8 +180,9 @@ export const TWLSample = (props: any) => {
           }
           // @ts-ignore
           const tdWmsLayer2 = L.timeDimension.layer.wms(wmsLayer, {
-            //requestTimeFromCapabilities: true,
-            //updateTimeDimension: true,
+            requestTimeFromCapabilities: false,
+            updateTimeDimension: false,
+            getCapabilitiesParams: { verbose: 'true' },
             cache: 0,
             cacheBackward: 0,
             cacheForward: 0,
