@@ -260,6 +260,12 @@ export function MapPage(props: MapPageProps) {
       setCombinations(combos);
     });
     setCurrentMap({ ...searchParams });
+
+    //if(searchParams.get('lat') && searchParams.get('lng')){
+    //  setTimeout(()=>{
+    //    setSelectedPoint({latlng:{lat: searchParams.get('lat'), lng: searchParams.get('lng')}})
+    //  }, 500);
+    //}
   }, []);
 
   useEffect(() => {
@@ -341,10 +347,19 @@ export function MapPage(props: MapPageProps) {
     });
   }, [currentMap]);
 
+  function paramsToObject(entries) {
+    const result = {}
+    for(const [key, value] of entries) { // each 'entry' is a [key, value] tuple
+      result[key] = value;
+    }
+    return result;
+  }
+  
+
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {
       setSearchParams({
-        ...sp,
+        ...paramsToObject(sp),
         ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
       });
       api

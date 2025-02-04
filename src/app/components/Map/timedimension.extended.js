@@ -16,10 +16,10 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
   },
 });
 
-  L.TimeDimension = L.TimeDimension.extend({
+L.TimeDimension = L.TimeDimension.extend({
   prepareNextTimes: function(numSteps, howmany, loop){
     if (!numSteps) {
-      numSteps = 1;
+      numSteps = 1; 
   }
 
   var newIndex = this._currentTimeIndex;
