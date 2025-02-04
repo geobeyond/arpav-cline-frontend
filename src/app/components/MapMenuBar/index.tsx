@@ -204,10 +204,10 @@ export function MapMenuBar(props: MapMenuBar) {
             ...mapParameters(
               map_data === 'future'
                 ? 'aggregation_period'
-                : 'historical_variable',
+                : 'historical_aggregation_period',
               map_data === 'future'
                 ? 'aggregation_period'
-                : 'historical_variable',),
+                : 'historical_aggregation_period',),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => {
