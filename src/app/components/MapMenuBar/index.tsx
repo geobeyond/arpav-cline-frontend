@@ -230,9 +230,9 @@ export function MapMenuBar(props: MapMenuBar) {
               map_data === 'future' ? 'time_window' : 'historical_time_window',
             ),
             disableable: true,
-            disabled: x => x.aggregation_period === 'annual',
+            disabled: x => x.aggregation_period !== '30yr',
             criteria: (x, c) =>
-              c.aggregation_period !== '30yr' ?  c.aggregation_period !== '10yr' ? [] : ['10yr_tw1', '10yr_tw2', '10yr_tw3'] : ['30yr_tw1'],
+              c.aggregation_period !== '30yr' ? [] : ['tw1', 'tw2'],
           },
         ],
       },
