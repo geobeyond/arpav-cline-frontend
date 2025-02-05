@@ -43,30 +43,30 @@ export const TWLSample = (props: any) => {
         let dt = new Date(+data.time).getFullYear();
         setCurrentYear(dt);
 
-        setTimeout(() => {
-          let layers = document.getElementsByClassName('leaflet-layer');
-          let tx = false;
-          //@ts-ignore
-          for (const t of layers) {
-            if (t.style.display === 'none') {
-              tx = true;
-            }
-          }
-
-          if (tx) {
-            let first = true;
-            //@ts-ignore
-            for (const t of layers) {
-              if (t.style['z-index'] === '500') {
-                if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
-                  t.style.display = 'block';
-                } else {
-                  t.style.display = 'none';
-                }
-              }
-            }
-          }
-        }, 250);
+        //setTimeout(() => {
+        //  let layers = document.getElementsByClassName('leaflet-layer');
+        //  let tx = false;
+        //  //@ts-ignore
+        //  for (const t of layers) {
+        //    if (t.style.display === 'none') {
+        //      tx = true;
+        //    }
+        //  }
+//
+        //  if (tx) {
+        //    let first = true;
+        //    //@ts-ignore
+        //    for (const t of layers) {
+        //      if (t.style['z-index'] === '500') {
+        //        if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
+        //          t.style.display = 'block';
+        //        } else {
+        //          t.style.display = 'none';
+        //        }
+        //      }
+        //    }
+        //  }
+        //}, 250);
       });
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
@@ -229,11 +229,6 @@ export const TWLSample = (props: any) => {
           map.addLayer(wmsLayer);
         }
 
-        const lyrs = document.getElementsByClassName('leaflet-layer');
-        for (let i = 0; i < lyrs.length; i++) {
-          const el: any = lyrs[i];
-          el.style.display = '';
-        }
 
         return () => {
           map.removeLayer(currentLayer);
