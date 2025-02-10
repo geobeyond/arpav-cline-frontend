@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Theme, useTheme } from '@mui/material/styles';
 import InfoIcon from '@mui/icons-material/Info';
 import ExitIcon from '@mui/icons-material/HighlightOff';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   IconButton,
@@ -42,9 +43,11 @@ interface IGrpItmIndex extends IGrpItm {
 }
 
 export interface IItem {
-  id: string;
   name: string;
-  description: string;
+  display_name_italian: string;
+  display_name_english: string;
+  description_italian: string;
+  description_english: string;
   disabled?: boolean;
   selected?: boolean;
 }
@@ -59,10 +62,12 @@ export type TSelectedValue = IGrpItm[];
 export type TValueSet = { columns: { group: IGroup; items: IItem[] }[] }[];
 
 export interface RowMenuProps {
+  criteria?: (activeCombinations: any, current: any) => string[];
   needsSelection: Boolean;
   key: string;
   groupName: string;
   items: IItem[];
+  disableable?: boolean;
 }
 
 export interface ColumnMenuProps {
@@ -79,16 +84,24 @@ export interface MultiRadioSelectProps {
   mobileIcon?: JSX.Element;
   className?: string;
   label: string;
+  current_map?: any;
+  activeCombinations?: any;
+  disabled?: boolean;
 }
 
 export function MultiRadioSelect(props: MultiRadioSelectProps) {
-  const handleChange = props.onChange ? props.onChange : () => {};
+  const handleChange = props.onChange ? props.onChange : () => { };
   const valueSet = props.valueSet;
+  const current_map = props.current_map;
   const sx = props.sx;
   const menuSx = props.menuSx;
   const label = props.label;
   const className = props.className ?? '';
   const MobileIcon = () => props.mobileIcon ?? <></>;
+  const activeCombinations = props.activeCombinations ?? {};
+  const disabled = props.disabled ?? false;
+
+  const { t, i18n } = useTranslation();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
@@ -101,18 +114,69 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   ) => {
     handleChange(key, event.target.value);
   };
+
   const values = valueSet
-    .map(({ rows }) => rows.map(({ items }) => items.find(x => x.selected)?.id))
+    .map(({ rows }) =>
+      rows.map(
+        ({ items }) =>
+          items.find(x => x.name === current_map[rows[0].key])?.name,
+      ),
+    )
     .flat()
     .filter(x => x);
-  const renderSelectedValue = () =>
-    valueSet
-      .map(({ rows }) =>
-        rows.map(({ items }) => items.find(x => x.selected)?.name),
-      )
-      .flat()
-      .filter(x => x)
-      .join(' - ');
+
+  const renderSelectedValue = (mode: string = 'label') => {
+    let ret: any = valueSet.map((rs, index) =>
+      rs.rows.map((row, iindex) =>
+        row.items.find(x => x.name === current_map[row.key]),
+      ),
+    );
+    ret = ret.flat();
+    ret = ret.filter(x => x);
+    ret = ret.filter(
+      x =>
+        (x.name.indexOf('tw') >= 0 &&
+          ret.filter(y => y.name === '30yr').length > 0) ||
+        x.name.indexOf('tw') < 0,
+    );
+    //@ts-ignore
+    ret = ret.map(x => translate(x, mode)).join(' - ');
+
+    return ret;
+  };
+
+  const translate = (item: IItem, mode: string = 'label') => {
+    if (mode === 'label') {
+      if (i18n.language === 'it') return item.display_name_italian;
+      else return item.display_name_english;
+    } else {
+      if (i18n.language === 'it') return item.description_italian;
+      else return item.description_english;
+    }
+  };
+
+  const getFieldsByCriteria = (row, setting, current) => {
+    if (JSON.stringify(setting) === JSON.stringify({})) {
+      return row.items.map(x => x.name);
+    }
+    const r = row.criteria(setting, current);
+    if (r) {
+      return r;
+    }
+    return row.items.map(x => x.name);
+  };
+  const getDisabledByCriteria = (row, current) => {
+    try {
+      const r = row.disabled(current);
+      if (r) {
+        return r;
+      }
+    } catch (ex) {
+      return false;
+    } finally {
+      return false;
+    }
+  };
 
   return (
     <FormControl sx={sx} className={className} hiddenLabel={false}>
@@ -121,6 +185,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
         aria-label={label}
         aria-hidden={false}
         multiple
+        disabled={disabled}
         value={values}
         renderValue={() =>
           isMobile ? (
@@ -128,7 +193,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
               <MobileIcon />
             </Box>
           ) : (
-            renderSelectedValue()
+            renderSelectedValue('label')
           )
         }
         open={isOpen}
@@ -176,35 +241,47 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                   <RadioGroup
                     sx={GroupMenuStyle}
                     aria-labelledby={`${row.key}-radio-group-label`}
-                    onChange={event => handleChangeRadioGroup(event, row.key)}
+                    onChange={event => {
+                      handleChangeRadioGroup(event, row.key);
+                    }}
                   >
                     {row.items.map(item => {
                       return (
                         <MenuItem
-                          key={item.id}
+                          key={item.name}
                           disableGutters
-                          disabled={item.disabled}
+                          disabled={
+                            row.disableable &&
+                            getFieldsByCriteria(
+                              row,
+                              activeCombinations,
+                              current_map,
+                            ).indexOf(item.name) < 0
+                          }
                         >
                           <FormControlLabel
-                            className={`MultiRadioSelectMenuItem ${
-                              item.selected
+                            className={`MultiRadioSelectMenuItem ${item.selected
                                 ? 'MultiRadioSelectMenuItem-selected'
                                 : ''
-                            }`}
+                              }`}
                             //See Sorting fields note.
-                            value={item.id}
+                            value={item.name}
                             control={<Radio />}
-                            // disabled={item.disabled}
-                            checked={item.selected}
+                            checked={item.name === current_map[row.key]}
                             label={
                               <Box sx={MenuLabelStyle}>
-                                <span aria-label={item.name}>{item.name}</span>
+                                <span aria-label={translate(item, 'label')}>
+                                  {translate(item, 'label')}
+                                </span>
                                 {isMobile ? (
                                   <Typography variant={'caption'}>
-                                    {item.description}
+                                    {translate(item, 'description')}
                                   </Typography>
                                 ) : (
-                                  <Tooltip title={item.description}>
+                                  <Tooltip
+                                    title={translate(item, 'description')}
+                                    enterTouchDelay={0}
+                                  >
                                     <InfoIcon fontSize={'small'} />
                                   </Tooltip>
                                 )}

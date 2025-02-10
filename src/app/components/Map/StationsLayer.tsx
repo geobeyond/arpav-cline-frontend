@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLeafletContext, withPane } from '@react-leaflet/core';
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet.vectorgrid';
-import { VECTORTILES_URL } from '../../../utils/constants';
+import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants';
 
 import { Button, Paper, Box, IconButton, Typography } from '@mui/material';
 import { MapPopup } from '../MapSearch';
@@ -13,7 +13,7 @@ import { PopupStyle } from './styles';
 
 export const StationsLayer = (props: any) => {
   const { selected_map } = useSelector((state: any) => state.map);
-  const { selectCallback, selectedPoint, openCharts } = props;
+  const { selectCallback, selectedPoint, openCharts, zIndex } = props;
   const map = useMap();
   const context = useLeafletContext();
   // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))
@@ -23,53 +23,30 @@ export const StationsLayer = (props: any) => {
     let selected = false;
     // let hovered = false;
     const container = context.layerContainer || context.map;
-    const url = `${VECTORTILES_URL}/public.places_cities.geometry/{z}/{x}/{y}.pbf`;
-    // @ts-ignore
-    let vectorLayer = L.GeoJSON().protobuf(url, {
-      interactive: true,
-      vectorTileLayerStyles: {
-        'public.places_cities.geometry': (
-          properties,
-          zoom,
-          geometryDimension,
-        ) => {
-          let opacity = 0.5;
-          let color = '#808080';
-          if (zoom <= 9) {
-            opacity = 0.1;
-            color = '#b6b6b6';
-          } else if (zoom >= 10 && zoom < 11) {
-            opacity = 0.2;
-          } else if (zoom >= 11 && zoom <= 12) {
-            opacity = 0.3;
-          }
+    const url = BACKEND_VECTOR_TILES_URL + '/stations/{z}/{x}/{y}';
 
+    context.map.createPane('stations');
+    // @ts-ignore
+    context.map.getPane('stations').style.zIndex = zIndex;
+
+    // @ts-ignore
+    let vectorLayer = L.vectorGrid.protobuf(url, {
+      interactive: true,
+      pane: 'stations',
+      vectorTileLayerStyles: {
+        stations: (properties, zoom, geometryDimension) => {
+          let opacity = 0.9;
+          let color = '#528ed2';
           // console.log(zoom, color, opacity)
           return {
             color: color,
             weight: 1,
-            radius: 1,
+            radius: 3,
             fill: true,
-            fillOpacity: 0,
+            fillOpacity: 0.7,
             opacity: opacity,
           };
         },
-      },
-      getFeatureId: function (f) {
-        if (selectedPoint && f.properties.name === selectedPoint.name) {
-          // console.log('mi arriva ', selectedPoint)
-          selected = f.properties.name;
-          vectorLayer.setFeatureStyle(f.properties.name, {
-            color: '#164d36',
-            weight: 2,
-            radius: 1,
-            fill: true,
-            fillOpacity: 0,
-            opacity: 1,
-          });
-          vectorLayer.bringToFront();
-        }
-        return f.properties.name;
       },
     });
 
@@ -103,12 +80,7 @@ export const StationsLayer = (props: any) => {
           pathOptions={{ color: '#164d36' }}
         >
           <Popup>
-            <Box sx={PopupStyle}>
-              <MapPopup
-                openCharts={openCharts}
-                value={selectedPoint}
-              ></MapPopup>
-            </Box>
+            <Box sx={PopupStyle}></Box>
           </Popup>
         </CircleMarker>
       </Pane>

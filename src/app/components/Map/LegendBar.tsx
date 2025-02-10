@@ -1,33 +1,110 @@
 import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { WMS_PROXY_URL } from '../../../utils/constants';
-import { LegendBarStyle } from './styles';
+import { useTranslation } from 'react-i18next';
 
 export interface LegendBarProps {
   className?: string;
   isMobile: Boolean;
+  data: any;
+  unit: string;
+  label: string;
+  precision?: number;
 }
 
+const lightOrDark = color => {
+  // Variables for red, green, blue values
+  var r, g, b, hsp;
+
+  // Check the format of the color, HEX or RGB?
+  if (color.match(/^rgb/)) {
+    // If RGB --> store the red, green, blue values in separate variables
+    color = color.match(
+      /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/,
+    );
+
+    r = color[1];
+    g = color[2];
+    b = color[3];
+  } else {
+    // If hex --> Convert it to RGB: http://gist.github.com/983661
+    color = +('0x' + color.slice(1).replace(color.length < 5 && /./g, '$&$&'));
+
+    r = color >> 16;
+    g = (color >> 8) & 255;
+    b = color & 255;
+  }
+
+  // HSP (Highly Sensitive Poo) equation from http://alienryderflex.com/hsp.html
+  hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
+
+  // Using the HSP value, determine whether the color is light or dark
+  if (hsp > 127.5) {
+    return 'light';
+  } else {
+    return 'dark';
+  }
+};
+
 export const LegendBar = (props: LegendBarProps) => {
-  const { className, isMobile } = props;
-  const { selected_map } = useSelector((state: any) => state.map);
+  const { className, isMobile, unit, label, precision = 2 } = props;
+  const data = props.data || { color_entries: [] };
+  const colors = data.color_entries?.sort((a, b) => b.value - a.value);
+
+  const { t, i18n } = useTranslation();
+  const hex2rgb = c => `rgb(${c.match(/\w\w/g).map(x => +`0x${x}`)})`;
 
   return (
-    <Box className={className} sx={LegendBarStyle}>
-      {selected_map.id && (
-        <div style={{ backgroundColor: 'white' }}>
-          <img src={`${WMS_PROXY_URL}${selected_map.legend}`} alt={'Legenda'} />
-          <Typography
-            id="modal-modal-title"
-            variant="body1"
-            component="p"
-            align={'center'}
-          >
-            {selected_map.unit}
-          </Typography>
+    <Box className={className}>
+      <div style={{ backgroundColor: 'white' }}>
+        <div
+          style={{ textAlign: 'center', maxWidth: isMobile ? '60px' : '120px' }}
+        >
+          <b>{label?.toUpperCase()}</b>
         </div>
-      )}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {colors.length > 0 && (
+            <div
+              style={{
+                backgroundColor: '#' + colors[0].color.substring(3),
+                width: isMobile ? '60px' : '120px',
+                height: '30px',
+              }}
+            ></div>
+          )}
+          {colors.map((itm, index, elements) => {
+            const bg = '#' + itm.color.substring(3);
+            const hbg = hex2rgb(itm.color.substring(3));
+            let nbg = bg;
+            let nhbg = hbg;
+            if (index < colors.length - 1) {
+              nbg = '#' + elements[index + 1].color.substring(3);
+              nhbg = hex2rgb(elements[index + 1].color.substring(3));
+            }
+            const fg = lightOrDark(bg) === 'light' ? '#000000' : '#ffffff';
+            return (
+              <div
+                style={{
+                  display: 'block',
+                  width: isMobile ? '60px' : '120px',
+                  height: '40px',
+                  textAlign: 'right',
+                  paddingRight: '5px',
+                  lineHeight: '0px',
+                  background:
+                    'linear-gradient(180deg, ' + bg + ' 0%, ' + nbg + ' 100%)',
+                  color: fg,
+                }}
+              >
+                {itm.value
+                  .toFixed(precision)
+                  .replaceAll('.', i18n.language === 'it' ? ',' : '.')}{' '}
+                {unit}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </Box>
   );
 };

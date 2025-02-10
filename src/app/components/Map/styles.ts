@@ -31,18 +31,6 @@ export const MobileSpaceDisplayStyle = {
   visibility: 'hidden' as Property.Visibility,
 };
 
-export const LegendBarStyle = theme => ({
-  '& img': {
-    width: '90px',
-    [theme.breakpoints.down('def')]: {
-      width: '65px',
-    },
-    '@media screen and (max-height: 770px)': {
-      width: '65px',
-    },
-  },
-});
-
 export const PopupStyle = theme => ({
   width: '108px',
   height: '42px',

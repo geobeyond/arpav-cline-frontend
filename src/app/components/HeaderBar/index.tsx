@@ -24,6 +24,9 @@ import {
   HeaderSocialsZone,
   LinkList,
   LinkListItem,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
 } from 'design-react-kit';
 import 'typeface-titillium-web';
 
@@ -42,6 +45,8 @@ import {
   LinkStyle,
   HeaderTextStyle,
 } from './styles';
+import MenuIcon from '@mui/icons-material/Menu';
+
 import { Link } from 'react-router-dom';
 class HeaderBarProps {
   mode?: 'compact' | 'full' = 'compact';
@@ -59,61 +64,118 @@ const HeaderBar = (props: HeaderBarProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
 
+  const style = {
+    maxHeight: '7svh',
+    minHeight: '30px',
+  };
+
   return (
     <Headers>
       <Header theme="light" type="slim" style={HeaderStyle}>
         <HeaderContent>
-          <HeaderBrand style={HeaderBrandStyle} href="/">
-            <b className="green">{t('app.header.acronymMeaning')}</b>
-          </HeaderBrand>
-          <HeaderRightZone>
-            <HeaderLinkZone>
-              <LinkList>
-                <LinkListItem href="/info" style={LinkStyle}>
-                  {t('app.header.menu.info')}
-                </LinkListItem>
-                <LinkListItem href="/privacy" style={LinkStyle}>
-                  {t('app.header.menu.privacyPolicy')}
-                </LinkListItem>
-                <LinkListItem href="/data" style={LinkStyle}>
-                  {t('app.header.menu.dataPolicy')}
-                </LinkListItem>
-              </LinkList>
-            </HeaderLinkZone>
-          </HeaderRightZone>
+          {isMobile ? (
+            <>
+              <a style={HeaderBrandStyle} href="/">
+                <b className="green">{t('app.header.acronymMeaning')}</b>
+              </a>
+              <Dropdown className="me-3">
+                <DropdownToggle tag="a" color="primary">
+                  <MenuIcon />
+                </DropdownToggle>
+                <DropdownMenu style={{ width: 200 }}>
+                  <LinkList>
+                    <LinkListItem href="/info" style={LinkStyle}>
+                      {t('app.header.menu.info')}
+                    </LinkListItem>
+                    <LinkListItem href="/privacy" style={LinkStyle}>
+                      {t('app.header.menu.privacyPolicy')}
+                    </LinkListItem>
+                    <LinkListItem href="/data" style={LinkStyle}>
+                      {t('app.header.menu.dataPolicy')}
+                    </LinkListItem>
+                  </LinkList>
+                </DropdownMenu>
+              </Dropdown>
+            </>
+          ) : (
+            <>
+              <HeaderBrand style={HeaderBrandStyle} href="/">
+                <b className="green">{t('app.header.acronymMeaning')}</b>
+              </HeaderBrand>
+              <HeaderRightZone>
+                <HeaderLinkZone>
+                  <LinkList>
+                    <LinkListItem href="/info" style={LinkStyle}>
+                      {t('app.header.menu.info')}
+                    </LinkListItem>
+                    <LinkListItem href="/privacy" style={LinkStyle}>
+                      {t('app.header.menu.privacyPolicy')}
+                    </LinkListItem>
+                    <LinkListItem href="/data" style={LinkStyle}>
+                      {t('app.header.menu.dataPolicy')}
+                    </LinkListItem>
+                  </LinkList>
+                </HeaderLinkZone>
+              </HeaderRightZone>
+            </>
+          )}
         </HeaderContent>
       </Header>
-      {props.mode === 'full' ? (
+      {props.mode === 'full' && !isMobile ? (
         <Header theme="light" type="center">
           <HeaderContent>
             <HeaderBrand>
-              <img
-                src={require('../../../assets/img/logo_arpav.png')}
-                alt="arpav"
-              ></img>
+              <a
+                href={'https://www.arpa.veneto.it/'}
+                target={'_blank'}
+                rel="noreferrer"
+              >
+                <img
+                  src={require('../../../assets/img/logo_arpav.png')}
+                  alt="arpav"
+                  style={style}
+                ></img>
+              </a>
             </HeaderBrand>
-            <HeaderRightZone style={HeaderTextStyle}>
-              <HeaderSocialsZone>
-                <ul>
-                  <li>
-                    <a aria-label="Facebook" href="#" target="_blank">
-                      <Icon icon="it-facebook" />
-                    </a>
-                  </li>
-                  <li>
-                    <a aria-label="Github" href="#" target="_blank">
-                      <Icon icon="it-github" />
-                    </a>
-                  </li>
-                  <li>
-                    <a aria-label="Twitter" href="#" target="_blank">
-                      <Icon icon="it-twitter" />
-                    </a>
-                  </li>
-                </ul>
-              </HeaderSocialsZone>
-              <HeaderSearch iconName="it-search" label="Cerca" />
-            </HeaderRightZone>
+            <HeaderBrand>
+              <a
+                href={'https://www.arpa.fvg.it/'}
+                target={'_blank'}
+                rel="noreferrer"
+              >
+                <img
+                  src={require('../../../assets/img/arpafvg-logo.png')}
+                  alt="arpafvg"
+                  style={style}
+                ></img>
+              </a>
+            </HeaderBrand>
+            <HeaderBrand>
+              <a
+                href={'https://www.snpambiente.it/'}
+                target={'_blank'}
+                rel="noreferrer"
+              >
+                <img
+                  src={require('../../../assets/img/logo_SNPA.png')}
+                  alt="arpav"
+                  style={style}
+                ></img>
+              </a>
+            </HeaderBrand>
+            <HeaderBrand>
+              <a
+                href={'https://www.regione.veneto.it/'}
+                target={'_blank'}
+                rel="noreferrer"
+              >
+                <img
+                  src={require('../../../assets/img/logo_regione_veneto.png')}
+                  alt="arpav"
+                  style={style}
+                ></img>
+              </a>
+            </HeaderBrand>
           </HeaderContent>
         </Header>
       ) : (
@@ -123,7 +185,3 @@ const HeaderBar = (props: HeaderBarProps) => {
   );
 };
 export default HeaderBar;
-
-//
-
-//

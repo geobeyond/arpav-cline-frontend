@@ -43,4 +43,5 @@ export const GlobalStyle = createGlobalStyle`
   .green a{
     color: #164d36;
   }
+  
 `;

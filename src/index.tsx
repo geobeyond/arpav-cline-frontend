@@ -7,17 +7,19 @@
 
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
+import chalk from 'chalk';
 
 import * as React from 'react';
 import ReactDOM, { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import FontFaceObserver from 'fontfaceobserver';
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
 import 'bootstrap-italia/dist/css/bootstrap-italia.min.css';
 
 import 'typeface-titillium-web';
+
+import { TOLGEE_BASE_URL } from 'utils/constants';
 
 import { App } from 'app';
 
@@ -29,28 +31,35 @@ import { ThemeProvider } from 'styles/theme/ThemeProvider';
 
 import reportWebVitals from 'reportWebVitals';
 
+import { Tolgee, DevTools, TolgeeProvider, FormatSimple } from '@tolgee/react';
+
 // Initialize languages
 import './locales/i18n';
 
-// Observe loading of Inter (to remove 'Inter', remove the <link> tag in
-// the index.html file and this observer)
-const openSansObserver = new FontFaceObserver('Inter', {});
-
-// When Inter is loaded, add a font-family using Inter to the body
-openSansObserver.load().then(() => {
-  document.body.classList.add('fontLoaded');
-});
 const { store } = configureAppStore();
 // console.log({store})
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container!);
+const tolgee = Tolgee().use(DevTools()).use(FormatSimple()).init({
+  language: 'en',
+  apiUrl: TOLGEE_BASE_URL,
+  apiKey: process.env.REACT_APP_TOLGEE_API_KEY,
+});
+//require('@dotenvx/dotenvx').config({ path: ['.env.staging', '.env'] });
+
+console.log(chalk.blue(`USING >> ${process.env.REACT_APP_BACKEND_PUBLIC_URL}`));
 
 root.render(
   <Provider store={store}>
     <ThemeProvider>
       <HelmetProvider>
         <React.StrictMode>
-          <App />
+          <TolgeeProvider
+            tolgee={tolgee}
+            fallback="Loading..." // loading fallback
+          >
+            <App />
+          </TolgeeProvider>
         </React.StrictMode>
       </HelmetProvider>
     </ThemeProvider>

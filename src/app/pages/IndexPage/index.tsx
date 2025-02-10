@@ -26,8 +26,10 @@ import {
   Section,
 } from 'design-react-kit';
 
-import { HeroStyle } from './styles';
+import { AttStyle, HeroStyle, TopHeroStyle, AttributionStyle } from './styles';
 import HeaderBar from 'app/components/HeaderBar';
+import Graph from './Graph';
+import { Box, Typography } from '@mui/material';
 
 const IndexPage = () => {
   const { t } = useTranslation();
@@ -36,83 +38,108 @@ const IndexPage = () => {
   const regioneImg = '/img/logo_regione_veneto.png';
   const arpavImg = '/img/logo_arpav.png';
   const snpaImg = '/img/logo_SNPA.png';
+  const setIds = newIds => null;
+  const setTimeRange = tr => null;
 
   return (
     <>
       <HeaderBar mode="full"></HeaderBar>
 
-      <Hero overlay="dark" style={HeroStyle}>
-        <HeroBackground
-          alt="imagealt"
-          src="https://images.unsplash.com/photo-1566996694954-90b052c413c4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          title="image title"
-        />
-        <HeroBody>
-          <HeroTitle>Barometro Climatico</HeroTitle>
-          <p className="d-none d-lg-block">
-            Platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper
-            dignissim cras. Dictum sit amet justo donec enim diam vulputate ut.
-            Eu nisl nunc mi ipsum faucibus.
-          </p>
-          <HeroButton href="/" color="secondary">
-            Visualizza
-          </HeroButton>
-        </HeroBody>
+      <Hero overlay="dark" style={TopHeroStyle}>
+        <h2>Barometro del clima</h2>
+
+        <p>
+          <i>
+            La temperatura misurata in Veneto e le proiezioni per il futuro.
+            Dove stiamo andando?
+          </i>
+        </p>
+        <p>
+          Il barometro utilizza la temperatura media annuale come indicatore dei
+          cambiamenti climatici in atto e attesi. Nel grafico:
+          <ul>
+            <li>
+              la temperatura registrata in Veneto negli ultimi decenni (linea
+              nera);
+            </li>
+            <li>
+              le proiezioni climatiche fino a fine secolo per tre diversi
+              scenari di riduzione delle emissioni di gas serra (linee blu,
+              gialla e rossa).
+            </li>
+          </ul>
+        </p>
+        <Graph></Graph>
       </Hero>
       <Section></Section>
+      <Container></Container>
       <Container color="muted" style={{ width: '100%' }}>
         <Row style={{ width: '100%' }}>
-          <Col sm={6}>
-            <Hero overlay="dark" style={HeroStyle}>
+          <Col lg={12} xl={6}>
+            <Hero overlay="dark">
               <HeroBackground
-                alt="imagealt"
-                src="https://plus.unsplash.com/premium_photo-1694475170294-4869138cca31?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                title="image title"
+                alt="Giuseppe Ghedina Basilio (1937)"
+                src={require('../../../assets/img/puntapenia_1937.jpg')}
+                title="Giuseppe Ghedina Basilio (1937)"
               />
               <HeroBody>
-                <HeroTitle>Dati Storici</HeroTitle>
-                <p className="d-none d-lg-block">
-                  Platea dictumst vestibulum rhoncus est pellentesque elit
-                  ullamcorper dignissim cras. Dictum sit amet justo donec enim
-                  diam vulputate ut. Eu nisl nunc mi ipsum faucibus.
-                </p>
-                <HeroButton href="/ps" color="secondary">
-                  Visualizzazione semplificata
+                <HeroTitle style={{ paddingRight: '20px' }}>
+                  {t('app.index.sections.hist')}
+                </HeroTitle>
+                <p className="d-none d-lg-block"></p>
+                <HeroButton
+                  disabled={true}
+                  href="/storico-semplice"
+                  color="secondary"
+                >
+                  {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
                 <br />
                 <br />
-                <HeroButton href="/pa" color="secondary">
-                  Visualizzazione tecnica
+                <HeroButton href="/storico-avanzata" color="secondary">
+                  {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
             </Hero>
+            <Container sx={AttributionStyle}>
+              <Box sx={AttributionStyle}>
+                <Typography sx={AttStyle}>
+                  Giuseppe Ghedina Basilio (1937)
+                </Typography>
+              </Box>
+            </Container>
           </Col>
-          <Col sm={6}>
-            <Hero overlay="dark" style={HeroStyle}>
+          <Col lg={12} xl={6}>
+            <Hero overlay="dark">
               <HeroBackground
                 alt="imagealt"
-                src="https://plus.unsplash.com/premium_photo-1679517155620-8048e22078b1?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src={require('../../../assets/img/punta_penia2022_cielo2.jpg')}
                 title="image title"
               />
               <HeroBody>
-                <HeroTitle>Previsioni</HeroTitle>
-                <p className="d-none d-lg-block">
-                  Platea dictumst vestibulum rhoncus est pellentesque elit
-                  ullamcorper dignissim cras. Dictum sit amet justo donec enim
-                  diam vulputate ut. Eu nisl nunc mi ipsum faucibus.
-                </p>
-                <HeroButton href="fs" color="secondary">
-                  Visualizzazione semplificata
+                <HeroTitle>{t('app.index.sections.proj')}</HeroTitle>
+                <p className="d-none d-lg-block"></p>
+                <HeroButton
+                  disabled={true}
+                  href="proiezioni-semplice"
+                  color="secondary"
+                >
+                  {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
                 <br />
                 <br />
-                <HeroButton href="fa" color="secondary">
-                  Visualizzazione tecnica
+                <HeroButton href="proiezioni-avanzata" color="secondary">
+                  {t('app.index.sections.advanced')}
                 </HeroButton>
               </HeroBody>
             </Hero>
+            <Container sx={AttributionStyle}>
+              <Box sx={AttributionStyle}>
+                <Typography sx={AttStyle}>Mauro Valt (2022)</Typography>
+              </Box>
+            </Container>
           </Col>
         </Row>
       </Container>

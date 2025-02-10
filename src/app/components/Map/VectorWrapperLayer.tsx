@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLeafletContext, withPane } from '@react-leaflet/core';
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet.vectorgrid';
-import { VECTORTILES_URL } from '../../../utils/constants';
+import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants'
 
 import { Button, Paper, Box, IconButton, Typography } from '@mui/material';
 import { MapPopup } from '../MapSearch';
@@ -12,80 +12,68 @@ import { MapPopup } from '../MapSearch';
 import { PopupStyle } from './styles';
 
 export const VectorWrapperLayer = (props: any) => {
+  const currentTimeSerie = props.currentTimeserie;
+  const zIndex = props.zIndex;
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
   const { selected_map } = useSelector((state: any) => state.map);
-  const { selectCallback, selectedPoint, openCharts } = props;
+  const { selectCallback, selectedPoint, openCharts, unit, precision } = props;
   const map = useMap();
   const context = useLeafletContext();
 
-  useEffect(() => {
-    if (refReady) {
-      popupRef.openOn(map);
-    }
-  }, [refReady]);
-  // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))
-  // const [selected, setSelected] = useState<any>(null);
+  let selected = useRef<any>();
+
+  const url = BACKEND_VECTOR_TILES_URL + '/municipalities/{z}/{x}/{y}';
 
   useEffect(() => {
-    let selected = false;
-    // let hovered = false;
-    const container = context.layerContainer || context.map;
-    const url = `${VECTORTILES_URL}/public.places_cities.geometry/{z}/{x}/{y}.pbf`;
+    context.map.createPane('municipalities');
     // @ts-ignore
-    let vectorLayer = L.vectorGrid
+    context.map.getPane('municipalities').style.zIndex = zIndex;
+    // @ts-ignore
+    const _vectorLayer = L.vectorGrid
       .protobuf(url, {
         interactive: true,
+        pane: 'municipalities',
         vectorTileLayerStyles: {
-          'public.places_cities.geometry': (
-            properties,
-            zoom,
-            geometryDimension,
-          ) => {
-            let opacity = 0.5;
-            let color = '#808080';
-            if (zoom <= 9) {
-              opacity = 0.1;
-              color = '#b6b6b6';
-            } else if (zoom >= 10 && zoom < 11) {
-              opacity = 0.2;
-            } else if (zoom >= 11 && zoom <= 12) {
-              opacity = 0.3;
-            }
-
-            // console.log(zoom, color, opacity)
-            return {
-              color: color,
-              weight: 1,
-              radius: 1,
-              fill: true,
-              fillOpacity: 0,
-              opacity: opacity,
-            };
+          municipalities: {
+            color: '#b6b6b6',
+            weight: 1,
+            radius: 1,
+            fill: true,
+            fillOpacity: 0,
+            opacity: 0.2,
           },
         },
+
         getFeatureId: function (f) {
-          if (selectedPoint && f.properties.name === selectedPoint.name) {
-            // console.log('mi arriva ', selectedPoint)
-            selected = f.properties.name;
-            vectorLayer.setFeatureStyle(f.properties.name, {
-              color: '#164d36',
-              weight: 2,
-              radius: 1,
-              fill: true,
-              fillOpacity: 0,
-              opacity: 1,
-            });
-            vectorLayer.bringToFront();
-          }
           return f.properties.name;
         },
       })
       .on('click', function (e) {
-        vectorLayer.resetFeatureStyle(selected);
-        selected = e.layer.properties.name;
-        if (selected && e.layer) {
+        const ls = selected.current;
+        if (ls) {
+          _vectorLayer.setFeatureStyle(ls, {
+            color: '#b6b6b6',
+            weight: 1,
+            radius: 1,
+            fill: true,
+            fillOpacity: 0,
+            opacity: 0.2,
+          });
+        }
+        selected.current = e.layer.properties.name || e.layer.properties.label;
+        //localStorage.setItem('muni', selected.current);
+        _vectorLayer.setFeatureStyle(selected.current, {
+          color: '#164d36',
+          weight: 2,
+          radius: 1,
+          fill: true,
+          fillOpacity: 0,
+          opacity: 1,
+        });
+        _vectorLayer.bringToFront();
+        if (selected.current && e.layer) {
           const payload = {
             ...e.layer.properties,
             latlng: e.latlng,
@@ -93,49 +81,58 @@ export const VectorWrapperLayer = (props: any) => {
           };
           // console.log(payload)
           selectCallback(payload);
+          //if (
+          //  currentTimeSerie &&
+          //  currentTimeSerie.values &&
+          //  currentTimeSerie.values.length > 0
+          //) {
+          setTimeout(() => {
+            try {
+              popupRef.current.openPopup();
+            } catch (ex) {
+              console.log(ex);
+            }
+          }, 550);
+          //}
         }
-      })
-      .on('mouseover', function (e) {});
+      });
+    map.addLayer(_vectorLayer);
+  }, []);
 
-    context.map.addLayer(vectorLayer);
-    vectorLayer.bringToFront();
-
-    return () => {
-      // console.log('RETURN')
+  useEffect(() => {
+    if (
+      currentTimeSerie === undefined ||
+      currentTimeSerie?.values === undefined ||
+      currentTimeSerie?.values?.length === 0
+    ) {
       try {
-        // @ts-ignore
-        if (vectorLayer) container.removeLayer(vectorLayer);
-      } catch (e) {
-        console.log('error REMOVING', e);
+        popupRef.current.closePopup();
+      } catch (ex) {
+        console.log(ex);
       }
-    };
-  }, [
-    selected_map,
-    map,
-    selectedPoint,
-    context.layerContainer,
-    context.map,
-    selectCallback,
-  ]);
+    }
+  }, [currentTimeSerie]);
+
+  // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))
+  // const [selected, setSelected] = useState<any>(null);
 
   return (
     selectedPoint && (
       <Pane name="custom" style={{ zIndex: 1000 }}>
         <CircleMarker
+          ref={popupRef}
           center={[selectedPoint.latlng.lat, selectedPoint.latlng.lng]}
           radius={2}
           pathOptions={{ color: '#164d36' }}
         >
-          <Popup
-            ref={r => {
-              popupRef = r;
-              setRefReady(true);
-            }}
-          >
+          <Popup>
             <Box sx={PopupStyle}>
               <MapPopup
                 openCharts={openCharts}
                 value={selectedPoint}
+                currentTimeserie={currentTimeSerie}
+                unit={unit}
+                precision={precision}
               ></MapPopup>
             </Box>
           </Popup>

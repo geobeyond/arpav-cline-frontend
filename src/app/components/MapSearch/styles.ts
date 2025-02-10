@@ -36,5 +36,10 @@ export const MapSearchSecondRowStyle = theme => ({
 });
 
 export const LatLngStyle = theme => ({
+  '& input': {
+    width: '124px',
+    margin: '7px',
+    height: '14px',
+  },
   height: 'max-content',
 });

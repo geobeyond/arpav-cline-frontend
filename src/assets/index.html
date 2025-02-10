@@ -20,21 +20,23 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <meta property="og:title" content="PPCNE Piattaforma Proiezioni Climatiche per il Nord-Est" />
+    <meta property="og:title" content="CLINE - Piattaforma Clima Nord-Est" />
     <meta property="og:description" content="" />
-    <meta
-      property="og:image"
-      content="/img/logo_arpav.png"
+    <meta property="og:image" content="/img/logo_arpav.png" />
+    <title>CLINE - Piattaforma Clima Nord-Est</title>
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css"
     />
-    <title>PPCNE Piattaforma Proiezioni Climatiche per il Nord-Est</title>
-    <meta
-      name="description"
-      content=""
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css"
     />
-    <link rel="stylesheet" href="styles.css">
   </head>
-  <body>
-<!--    <noscript>You need to enable JavaScript to run this app.</noscript>-->
+  <body style="overflow: hidden">
+    <!--    <noscript>You need to enable JavaScript to run this app.</noscript>-->
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -46,5 +48,18 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"
+    ></script>
   </body>
 </html>

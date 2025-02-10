@@ -1,6 +1,8 @@
+import { PosAnimation } from 'leaflet';
+
 export const ModalStyle = theme => ({
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'flex-start',
   top: theme.custom.headerHeight,
@@ -21,6 +23,7 @@ export const PageContainerStyle = theme => ({
   bgcolor: 'background.paper',
   width: '70%',
   display: 'flex',
+  flexDirection: 'column',
   [theme.breakpoints.down('def')]: {
     mt: '2%',
     width: '98%',
@@ -42,4 +45,9 @@ export const FakePageFooter = theme => ({
   '&>p': {
     height: 4,
   },
+});
+
+export const ScrollableStyle = theme => ({
+  height: 'calc(100vh - 100px)',
+  overflow: 'visible',
 });

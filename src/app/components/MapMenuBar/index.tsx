@@ -10,6 +10,8 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  Tooltip,
+  CircularProgress,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
@@ -39,9 +41,8 @@ import {
   MenuR1Style,
   MenuR2Style,
 } from './styles';
-import { MapState } from '../../pages/MapPage/slice/types';
 import DownloadDataDialog from '../DownloadDataDialog';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useMapSlice } from '../../pages/MapPage/slice';
 import { MenuSelectionMobileStyle } from './styles';
 import SnowSunIcon from '../../icons/SnowSunIcon';
@@ -51,51 +52,91 @@ import {
   LinkList,
   LinkListItem,
 } from 'design-react-kit';
+import { RequestApi } from 'app/Services';
 
 export interface MapMenuBar {
   onDownloadMapImg?: Function;
+  onMenuChange?: Function;
   mode: string;
   data: string;
+  menus: any;
+  combinations: any;
+  current_map?: any;
+  foundLayers: number;
+  setCurrentMap: Function;
+  openError: Function;
+  showLoader?: Function;
+
+  inProgress?: boolean;
 }
 
 const MAP_MODES = {
   future: 'Proiezioni',
-  past: 'Dati Storici',
-  advanced: 'Vista avanzata',
-  simple: 'Vista semplificata',
+  past: 'Storico',
+  advanced: 'Avanzata',
+  simple: 'Semplice',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export function MapMenuBar(props: MapMenuBar) {
   const map_mode = props.mode;
   const map_data = props.data;
-  const onDownloadMapImg = props.onDownloadMapImg ?? (() => {});
-  const {
-    selected_map,
-    forecast_parameters,
-    selectactable_parameters,
-    timeserie,
-    // @ts-ignore
-  } = useSelector(state => state?.map as MapState);
-  const { t } = useTranslation();
+  const onMenuChange = props.onMenuChange;
+  const current_map = props.current_map;
+  const forecast_parameters = props.menus;
+  const foundLayers = props.foundLayers;
+  const setCurrentMap = props.setCurrentMap;
+  const combinations = props.combinations || {};
+  const openError = props.openError;
+  const showLoader = props.showLoader;
+  const inProgress = props.inProgress || false;
+
+  const activeCombinations = useRef(
+    Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
+  );
+
+  const setActiveCombinations = combo => {
+    activeCombinations.current = { ...combo };
+  };
+
+  const onDownloadMapImg = props.onDownloadMapImg ?? (() => { });
+  //const {
+  //  selected_map,
+  //  forecast_parameters,
+  //  selectactable_parameters,
+  //  timeserie,
+  //  // @ts-ignore
+  //} = useSelector(state => state?.map as MapState);
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
+  const localCM = useRef<any>(current_map);
+
+  const changingParameter = useRef<string>('climatological_variable');
+  const changingValue = useRef<string>('tas');
+  const prevValue = useRef<string | null>('tas');
+  const showModal = useRef<boolean>(true);
+
+  const api = RequestApi.getInstance();
 
   const mapParameters = (mapKey, parameterListKey) => {
-    const items = forecast_parameters[parameterListKey].map(item => {
-      return {
-        ...item,
-        disabled: !(
-          Array.isArray(selectactable_parameters[parameterListKey]) &&
-          selectactable_parameters[parameterListKey].includes(item?.id)
-        ),
-        selected: selected_map[mapKey] === item.id,
-      };
-    });
-    const needsSelection =
-      selected_map[mapKey] == null &&
-      items.filter(x => x.disabled === false).length > 0;
-    return { items, needsSelection };
+    if (forecast_parameters) {
+      const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
+      const items = fp.allowed_values.map(item => {
+        return {
+          ...item,
+          disabled: false,
+          selected: false, //currentMap[mapKey] === item.name,
+        };
+      });
+      //const needsSelection =
+      //  selected_map[mapKey] == null &&
+      //  items.filter(x => x.disabled === false).length > 0;
+      //return { items, needsSelection };
+      return { items, needsSelection: false };
+    } else {
+      return { items: [], needsSelection: false };
+    }
   };
 
   const setItemMenus = () => ({
@@ -104,9 +145,18 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key: 'variable',
+            key: 'climatological_variable',
             groupName: '',
-            ...mapParameters('variable', 'variables'),
+            ...mapParameters(
+              map_data === 'future'
+                ? 'climatological_variable'
+                : 'historical_variable',
+              map_data === 'future'
+                ? 'climatological_variable'
+                : 'historical_variable',
+            ),
+            disableable: false,
+            criteria: (x, c) => [],
           },
         ],
       },
@@ -115,44 +165,74 @@ export function MapMenuBar(props: MapMenuBar) {
       map_data === 'past'
         ? []
         : [
-            // COLUMNS:
-            {
-              rows: [
-                {
-                  key: 'forecast_model',
-                  groupName: t('app.map.menu.models'),
-                  ...mapParameters('forecast_model', 'forecast_models'),
-                },
-              ],
-            },
-            {
-              rows: [
-                {
-                  key: 'scenario',
-                  groupName: t('app.map.menu.scenarios'),
-                  ...mapParameters('scenario', 'scenarios'),
-                },
-              ],
-            },
-          ],
+          // COLUMNS:
+          {
+            rows: [
+              {
+                key: 'climatological_model',
+                groupName: t('app.map.menu.models'),
+                ...mapParameters(
+                  'climatological_model',
+                  'climatological_model',
+                ),
+                disableable: false,
+                criteria: (x, c) => [],
+                disabled: x => false,
+              },
+            ],
+          },
+          {
+            rows: [
+              {
+                key: 'scenario',
+                disableable: false,
+                groupName: t('app.map.menu.scenarios'),
+                ...mapParameters('scenario', 'scenario'),
+                criteria: (x, c) => [],
+                disabled: x => false,
+              },
+            ],
+          },
+        ],
     periodMenuSet: [
       // COLUMNS:
       {
         rows: [
           {
-            key: 'data_series',
+            key: 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
-            ...mapParameters('data_series', 'data_series'),
+            ...mapParameters(
+              map_data === 'future'
+                ? 'aggregation_period'
+                : 'historical_aggregation_period',
+              map_data === 'future'
+                ? 'aggregation_period'
+                : 'historical_aggregation_period',),
+            disableable: true,
+            disabled: x => false,
+            criteria: (x, c) => {
+              return x?.aggregation_period;
+            },
           },
           {
-            key: 'value_type',
+            key: 'measure',
             groupName: t('app.map.menu.valueTypes'),
-            ...mapParameters('value_type', 'value_types'),
+            ...mapParameters('measure', 'measure'),
+            disableable: true,
+            disabled: x => false,
+            criteria: (x, c) => x?.measure,
           },
           {
             key: 'time_window',
             groupName: t('app.map.menu.timeWindows'),
-            ...mapParameters('time_window', 'time_windows'),
+            ...mapParameters(
+              map_data === 'future' ? 'time_window' : 'historical_time_window',
+              map_data === 'future' ? 'time_window' : 'historical_time_window',
+            ),
+            disableable: true,
+            disabled: x => x.aggregation_period !== '30yr',
+            criteria: (x, c) =>
+              c.aggregation_period !== '30yr' ? [] : ['tw1', 'tw2'],
           },
         ],
       },
@@ -164,7 +244,13 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             key: 'year_period',
             groupName: '',
-            ...mapParameters('year_period', 'year_periods'),
+            ...mapParameters(
+              map_data === 'future' ? 'year_period' : 'historical_year_period',
+              map_data === 'future' ? 'year_period' : 'historical_year_period',
+            ),
+            disableable: true,
+            disabled: x => false,
+            criteria: (x, c) => x?.year_period,
           },
         ],
       },
@@ -176,7 +262,7 @@ export function MapMenuBar(props: MapMenuBar) {
   useEffect(() => {
     // console.log('PASSO')
     setMenus(setItemMenus());
-  }, [forecast_parameters, selectactable_parameters, selected_map]);
+  }, [forecast_parameters, setItemMenus]);
 
   // const [selectedValues, setSelectedValues] = React.useState<IGrpItm[][] | []>(
   //   [],
@@ -192,43 +278,108 @@ export function MapMenuBar(props: MapMenuBar) {
   const [isDownloadDataOpen, setDownloadDataOpen] =
     React.useState<boolean>(false);
 
+  const all_meas = ['absolute', 'anomaly'];
+  const all_pers = ['annual', '30yr'];
+  const all_indx = [
+    'tas',
+    'cdds',
+    'hdds',
+    'pr',
+    'snwdays',
+    'su30',
+    'tasmax',
+    'tasmin',
+    'tr',
+    'fd',
+  ];
+
+  const changeables = ['measure', 'year_period', 'time_window'];
   /* ********************************************************************************************************** */
   // MENU 0
-
   /* ********************************************************************************************************** */
 
-  // const handleChange = (menuIdx: number, groupSelection: IGrpItm[]) => {
-  const handleChange = (key: string, value: string) => {
-    // console.log("ciao2", key, value)
-    dispatch(actions.actions.changeSelection({ key, value }));
-    // const selTmp = [...selectedValues];
-    // selTmp[menuIdx] = groupSelection;
-    // setSelectedValues(selTmp);
+  const toDefault = object => {
+    let ret: any = {};
+    for (let k of Object.keys(object)) {
+      if (object[k].length > 0) {
+        ret[k] = object[k][object[k].length - 1];
+      } else {
+        ret[k] = null;
+      }
+    }
+
+    ret.climatological_model = 'model_ensemble';
+    ret.scenario = 'rcp85';
+    ret.aggregation_period = '30yr';
+    ret.measure = 'anomaly';
+    ret.time_window = 'tw1';
+
+    return ret;
   };
+
+  const handleChange = (key: string, value: string) => {
+    if (showLoader) {
+      if (onMenuChange) {
+        onMenuChange(true);
+      }
+    }
+    prevValue.current = localCM.current[key];
+    changingParameter.current = key;
+    changingValue.current = value;
+    localCM.current = { ...localCM.current, ...{ [key]: value } };
+    if (key === 'climatological_variable') {
+      showModal.current = false;
+      console.log('activatingCV', value, combinations[value]);
+      setActiveCombinations(combinations[value]);
+      localCM.current = toDefault(combinations[value + '::30yr']);
+      setCurrentMap(localCM.current);
+    } else {
+      const steps = [
+        'climatological_variable',
+        'aggregation_period',
+        'measure',
+      ];
+      console.log('handleChange', key, value);
+      console.log(combinations);
+      const idx = steps.indexOf(key);
+      let ckey = '{climatological_variable}';
+      if (idx > 0) {
+        ckey = ckey + '::{metric}';
+        ckey = ckey.replace(
+          '{climatological_variable}',
+          current_map.climatological_variable,
+        );
+        ckey = ckey.replace('{metric}', value);
+        if (Object.keys(combinations).indexOf(ckey) >= 0) {
+          //if (current_map[key] in combinations[ckey]) {
+          console.log(
+            'activating Combo',
+            ckey,
+            combinations[ckey][current_map[key]],
+          );
+          setActiveCombinations(combinations[ckey]);
+          //}
+        } else if (
+          Object.keys(combinations).indexOf(
+            current_map.climatological_variable,
+          ) >= 0
+        ) {
+          setActiveCombinations(
+            combinations[current_map.climatological_variable],
+          );
+        }
+      }
+      setCurrentMap(localCM.current);
+    }
+    if (onMenuChange) {
+      onMenuChange(true);
+    }
+  };
+
+  //setActiveCombinations(combinations['tas']);
 
   const findValueName = (key: string, listKey: string) => {
-    const id = selected_map[key];
-    let name = '';
-    if (id)
-      name = forecast_parameters[listKey]?.find(item => item.id === id)?.name;
-    return name ?? '';
-  };
-
-  const selectedValuesToString = () => {
-    const keys = [
-      ['variable', 'variables'],
-      ['forecast_model', 'forecast_models'],
-      ['scenario', 'scenarios'],
-      ['data_series', 'data_series'],
-      ['value_type', 'value_types'],
-      ['time_window', 'time_windows'],
-      ['year_period', 'year_periods'],
-    ];
-
-    const values = keys.map(key => findValueName(key[0], key[1]));
-    const label = values.filter(valSet => valSet).join(', ');
-
-    return label;
+    return '';
   };
 
   const hasMissingValues = items => {
@@ -236,6 +387,99 @@ export function MapMenuBar(props: MapMenuBar) {
       items.filter(h => h.rows.filter(x => x.needsSelection).length > 0)
         .length > 0
     );
+  };
+
+  useEffect(() => {
+    if (foundLayers === 0) {
+      if (changingParameter.current !== 'climatological_variable') {
+        openError('wrong_config');
+      }
+      let nm = { ...localCM.current };
+
+      if (changingParameter.current === 'year_period') {
+        if (prevValue.current) {
+          nm.year_period = prevValue.current;
+          prevValue.current = null;
+        }
+      } else {
+        let kk = localCM.current.climatological_variable;
+
+        let pkk = kk + '::' + localCM.current.aggregation_period;
+        let mkk = kk + '::' + localCM.current.measure;
+
+        if (kk in combinations) {
+          let opts = { ...combinations[kk] };
+          if (pkk in combinations) {
+            opts = { ...combinations[pkk] };
+          } else if (mkk in combinations) {
+          }
+          console.log(opts);
+          if (opts) {
+            for (let k of Object.keys(localCM.current)) {
+              if (changeables.indexOf(k) >= 0) {
+                if (
+                  opts[k].indexOf(localCM.current[k]) < 0 ||
+                  k.indexOf('measure') >= 0
+                ) {
+                  if (opts[k].length > 0) {
+                    nm[k] = opts[k].filter(x => localCM.current[k] !== x)[0];
+                  } else {
+                    nm[k] = null;
+                  }
+                } else {
+                  opts[k] = all_meas.filter(gg => gg !== localCM.current[k])[0];
+                }
+              }
+            }
+          }
+        }
+      }
+      localCM.current = { ...nm };
+      console.log(localCM.current);
+      setCurrentMap(localCM.current);
+
+      setActiveCombinations(
+        combinations[localCM.current.climatological_variable],
+      );
+    } else {
+      if (onMenuChange) {
+        onMenuChange(false);
+      }
+    }
+  }, [foundLayers]);
+
+  const labelFor = (itm: string) => {
+    api.getConfigurationParams().then(x => console.log(x));
+    const confs = localStorage.getItem('configs');
+    let configs = [];
+    if (confs) {
+      configs = JSON.parse(confs);
+    }
+    const labelsf = configs.map((config: any) =>
+      config.allowed_values.map(x => [
+        x.name,
+        i18n.language === 'it'
+          ? x.display_name_italian
+          : x.display_name_english,
+      ]),
+    );
+    const labels = Object.fromEntries(labelsf.flat());
+    return labels[itm];
+  };
+
+  const selectedValueToString = () => {
+    const caption = `${labelFor(localCM.current.climatological_variable)}
+    - ${labelFor(localCM.current.climatological_model)}
+    - ${labelFor(localCM.current.scenario)}
+    - ${labelFor(localCM.current.aggregation_period)}
+    - ${labelFor(localCM.current.measure)}
+    ${localCM.current.time_window &&
+        localCM.current.aggregation_period === '30yr'
+        ? ' - ' + labelFor(localCM.current.time_window)
+        : ''
+      }
+    - ${labelFor(localCM.current.year_period)}`;
+    return caption;
   };
 
   return (
@@ -259,13 +503,14 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
+              {map_data === 'past'?(<></>):(
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
                     {t('app.map.menuBar.model')}
                   </Typography>
                 </Box>
-              </Grid>
+              </Grid>)}
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
@@ -280,11 +525,19 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid xs={5} sx={FirstRowStyle}>
+              
+              {map_data !== 'past'?(<></>):(
+              <Grid xs={4} sx={FirstRowStyle}></Grid>)}
+              <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
                     {MAP_MODES[map_data]} - {MAP_MODES[map_mode]}
                   </Typography>
+                </Box>
+              </Grid>
+              <Grid xs={1} sx={FirstRowStyle}>
+                <Box>
+                  <Typography sx={MenuLabelStyle}></Typography>
                 </Box>
               </Grid>
             </>
@@ -292,20 +545,21 @@ export function MapMenuBar(props: MapMenuBar) {
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.variableMenuSet}
-              // value={selectedValues[0]}
+              current_map={current_map}
               onChange={handleChange}
               sx={LeftSelectStyle}
               menuSx={SelectMenuStyle}
               mobileIcon={<ThermostatIcon />}
-              className={
-                hasMissingValues(menus.variableMenuSet) ? 'NeedsSelection' : ''
-              }
               label={t('app.map.menuBar.indicator')}
+              disabled={inProgress}
             />
           </Grid>
+          
+          {map_data === 'past'?(<></>):(
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.modelAndScenarioMenuSet}
+              current_map={current_map}
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
@@ -317,25 +571,31 @@ export function MapMenuBar(props: MapMenuBar) {
               }
               // label={'Model and Scenario'}
               label={t('app.map.menuBar.model')}
+              disabled={inProgress}
             />
           </Grid>
+          )}
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.periodMenuSet}
+              current_map={current_map}
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
+              activeCombinations={activeCombinations.current}
               mobileIcon={<DateRangeIcon />}
               className={
                 hasMissingValues(menus.periodMenuSet) ? 'NeedsSelection' : ''
               }
               // label={'Period'}
               label={t('app.map.menuBar.period')}
+              disabled={inProgress}
             />
           </Grid>
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
               valueSet={menus.seasonMenuSet}
+              current_map={current_map}
               onChange={handleChange}
               sx={SelectStyle}
               menuSx={SelectMenuStyle}
@@ -343,33 +603,52 @@ export function MapMenuBar(props: MapMenuBar) {
               className={
                 hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
               }
+              activeCombinations={activeCombinations.current}
               label={t('app.map.menuBar.season')}
               // label={'Season'}
+              disabled={inProgress}
             />
           </Grid>
+          {map_data !== 'past'?(<></>):(
+          <Grid xs={1} def={4} sx={SecondRowStyle}></Grid>)}
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
-                <IconButton
+                <Tooltip
+                  title={t('app.map.menuBar.downloadData')}
+                  enterTouchDelay={0}
+                >
+                  <IconButton
+                    onClick={() => setDownloadDataOpen(true)}
+                    aria-label={t('app.map.menuBar.downloadMap')}
+                    disabled={foundLayers === 0 || inProgress}
+                  >
+                    <FileDownloadIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                /*</Grid><IconButton
                   onClick={() => setDownloadDataOpen(true)}
-                  disabled={timeserie.length === 0}
+                  disabled={true}
                   aria-label={t('app.map.menuBar.downloadData')}
                 >
                   <FileDownloadIcon />
-                </IconButton>
-              ) : (
+                </IconButton>*/
                 <Button
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
-                  disabled={timeserie.length === 0}
                   aria-label={t('app.map.menuBar.downloadData')}
+                  disabled={foundLayers === 0 || inProgress}
                 >
                   {t('app.map.menuBar.downloadData')}
                 </Button>
               )}
               <DownloadDataDialog
+                menus={forecast_parameters}
                 open={isDownloadDataOpen}
                 setOpen={setDownloadDataOpen}
+                combinations={combinations}
+                configuration={current_map}
               />
             </Box>
           </Grid>
@@ -378,15 +657,27 @@ export function MapMenuBar(props: MapMenuBar) {
               {isMobile ? (
                 <IconButton
                   onClick={() => onDownloadMapImg()}
+                  disabled={foundLayers === 0 || inProgress}
                   aria-label={t('app.map.menuBar.downloadMap')}
                 >
-                  <PhotoCameraIcon />
+                  {inProgress ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <PhotoCameraIcon />
+                  )}
                 </IconButton>
               ) : (
                 <Button
-                  startIcon={<PhotoCameraIcon />}
+                  startIcon={
+                    inProgress ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <PhotoCameraIcon />
+                    )
+                  }
                   onClick={() => onDownloadMapImg()}
                   aria-label={t('app.map.menuBar.downloadMap')}
+                  disabled={foundLayers === 0 || inProgress}
                 >
                   {t('app.map.menuBar.downloadMap')}
                 </Button>
@@ -401,30 +692,27 @@ export function MapMenuBar(props: MapMenuBar) {
               <DropdownMenu style={{ zIndex: 100000000 }}>
                 <LinkList>
                   <LinkListItem inDropdown href="/">
-                    Home
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/barometer">
-                    Barometro Climatico
+                    {t('app.index.sections.barometer')}
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
-                    Proiezioni
+                    {t('app.index.sections.proj')}
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/fs">
-                    Proiezioni - Semplificata
+                  <LinkListItem disabled inDropdown href="/proiezioni-semplice">
+                    {t('app.index.sections.simple')}
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/fa">
-                    Proiezioni - Avanzata
+                  <LinkListItem inDropdown href="/proiezioni-avanzata">
+                    {t('app.index.sections.advanced')}
                   </LinkListItem>
                   <LinkListItem divider />
                   <LinkListItem header inDropdown>
-                    Dati storici
+                    {t('app.index.sections.hist')}
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/ps">
-                    Storico - Semplificata
+                  <LinkListItem disabled inDropdown href="/storico-semplice">
+                    {t('app.index.sections.simple')}
                   </LinkListItem>
-                  <LinkListItem inDropdown href="/pa">
-                    Storico - Avanzata
+                  <LinkListItem disabled inDropdown href="/storico-avanzata">
+                    {t('app.index.sections.advanced')}
                   </LinkListItem>
                 </LinkList>
               </DropdownMenu>
@@ -434,9 +722,7 @@ export function MapMenuBar(props: MapMenuBar) {
       </Toolbar>
       {isMobile && (
         <Toolbar sx={MenuSelectionMobileStyle}>
-          <Typography variant={'caption'}>
-            {selectedValuesToString()}
-          </Typography>
+          <Typography variant={'caption'}>{selectedValueToString()}</Typography>
         </Toolbar>
       )}
     </FormControl>

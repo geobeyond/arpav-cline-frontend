@@ -1,3 +1,5 @@
+import { Height } from '@mui/icons-material';
+
 export const TitleDownloadStyle = theme => ({
   color: 'success.dark',
   fontWeight: 'bold',
@@ -69,8 +71,12 @@ export const CloseButtonContStyle = theme => ({
 export const FieldContainerStyle = theme => ({
   ml: 0,
   mr: 0,
-  mt: 4,
-  mb: 4,
+  width: '100%',
+  maxWidth: '450px',
+});
+export const FullWidthStyle = theme => ({
+  width: '100%',
+  maxWidth: '24vw',
 });
 
 export const MapDataContainerStyle = theme => ({
@@ -78,11 +84,17 @@ export const MapDataContainerStyle = theme => ({
   flexDirection: 'row',
   flexWrap: 'wrap',
   justifyContent: 'flex-start',
-  gap: 16,
+  gap: 8,
   [theme.breakpoints.down('xl')]: {
     justifyContent: 'space-between',
     gap: 0,
   },
+});
+
+export const FieldsStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'column',
+  flexWrap: 'wrap',
 });
 
 export const MapDataSectionTextStyle = theme => ({
@@ -100,6 +112,22 @@ export const SliderContainerStyle = theme => ({
   flexWrap: 'nowrap',
   alignItems: 'center',
   marginTop: 4,
+});
+
+export const MapColStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'column',
+  flexWrap: 'nowrap',
+  marginTop: 4,
+  gap: '16px',
+});
+
+export const RowStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  marginTop: 4,
+  gap: '16px',
 });
 
 export const YearsSliderStyle = theme => ({
@@ -123,11 +151,12 @@ export const InputYearStyle = theme => ({
 });
 
 export const ImgButtonContainerStyle = theme => ({
+  width: '100%',
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  gap: 3,
-  m: 3,
+
+  gap: 2,
   [theme.breakpoints.down('def')]: {
     flexDirection: 'column',
   },
@@ -136,5 +165,37 @@ export const ImgButtonContainerStyle = theme => ({
 export const ImgDoubleButtonContainerStyle = theme => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: 3,
+  width: '100%',
+  gap: 2,
+});
+
+export const ModalStyle = theme => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '90%',
+  height: '400px',
+  p: 0,
+  position: 'fixed',
+  left: '16px',
+  bottom: '16px',
+  bgcolor: 'white',
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: 12,
+});
+
+export const BoxExtractionStyle = theme => ({
+  height: '400px',
+});
+
+export const ExtractionStyle = theme => ({
+  //bottom: '300px',
+  position: 'absolute',
+  left: '20%',
+  right: '20%',
+  width: 'fit-content',
+  height: 'fit-content',
+  top: 'calc(100% - 650px)',
+  //minWidth: '600px',
+  //maxWidth: '1700px',
+  //maxHeight: '500',
 });

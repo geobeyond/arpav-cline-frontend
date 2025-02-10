@@ -17,10 +17,10 @@ export const BaseLayerControl = (props: any) => {
       },
     ),
     'Sentinel 2': L.tileLayer(
-      'https://s2maps-tiles.eu/wmts?layer=s2cloudless-2021_3857&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}',
+      'https://tiles.maps.eox.at/wmts?layer=s2cloudless-2021_3857&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}',
       {
         attribution:
-          '&copy; <a target="_blank" rel="noopener" href="https://s2maps.eu/">Sentinel-2 cloudless by EOX IT Services GmbH (Copernicus Sentinel data 2017 &amp; 2018)</a>',
+          '&copy; <a target="_blank" rel="noopener" href="https://tiles.maps.eox.at/">Sentinel-2 cloudless by EOX IT Services GmbH (Copernicus Sentinel data 2017 &amp; 2018)</a>',
       },
     ),
     Gebco: L.tileLayer.wms(
@@ -29,7 +29,7 @@ export const BaseLayerControl = (props: any) => {
         layers: 'GEBCO_LATEST',
         format: 'image/png',
         attribution:
-          '&copy; <a target="_blank" rel="noopener" href="https://s2maps.eu/">Sentinel-2 cloudless by EOX IT Services GmbH (Copernicus Sentinel data 2017 &amp; 2018)</a>',
+          '&copy; <a target="_blank" rel="noopener" href="https://tiles.maps.eox.at/">Sentinel-2 cloudless by EOX IT Services GmbH (Copernicus Sentinel data 2017 &amp; 2018)</a>',
       },
     ),
   };

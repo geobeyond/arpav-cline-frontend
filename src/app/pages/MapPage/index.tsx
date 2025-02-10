@@ -4,11 +4,19 @@
  * MapPage
  *
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  Backdrop,
+  CircularProgress,
+  useMediaQuery,
+  Modal,
+  Typography,
+  Button,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { MapLoadingContainerStyle, mapStyle } from './styles';
+import { MapLoadingContainerStyle, mapStyle, SpinnerStyle } from './styles';
 import Map from '../../components/Map';
 import MapMenuBar from '../../components/MapMenuBar';
 import { LatLng, Map as LMap } from 'leaflet';
@@ -16,25 +24,57 @@ import {
   SimpleMapScreenshoter,
   PluginOptions,
 } from 'leaflet-simple-map-screenshoter';
-import { find_keys, full_find_keys, useMapSlice } from './slice';
+//import { find_keys, full_find_keys, useMapSlice } from './slice';
 import { useDispatch, useSelector } from 'react-redux';
 import TimeSeriesDialog from '../../components/TimeSeriesDialog';
 import { useSearchParams } from 'react-router-dom';
-import { selectMap } from './slice/selectors';
-import { Filters, iCityItem } from './slice/types';
+//import { selectMap } from './slice/selectors';
+//import { Filters, iCityItem } from './slice/types';
 import { saveAs } from 'file-saver';
 import useCustomSnackbar from '../../../utils/useCustomSnackbar';
 import HeaderBar from '../../components/HeaderBar';
+import { RequestApi } from 'app/Services';
 
 interface MapPageProps {
   map_mode: string;
   map_data: string;
 }
 
+const defaultMap: any = {
+  climatological_variable: 'tas',
+  climatological_model: 'model_ensemble',
+  scenario: 'rcp85',
+  measure: 'anomaly',
+  time_window: 'tw1',
+  aggregation_period: '30yr',
+  year_period: 'winter',
+
+  data_series: 'no',
+};
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 export function MapPage(props: MapPageProps) {
   const map_mode = props.map_mode;
   const map_data = props.map_data;
-  const actions = useMapSlice();
+  if (map_data === 'future') {
+    defaultMap['archive'] = 'forecast';
+  } else {
+    defaultMap['archive'] = 'historical';
+  }
+
+  console.log(map_mode, map_data);
+  //const actions = useMapSlice();
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t, i18n } = useTranslation();
@@ -45,12 +85,31 @@ export function MapPage(props: MapPageProps) {
   const [tSOpen, setTSOpen] = React.useState(false);
   const mapRef = React.useRef<LMap | undefined>(undefined);
   const coordRef = React.useRef<LatLng>(new LatLng(0, 0, 0));
-  const { layers, selected_map, cities, forecast_parameters, error } =
-    useSelector(selectMap);
+  //const { layers, selected_map, cities, forecast_parameters, error } =
+  //  useSelector(selectMap);
   const [loading, setLoading] = useState(false);
-  const [selectedPoint, setSelectedPoint] = useState<iCityItem | null>(null);
+  const [menus, setMenus] = useState();
+  const [combinations, setCombinations] = useState({});
+  const [selectedPoint, setSelectedPoint] = useState<any | null>(null);
   const [mapScreen, setMapScreen] = useState<any>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
+  const api = new RequestApi();
+
+  const [currentLayer, setCurrentLayer] = useState('');
+  const [currentLayerConfig, setCurrentLayerConfig] = useState({});
+  const [currentTimeSerie, setCurrentTimeSerie] = useState({});
+
+  const [error, setError] = useState('');
+  const openError = type => setError(type);
+  const closeError = () => setError('');
+
+  const [foundLayers, setFoundLayers] = useState(0);
+
+  const [currentYear, setCurrentYear] = useState(2036);
+  //const [loading, showLoader] = useState(false);
+
+  const currentInfo = useRef(false);
+  const currentHide = useRef<any>();
 
   const handleMapReady = (map: LMap) => {
     mapRef.current = map;
@@ -60,101 +119,264 @@ export function MapPage(props: MapPageProps) {
     setMapScreen(mapScreenPlugin);
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [sp, setSearchParams] = useSearchParams();
+  const searchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(searchParams);
+
+  let ncmap = { ...defaultMap, ...params };
+  const [currentMap, setCurrentMap] = useState({
+    ...defaultMap,
+    ...params,
+  });
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 
+  const labelFor = (itm: string) => {
+    const configs = localStorage.getItem('configs');
+    const rcps = configs ? JSON.parse(configs) : {};
+    const labelsf = rcps.map((config: any) =>
+      config.allowed_values.map(x => [
+        x.name,
+        i18n.language === 'it'
+          ? x.display_name_italian
+          : x.display_name_english,
+      ]),
+    );
+    const labels = Object.fromEntries(labelsf.flat());
+    return labels[itm];
+  };
+
   const findValueName = (key: string, listKey: string) => {
-    const id = selected_map[key];
+    //const id = selected_map[key];
     let name = '';
-    if (id)
-      name = forecast_parameters[listKey]?.find(item => item.id === id)?.name;
+    //if (id)
+    //  name = forecast_parameters[listKey]?.find(item => item.id === id)?.name;
     return name ?? '';
   };
 
+  const merge = (...objs) =>
+    [...objs].reduce(
+      (acc, obj) =>
+        Object.keys(obj).reduce((a, k) => {
+          acc[k] = acc.hasOwnProperty(k)
+            ? [].concat(acc[k]).concat(obj[k])
+            : obj[k];
+          return acc;
+        }, {}),
+      {},
+    );
+
   useEffect(() => {
-    dispatch(actions.actions.loadParameters());
-    dispatch(actions.actions.loadLayers());
-    dispatch(actions.actions.loadCities());
-    return () => {
-      console.log('Unmounting MapPage');
-    };
+    const all_meas = ['absolute', 'anomaly'];
+    const all_pers = ['annual', '30yr'];
+    const all_indx = [
+      'tas',
+      'cdds',
+      'hdds',
+      'pr',
+      'snwdays',
+      'su30',
+      'tasmax',
+      'tasmin',
+      'tr',
+      'fd',
+    ];
+
+    const changeables = ['measure', 'year_period', 'time_window'];
+    setCurrentMap({ ...searchParams });
+    api.getAttributes().then(x => {
+      setMenus(x.items);
+      let combos = x.combinations.reduce((prev, cur) => {
+        for (let k of Object.keys(defaultMap)) {
+          if (!(k in cur.other_parameters)) {
+            cur.other_parameters[k] = [];
+            if (k in cur) {
+              cur.other_parameters[k].push(cur[k]);
+            }
+          }
+        }
+        const kk = cur.variable + '::' + cur.aggregation_period;
+        const km = cur.variable + '::' + cur.measure;
+        const ki = cur.variable;
+        cur.kk = kk;
+        cur.ki = ki;
+        if (ki in prev) {
+          prev[ki].aggregation_period.push(cur.aggregation_period);
+          prev[ki].measure.push(cur.measure);
+        } else {
+          prev[ki] = { ...cur.other_parameters };
+          prev[ki].aggregation_period = [cur.aggregation_period];
+          prev[ki].measure = [cur.measure];
+        }
+        if (kk in prev) {
+          prev[kk][cur.measure] = cur.other_parameters;
+        } else {
+          prev = {
+            ...prev,
+            [cur.variable + '::' + cur.aggregation_period]: {
+              [cur.measure]: cur.other_parameters,
+            },
+          };
+        }
+        if (km in prev) {
+          prev[kk][cur.aggregation_period] = cur.other_parameters;
+        } else {
+          prev = {
+            ...prev,
+            [cur.variable + '::' + cur.measure]: {
+              [cur.aggregation_period]: cur.other_parameters,
+            },
+          };
+        }
+        return prev;
+      }, {});
+      // TODO: copiare configurazione year_period dell'indicatore su tutte le altre combo;
+      for (let k of Object.keys(combos)) {
+        if (k.indexOf('::') >= 0) {
+          const m = k.split('::')[0];
+          let nc: any = {};
+          let kks = Object.keys(combos[k]);
+          if (kks.length === 1) {
+            combos[k] = combos[k][kks[0]];
+          } else {
+            for (let kk of kks) {
+              nc = merge(nc, combos[k][kk]);
+            }
+            combos[k] = nc;
+          }
+          if (all_indx.indexOf(m) >= 0) {
+            combos[k].measure = all_meas;
+            combos[k].aggregation_period = all_pers;
+          }
+          combos[k].climatological_variable = [m];
+        } else {
+          if (all_indx.indexOf(k) >= 0) {
+            combos[k].measure = all_meas;
+            combos[k].aggregation_period = all_pers;
+          }
+          combos[k].climatological_variable = [k];
+        }
+      }
+      setCombinations(combos);
+    });
+    setCurrentMap({ ...searchParams });
+
+    //if(searchParams.get('lat') && searchParams.get('lng')){
+    //  setTimeout(()=>{
+    //    setSelectedPoint({latlng:{lat: searchParams.get('lat'), lng: searchParams.get('lng')}})
+    //  }, 500);
+    //}
   }, []);
 
   useEffect(() => {
-    let params = {};
-    searchParams.forEach((v, k) => {
-      if (full_find_keys.includes(k) && v !== 'null' && v !== '') {
-        params[k] = v;
-      }
+    const all_meas = ['absolute', 'anomaly'];
+    const all_pers = ['annual', '30yr'];
+    const all_indx = [
+      'tas',
+      'cdds',
+      'hdds',
+      'pr',
+      'snwdays',
+      'su30',
+      'tasmax',
+      'tasmin',
+      'tr',
+      'fd',
+    ];
+
+    const changeables = ['measure', 'year_period', 'time_window'];
+
+    //setSearchParams(currentMap);
+
+    setSearchParams(currentMap);
+
+    console.log('currentMap', currentMap);
+
+    try {
+      api
+        .getLayer(
+          currentMap.climatological_variable,
+          currentMap.climatological_model,
+          currentMap.scenario,
+          currentMap.measure,
+          currentMap.time_window,
+          currentMap.aggregation_period,
+          currentMap.year_period,
+        )
+        .then((x: any) => {
+          console.log(x);
+          setCurrentMap(currentMap);
+          setFoundLayers(x.items.length);
+          if (x.items.length === 1) {
+            api.getLayerConf(x.items[0]).then(conf => {
+              setCurrentLayer(x.items[0].identifier);
+              setCurrentLayerConfig(conf);
+              setLoading(false);
+            });
+          } else {
+          }
+        });
+    } catch (e) {
+      console.log(e);
+    }
+
+    //@ts-ignore
+    mapRef.current.on(
+      'simpleMapScreenshoter.takeScreen',
+      () => {
+        //currentInfo.current = document
+        //  .getElementsByClassName('leaflet-time-info')[0]
+        //  //@ts-ignore
+        //  .checkVisibility();
+        //currentHide.current = setInterval(() => {
+        //  document
+        //    //@ts-ignore
+        //    .getElementsByClassName('leaflet-time-info')[0].style.display =
+        //    'none';
+        //});
+      },
+      250,
+    );
+    //@ts-ignore
+    mapRef.current.on('simpleMapScreenshoter.done', () => {
+      //clearInterval(currentHide.current);
+      //document
+      //  //@ts-ignore
+      //  .getElementsByClassName('leaflet-time-info')[0].style.display =
+      //  currentInfo.current ? 'flex' : 'none';
     });
-    if (Object.keys(params).length > 0 && layers.length > 0) {
-      dispatch(actions.actions.setMap(params as Filters));
-    } else if (layers.length > 0) {
-      dispatch(actions.actions.setMap(selected_map));
+  }, [currentMap]);
+
+  function paramsToObject(entries) {
+    const result = {}
+    for(const [key, value] of entries) { // each 'entry' is a [key, value] tuple
+      result[key] = value;
     }
-    if (layers.length === 0) setLoading(true);
-  }, [layers]);
+    return result;
+  }
+  
 
   useEffect(() => {
-    if (selected_map.id) {
-      setLoading(false);
-      const filterDict = {
-        ...Object.fromEntries(
-          Object.entries(selected_map).filter(([key]) =>
-            full_find_keys.includes(key),
-          ),
-        ),
-        city: selectedPoint?.name || '',
-        lat: selectedPoint?.latlng.lat || '',
-        lng: selectedPoint?.latlng.lng || '',
-      };
-      // @ts-ignore
-      setSearchParams(filterDict as Filters);
-    }
-  }, [selected_map, selectedPoint]);
-
-  useEffect(() => {
-    if (selected_map.id) {
-      let payload = {
-        id: selected_map.id,
-      };
-      if (selectedPoint) {
-        payload['lat'] = selectedPoint.latlng.lat;
-        payload['lng'] = selectedPoint.latlng.lng;
-      }
-      dispatch(actions.actions.requestTimeserie(payload));
-    } else {
-      dispatch(actions.actions.setTimeserie([]));
-    }
-  }, [selected_map, selectedPoint]);
-
-  useEffect(() => {
-    if (
-      searchParams.get('city') &&
-      searchParams.get('lat') &&
-      searchParams.get('lng')
-    ) {
-      setSelectedPoint({
-        // ...city,
-        name: searchParams.get('city') || '',
-        label: searchParams.get('city') || '',
-        latlng: {
-          // @ts-ignore
-          lat: parseFloat(searchParams.get('lat')),
-          // @ts-ignore
-          lng: parseFloat(searchParams.get('lng')),
-        },
+    if (currentLayer.length > 0 && selectedPoint) {
+      setSearchParams({
+        ...paramsToObject(sp),
+        ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
       });
-    } else {
-      setSelectedPoint(null);
+      api
+        .getTimeserieV2(
+          currentLayer,
+          selectedPoint.latlng.lat,
+          selectedPoint.latlng.lng,
+          false,
+          false,
+          false,
+          false,
+        )
+        .then(data => {
+          setCurrentTimeSerie(data.series[0]);
+        });
     }
-  }, [cities]);
-
-  useEffect(() => {
-    if (error) enqueueCSnackbar(t(error), { variant: 'error' });
-    dispatch(actions.actions.genericError({ error: '' }));
-  }, [error]);
+  }, [selectedPoint, currentLayer]);
 
   const PLUGIN_OPTIONS: PluginOptions = {
     cropImageByInnerWH: true, // crop blank opacity from image borders
@@ -194,52 +416,77 @@ export function MapPage(props: MapPageProps) {
     captionOffset: 5,
   };
 
+  const updateCurrentMap = status => {
+    setLoading(status);
+    //let cm = { ...currentMap };
+    //cm[key] = value;
+    //setCurrentMap(cm);
+  };
+
   const handleDownloadMapImg = () => {
     const format = 'image';
     let year = '';
     try {
       year =
-        selected_map.data_series === 'yes'
+        currentMap.aggregation_period === 'annual' ||
+          currentMap.aggregation_period === 'test'
           ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
-              .getFullYear()
-              .toString()
+            .getFullYear()
+            .toString()
           : '';
+      console.log('showing year', year);
     } catch (e) {
       // console.log('no year');
     }
 
     setInProgress(true);
-    const caption = `${
-      isMobile ? selected_map.variable : findValueName('variable', 'variables')
-    }
-- ${joinNames([
-      findValueName('forecast_model', 'forecast_models'),
-      findValueName('scenario', 'scenarios'),
-    ])}
-- ${joinNames([
-      findValueName('data_series', 'data_series'),
-      findValueName('value_type', 'value_types'),
-      findValueName('time_window', 'time_windows'),
-    ])}
-- ${findValueName('year_period', 'year_periods')}
-${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-    const filename = `Screenshot ${findValueName(
-      'variable',
-      'variables',
+    const caption = `${isMobile
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
+      }
+    - ${joinNames([
+        labelFor(currentMap.climatological_model),
+        labelFor(currentMap.scenario),
+      ])}
+    - ${joinNames([
+        labelFor(currentMap.aggregation_period),
+        labelFor(currentMap.measure),
+      ])}
+      ${currentMap.time_window && currentMap.aggregation_period === '30yr'
+        ? labelFor(currentMap.time_window)
+        : ''
+      }
+    - ${labelFor(currentMap.year_period)}
+    ${currentMap.aggregation_period != '30yr' && currentYear
+        ? ` - Anno ${year}`
+        : ''
+      } © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
+
+    let filename = `Screenshot ${labelFor(
+      currentMap.climatological_variable,
     )} - ${joinNames([
-      findValueName('forecast_model', 'forecast_models'),
-      findValueName('scenario', 'scenarios'),
+      labelFor(currentMap.climatological_model),
+      labelFor(currentMap.scenario),
     ])} - ${joinNames([
-      findValueName('data_series', 'data_series'),
-      findValueName('value_type', 'value_types'),
-      findValueName('time_window', 'time_windows'),
-    ])} - ${findValueName('year_period', 'year_periods')} ${
-      year ? ` Anno ${year}` : ''
-    }.png`;
+      labelFor(currentMap.aggregation_period),
+      labelFor(currentMap.measure),
+    ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
+        ? ' - ' + labelFor(currentMap.time_window)
+        : ''
+      } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
+        ? ` - Anno ${year}`
+        : ''
+      }.${
+      //@ts-ignore
+      navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
+        ? 'jpg'
+        : 'png'
+      }`;
+    filename = filename.replaceAll('_', '');
     mapScreen
       .takeScreen(format, {
         captionFontSize: isMobile ? 10 : 12,
-        screenName: `${findValueName('variable', 'variables')}`,
+        screenName: `${currentMap.climatological_variable}`,
         caption: caption,
       })
       .then(blob => {
@@ -254,6 +501,7 @@ ${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, 
 
   const openCharts = (latLng: LatLng) => {
     coordRef.current = latLng;
+
     setTSOpen(true);
   };
 
@@ -266,11 +514,35 @@ ${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, 
 
   return (
     <Box sx={mapStyle}>
+      <Modal
+        open={error.length > 0}
+        onClose={closeError}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {t(error + '.title')}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            {t(error + '.message')}
+          </Typography>
+          <Button onClick={closeError}>Ok</Button>
+        </Box>
+      </Modal>
       <HeaderBar />
       <MapMenuBar
         onDownloadMapImg={handleDownloadMapImg}
         mode={map_mode}
         data={map_data}
+        menus={menus}
+        combinations={combinations}
+        onMenuChange={updateCurrentMap}
+        current_map={currentMap}
+        foundLayers={foundLayers}
+        setCurrentMap={setCurrentMap}
+        openError={openError}
+        inProgress={inProgress}
       />
 
       <Map
@@ -278,25 +550,26 @@ ${year ? ` - Anno ${year}` : ''}   © ARPAV - Arpa FVG`; // string or function, 
         openCharts={openCharts}
         setPoint={setPoint}
         selectedPoint={selectedPoint}
+        layerConf={currentLayerConfig}
+        currentLayer={currentLayer}
+        currentMap={currentMap}
+        currentTimeserie={currentTimeSerie}
+        setCurrentMap={setCurrentMap}
+        setCurrentYear={setCurrentYear}
       />
-      {loading && (
-        <Box sx={MapLoadingContainerStyle}>
-          <CircularProgress size={80} />
-        </Box>
-      )}
+
       <TimeSeriesDialog
         selectedPoint={selectedPoint}
         open={tSOpen}
         setOpen={setTSOpen}
+        currentLayer={currentLayerConfig}
+        currentMap={currentMap}
       />
 
       {/*TODO Backdrop only for debug?*/}
-      <Backdrop
-        sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-        open={inProgress}
-      >
+      <Modal open={loading} sx={SpinnerStyle}>
         <CircularProgress color="inherit" size={80} />
-      </Backdrop>
+      </Modal>
     </Box>
   );
 }

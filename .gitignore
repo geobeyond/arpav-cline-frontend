@@ -5,6 +5,7 @@ node_modules
 stats.json
 .pnp
 .pnp.js
+public/injectedEnv.js
 
 # misc
 .DS_Store
@@ -38,3 +39,4 @@ _cacache
 _locks
 _logs
 docs
+/.vscode

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { API_URL } from '../../../../utils/constants';
+import { BACKEND_API_URL } from '../../../../utils/constants';
 
 import { getCookie, removeCookie } from '../../../../utils/cookie';
 
@@ -39,7 +39,7 @@ abstract class HttpClient {
 }
 
 const AxiosConf: AxiosRequestConfig = {
-  baseURL: API_URL,
+  baseURL: BACKEND_API_URL,
 };
 
 export class Http extends HttpClient {
