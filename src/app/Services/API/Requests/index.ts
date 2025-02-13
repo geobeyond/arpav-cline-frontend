@@ -153,6 +153,25 @@ export class RequestApi extends Http {
     }
   };
 
+  public getHistoricLayer = (
+    variable?,
+    measure?,
+    time_period?,
+    aggregation_period?,
+    season?,
+  ) => {
+    return this.doGetLayer(
+      variable,
+      undefined,
+      undefined,
+      measure,
+      time_period,
+      aggregation_period,
+      season,
+      'historical',
+    );
+  };
+
   public getLayer = (
     variable?,
     model?,
@@ -274,11 +293,22 @@ export class RequestApi extends Http {
     time_period?: string,
     aggregation_period?: string,
     season?: string,
+    mode?: string,
   ) => {
+    if (!mode) {
+      mode = 'forecast';
+    }
     // Create the filter string based on the given parameters.
     let filter = '';
     if (variable) {
-      filter += 'possible_value=climatological_variable:' + variable + '&';
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast'
+          ? 'climatological_variable'
+          : 'historical_variable') +
+        ':' +
+        variable +
+        '&';
     }
     if (model) {
       filter += 'possible_value=climatological_model:' + model + '&';
@@ -290,14 +320,32 @@ export class RequestApi extends Http {
       filter += 'possible_value=measure:' + measure + '&';
     }
     if (time_period && aggregation_period !== 'annual') {
-      filter += 'possible_value=time_window:' + time_period + '&';
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast'
+          ? 'time_window'
+          : 'climatological_standard_normal') +
+        ':' +
+        time_period +
+        '&';
     }
     if (aggregation_period) {
-      filter += 'possible_value=aggregation_period:' + aggregation_period + '&';
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast' ? 'aggregation_period' : 'aggregation_period') +
+        ':' +
+        aggregation_period +
+        '&';
     }
     if (season) {
-      filter += 'possible_value=year_period:' + season + '&';
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast' ? 'year_period' : 'historical_year_period') +
+        ':' +
+        season +
+        '&';
     }
+    filter += 'possible_value=archive:' + mode + '&';
 
     const fullUrl =
       BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter;
@@ -562,10 +610,7 @@ export class RequestApi extends Http {
       });
   };
 
-  public getAttributes = (
-    mode: string = 'forecast',
-    force: boolean = false,
-  ) => {
+  public getAttributes = (mode: string = 'future', force: boolean = false) => {
     let reqs: any[] = [];
 
     const ret = this.instance
@@ -576,7 +621,7 @@ export class RequestApi extends Http {
         return d.items;
       });
     reqs.push(ret);
-    if (mode === 'forecast') {
+    if (mode === 'future') {
       const cret = this.instance.get<any>(
         `${BACKEND_API_URL}/coverages/forecast-variable-combinations`,
       );

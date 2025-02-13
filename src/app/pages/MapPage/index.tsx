@@ -52,6 +52,18 @@ const defaultMap: any = {
   data_series: 'no',
 };
 
+const defaultMapHistorical: any = {
+  historical_variable: 'tdd',
+  climatological_model: 'model_ensemble',
+  scenario: 'rcp85',
+  measure: 'anomaly',
+  time_window: 'tw1',
+  aggregation_period: '30yr',
+  year_period: 'winter',
+
+  data_series: 'no',
+};
+
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -124,10 +136,17 @@ export function MapPage(props: MapPageProps) {
   const params = Object.fromEntries(searchParams);
 
   let ncmap = { ...defaultMap, ...params };
-  const [currentMap, setCurrentMap] = useState({
-    ...defaultMap,
-    ...params,
-  });
+  if (map_data === 'history') {
+    ncmap = { ...defaultMapHistorical, ...params };
+  }
+  const [currentMap, setCurrentMap] = useState(
+    map_data === 'future'
+      ? { ...defaultMap, ...params }
+      : {
+        ...defaultMapHistorical,
+        ...params,
+      },
+  );
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 
@@ -184,7 +203,7 @@ export function MapPage(props: MapPageProps) {
 
     const changeables = ['measure', 'year_period', 'time_window'];
     setCurrentMap({ ...searchParams });
-    api.getAttributes().then(x => {
+    api.getAttributes(map_data).then(x => {
       setMenus(x.items);
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
@@ -293,29 +312,53 @@ export function MapPage(props: MapPageProps) {
     console.log('currentMap', currentMap);
 
     try {
-      api
-        .getLayer(
-          currentMap.climatological_variable,
-          currentMap.climatological_model,
-          currentMap.scenario,
-          currentMap.measure,
-          currentMap.time_window,
-          currentMap.aggregation_period,
-          currentMap.year_period,
-        )
-        .then((x: any) => {
-          console.log(x);
-          setCurrentMap(currentMap);
-          setFoundLayers(x.items.length);
-          if (x.items.length === 1) {
-            api.getLayerConf(x.items[0]).then(conf => {
-              setCurrentLayer(x.items[0].identifier);
-              setCurrentLayerConfig(conf);
-              setLoading(false);
-            });
-          } else {
-          }
-        });
+      if (map_data === 'future') {
+        api
+          .getLayer(
+            currentMap.climatological_variable,
+            currentMap.climatological_model,
+            currentMap.scenario,
+            currentMap.measure,
+            currentMap.time_window,
+            currentMap.aggregation_period,
+            currentMap.year_period,
+          )
+          .then((x: any) => {
+            console.log(x);
+            setCurrentMap(currentMap);
+            setFoundLayers(x.items.length);
+            if (x.items.length === 1) {
+              api.getLayerConf(x.items[0]).then(conf => {
+                setCurrentLayer(x.items[0].identifier);
+                setCurrentLayerConfig(conf);
+                setLoading(false);
+              });
+            } else {
+            }
+          });
+      } else {
+        api
+          .getHistoricLayer(
+            currentMap.historical_variable,
+            currentMap.measure,
+            currentMap.historical_time_window,
+            currentMap.aggregation_period,
+            currentMap.historical_year_period,
+          )
+          .then((x: any) => {
+            console.log(x);
+            setCurrentMap(currentMap);
+            setFoundLayers(x.items.length);
+            if (x.items.length === 1) {
+              api.getLayerConf(x.items[0]).then(conf => {
+                setCurrentLayer(x.items[0].identifier);
+                setCurrentLayerConfig(conf);
+                setLoading(false);
+              });
+            } else {
+            }
+          });
+      }
     } catch (e) {
       console.log(e);
     }
@@ -348,13 +391,13 @@ export function MapPage(props: MapPageProps) {
   }, [currentMap]);
 
   function paramsToObject(entries) {
-    const result = {}
-    for(const [key, value] of entries) { // each 'entry' is a [key, value] tuple
+    const result = {};
+    for (const [key, value] of entries) {
+      // each 'entry' is a [key, value] tuple
       result[key] = value;
     }
     return result;
   }
-  
 
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {

@@ -207,7 +207,8 @@ export function MapMenuBar(props: MapMenuBar) {
                 : 'historical_aggregation_period',
               map_data === 'future'
                 ? 'aggregation_period'
-                : 'historical_aggregation_period',),
+                : 'historical_aggregation_period',
+            ),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => {
@@ -250,7 +251,7 @@ export function MapMenuBar(props: MapMenuBar) {
             ),
             disableable: true,
             disabled: x => false,
-            criteria: (x, c) => x?.year_period,
+            criteria: (x, c) => x?.year_period || x?.historical_year_period,
           },
         ],
       },
@@ -503,14 +504,17 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              {map_data === 'past'?(<></>):(
-              <Grid xs={4} sx={FirstRowStyle}>
-                <Box>
-                  <Typography sx={MenuLabelStyle}>
-                    {t('app.map.menuBar.model')}
-                  </Typography>
-                </Box>
-              </Grid>)}
+              {map_data === 'past' ? (
+                <></>
+              ) : (
+                <Grid xs={4} sx={FirstRowStyle}>
+                  <Box>
+                    <Typography sx={MenuLabelStyle}>
+                      {t('app.map.menuBar.model')}
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
@@ -525,9 +529,12 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              
-              {map_data !== 'past'?(<></>):(
-              <Grid xs={4} sx={FirstRowStyle}></Grid>)}
+
+              {map_data !== 'past' ? (
+                <></>
+              ) : (
+                <Grid xs={4} sx={FirstRowStyle}></Grid>
+              )}
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
@@ -554,26 +561,28 @@ export function MapMenuBar(props: MapMenuBar) {
               disabled={inProgress}
             />
           </Grid>
-          
-          {map_data === 'past'?(<></>):(
-          <Grid xs={1} def={4} sx={SecondRowStyle}>
-            <MultiRadioSelect
-              valueSet={menus.modelAndScenarioMenuSet}
-              current_map={current_map}
-              onChange={handleChange}
-              sx={SelectStyle}
-              menuSx={SelectMenuStyle}
-              mobileIcon={<ShowChartIcon />}
-              className={
-                hasMissingValues(menus.modelAndScenarioMenuSet)
-                  ? 'NeedsSelection'
-                  : ''
-              }
-              // label={'Model and Scenario'}
-              label={t('app.map.menuBar.model')}
-              disabled={inProgress}
-            />
-          </Grid>
+
+          {map_data === 'past' ? (
+            <></>
+          ) : (
+            <Grid xs={1} def={4} sx={SecondRowStyle}>
+              <MultiRadioSelect
+                valueSet={menus.modelAndScenarioMenuSet}
+                current_map={current_map}
+                onChange={handleChange}
+                sx={SelectStyle}
+                menuSx={SelectMenuStyle}
+                mobileIcon={<ShowChartIcon />}
+                className={
+                  hasMissingValues(menus.modelAndScenarioMenuSet)
+                    ? 'NeedsSelection'
+                    : ''
+                }
+                // label={'Model and Scenario'}
+                label={t('app.map.menuBar.model')}
+                disabled={inProgress}
+              />
+            </Grid>
           )}
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
@@ -609,8 +618,11 @@ export function MapMenuBar(props: MapMenuBar) {
               disabled={inProgress}
             />
           </Grid>
-          {map_data !== 'past'?(<></>):(
-          <Grid xs={1} def={4} sx={SecondRowStyle}></Grid>)}
+          {map_data !== 'past' ? (
+            <></>
+          ) : (
+            <Grid xs={1} def={4} sx={SecondRowStyle}></Grid>
+          )}
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
@@ -711,7 +723,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   <LinkListItem disabled inDropdown href="/storico-semplice">
                     {t('app.index.sections.simple')}
                   </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/storico-avanzata">
+                  <LinkListItem inDropdown href="/storico-avanzata">
                     {t('app.index.sections.advanced')}
                   </LinkListItem>
                 </LinkList>
