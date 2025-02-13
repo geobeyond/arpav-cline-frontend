@@ -42,7 +42,7 @@ export const GroupMenuStyle = {
 
 export const MenuLabelStyle = theme => ({
   display: 'flex',
-  height: '40px',
+  height: '20px',
   flexDirection: 'row',
   justifyContent: 'space-between',
   gap: 1,

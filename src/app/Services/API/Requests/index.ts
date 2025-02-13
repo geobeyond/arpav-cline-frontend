@@ -407,12 +407,20 @@ export class RequestApi extends Http {
     } else {
       const lc = localStorage.getItem(conf.related_coverage_configuration_url);
       if (lc) {
-        return Promise.resolve(JSON.parse(lc));
+        const ret = JSON.parse(lc);
+        ret.wms_main_layer_name = conf.wms_main_layer_name;
+        ret.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+        return Promise.resolve(ret);
       } else {
         // Fetch only the main data configuration
         return this.instance
           .get<any>(conf.related_coverage_configuration_url)
           .then(response => {
+            //@ts-ignore
+            response.wms_main_layer_name = conf.wms_main_layer_name;
+            //@ts-ignore
+            response.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+
             localStorage.setItem(
               conf.related_coverage_configuration_url,
               JSON.stringify(response),

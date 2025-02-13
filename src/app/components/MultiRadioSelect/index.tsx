@@ -65,6 +65,7 @@ export interface RowMenuProps {
   criteria?: (activeCombinations: any, current: any) => string[];
   needsSelection: Boolean;
   key: string;
+  multicol?: number[];
   groupName: string;
   items: IItem[];
   disableable?: boolean;
@@ -245,11 +246,16 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                       handleChangeRadioGroup(event, row.key);
                     }}
                   >
-                    {row.items.map(item => {
+                    {row.items.map((item, index) => {
                       return (
                         <MenuItem
                           key={item.name}
                           disableGutters
+                          sx={{
+                            marginBottom: row.multicol?.includes(index)
+                              ? '200px'
+                              : '0',
+                          }}
                           disabled={
                             row.disableable &&
                             getFieldsByCriteria(

@@ -231,11 +231,17 @@ export function MapMenuBar(props: MapMenuBar) {
           },
           {
             key:
-              map_data === 'future' ? 'time_window' : 'historical_time_window',
+              map_data === 'future'
+                ? 'time_window'
+                : 'climatological_standard_normal',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
-              map_data === 'future' ? 'time_window' : 'historical_time_window',
-              map_data === 'future' ? 'time_window' : 'historical_time_window',
+              map_data === 'future'
+                ? 'time_window'
+                : 'climatological_standard_normal',
+              map_data === 'future'
+                ? 'time_window'
+                : 'climatological_standard_normal',
             ),
             disableable: true,
             disabled: x => x.aggregation_period !== '30yr',
@@ -250,6 +256,7 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
+            multicol: [5, 11, 16],
             key:
               map_data === 'future' ? 'year_period' : 'historical_year_period',
             groupName: '',

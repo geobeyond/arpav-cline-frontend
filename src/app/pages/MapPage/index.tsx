@@ -60,9 +60,9 @@ const defaultMapHistorical: any = {
   scenario: 'rcp85',
 
   measure: 'absolute',
-  time_window: 'tw1',
-  historical_aggregation_period: 'annual',
-  historical_year_period: 'winter',
+  climatological_standard_normal: '1991_2020',
+  historical_aggregation_period: '30yr',
+  historical_year_period: 'all_year',
   archive: 'historical',
   data_series: 'no',
 };
@@ -344,7 +344,7 @@ export function MapPage(props: MapPageProps) {
           .getHistoricLayer(
             currentMap.historical_variable,
             currentMap.measure,
-            currentMap.historical_time_window,
+            currentMap.climatological_standard_normal,
             currentMap.aggregation_period,
             currentMap.historical_year_period,
           )
@@ -530,8 +530,8 @@ export function MapPage(props: MapPageProps) {
 
     setInProgress(true);
     const caption = `${isMobile
-      ? currentMap.climatological_variable
-      : labelFor(currentMap.climatological_variable)
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
       }
     - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -560,8 +560,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-      ? ' - ' + labelFor(currentMap.time_window)
-      : ''
+        ? ' - ' + labelFor(currentMap.time_window)
+        : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''
