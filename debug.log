@@ -80,3 +80,6 @@
 [0204/125817.682:ERROR:crashpad_client_win.cc(868)] not connected
 [0204/125818.223:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
 [0204/125819.849:ERROR:crashpad_client_win.cc(868)] not connected
+[0213/131118.336:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
+[0213/131135.509:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
+[0213/131159.344:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)

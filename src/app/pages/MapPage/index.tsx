@@ -363,6 +363,49 @@ export function MapPage(props: MapPageProps) {
       console.log(e);
     }
 
+    if ('lat' in currentMap) {
+      setTimeout(() => {
+        // @ts-ignore
+        const found: any = Object.values(mapRef.current?._layers).find(
+          // @ts-ignore
+          x => x._url && x._url.includes('municipalities'),
+        );
+        api
+          .findMunicipality(currentMap.lat, currentMap.lng)
+          .then((geoj: any) => {
+            setSelectedPoint({
+              name: geoj.features[0].properties.name,
+              value: geoj.features[0].properties.name,
+              latlng: {
+                lat: parseFloat(currentMap.lat),
+                lng: parseFloat(currentMap.lng),
+              },
+            });
+            found.setFeatureStyle(geoj.features[0].properties.name, {
+              color: '#164d36',
+              weight: 2,
+              radius: 1,
+              fill: true,
+              fillOpacity: 0,
+              opacity: 1,
+            });
+            // @ts-ignore
+            found.fire('click', {
+              // @ts-ignore
+              latlng: L.latLng([
+                parseFloat(currentMap.lat),
+                parseFloat(currentMap.lng),
+              ]),
+              // latlng: found.latlng,
+              layer: {
+                properties: geoj.features[0].properties,
+              },
+              label: geoj.features[0].properties.name,
+            });
+          });
+      }, 250);
+    }
+
     //@ts-ignore
     mapRef.current.on(
       'simpleMapScreenshoter.takeScreen',
