@@ -48,19 +48,22 @@ const defaultMap: any = {
   time_window: 'tw1',
   aggregation_period: '30yr',
   year_period: 'winter',
+  archive: 'forecast',
 
   data_series: 'no',
 };
 
 const defaultMapHistorical: any = {
   historical_variable: 'tdd',
+
   climatological_model: 'model_ensemble',
   scenario: 'rcp85',
-  measure: 'anomaly',
-  time_window: 'tw1',
-  aggregation_period: '30yr',
-  year_period: 'winter',
 
+  measure: 'absolute',
+  time_window: 'tw1',
+  historical_aggregation_period: 'annual',
+  historical_year_period: 'winter',
+  archive: 'historical',
   data_series: 'no',
 };
 
@@ -527,8 +530,8 @@ export function MapPage(props: MapPageProps) {
 
     setInProgress(true);
     const caption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
+      ? currentMap.climatological_variable
+      : labelFor(currentMap.climatological_variable)
       }
     - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -557,8 +560,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? ' - ' + labelFor(currentMap.time_window)
-        : ''
+      ? ' - ' + labelFor(currentMap.time_window)
+      : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''

@@ -87,11 +87,7 @@ const IndexPage = () => {
                   {t('app.index.sections.hist')}
                 </HeroTitle>
                 <p className="d-none d-lg-block"></p>
-                <HeroButton
-                  disabled={true}
-                  href="/storico-semplice"
-                  color="secondary"
-                >
+                <HeroButton href="/storico-semplice" color="secondary">
                   {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />
@@ -120,11 +116,7 @@ const IndexPage = () => {
               <HeroBody>
                 <HeroTitle>{t('app.index.sections.proj')}</HeroTitle>
                 <p className="d-none d-lg-block"></p>
-                <HeroButton
-                  disabled={true}
-                  href="proiezioni-semplice"
-                  color="secondary"
-                >
+                <HeroButton href="proiezioni-semplice" color="secondary">
                   {t('app.index.sections.simple')}
                 </HeroButton>
                 <br />

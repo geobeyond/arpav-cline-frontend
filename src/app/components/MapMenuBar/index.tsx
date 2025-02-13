@@ -145,7 +145,10 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key: 'climatological_variable',
+            key:
+              map_data === 'future'
+                ? 'climatological_variable'
+                : 'historical_variable',
             groupName: '',
             ...mapParameters(
               map_data === 'future'
@@ -199,7 +202,10 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key: 'aggregation_period',
+            key:
+              map_data === 'future'
+                ? 'aggregation_period'
+                : 'historical_aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters(
               map_data === 'future'
@@ -224,7 +230,8 @@ export function MapMenuBar(props: MapMenuBar) {
             criteria: (x, c) => x?.measure,
           },
           {
-            key: 'time_window',
+            key:
+              map_data === 'future' ? 'time_window' : 'historical_time_window',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
               map_data === 'future' ? 'time_window' : 'historical_time_window',
@@ -243,7 +250,8 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key: 'year_period',
+            key:
+              map_data === 'future' ? 'year_period' : 'historical_year_period',
             groupName: '',
             ...mapParameters(
               map_data === 'future' ? 'year_period' : 'historical_year_period',
@@ -710,7 +718,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   <LinkListItem header inDropdown>
                     {t('app.index.sections.proj')}
                   </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/proiezioni-semplice">
+                  <LinkListItem inDropdown href="/proiezioni-semplice">
                     {t('app.index.sections.simple')}
                   </LinkListItem>
                   <LinkListItem inDropdown href="/proiezioni-avanzata">
@@ -720,7 +728,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   <LinkListItem header inDropdown>
                     {t('app.index.sections.hist')}
                   </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/storico-semplice">
+                  <LinkListItem inDropdown href="/storico-semplice">
                     {t('app.index.sections.simple')}
                   </LinkListItem>
                   <LinkListItem inDropdown href="/storico-avanzata">
