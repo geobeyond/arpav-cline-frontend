@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { Http } from '../Http';
 import { P } from 'app/pages/NotFoundPage/P';
-import { BACKEND_API_URL } from '../../../../utils/constants';
+import { BACKEND_API_URL, BACKEND_WMS_BASE_URL } from '../../../../utils/constants';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -33,7 +33,8 @@ const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 export class RequestApi extends Http {
   getCapabilities(wms) {
     const fullUrl =
-      'https://arpav.geobeyond.dev/api/v2/coverages/wms/' +
+      BACKEND_WMS_BASE_URL +
+      '/' +
       wms +
       '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&verbose=true';
 
