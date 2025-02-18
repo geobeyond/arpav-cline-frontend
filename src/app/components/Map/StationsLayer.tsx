@@ -41,7 +41,7 @@ export const StationsLayer = (props: any) => {
           // console.log(zoom, color, opacity)
           return {
             color: color,
-            weight: 1,
+            weight: data === 'future' ? 1 : 2,
             radius: data === 'future' ? 3 : 8,
             fill: true,
             fillOpacity: 0.7,

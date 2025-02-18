@@ -650,16 +650,27 @@ export class RequestApi extends Http {
                   ].indexOf(y.name) >= 0,
               );
             }
+            if (x.name.indexOf('historical_variable') === 0) {
+              x.allowed_values = x.allowed_values.filter(
+                y => ['tdd', 'prcptot', 'tr', 'su30'].indexOf(y.name) >= 0,
+              );
+            }
             if (x.name.indexOf('climatological_model') === 0) {
               x.allowed_values = x.allowed_values.filter(
                 y => ['model_ensemble'].indexOf(y.name) >= 0,
               );
             }
-            if (x.name.indexOf('scenario') == 0) {
+            if (x.name.indexOf('historical_aggregation_period') === 0) {
               x.allowed_values = x.allowed_values.filter(
-                y => ['rcp85'].indexOf(y.name) >= 0,
+                y => ['annual', '30yr'].indexOf(y.name) >= 0,
               );
             }
+            if (x.name.indexOf('historical_year_period') === 0) {
+              x.allowed_values = x.allowed_values.filter(
+                y => y.name.indexOf('M') < 0,
+              );
+            }
+
             return x;
           });
           return d;

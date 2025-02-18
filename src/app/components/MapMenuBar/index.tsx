@@ -648,7 +648,9 @@ export function MapMenuBar(props: MapMenuBar) {
                   <IconButton
                     onClick={() => setDownloadDataOpen(true)}
                     aria-label={t('app.map.menuBar.downloadMap')}
-                    disabled={foundLayers === 0 || inProgress}
+                    disabled={
+                      foundLayers === 0 || inProgress || map_mode === 'simple'
+                    }
                   >
                     <FileDownloadIcon />
                   </IconButton>
@@ -665,7 +667,9 @@ export function MapMenuBar(props: MapMenuBar) {
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
                   aria-label={t('app.map.menuBar.downloadData')}
-                  disabled={foundLayers === 0 || inProgress}
+                  disabled={
+                    foundLayers === 0 || inProgress || map_mode === 'simple'
+                  }
                 >
                   {t('app.map.menuBar.downloadData')}
                 </Button>
@@ -684,9 +688,7 @@ export function MapMenuBar(props: MapMenuBar) {
               {isMobile ? (
                 <IconButton
                   onClick={() => onDownloadMapImg()}
-                  disabled={
-                    foundLayers === 0 || inProgress || map_mode === 'simple'
-                  }
+                  disabled={foundLayers === 0 || inProgress}
                   aria-label={t('app.map.menuBar.downloadMap')}
                 >
                   {inProgress ? (
@@ -706,9 +708,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   }
                   onClick={() => onDownloadMapImg()}
                   aria-label={t('app.map.menuBar.downloadMap')}
-                  disabled={
-                    foundLayers === 0 || inProgress || map_mode === 'simple'
-                  }
+                  disabled={foundLayers === 0 || inProgress}
                 >
                   {t('app.map.menuBar.downloadMap')}
                 </Button>

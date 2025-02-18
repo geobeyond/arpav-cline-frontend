@@ -93,7 +93,7 @@ Le informazioni presentate nella Piattaforma sono di utilità per decisori polit
 cittadini, al fine di supportare la pianificazione del territorio, le misure di adattamento ai cambiamenti
 climatici e, più in generale, aumentare la conoscenza e la consapevolezza sui cambiamenti climatici in
 corso.</p>
-<p>Per informazioni sull'utilizzo  di CliNE è possibile consultare il <a href="https://github.com/venetoarpa/Arpav-PPCV-backend/wiki/Manuale-utente" target="_blank">Manuale d'uso.</a></p>
+<p>Per informazioni sull'utilizzo  di CliNE è possibile consultare il <a href="https://github.com/venetoarpa/arpav-cline-frontend/wiki/Manuale-utente" target="_blank">Manuale d'uso.</a></p>
 
 <h1>
  Gli elementi della piattaforma

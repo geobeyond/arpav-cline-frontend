@@ -26,7 +26,7 @@ import {
   ModalStyle,
   TitleDownloadStyle,
   ExtractionStyle,
-  BoxExtractionStyle
+  BoxExtractionStyle,
 } from './styles';
 import MapDlData from './mapDlData';
 import UserDlData from '../UserDlData/userDlData';
@@ -98,7 +98,6 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
     setDownloadUrl(url);
   };
 
-
   return (
     <>
       <Modal open={open} sx={DownloadModalStyle}>
@@ -112,7 +111,8 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           <Grid xs={1}></Grid>
           <Grid xs={26}>
             <Typography variant={'h6'} sx={TitleDownloadStyle}>
-              {t('app.header.acronymMeaning')} - Modulo scarica dati
+              {t('app.header.acronymMeaning')} -{' '}
+              {t('app.header.dataDownloadModule')}
             </Typography>
           </Grid>
           <Grid xs={1} sx={CloseIconContStyle}>
@@ -194,7 +194,9 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           >
             <Grid xs={1}></Grid>
             <Grid xs={26}>
-              <Typography variant={'h6'} sx={TitleDownloadStyle}>Estrazioni scaricabili</Typography>
+              <Typography variant={'h6'} sx={TitleDownloadStyle}>
+                Estrazioni scaricabili
+              </Typography>
             </Grid>
             <Grid xs={1} sx={CloseIconContStyle}>
               <IconButton
@@ -209,8 +211,8 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
             <Grid xs={28}>
               <LinkList>
                 {links.map((x: any) => (
-                  <LinkListItem className='icon-left' href={x.url}>
-                    <Icon color='primary' icon='it-chevron-right' aria-hidden />
+                  <LinkListItem className="icon-left" href={x.url}>
+                    <Icon color="primary" icon="it-chevron-right" aria-hidden />
                     {x.label}
                   </LinkListItem>
                 ))}

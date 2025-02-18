@@ -2257,6 +2257,18 @@
   resolved "https://registry.npmjs.org/@tolgee/core/-/core-5.28.6.tgz"
   integrity sha512-L74YuSmd3dogKj13ks/j/qRORrdK/tx8eCmLlQPnvS512rRLxaBmu5k91ZxgUFy+ZnwWGDkOqezgqWkFXrcuRQ==
 
+"@tolgee/core@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/@tolgee/core/-/core-6.1.1.tgz"
+  integrity sha512-BRhmXU4HHGDt6d7vXCxPl1xjnxBMxmO0OuBv+UmaqOHNM/MTsbM+rhjWgrAtJ93Fz5MYUMwqmLU1iofASPxYUQ==
+
+"@tolgee/i18next@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/@tolgee/i18next/-/i18next-6.1.1.tgz"
+  integrity sha512-i8YG1O84aYmf77VNP6aCZVCPJclhpKKLjUVHdLgr9Qpomu394grkA32Xux3G2jYgcy6up38q4K/Wgy8O11osYw==
+  dependencies:
+    "@tolgee/web" "6.1.1"
+
 "@tolgee/react@5.28.6":
   version "5.28.6"
   resolved "https://registry.npmjs.org/@tolgee/react/-/react-5.28.6.tgz"
@@ -2270,6 +2282,13 @@
   integrity sha512-9+FrXhYHryp2/WXSOiY9n9XAjeZxIixx9FBjx8z2GBsUhIM9VFDAA4/9bb884Gk5fmk3shQ+tehSSAvLLnihgQ==
   dependencies:
     "@tolgee/core" "5.28.6"
+
+"@tolgee/web@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/@tolgee/web/-/web-6.1.1.tgz"
+  integrity sha512-O8kUFWQK66knaMIfGA40H/PeU0nnJbtLuoqkDiBBVSrwajRipy7uBdrZuJokS2eypLyWA0giYPzxud+7sgnnpg==
+  dependencies:
+    "@tolgee/core" "6.1.1"
 
 "@tootallnate/once@1":
   version "1.1.2"
