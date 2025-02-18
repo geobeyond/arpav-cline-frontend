@@ -35,13 +35,13 @@ class ContinuousIntegration {
           dockerfile: 'Dockerfile'
         }
       )
-      .withLabel(
-        'org.opencontainers.image.source',
-        'https://github.com/geobeyond/Arpav-PPCV'
-      )
     if (publishDockerImage) {
       const sanitizedName = this._sanitizeDockerImageName(publishDockerImage)
-      return await builtImage.publish(sanitizedName)
+      const labeledImage = builtImage.withLabel(
+        'org.opencontainers.image.source',
+        publishDockerImage.split(':')[0]
+      )
+      return await labeledImage.publish(sanitizedName)
     } else {
       return 'Done!'
     }
