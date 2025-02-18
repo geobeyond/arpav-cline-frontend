@@ -684,7 +684,9 @@ export function MapMenuBar(props: MapMenuBar) {
               {isMobile ? (
                 <IconButton
                   onClick={() => onDownloadMapImg()}
-                  disabled={foundLayers === 0 || inProgress}
+                  disabled={
+                    foundLayers === 0 || inProgress || map_mode === 'simple'
+                  }
                   aria-label={t('app.map.menuBar.downloadMap')}
                 >
                   {inProgress ? (
@@ -704,7 +706,9 @@ export function MapMenuBar(props: MapMenuBar) {
                   }
                   onClick={() => onDownloadMapImg()}
                   aria-label={t('app.map.menuBar.downloadMap')}
-                  disabled={foundLayers === 0 || inProgress}
+                  disabled={
+                    foundLayers === 0 || inProgress || map_mode === 'simple'
+                  }
                 >
                   {t('app.map.menuBar.downloadMap')}
                 </Button>
