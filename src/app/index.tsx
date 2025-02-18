@@ -23,6 +23,14 @@ import InfoPage from './pages/InfoPage';
 import DataPolicyPage from './pages/DataPolicyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
+import { TolgeeProvider, DevTools, FormatSimple, Tolgee } from '@tolgee/react';
+
+const tolgee = Tolgee().use(DevTools()).use(FormatSimple()).init({
+  language: 'en',
+  apiUrl: process.env.REACT_APP_TOLGEE_API_URL,
+  apiKey: process.env.REACT_APP_TOLGEE_API_KEY,
+});
+
 export function App() {
   const { t, i18n } = useTranslation();
   // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
@@ -36,43 +44,48 @@ export function App() {
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={3}>
-        <BrowserRouter>
-          <Helmet
-            titleTemplate={`%s - ${t('app.header.acronymMeaning')}`}
-            defaultTitle={t('app.header.acronymMeaning')}
-            htmlAttributes={{ lang: i18n.language }}
-          >
-            <meta name="description" content={t('app.header.acronymMeaning')} />
-          </Helmet>
-          <Routes>
-            <Route path="/" element={<IndexPage />} />
-            <Route path="/barometer" element={<IndexPage />} />
-            <Route
-              path="/proiezioni-semplice"
-              element={<MapPage map_data="future" map_mode="simple" />}
-            />
-            <Route
-              path="/storico-semplice"
-              element={<MapPage map_data="past" map_mode="simple" />}
-            />
-            <Route
-              path="/proiezioni-avanzata"
-              element={<MapPage map_data="future" map_mode="advanced" />}
-            />
-            <Route
-              path="/storico-avanzata"
-              element={<MapPage map_data="past" map_mode="advanced" />}
-            />
+        <TolgeeProvider tolgee={tolgee}>
+          <BrowserRouter>
+            <Helmet
+              titleTemplate={`%s - ${t('app.header.acronymMeaning')}`}
+              defaultTitle={t('app.header.acronymMeaning')}
+              htmlAttributes={{ lang: i18n.language }}
+            >
+              <meta
+                name="description"
+                content={t('app.header.acronymMeaning')}
+              />
+            </Helmet>
+            <Routes>
+              <Route path="/" element={<IndexPage />} />
+              <Route path="/barometer" element={<IndexPage />} />
+              <Route
+                path="/proiezioni-semplice"
+                element={<MapPage map_data="future" map_mode="simple" />}
+              />
+              <Route
+                path="/storico-semplice"
+                element={<MapPage map_data="past" map_mode="simple" />}
+              />
+              <Route
+                path="/proiezioni-avanzata"
+                element={<MapPage map_data="future" map_mode="advanced" />}
+              />
+              <Route
+                path="/storico-avanzata"
+                element={<MapPage map_data="past" map_mode="advanced" />}
+              />
 
-            <Route path="/info" element={<InfoPage />} />
-            <Route path="/data" element={<DataPolicyPage />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          </Routes>
-          {/*<Routes>*/}
-          {/*  <Route path="*" element={<MapPage />} />*/}
-          {/*</Routes>*/}
-          {/*<GlobalStyle />*/}
-        </BrowserRouter>
+              <Route path="/info" element={<InfoPage />} />
+              <Route path="/data" element={<DataPolicyPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            </Routes>
+            {/*<Routes>*/}
+            {/*  <Route path="*" element={<MapPage />} />*/}
+            {/*</Routes>*/}
+            {/*<GlobalStyle />*/}
+          </BrowserRouter>
+        </TolgeeProvider>
       </SnackbarProvider>
     </ThemeProvider>
   );

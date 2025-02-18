@@ -252,8 +252,8 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           key={item.name}
                           disableGutters
                           sx={{
-                            marginBottom: row.multicol?.includes(index)
-                              ? '200px'
+                            marginBottom: row.multicol?.includes(index + 1)
+                              ? 'calc(50vh - 100px)'
                               : '0',
                           }}
                           disabled={

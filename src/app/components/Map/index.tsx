@@ -95,6 +95,8 @@ interface MapProps {
   currentTimeserie?: any;
   setCurrentMap?: Function;
   setCurrentYear?: Function;
+  mode: string;
+  data: string;
 }
 
 const Map = (props: MapProps) => {
@@ -111,6 +113,8 @@ const Map = (props: MapProps) => {
     currentTimeserie = {},
     setCurrentMap = () => { },
     setCurrentYear = () => { },
+    mode = 'advanced',
+    data = 'future',
   } = props;
 
   const theme = useTheme();
@@ -339,9 +343,14 @@ const Map = (props: MapProps) => {
           />
         </LayersControl.BaseLayer>
       </LayersControl>
-      <StationsLayer zIndex={550}></StationsLayer>
+      <StationsLayer
+        data={data}
+        variable={currentMap.climatological_variable}
+        zIndex={550}
+      ></StationsLayer>
       <VectorWrapperLayer
         zIndex={600}
+        mode={mode}
         ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
@@ -367,7 +376,9 @@ const Map = (props: MapProps) => {
         }
         stl={layerConf.palette}
         useTime={setTimeStatus}
-        isTimeseries={currentMap.aggregation_period === 'annual'}
+        isTimeseries={
+          mode !== 'simple' && currentMap.aggregation_period === 'annual'
+        }
         setCurrentYear={setCurrentYear}
       />
       <CustomControlMap

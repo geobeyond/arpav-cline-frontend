@@ -52,6 +52,7 @@ export interface TSDataContainerProps {
   currentMap: any;
   setSeriesFilter: Function;
   setFilledSeries: Function;
+  mode: string;
 }
 
 //TODO
@@ -77,6 +78,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     ) => { },
     setSeriesFilter = () => { },
     setFilledSeries = () => { },
+    mode,
   } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
@@ -1098,6 +1100,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             <Select
               labelId="SelectedModel"
               id="SelectedModel"
+              disabled={mode === 'simple'}
               value={comparisonClimatologicalModel}
               label={t('app.map.timeSeriesDialog.comparisonModel')}
               onChange={e => {
@@ -1138,6 +1141,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               {t('app.map.timeSeriesDialog.modelSmoothing')}
             </InputLabel>
             <Slider
+              disabled={mode === 'simple'}
               aria-label="Options"
               defaultValue={1}
               valueLabelFormat={valuetext}
@@ -1167,6 +1171,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               {t('app.map.timeSeriesDialog.sensorSmoothing')}
             </InputLabel>
             <Slider
+              disabled={mode === 'simple'}
               aria-label="Options"
               defaultValue={0}
               valueLabelFormat={valuetextSensor}

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLeafletContext, withPane } from '@react-leaflet/core';
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet.vectorgrid';
-import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants'
+import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants';
 
 import { Button, Paper, Box, IconButton, Typography } from '@mui/material';
 import { MapPopup } from '../MapSearch';
@@ -18,7 +18,8 @@ export const VectorWrapperLayer = (props: any) => {
   let popupRef: any = useRef();
 
   const { selected_map } = useSelector((state: any) => state.map);
-  const { selectCallback, selectedPoint, openCharts, unit, precision } = props;
+  const { selectCallback, selectedPoint, openCharts, unit, precision, mode } =
+    props;
   const map = useMap();
   const context = useLeafletContext();
 
@@ -128,6 +129,7 @@ export const VectorWrapperLayer = (props: any) => {
           <Popup>
             <Box sx={PopupStyle}>
               <MapPopup
+                mode={mode}
                 openCharts={openCharts}
                 value={selectedPoint}
                 currentTimeserie={currentTimeSerie}

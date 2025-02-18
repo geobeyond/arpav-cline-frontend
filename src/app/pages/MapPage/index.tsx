@@ -82,6 +82,7 @@ const modalStyle = {
 export function MapPage(props: MapPageProps) {
   const map_mode = props.map_mode;
   const map_data = props.map_data;
+  console.log(map_mode, map_data);
   if (map_data === 'future') {
     defaultMap['archive'] = 'forecast';
   } else {
@@ -206,7 +207,7 @@ export function MapPage(props: MapPageProps) {
 
     const changeables = ['measure', 'year_period', 'time_window'];
     setCurrentMap({ ...searchParams });
-    api.getAttributes(map_data).then(x => {
+    api.getAttributes(map_data, map_mode).then(x => {
       setMenus(x.items);
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
@@ -645,9 +646,12 @@ export function MapPage(props: MapPageProps) {
         currentTimeserie={currentTimeSerie}
         setCurrentMap={setCurrentMap}
         setCurrentYear={setCurrentYear}
+        mode={map_mode}
+        data={map_data}
       />
 
       <TimeSeriesDialog
+        mode={map_mode}
         selectedPoint={selectedPoint}
         open={tSOpen}
         setOpen={setTSOpen}

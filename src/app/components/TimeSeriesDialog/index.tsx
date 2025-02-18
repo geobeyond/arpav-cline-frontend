@@ -22,6 +22,7 @@ export interface TimeSeriesDialogProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   currentLayer: any;
   currentMap: any;
+  mode: string;
 }
 
 export interface TimeRangeProps {
@@ -36,6 +37,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     selectedPoint,
     currentLayer,
     currentMap,
+    mode,
   } = props;
   const latLng = selectedPoint
     ? new LatLng(selectedPoint.latlng.lat, selectedPoint.latlng.lng)
@@ -132,6 +134,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
             <TSDataContainer
               latLng={latLng}
               setIds={setIds}
+              mode={mode}
               setTimeRange={setTimeRange}
               place={place}
               setToDownload={setToDownload}

@@ -53,6 +53,7 @@ export interface MapPopupProps {
   currentTimeserie: any;
   unit: string;
   precision: number;
+  mode?: string;
 }
 
 export const ValueRenderer = ({ time, value, unit }) => {
@@ -314,6 +315,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     unit,
     precision,
     currentTimeserie,
+    mode,
   } = props;
   const { cities, selected_map } = useSelector((state: any) => state.map);
 
@@ -389,7 +391,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie && (
+      {timeserie && mode !== 'simple' && (
         <CompactValueRenderer
           time={tt}
           value={tv}
@@ -420,6 +422,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         </Tooltip>
         <span style={{ flex: '1 1 1px' }}></span>
       </div>
+      {mode === 'simple' && <span style={{ flex: '1 1 1px' }}></span>}
     </div>
   );
 };

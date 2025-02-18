@@ -5,3 +5,6 @@
 [0128/135102.338:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
 [0203/165105.858:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
 [0203/202339.572:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
+[0217/190122.023:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
+[0217/190551.482:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)
+[0217/190759.739:ERROR:registration_protocol_win.cc(108)] CreateFile: Impossibile trovare il file specificato. (0x2)

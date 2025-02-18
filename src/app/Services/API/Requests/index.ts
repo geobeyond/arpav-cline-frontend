@@ -618,7 +618,12 @@ export class RequestApi extends Http {
       });
   };
 
-  public getAttributes = (mode: string = 'future', force: boolean = false) => {
+  public getAttributes = (
+    data: string = 'future',
+    mode: string = 'advanced',
+    force: boolean = false,
+  ) => {
+    console.log('getAttributes', data, mode, force);
     let reqs: any[] = [];
 
     const ret = this.instance
@@ -627,9 +632,43 @@ export class RequestApi extends Http {
       )
       .then((d: any) => {
         return d.items;
+      })
+      .then((d: any[]) => {
+        if (mode === 'simple') {
+          d.map(x => {
+            if (x.name.indexOf('climatological_variable') === 0) {
+              x.allowed_values = x.allowed_values.filter(
+                y =>
+                  [
+                    'tas',
+                    'pr',
+                    'tr',
+                    'su30',
+                    'r95ptot',
+                    'cdds',
+                    'snwdays',
+                  ].indexOf(y.name) >= 0,
+              );
+            }
+            if (x.name.indexOf('climatological_model') === 0) {
+              x.allowed_values = x.allowed_values.filter(
+                y => ['model_ensemble'].indexOf(y.name) >= 0,
+              );
+            }
+            if (x.name.indexOf('scenario') == 0) {
+              x.allowed_values = x.allowed_values.filter(
+                y => ['rcp85'].indexOf(y.name) >= 0,
+              );
+            }
+            return x;
+          });
+          return d;
+        } else {
+          return d;
+        }
       });
     reqs.push(ret);
-    if (mode === 'future') {
+    if (data === 'future') {
       const cret = this.instance.get<any>(
         `${BACKEND_API_URL}/coverages/forecast-variable-combinations`,
       );
