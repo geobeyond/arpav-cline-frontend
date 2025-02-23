@@ -36,11 +36,12 @@ class ContinuousIntegration {
         }
       )
     if (publishDockerImage) {
-      const sanitizedName = this._sanitizeDockerImageName(publishDockerImage)
+      const [, orgName, repoName] = publishDockerImage.split('/')
       const labeledImage = builtImage.withLabel(
         'org.opencontainers.image.source',
-        publishDockerImage.split(':')[0]
+        `https://github.com/${orgName}/${repoName}`,
       )
+      const sanitizedName = this._sanitizeDockerImageName(publishDockerImage)
       return await labeledImage.publish(sanitizedName)
     } else {
       return 'Done!'
