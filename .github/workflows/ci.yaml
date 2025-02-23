@@ -8,7 +8,7 @@ on:
 env:
   PUBLISH_IMAGE: ${{ (github.ref_name == 'main' || github.ref_type == 'tag') && 'TRUE' || 'FALSE'}}
   IMAGE_TAG: ${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
-  IMAGE_NAME: ghcr.io/${{ github.repository }}/arpav-ppcv
+  IMAGE_NAME: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}
 
 jobs:
   run-dagger-ci:
