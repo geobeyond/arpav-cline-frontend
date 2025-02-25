@@ -79,7 +79,10 @@ http://localhost:3000
 Build the docker image:
 
 ```shell
-docker build -t ppcv_frontend -f Dockerfile .
+docker build \
+    --tag ghcr.io/geobeyond/arpav-cline-frontend/arpav-cline-frontend \
+    --label https://github.com/geobeyond/arpav-cline-frontend \
+    --file Dockerfile .
 ```
 
 Run the built container with:
