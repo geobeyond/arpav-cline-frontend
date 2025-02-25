@@ -367,7 +367,7 @@ const Map = (props: MapProps) => {
 
       <TWLSample
         zIndex={500}
-        layer={currentLayer}
+        layer={layerConf.wms_base_url}
         opacity={opacity}
         show={
           showUncertainty

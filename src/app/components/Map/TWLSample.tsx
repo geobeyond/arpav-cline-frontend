@@ -52,7 +52,7 @@ export const TWLSample = (props: any) => {
         //      tx = true;
         //    }
         //  }
-//
+        //
         //  if (tx) {
         //    let first = true;
         //    //@ts-ignore
@@ -98,7 +98,7 @@ export const TWLSample = (props: any) => {
           attribution:
             '&copy; <a target="_blank" rel="noopener" href="/data">ARPAV - Arpa FVG</a>',
         };
-        const tlUrl = `${BACKEND_WMS_BASE_URL}/${selected_map_path}`;
+        const tlUrl = selected_map_path; //`${BACKEND_WMS_BASE_URL}/${selected_map_path}`;
         // @ts-ignore
         const wmsLayer = new TileLayer.WMS(tlUrl, {
           ...params,
@@ -229,7 +229,6 @@ export const TWLSample = (props: any) => {
           //}
           map.addLayer(wmsLayer);
         }
-
 
         return () => {
           map.removeLayer(currentLayer);

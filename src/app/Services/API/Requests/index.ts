@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { Http } from '../Http';
 import { P } from 'app/pages/NotFoundPage/P';
-import { BACKEND_API_URL, BACKEND_WMS_BASE_URL } from '../../../../utils/constants';
+import {
+  BACKEND_API_URL,
+  BACKEND_WMS_BASE_URL,
+} from '../../../../utils/constants';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -348,8 +351,7 @@ export class RequestApi extends Http {
     }
     filter += 'possible_value=archive:' + mode + '&';
 
-    const fullUrl =
-      BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter;
+    const fullUrl = BACKEND_API_URL + '/coverages/coverages?' + filter;
 
     console.log(fullUrl);
     const d = localStorage.getItem(fullUrl);
@@ -357,30 +359,32 @@ export class RequestApi extends Http {
       return Promise.resolve(JSON.parse(d)).then((x: any) => {
         console.log(x);
         // If the response contains items, filter out the ones with uncertainty.
-        if (x.items.length > 0) {
-          let xx = x.items.filter(
-            itm =>
-              JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
-          );
-          return { items: xx };
-        } else return x;
+        //if (x.items.length > 0) {
+        //  let xx = x.items.filter(
+        //    itm =>
+        //      JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
+        //  );
+        //  return { items: xx };
+        //} else
+        return x;
       });
     }
 
     // Make the request to the API.
     return this.instance
-      .get<any>(BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter)
+      .get<any>(BACKEND_API_URL + '/coverages/coverages?' + filter)
       .then((x: any) => {
         localStorage.setItem(fullUrl, JSON.stringify(x));
         console.log(x);
         // If the response contains items, filter out the ones with uncertainty.
-        if (x.items.length > 0) {
-          let xx = x.items.filter(
-            itm =>
-              JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
-          );
-          return { items: xx };
-        } else return x;
+        //if (x.items.length > 0) {
+        //  let xx = x.items.filter(
+        //    itm =>
+        //      JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
+        //  );
+        //  return { items: xx };
+        //} else
+        return x;
       });
   };
   /**
@@ -394,10 +398,8 @@ export class RequestApi extends Http {
     if ('ensemble_data' in conf) {
       // Fetch both the main and ensemble data configurations concurrently
       return Promise.all([
-        this.instance.get<any>(conf.related_coverage_configuration_url),
-        this.instance.get<any>(
-          conf.ensemble_data.related_coverage_configuration_url,
-        ),
+        this.instance.get<any>(conf.url),
+        this.instance.get<any>(conf.ensemble_data.url),
       ]).then(responses => {
         console.log('getLayerConf: Fetched both main and ensemble data');
         console.log(responses);
@@ -406,7 +408,7 @@ export class RequestApi extends Http {
         return responses[0];
       });
     } else {
-      const lc = localStorage.getItem(conf.related_coverage_configuration_url);
+      const lc = localStorage.getItem(conf.url);
       if (lc) {
         const ret = JSON.parse(lc);
         ret.wms_main_layer_name = conf.wms_main_layer_name;
@@ -414,22 +416,17 @@ export class RequestApi extends Http {
         return Promise.resolve(ret);
       } else {
         // Fetch only the main data configuration
-        return this.instance
-          .get<any>(conf.related_coverage_configuration_url)
-          .then(response => {
-            //@ts-ignore
-            response.wms_main_layer_name = conf.wms_main_layer_name;
-            //@ts-ignore
-            response.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+        return this.instance.get<any>(conf.url).then(response => {
+          //@ts-ignore
+          response.wms_main_layer_name = conf.wms_main_layer_name;
+          //@ts-ignore
+          response.wms_secondary_layer_name = conf.wms_secondary_layer_name;
 
-            localStorage.setItem(
-              conf.related_coverage_configuration_url,
-              JSON.stringify(response),
-            );
-            console.log('getLayerConf: Fetched only main data');
-            console.log(response);
-            return response;
-          });
+          localStorage.setItem(conf.url, JSON.stringify(response));
+          console.log('getLayerConf: Fetched only main data');
+          console.log(response);
+          return response;
+        });
       }
     }
   };
@@ -668,7 +665,10 @@ export class RequestApi extends Http {
             }
             if (x.name.indexOf('historical_year_period') === 0) {
               x.allowed_values = x.allowed_values.filter(
-                y => y.name.indexOf('M') < 0,
+                y =>
+                  ['all_year', 'spring', 'summer', 'winter', 'autumn'].indexOf(
+                    y.name,
+                  ) >= 0,
               );
             }
 
