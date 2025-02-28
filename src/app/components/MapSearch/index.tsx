@@ -226,7 +226,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           options={cities}
           sx={AutocompleteSyle}
           renderInput={params => (
-            <TextField {...params} label="" placeholder="Ricerca per comune" />
+            <TextField {...params} label="" placeholder={t('app.search')} />
           )}
           onChange={onChange}
           value={value}

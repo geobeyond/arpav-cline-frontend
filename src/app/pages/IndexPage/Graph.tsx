@@ -379,9 +379,9 @@ const Graph = (props: any) => {
   };
 
   const rcps = {
-    rcp85: 'Scenario nessuna mitigazione',
-    rcp45: 'Scenario intermedio',
-    rcp26: 'Scenario forte mitigazione',
+    rcp85: t('rcp85'),
+    rcp45: t('rcp45'),
+    rcp26: t('rcp26'),
   };
 
   const labelFor = (itm, mode = 'default') => {

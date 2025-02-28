@@ -52,7 +52,7 @@ const tolgee = Tolgee().use(DevTools()).use(I18nextPlugin()).init({
 withTolgee(i18n, tolgee)
   .use(initReactI18next)
   .init({
-    lng: 'it', // or use i18next language detector
+    //lng: 'en', // or use i18next language detector
     supportedLngs: ['it', 'en'],
   });
 
