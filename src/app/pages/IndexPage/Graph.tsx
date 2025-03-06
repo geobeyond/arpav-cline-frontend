@@ -379,9 +379,9 @@ const Graph = (props: any) => {
   };
 
   const rcps = {
-    rcp85: t('rcp85'),
-    rcp45: t('rcp45'),
-    rcp26: t('rcp26'),
+    rcp85: t('scenarios.rcp85'),
+    rcp45: t('scenarios.rcp45'),
+    rcp26: t('scenarios.rcp26'),
   };
 
   const labelFor = (itm, mode = 'default') => {

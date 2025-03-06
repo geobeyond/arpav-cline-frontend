@@ -153,111 +153,110 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const [realDataValues, setRealDataValues] = useState<any>({});
 
   useEffect(() => {
-    setTimeseries([]);
-    const baseSelection = Object.fromEntries(
-      Object.entries(selected_map).filter(([key]) =>
-        full_find_keys.includes(key),
-      ),
-    );
-    // console.log(baseSelection)
-    //const ids = models
-    //  .filter(x => x)
-    //  .map(model => {
-    //    return scenarios.map(scenario => {
-    //      const input = {
-    //        ...baseSelection,
-    //        data_series: 'yes',
-    //        forecast_model: model,
-    //        time_window: null,
-    //        scenario,
-    //      };
-    //      const resItem = getItemByFilters(layers, input);
-    //      // @ts-ignore
-    //      return resItem ? resItem?.id : null;
-    //    });
-    //  })
-    //  .flat();
+    const do_effect = async () => {
+      setTimeseries([]);
+      const baseSelection = Object.fromEntries(
+        Object.entries(selected_map).filter(([key]) =>
+          full_find_keys.includes(key),
+        ),
+      );
+      // console.log(baseSelection)
+      //const ids = models
+      //  .filter(x => x)
+      //  .map(model => {
+      //    return scenarios.map(scenario => {
+      //      const input = {
+      //        ...baseSelection,
+      //        data_series: 'yes',
+      //        forecast_model: model,
+      //        time_window: null,
+      //        scenario,
+      //      };
+      //      const resItem = getItemByFilters(layers, input);
+      //      // @ts-ignore
+      //      return resItem ? resItem?.id : null;
+      //    });
+      //  })
+      //  .flat();
 
-    let ids = api.createIds(
-      //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
-      currentLayer.coverage_id_pattern,
-      {
-        ...currentMap,
-        ...{ name: currentLayer.name },
-        ...{
-          scenario: ['rcp26', 'rcp45', 'rcp85'],
-        },
-        ...{ data_series: true },
-      },
-    );
-    if (currentLayer.ensemble_data) {
-      ids = api.createIds(
+      let ids = await api.createIds(
         //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
-        currentLayer.ensemble_data.coverage_id_pattern,
         {
           ...currentMap,
-          ...{ name: currentLayer.ensemble_data.name },
-          ...{ climatological_model: ['model_ensemble'] },
           ...{
             scenario: ['rcp26', 'rcp45', 'rcp85'],
           },
           ...{ data_series: true },
         },
       );
-    }
-    console.log(ids);
-    setIds(ids);
-    api
-      .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
-      .then(res => {
-        //@ts-ignore
-        setTimeseries(res.series);
-        setToDownload({ ...res });
-
-        const dataValues = res.series.reduce((prev, curr) => {
-          return {
-            ...prev,
+      if (currentLayer.ensemble_data) {
+        ids = await api.createIds(
+          //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
+          {
+            ...currentMap,
+            ...{ climatological_model: ['model_ensemble'] },
             ...{
-              [curr.name + '__' + curr.info.processing_method]: curr.values,
+              scenario: ['rcp26', 'rcp45', 'rcp85'],
             },
-          };
-        }, {});
-        for (let k of Object.keys(dataValues)) {
-          for (let kk of dataValues[k]) {
-            kk.datetime = kk.datetime.split('-')[0];
-          }
-        }
-        for (let k of Object.keys(dataValues)) {
-          let vv: any[] = [];
-          for (let y of range(baseValue, 2100)) {
-            let found: boolean | any = false;
+            ...{ data_series: true },
+          },
+        );
+      }
+      console.log(ids);
+      setIds(ids);
+      api
+        .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
+        .then(res => {
+          //@ts-ignore
+          setTimeseries(res.series);
+          setToDownload({ ...res });
+
+          const dataValues = res.series.reduce((prev, curr) => {
+            return {
+              ...prev,
+              ...{
+                [curr.name + '__' + curr.info.processing_method]: curr.values,
+              },
+            };
+          }, {});
+          for (let k of Object.keys(dataValues)) {
             for (let kk of dataValues[k]) {
-              if (y.toString() === kk.datetime) {
-                found = kk;
-                break;
+              kk.datetime = kk.datetime.split('-')[0];
+            }
+          }
+          for (let k of Object.keys(dataValues)) {
+            let vv: any[] = [];
+            for (let y of range(baseValue, 2100)) {
+              let found: boolean | any = false;
+              for (let kk of dataValues[k]) {
+                if (y.toString() === kk.datetime) {
+                  found = kk;
+                  break;
+                }
+              }
+              if (found) {
+                vv.push(found);
+              } else {
+                vv.push({
+                  value: null,
+                  datetime: y.toString(),
+                });
               }
             }
-            if (found) {
-              vv.push(found);
-            } else {
-              vv.push({
-                value: null,
-                datetime: y.toString(),
-              });
-            }
+            dataValues[k] = vv;
           }
-          dataValues[k] = vv;
-        }
-        console.log(dataValues);
-        setFilledSeries(dataValues);
-        setRealDataValues(dataValues);
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(
-          actions.actions.genericError({ error: 'app.error.dlTimeSeries' }),
-        );
-      });
+          console.log(dataValues);
+          setFilledSeries(dataValues);
+          setRealDataValues(dataValues);
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(
+            actions.actions.genericError({ error: 'app.error.dlTimeSeries' }),
+          );
+        });
+    };
+    do_effect().catch(console.error);
   }, [
     selected_map,
     selectactable_parameters,

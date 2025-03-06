@@ -34,8 +34,8 @@ export interface UserDlDataProps {
 }
 
 const UserDlData = (props: UserDlDataProps) => {
-  const onValidityChange = props.onValidityChange ?? (() => {});
-  const onChange = props.onChange ?? (() => {});
+  const onValidityChange = props.onValidityChange ?? (() => { });
+  const onChange = props.onChange ?? (() => { });
 
   enum Reason {
     Study = 'study',
@@ -48,13 +48,13 @@ const UserDlData = (props: UserDlDataProps) => {
     localStorage && typeof localStorage.getItem('user_form') === 'string'
       ? JSON.parse(localStorage.getItem('user_form') as string)
       : {
-          // public: 0,
-          membership: '',
-          place: '',
-          // reason: Reason.Study,
-          other_reason: '',
-          accept_disclaimer: false,
-        };
+        // public: 0,
+        membership: '',
+        place: '',
+        // reason: Reason.Study,
+        other_reason: '',
+        accept_disclaimer: false,
+      };
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -107,14 +107,14 @@ const UserDlData = (props: UserDlDataProps) => {
         initialValues={initialValues}
         validateOnMount={true}
         validationSchema={Yup.object({
-          reason: Yup.string().required(),
-          public: Yup.boolean().required(),
+          download_reason: Yup.string().required(),
+          is_public_sector: Yup.boolean().required(),
           accept_disclaimer: Yup.boolean().oneOf(
             [true],
             t('app.map.downloadDataDialog.user.disclaimerReadError'),
           ),
         })}
-        onSubmit={async v => {}}
+        onSubmit={async v => { }}
       >
         {formikProps => (
           <Form onChange={handleChangeForm}>
@@ -159,8 +159,8 @@ const UserDlData = (props: UserDlDataProps) => {
                 </Box>*/}
               <Box sx={FieldContainerStyle}>
                 <Field
-                  id={'membership'}
-                  name={'membership'}
+                  id={'entity_name'}
+                  name={'entity_name'}
                   type={'text'}
                   label={t('app.map.downloadDataDialog.user.membership')}
                   // required
@@ -176,8 +176,8 @@ const UserDlData = (props: UserDlDataProps) => {
                 </FormLabel>
                 <Field
                   component={RadioGroup}
-                  id="public"
-                  name="public"
+                  id="is_public_sector"
+                  name="is_public_sector"
                   size={isMobile ? 'small' : 'medium'}
                 >
                   <FormControlLabel
@@ -198,8 +198,8 @@ const UserDlData = (props: UserDlDataProps) => {
                 </FormLabel>
                 <Field
                   component={RadioGroup}
-                  id="reason"
-                  name="reason"
+                  id="download_reason"
+                  name="download_reason"
                   size={isMobile ? 'small' : 'medium'}
                 >
                   <FormControlLabel

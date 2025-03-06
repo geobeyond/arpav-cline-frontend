@@ -122,7 +122,8 @@ export function MapMenuBar(props: MapMenuBar) {
   const mapParameters = (mapKey, parameterListKey) => {
     if (forecast_parameters) {
       const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
-      const items = fp.allowed_values.map(item => {
+      const items = fp.allowed_values?.map(item => {
+        //TODO: Controllre caso in cui fp sia vuoto
         return {
           ...item,
           disabled: false,
@@ -205,15 +206,15 @@ export function MapMenuBar(props: MapMenuBar) {
             key:
               map_data === 'future'
                 ? 'aggregation_period'
-                : 'historical_aggregation_period',
+                : 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
             ...mapParameters(
               map_data === 'future'
                 ? 'aggregation_period'
-                : 'historical_aggregation_period',
+                : 'aggregation_period',
               map_data === 'future'
                 ? 'aggregation_period'
-                : 'historical_aggregation_period',
+                : 'aggregation_period',
             ),
             disableable: true,
             disabled: x => false,
@@ -230,18 +231,11 @@ export function MapMenuBar(props: MapMenuBar) {
             criteria: (x, c) => x?.measure,
           },
           {
-            key:
-              map_data === 'future'
-                ? 'time_window'
-                : 'climatological_standard_normal',
+            key: map_data === 'future' ? 'time_window' : 'time_window',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
-              map_data === 'future'
-                ? 'time_window'
-                : 'climatological_standard_normal',
-              map_data === 'future'
-                ? 'time_window'
-                : 'climatological_standard_normal',
+              map_data === 'future' ? 'time_window' : 'time_window',
+              map_data === 'future' ? 'time_window' : 'time_window',
             ),
             disableable: true,
             disabled: x => x.aggregation_period !== '30yr',

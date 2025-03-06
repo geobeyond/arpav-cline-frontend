@@ -44,6 +44,7 @@ import { RequestApi } from 'app/Services';
 import { UncertaintySwitch } from './UncertaintySwitch';
 import { useTranslation } from 'react-i18next';
 import { StationsLayer } from './StationsLayer';
+import { DynamicStationsLayer } from './DynamicStationsLayer';
 
 // import {BaseLayerControl} from "./BaseLayerControl";
 
@@ -346,8 +347,15 @@ const Map = (props: MapProps) => {
       <StationsLayer
         data={data}
         variable={currentMap.climatological_variable}
+        url={currentMap.observation_stations_vector_tile_layer_url}
         zIndex={550}
       ></StationsLayer>
+      <DynamicStationsLayer
+        data={data}
+        variable={currentMap.climatological_variable}
+        url={currentMap.observation_stations_vector_tile_layer_url}
+        zIndex={575}
+      ></DynamicStationsLayer>
       <VectorWrapperLayer
         zIndex={600}
         mode={mode}

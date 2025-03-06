@@ -70,7 +70,14 @@ export class RequestApi extends Http {
         ]),
       );
       const labels = Object.fromEntries(labelsf.flat());
-      const innerConf = { ...configuration };
+      const innerConf = {
+        ...configuration,
+        ...{
+          download_reason: dataSet.downloadReason,
+          entity_name: dataSet.entity_name,
+          is_public_sector: dataSet.is_public_sector === 'true',
+        },
+      };
       delete innerConf.archive;
       if (innerConf.aggregation_period === 'annual') {
         delete innerConf.time_window;
@@ -461,7 +468,8 @@ export class RequestApi extends Http {
     return res;
   };
 
-  public createIds(pattern: string, items: any) {
+  public createIds(items: any) {
+    console.log('pattern');
     let ret: string[] = [];
     let titems: any[] = [];
 
@@ -475,14 +483,24 @@ export class RequestApi extends Http {
       }
     }
     const combs = this.cartesianProduct(titems);
+    const reqs: Promise<any>[] = [];
     for (const c of combs) {
-      let tpattern = pattern;
-      for (let j of Object.keys(c)) {
-        tpattern = tpattern.replaceAll('{' + j + '}', c[j]);
-      }
-      ret.push(tpattern);
+      reqs.push(
+        this.doGetLayer(
+          c.climatological_variable,
+          c.climatological_model,
+          c.scenario,
+          c.measure,
+          c.time_period,
+          c.aggregation_period,
+          c.season,
+          c.archive,
+        ),
+      );
     }
-    return ret;
+    return Promise.all(reqs).then(data => {
+      return data.map(x => x.identifier);
+    });
   }
 
   public getTimeseriesV2 = (

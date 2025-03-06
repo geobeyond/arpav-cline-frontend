@@ -42,19 +42,6 @@ const { store } = configureAppStore();
 // console.log({store})
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container!);
-const tolgee = Tolgee().use(DevTools()).use(I18nextPlugin()).init({
-  language: 'en',
-  apiUrl: 'https://tolgee.arpav.geobeyond.dev',
-  apiKey: 'tgpak_gfpwkzbqhbtgo4tcnfzge5leou4tezldnnsgo4tportds',
-});
-//require('@dotenvx/dotenvx').config({ path: ['.env.staging', '.env'] });
-
-withTolgee(i18n, tolgee)
-  .use(initReactI18next)
-  .init({
-    //lng: 'en', // or use i18next language detector
-    supportedLngs: ['it', 'en'],
-  });
 
 console.log(chalk.blue(`USING >> ${process.env.REACT_APP_BACKEND_PUBLIC_URL}`));
 

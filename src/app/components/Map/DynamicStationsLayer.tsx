@@ -11,7 +11,7 @@ import { MapPopup } from '../MapSearch';
 
 import { PopupStyle } from './styles';
 
-export const StationsLayer = (props: any) => {
+export const DynamicStationsLayer = (props: any) => {
   const { selected_map } = useSelector((state: any) => state.map);
   const {
     selectCallback,
@@ -31,45 +31,46 @@ export const StationsLayer = (props: any) => {
     let selected = false;
     // let hovered = false;
     const container = context.layerContainer || context.map;
-    const url = BACKEND_VECTOR_TILES_URL + '/stations/{z}/{x}/{y}';
 
-    context.map.createPane('stations');
-    // @ts-ignore
-    context.map.getPane('stations').style.zIndex = zIndex;
+    if (url) {
+      context.map.createPane('stationssel');
+      // @ts-ignore
+      context.map.getPane('stationssel').style.zIndex = zIndex;
 
-    // @ts-ignore
-    let vectorLayer = L.vectorGrid.protobuf(url, {
-      interactive: true,
-      pane: 'stations',
-      vectorTileLayerStyles: {
-        stations: (properties, zoom, geometryDimension) => {
-          let opacity = 0.9;
-          let color = data === 'future' ? '#bdc2cf' : '#778494';
-          // console.log(zoom, color, opacity)
-          return {
-            color: color,
-            weight: data === 'future' ? 1 : 2,
-            radius: data === 'future' ? 3 : 8,
-            fill: true,
-            fillOpacity: 0.7,
-            opacity: opacity,
-          };
+      // @ts-ignore
+      let vectorLayer = L.vectorGrid.protobuf(url, {
+        interactive: true,
+        pane: 'stationssel',
+        vectorTileLayerStyles: {
+          stationssel: (properties, zoom, geometryDimension) => {
+            let opacity = 0.9;
+            let color = data === 'future' ? '#abb2b9' : '#464b52';
+            // console.log(zoom, color, opacity)
+            return {
+              color: color,
+              weight: data === 'future' ? 2 : 4,
+              radius: data === 'future' ? 5 : 10,
+              fill: true,
+              fillOpacity: 0.7,
+              opacity: opacity,
+            };
+          },
         },
-      },
-    });
+      });
 
-    context.map.addLayer(vectorLayer);
-    vectorLayer.bringToFront();
+      context.map.addLayer(vectorLayer);
+      vectorLayer.bringToFront();
 
-    return () => {
-      // console.log('RETURN')
-      try {
-        // @ts-ignore
-        if (vectorLayer) container.removeLayer(vectorLayer);
-      } catch (e) {
-        console.log('error REMOVING', e);
-      }
-    };
+      return () => {
+        // console.log('RETURN')
+        try {
+          // @ts-ignore
+          if (vectorLayer) container.removeLayer(vectorLayer);
+        } catch (e) {
+          console.log('error REMOVING', e);
+        }
+      };
+    }
   }, [
     selected_map,
     map,
@@ -77,6 +78,7 @@ export const StationsLayer = (props: any) => {
     context.layerContainer,
     context.map,
     selectCallback,
+    url,
   ]);
 
   return (
