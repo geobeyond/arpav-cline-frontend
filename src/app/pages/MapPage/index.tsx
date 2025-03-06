@@ -54,7 +54,7 @@ const defaultMap: any = {
 };
 
 const defaultMapHistorical: any = {
-  historical_variable: 'tdd',
+  historical_variable: 'tas',
 
   climatological_model: 'model_ensemble',
   scenario: 'rcp85',

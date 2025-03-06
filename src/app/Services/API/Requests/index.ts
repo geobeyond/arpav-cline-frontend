@@ -493,13 +493,13 @@ export class RequestApi extends Http {
           c.measure,
           c.time_period,
           c.aggregation_period,
-          c.season,
+          c.year_period,
           c.archive,
         ),
       );
     }
     return Promise.all(reqs).then(data => {
-      return data.map(x => x.identifier);
+      return data.map(x => x.items[0].identifier);
     });
   }
 
