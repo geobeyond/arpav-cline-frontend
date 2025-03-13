@@ -253,7 +253,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           disableGutters
                           sx={{
                             marginBottom: row.multicol?.includes(index + 1)
-                              ? 'calc(50vh - 100px)'
+                              ? '0'
                               : '0',
                           }}
                           disabled={

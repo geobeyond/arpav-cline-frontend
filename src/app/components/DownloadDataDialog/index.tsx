@@ -211,7 +211,18 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
             <Grid xs={28}>
               <LinkList>
                 {links.map((x: any) => (
-                  <LinkListItem className="icon-left" href={x.url}>
+                  <LinkListItem
+                    className="icon-left"
+                    href={
+                      x.url +
+                      '&is_public_sector=' +
+                      dataSet.current.is_public_sector +
+                      '&entity_name=' +
+                      dataSet.current.entity_name +
+                      '&download_reason=' +
+                      dataSet.current.download_reason
+                    }
+                  >
                     <Icon color="primary" icon="it-chevron-right" aria-hidden />
                     {x.label}
                   </LinkListItem>
