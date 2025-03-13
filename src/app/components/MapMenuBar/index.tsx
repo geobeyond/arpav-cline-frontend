@@ -92,7 +92,9 @@ export function MapMenuBar(props: MapMenuBar) {
   const inProgress = props.inProgress || false;
 
   const activeCombinations = useRef(
-    Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
+    Object.keys(combinations).length > 0
+      ? combinations['tas::thirty_year']
+      : {},
   );
 
   const setActiveCombinations = combo => {
@@ -146,18 +148,11 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key:
-              map_data === 'future'
-                ? 'climatological_variable'
-                : 'historical_variable',
+            key: 'climatological_variable',
             groupName: '',
             ...mapParameters(
-              map_data === 'future'
-                ? 'climatological_variable'
-                : 'historical_variable',
-              map_data === 'future'
-                ? 'climatological_variable'
-                : 'historical_variable',
+              'climatological_variable',
+              'climatological_variable',
             ),
             disableable: false,
             criteria: (x, c) => [],
@@ -208,14 +203,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 ? 'aggregation_period'
                 : 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
-            ...mapParameters(
-              map_data === 'future'
-                ? 'aggregation_period'
-                : 'aggregation_period',
-              map_data === 'future'
-                ? 'aggregation_period'
-                : 'aggregation_period',
-            ),
+            ...mapParameters('aggregation_period', 'aggregation_period'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => {
@@ -231,16 +219,16 @@ export function MapMenuBar(props: MapMenuBar) {
             criteria: (x, c) => x?.measure,
           },
           {
-            key: map_data === 'future' ? 'time_window' : 'time_window',
+            key: map_data === 'future' ? 'time_window' : 'reference_period',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
-              map_data === 'future' ? 'time_window' : 'time_window',
-              map_data === 'future' ? 'time_window' : 'time_window',
+              map_data === 'future' ? 'time_window' : 'reference_period',
+              map_data === 'future' ? 'time_window' : 'reference_period',
             ),
             disableable: true,
-            disabled: x => x.aggregation_period !== '30yr',
+            disabled: x => x.aggregation_period !== 'thirty_year',
             criteria: (x, c) =>
-              c.aggregation_period !== '30yr' ? [] : ['tw1', 'tw2'],
+              c.aggregation_period !== 'thirty_year' ? [] : ['tw1', 'tw2'],
           },
         ],
       },
@@ -251,16 +239,15 @@ export function MapMenuBar(props: MapMenuBar) {
         rows: [
           {
             multicol: [5, 11, 16],
-            key:
-              map_data === 'future' ? 'year_period' : 'historical_year_period',
+            key: map_data === 'future' ? 'year_period' : 'year_period',
             groupName: '',
             ...mapParameters(
-              map_data === 'future' ? 'year_period' : 'historical_year_period',
-              map_data === 'future' ? 'year_period' : 'historical_year_period',
+              map_data === 'future' ? 'year_period' : 'year_period',
+              map_data === 'future' ? 'year_period' : 'year_period',
             ),
             disableable: true,
             disabled: x => false,
-            criteria: (x, c) => x?.year_period || x?.historical_year_period,
+            criteria: (x, c) => x?.year_period || x?.year_period,
           },
         ],
       },
@@ -289,7 +276,7 @@ export function MapMenuBar(props: MapMenuBar) {
     React.useState<boolean>(false);
 
   const all_meas = ['absolute', 'anomaly'];
-  const all_pers = ['annual', '30yr'];
+  const all_pers = ['annual', 'thirty_year'];
   const all_indx = [
     'tas',
     'cdds',
@@ -320,7 +307,7 @@ export function MapMenuBar(props: MapMenuBar) {
 
     ret.climatological_model = 'model_ensemble';
     ret.scenario = 'rcp85';
-    ret.aggregation_period = '30yr';
+    ret.aggregation_period = 'thirty_year';
     ret.measure = 'anomaly';
     ret.time_window = 'tw1';
 
@@ -341,7 +328,7 @@ export function MapMenuBar(props: MapMenuBar) {
       showModal.current = false;
       console.log('activatingCV', value, combinations[value]);
       setActiveCombinations(combinations[value]);
-      localCM.current = toDefault(combinations[value + '::30yr']);
+      localCM.current = toDefault(combinations[value + '::thirty_year']);
       setCurrentMap(localCM.current);
     } else {
       const steps = [
@@ -484,7 +471,7 @@ export function MapMenuBar(props: MapMenuBar) {
     - ${labelFor(localCM.current.aggregation_period)}
     - ${labelFor(localCM.current.measure)}
     ${localCM.current.time_window &&
-        localCM.current.aggregation_period === '30yr'
+        localCM.current.aggregation_period === 'thirty_year'
         ? ' - ' + labelFor(localCM.current.time_window)
         : ''
       }
@@ -610,27 +597,43 @@ export function MapMenuBar(props: MapMenuBar) {
               disabled={inProgress}
             />
           </Grid>
-          <Grid xs={1} def={4} sx={SecondRowStyle}>
-            <MultiRadioSelect
-              valueSet={menus.seasonMenuSet}
-              current_map={current_map}
-              onChange={handleChange}
-              sx={SelectStyle}
-              menuSx={SelectMenuStyle}
-              mobileIcon={<SnowSunIcon />}
-              className={
-                hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
-              }
-              activeCombinations={activeCombinations.current}
-              label={t('app.map.menuBar.season')}
-              // label={'Season'}
-              disabled={inProgress}
-            />
-          </Grid>
-          {map_data !== 'past' ? (
-            <></>
+
+          {map_data === 'past' ? (
+            <Grid xs={2} def={8} sx={SecondRowStyle}>
+              <MultiRadioSelect
+                valueSet={menus.seasonMenuSet}
+                current_map={current_map}
+                onChange={handleChange}
+                sx={SelectStyle}
+                menuSx={SelectMenuStyle}
+                mobileIcon={<SnowSunIcon />}
+                className={
+                  hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
+                }
+                activeCombinations={activeCombinations.current}
+                label={t('app.map.menuBar.season')}
+                // label={'Season'}
+                disabled={inProgress}
+              />
+            </Grid>
           ) : (
-            <Grid xs={1} def={4} sx={SecondRowStyle}></Grid>
+            <Grid xs={1} def={4} sx={SecondRowStyle}>
+              <MultiRadioSelect
+                valueSet={menus.seasonMenuSet}
+                current_map={current_map}
+                onChange={handleChange}
+                sx={SelectStyle}
+                menuSx={SelectMenuStyle}
+                mobileIcon={<SnowSunIcon />}
+                className={
+                  hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
+                }
+                activeCombinations={activeCombinations.current}
+                label={t('app.map.menuBar.season')}
+                // label={'Season'}
+                disabled={inProgress}
+              />
+            </Grid>
           )}
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>

@@ -49,20 +49,17 @@ const defaultMap: any = {
   aggregation_period: '30yr',
   year_period: 'winter',
   archive: 'forecast',
-
   data_series: 'no',
 };
 
 const defaultMapHistorical: any = {
-  historical_variable: 'tas',
-
+  climatological_variable: 'tas',
   climatological_model: 'model_ensemble',
   scenario: 'rcp85',
-
   measure: 'absolute',
-  climatological_standard_normal: '1991_2020',
-  historical_aggregation_period: '30yr',
-  historical_year_period: 'all_year',
+  reference_period: '1991_2020',
+  aggregation_period: '30yr',
+  year_period: 'all_year',
   archive: 'historical',
   data_series: 'no',
 };
@@ -208,6 +205,7 @@ export function MapPage(props: MapPageProps) {
     const changeables = ['measure', 'year_period', 'time_window'];
     setCurrentMap({ ...searchParams });
     api.getAttributes(map_data, map_mode).then(x => {
+      //@ts-ignore
       setMenus(x.items);
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
@@ -218,9 +216,9 @@ export function MapPage(props: MapPageProps) {
             }
           }
         }
-        const kk = cur.variable + '::' + cur.aggregation_period;
-        const km = cur.variable + '::' + cur.measure;
-        const ki = cur.variable;
+        const kk = cur.climatological_variable + '::' + cur.aggregation_period;
+        const km = cur.climatological_variable + '::' + cur.measure;
+        const ki = cur.climatological_variable;
         cur.kk = kk;
         cur.ki = ki;
         if (ki in prev) {
@@ -236,7 +234,7 @@ export function MapPage(props: MapPageProps) {
         } else {
           prev = {
             ...prev,
-            [cur.variable + '::' + cur.aggregation_period]: {
+            [cur.climatological_variable + '::' + cur.aggregation_period]: {
               [cur.measure]: cur.other_parameters,
             },
           };
@@ -246,7 +244,7 @@ export function MapPage(props: MapPageProps) {
         } else {
           prev = {
             ...prev,
-            [cur.variable + '::' + cur.measure]: {
+            [cur.climatological_variable + '::' + cur.measure]: {
               [cur.aggregation_period]: cur.other_parameters,
             },
           };
@@ -283,6 +281,9 @@ export function MapPage(props: MapPageProps) {
       setCombinations(combos);
     });
     setCurrentMap({ ...searchParams });
+    if (searchParams.get('plotPopup')) {
+      setTSOpen(true);
+    }
 
     //if(searchParams.get('lat') && searchParams.get('lng')){
     //  setTimeout(()=>{
@@ -343,11 +344,11 @@ export function MapPage(props: MapPageProps) {
       } else {
         api
           .getHistoricLayer(
-            currentMap.historical_variable,
+            currentMap.climatological_variable,
             currentMap.measure,
-            currentMap.climatological_standard_normal,
+            currentMap.reference_period,
             currentMap.aggregation_period,
-            currentMap.historical_year_period,
+            currentMap.year_period,
           )
           .then((x: any) => {
             console.log(x);
@@ -592,6 +593,12 @@ export function MapPage(props: MapPageProps) {
   const openCharts = (latLng: LatLng) => {
     coordRef.current = latLng;
 
+    const sp = new URLSearchParams(window.location.search);
+    setSearchParams({
+      ...paramsToObject(sp),
+      ...{ plotPopup: 'true' },
+    });
+
     setTSOpen(true);
   };
 
@@ -652,6 +659,7 @@ export function MapPage(props: MapPageProps) {
 
       <TimeSeriesDialog
         mode={map_mode}
+        map_data={map_data}
         selectedPoint={selectedPoint}
         open={tSOpen}
         setOpen={setTSOpen}

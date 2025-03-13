@@ -64,7 +64,7 @@ export function App() {
     (function () {
       var u = 'https://ingestion.webanalytics.italia.it/';
       _paq.push(['setTrackerUrl', u + 'matomo.php']);
-      _paq.push(['setSiteId', '40930']);
+      _paq.push(['setSiteId', '41461']);
       var d = document,
         g = d.createElement('script'),
         s = d.getElementsByTagName('script')[0];

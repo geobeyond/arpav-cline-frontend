@@ -23,6 +23,7 @@ export interface TimeSeriesDialogProps {
   currentLayer: any;
   currentMap: any;
   mode: string;
+  map_data: string;
 }
 
 export interface TimeRangeProps {
@@ -38,6 +39,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     currentLayer,
     currentMap,
     mode,
+    map_data,
   } = props;
   const latLng = selectedPoint
     ? new LatLng(selectedPoint.latlng.lat, selectedPoint.latlng.lng)
@@ -135,6 +137,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               latLng={latLng}
               setIds={setIds}
               mode={mode}
+              map_data={map_data}
               setTimeRange={setTimeRange}
               place={place}
               setToDownload={setToDownload}

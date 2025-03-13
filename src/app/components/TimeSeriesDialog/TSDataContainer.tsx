@@ -53,6 +53,7 @@ export interface TSDataContainerProps {
   setSeriesFilter: Function;
   setFilledSeries: Function;
   mode: string;
+  map_data: string;
 }
 
 //TODO
@@ -66,7 +67,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setIds,
     setTimeRange,
     place = '',
-    setToDownload = () => {},
+    setToDownload = () => { },
     currentLayer,
     currentMap,
     setFilters = (
@@ -75,10 +76,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       tsSmoothing,
       sensorSmoothing,
       uncertainty,
-    ) => {},
-    setSeriesFilter = () => {},
-    setFilledSeries = () => {},
+    ) => { },
+    setSeriesFilter = () => { },
+    setFilledSeries = () => { },
     mode,
+    map_data,
   } = props;
   const api = RequestApi.getInstance();
   const theme = useTheme();
@@ -205,7 +207,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       console.log(ids);
       setIds(ids);
       api
-        .getTimeseriesV2(ids, latLng.lat, latLng.lng, true)
+        .getTimeseriesV2(ids, latLng.lat, latLng.lng, true, map_data)
         .then(res => {
           //@ts-ignore
           setTimeseries(res.series);
@@ -443,7 +445,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             x.info.aggregation_period === item.info.aggregation_period &&
             x.info.climatological_model === item.info.climatological_model &&
             x.info.climatological_variable ===
-              item.info.climatological_variable &&
+            item.info.climatological_variable &&
             x.info.measure === item.info.measure &&
             x.info.scenario === item.info.scenario &&
             x.info.year_period === item.info.year_period &&
@@ -467,9 +469,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
                 realDataValues[item.name + '__' + item.info.processing_method][
                   i
                 ].value -
-                  realDataValues[
-                    lbitem[0].name + '__' + lbitem[0].info.processing_method
-                  ][i].value,
+                realDataValues[
+                  lbitem[0].name + '__' + lbitem[0].info.processing_method
+                ][i].value,
               );
             } else {
               ret.push(null);
@@ -563,7 +565,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
             (item.info.climatological_model === baseClimatologicalModel ||
               item.info.climatological_model ===
-                comparisonClimatologicalModel)) ||
+              comparisonClimatologicalModel)) ||
             ('series_elaboration' in item.info &&
               item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0))
         );
@@ -579,10 +581,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
               (item.info.climatological_model === baseClimatologicalModel ||
                 item.info.climatological_model ===
-                  comparisonClimatologicalModel)) ||
+                comparisonClimatologicalModel)) ||
               ('series_elaboration' in item.info &&
                 item.info.processing_method.indexOf(sensorProcessingMehtod) >=
-                  0))
+                0))
           );
         }),
       ];
@@ -618,12 +620,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   let opseriesObj = [
     uncert
       ? pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp26' &&
-            x.info.climatological_model === baseClimatologicalModel &&
-            x.info.processing_method === processingMethod &&
-            x.info.uncertainty_type === 'lower_uncertainty',
-        )[0]
+        x =>
+          x.info.scenario === 'rcp26' &&
+          x.info.climatological_model === baseClimatologicalModel &&
+          x.info.processing_method === processingMethod &&
+          x.info.uncertainty_type === 'lower_uncertainty',
+      )[0]
       : null,
     pseriesObj.filter(
       x =>
@@ -635,29 +637,29 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     baseClimatologicalModel === comparisonClimatologicalModel
       ? null
       : pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp26' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === comparisonClimatologicalModel &&
-            !('uncertainty_type' in x.info),
-        )[0],
+        x =>
+          x.info.scenario === 'rcp26' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === comparisonClimatologicalModel &&
+          !('uncertainty_type' in x.info),
+      )[0],
     uncert
       ? pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp26' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === baseClimatologicalModel &&
-            x.info.uncertainty_type === 'upper_uncertainty',
-        )[0]
+        x =>
+          x.info.scenario === 'rcp26' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === baseClimatologicalModel &&
+          x.info.uncertainty_type === 'upper_uncertainty',
+      )[0]
       : null,
     uncert
       ? pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp45' &&
-            x.info.climatological_model === baseClimatologicalModel &&
-            x.info.processing_method === processingMethod &&
-            x.info.uncertainty_type === 'lower_uncertainty',
-        )[0]
+        x =>
+          x.info.scenario === 'rcp45' &&
+          x.info.climatological_model === baseClimatologicalModel &&
+          x.info.processing_method === processingMethod &&
+          x.info.uncertainty_type === 'lower_uncertainty',
+      )[0]
       : null,
     pseriesObj.filter(
       x =>
@@ -669,29 +671,29 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     baseClimatologicalModel === comparisonClimatologicalModel
       ? null
       : pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp45' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === comparisonClimatologicalModel &&
-            !('uncertainty_type' in x.info),
-        )[0],
+        x =>
+          x.info.scenario === 'rcp45' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === comparisonClimatologicalModel &&
+          !('uncertainty_type' in x.info),
+      )[0],
     uncert
       ? pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp45' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === baseClimatologicalModel &&
-            x.info.uncertainty_type === 'upper_uncertainty',
-        )[0]
+        x =>
+          x.info.scenario === 'rcp45' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === baseClimatologicalModel &&
+          x.info.uncertainty_type === 'upper_uncertainty',
+      )[0]
       : null,
     uncert
       ? pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp85' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === baseClimatologicalModel &&
-            x.info.uncertainty_type === 'lower_uncertainty',
-        )[0]
+        x =>
+          x.info.scenario === 'rcp85' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === baseClimatologicalModel &&
+          x.info.uncertainty_type === 'lower_uncertainty',
+      )[0]
       : null,
     pseriesObj.filter(
       x =>
@@ -703,20 +705,20 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     baseClimatologicalModel === comparisonClimatologicalModel
       ? null
       : pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp85' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === comparisonClimatologicalModel &&
-            !('uncertainty_type' in x.info),
-        )[0],
+        x =>
+          x.info.scenario === 'rcp85' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === comparisonClimatologicalModel &&
+          !('uncertainty_type' in x.info),
+      )[0],
     uncert
       ? pseriesObj.filter(
-          x =>
-            x.info.scenario === 'rcp85' &&
-            x.info.processing_method === processingMethod &&
-            x.info.climatological_model === baseClimatologicalModel &&
-            x.info.uncertainty_type === 'upper_uncertainty',
-        )[0]
+        x =>
+          x.info.scenario === 'rcp85' &&
+          x.info.processing_method === processingMethod &&
+          x.info.climatological_model === baseClimatologicalModel &&
+          x.info.uncertainty_type === 'upper_uncertainty',
+      )[0]
       : null,
     pseriesObj.filter(
       x =>
@@ -769,11 +771,10 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-  ${
-    timeseries[0].translations.parameter_values.climatological_variable[
+  ${timeseries[0].translations.parameter_values.climatological_variable[
       i18n.language
-    ]
-  }
+      ]
+      }
   `
     : '';
 
@@ -781,15 +782,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${
-          timeseries[0].translations.parameter_values.year_period[i18n.language]
-        }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
-          localStartYear,
-        )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${
-          place ? place + ' - ' : ''
-        }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
-          'app.map.timeSeriesDialog.lng',
-        )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
+    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${timeseries[0].translations.parameter_values.year_period[i18n.language]
+      }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+        localStartYear,
+      )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
+      }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
+        'app.map.timeSeriesDialog.lng',
+      )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
   Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`
     : '';
 
@@ -821,17 +820,15 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         label: {
           show: true,
           formatter: v => {
-            return `${t('app.map.timeSeriesDialog.xUnit')} ${
-              v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
-            }`;
+            return `${t('app.map.timeSeriesDialog.xUnit')} ${v.value !== null ? roundTo4(v.value, 1).replace('.', ',') : '-'
+              }`;
           },
         },
       },
       valueFormatter: v =>
-        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${
-          i18n.language === 'en'
-            ? currentLayer?.unit_english
-            : currentLayer?.unit_italian
+        `${v !== null ? roundTo4(v, 1).replace('.', ',') : '-'} ${i18n.language === 'en'
+          ? currentLayer?.unit_english
+          : currentLayer?.unit_italian
         }`,
 
       formatter: p => {
@@ -1072,16 +1069,16 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     if (v === 0) {
       setSensorProcessingMethod('no_processing');
     } else if (v === 1) {
-      setSensorProcessingMethod('MOVING_AVERAGE_5_YEARS');
+      setSensorProcessingMethod('moving_average_5_years');
     }
   };
   const setModelSmoothing = v => {
     if (v === 0) {
       setProcessingMethod('no_processing');
     } else if (v === 1) {
-      setProcessingMethod('MOVING_AVERAGE_11_YEARS');
+      setProcessingMethod('moving_average_11_years');
     } else if (v === 2) {
-      setProcessingMethod('LOESS_SMOOTHING');
+      setProcessingMethod('loess_smoothing');
     }
   };
 

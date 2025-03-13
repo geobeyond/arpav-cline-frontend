@@ -312,14 +312,7 @@ export class RequestApi extends Http {
     // Create the filter string based on the given parameters.
     let filter = '';
     if (variable) {
-      filter +=
-        'possible_value=' +
-        (mode === 'forecast'
-          ? 'climatological_variable'
-          : 'historical_variable') +
-        ':' +
-        variable +
-        '&';
+      filter += 'possible_value=climatological_variable:' + variable + '&';
     }
     if (model) {
       filter += 'possible_value=climatological_model:' + model + '&';
@@ -333,9 +326,7 @@ export class RequestApi extends Http {
     if (time_period && aggregation_period !== 'annual') {
       filter +=
         'possible_value=' +
-        (mode === 'forecast'
-          ? 'time_window'
-          : 'climatological_standard_normal') +
+        (mode === 'forecast' ? 'time_window' : 'reference_period') +
         ':' +
         time_period +
         '&';
@@ -351,7 +342,7 @@ export class RequestApi extends Http {
     if (season) {
       filter +=
         'possible_value=' +
-        (mode === 'forecast' ? 'year_period' : 'historical_year_period') +
+        (mode === 'forecast' ? 'year_period' : 'year_period') +
         ':' +
         season +
         '&';
@@ -508,6 +499,7 @@ export class RequestApi extends Http {
     lat: number,
     lng: number,
     withStation: boolean = true,
+    mode: string = 'forecast',
   ) => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
     for (let id of series) {
@@ -541,8 +533,11 @@ export class RequestApi extends Http {
     related: boolean = true,
     smoothing: boolean = true,
     uncertainty: boolean = true,
+    mode: string = 'forecast',
   ) => {
-    let url = `${BACKEND_API_URL}/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    const ep =
+      mode === 'forecast' ? 'forecast-time-series' : 'historical-time-series';
+    let url = `${BACKEND_API_URL}/coverages/${ep}/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
@@ -634,6 +629,35 @@ export class RequestApi extends Http {
       });
   };
 
+  public extractPossibleValues = combinations => {
+    const possibleValues = {};
+
+    combinations.forEach(comb => {
+      Object.keys(comb).forEach(key => {
+        if (key === 'other_parameters') {
+          Object.keys(comb[key]).forEach(param => {
+            if (!possibleValues[param]) {
+              possibleValues[param] = new Set();
+            }
+            comb[key][param].forEach(value => possibleValues[param].add(value));
+          });
+        } else {
+          if (!possibleValues[key]) {
+            possibleValues[key] = new Set();
+          }
+          possibleValues[key].add(comb[key]);
+        }
+      });
+    });
+
+    // Convert sets to arrays
+    Object.keys(possibleValues).forEach(key => {
+      possibleValues[key] = Array.from(possibleValues[key]);
+    });
+
+    return possibleValues;
+  };
+
   public getAttributes = (
     data: string = 'future',
     mode: string = 'advanced',
@@ -648,74 +672,48 @@ export class RequestApi extends Http {
       )
       .then((d: any) => {
         return d.items;
-      })
-      .then((d: any[]) => {
-        if (mode === 'simple') {
-          d.map(x => {
-            if (x.name.indexOf('climatological_variable') === 0) {
-              x.allowed_values = x.allowed_values.filter(
-                y =>
-                  [
-                    'tas',
-                    'pr',
-                    'tr',
-                    'su30',
-                    'r95ptot',
-                    'cdds',
-                    'snwdays',
-                  ].indexOf(y.name) >= 0,
-              );
-            }
-            if (x.name.indexOf('historical_variable') === 0) {
-              x.allowed_values = x.allowed_values.filter(
-                y => ['tdd', 'prcptot', 'tr', 'su30'].indexOf(y.name) >= 0,
-              );
-            }
-            if (x.name.indexOf('climatological_model') === 0) {
-              x.allowed_values = x.allowed_values.filter(
-                y => ['model_ensemble'].indexOf(y.name) >= 0,
-              );
-            }
-            if (x.name.indexOf('historical_aggregation_period') === 0) {
-              x.allowed_values = x.allowed_values.filter(
-                y => ['annual', '30yr'].indexOf(y.name) >= 0,
-              );
-            }
-            if (x.name.indexOf('historical_year_period') === 0) {
-              x.allowed_values = x.allowed_values.filter(
-                y =>
-                  ['all_year', 'spring', 'summer', 'winter', 'autumn'].indexOf(
-                    y.name,
-                  ) >= 0,
-              );
-            }
-
-            return x;
-          });
-          return d;
-        } else {
-          return d;
-        }
       });
     reqs.push(ret);
     if (data === 'future') {
       const cret = this.instance.get<any>(
-        `${BACKEND_API_URL}/coverages/forecast-variable-combinations`,
+        `${BACKEND_API_URL}/coverages/forecast-variable-combinations?navigation_section=${mode}`,
       );
       reqs.push(cret);
     } else {
       const cret = this.instance.get<any>(
-        `${BACKEND_API_URL}/coverages/historical-variable-combinations`,
+        `${BACKEND_API_URL}/coverages/historical-variable-combinations?navigation_section=${mode}`,
       );
       reqs.push(cret);
     }
 
     const p = Promise.all(reqs).then(x => {
-      localStorage.setItem('configs', JSON.stringify(x[0]));
-      localStorage.setItem('combs::' + mode, JSON.stringify(x[1]));
+      let configs = x[0];
+      let combs = x[1].combinations;
+
+      let possibleValues = this.extractPossibleValues(combs);
+      console.log(possibleValues);
+
+      let fconfigs: any[] = [];
+
+      for (let config of configs) {
+        if (
+          Object.keys(possibleValues).indexOf(config.name) >= 0 &&
+          possibleValues[config.name].length > 0
+        ) {
+          config.allowed_values = config.allowed_values.filter(x => {
+            return possibleValues[config.name].indexOf(x.name) >= 0;
+          });
+          fconfigs.push(config);
+        }
+      }
+
+      console.log(fconfigs);
+
+      localStorage.setItem('configs', JSON.stringify(configs));
+      localStorage.setItem('combs::' + mode, JSON.stringify(combs));
       return {
-        items: x[0],
-        combinations: x[1].combinations,
+        items: fconfigs,
+        combinations: combs,
       };
     });
     return p;
