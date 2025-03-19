@@ -108,6 +108,8 @@ export function MapPage(props: MapPageProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
   const api = new RequestApi();
 
+  const [caption, setCaption] = useState('');
+
   const [currentLayer, setCurrentLayer] = useState('');
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
   const [currentTimeSerie, setCurrentTimeSerie] = useState({});
@@ -453,6 +455,7 @@ export function MapPage(props: MapPageProps) {
         ...paramsToObject(sp),
         ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
       });
+
       api
         .getTimeserieV2(
           currentLayer,
@@ -468,6 +471,45 @@ export function MapPage(props: MapPageProps) {
         });
     }
   }, [selectedPoint, currentLayer]);
+
+  useEffect(() => {
+    let year = '';
+    try {
+      year =
+        currentMap.aggregation_period === 'annual' ||
+          currentMap.aggregation_period === 'test'
+          ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
+            .getFullYear()
+            .toString()
+          : '';
+      console.log('showing year', year);
+    } catch (e) {
+      // console.log('no year');
+    }
+    const lcaption = `${isMobile
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
+      }
+  - ${joinNames([
+        labelFor(currentMap.climatological_model),
+        labelFor(currentMap.scenario),
+      ])}
+  - ${joinNames([
+        labelFor(currentMap.aggregation_period),
+        labelFor(currentMap.measure),
+      ])}
+    ${currentMap.time_window && currentMap.aggregation_period === '30yr'
+        ? labelFor(currentMap.time_window)
+        : ''
+      }
+  - ${labelFor(currentMap.year_period)}
+  ${currentMap.aggregation_period != '30yr' && currentYear
+        ? ` - Anno ${year}`
+        : ''
+      } `; // string or function, added caption to bottom of screen
+
+    setCaption(lcaption);
+  }, [currentMap]);
 
   const PLUGIN_OPTIONS: PluginOptions = {
     cropImageByInnerWH: true, // crop blank opacity from image borders
@@ -532,28 +574,6 @@ export function MapPage(props: MapPageProps) {
 
     setInProgress(true);
 
-    const caption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
-      }
-    - ${joinNames([
-        labelFor(currentMap.climatological_model),
-        labelFor(currentMap.scenario),
-      ])}
-    - ${joinNames([
-        labelFor(currentMap.aggregation_period),
-        labelFor(currentMap.measure),
-      ])}
-      ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? labelFor(currentMap.time_window)
-        : ''
-      }
-    - ${labelFor(currentMap.year_period)}
-    ${currentMap.aggregation_period != '30yr' && currentYear
-        ? ` - Anno ${year}`
-        : ''
-      } © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
-
     let filename = `Screenshot ${labelFor(
       currentMap.climatological_variable,
     )} - ${joinNames([
@@ -571,8 +591,8 @@ export function MapPage(props: MapPageProps) {
       }.${
       //@ts-ignore
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
-        ? 'jpg'
-        : 'jpg'
+        ? 'png'
+        : 'png'
       }`;
     filename = filename.replaceAll('_', '');
 
@@ -677,6 +697,25 @@ export function MapPage(props: MapPageProps) {
         currentLayer={currentLayerConfig}
         currentMap={currentMap}
       />
+
+      {currentMap.op !== 'screenshot' ? (
+        <></>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            color: 'white',
+            backgroundColor: 'rgb(22, 77, 54)',
+          }}
+        >
+          <Typography style={{ paddingLeft: '5px' }}>{caption}</Typography>
+          <span style={{ flex: '1 1 1px' }}></span>
+          <Typography style={{ paddingRight: '5px' }}>
+            © ARPAV - Arpa FVG
+          </Typography>
+        </div>
+      )}
 
       {/*TODO Backdrop only for debug?*/}
       <Modal open={loading} sx={SpinnerStyle}>

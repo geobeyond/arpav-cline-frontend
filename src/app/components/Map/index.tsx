@@ -221,6 +221,7 @@ const Map = (props: MapProps) => {
       zoom={defaultZoom}
       maxZoom={19}
       zoomControl={false}
+      hash={true}
       // @ts-ignore
       timeDimensionControl={true}
       timeDimensionextendedControl={true}
@@ -255,27 +256,35 @@ const Map = (props: MapProps) => {
     >
       <ScaleControl imperial={false} />
 
-      <ZoomControl position={'topright'} />
+      {currentMap.op !== 'screenshot' ? (
+        <ZoomControl position={'topright'} />
+      ) : (
+        <></>
+      )}
       {isMobile && (
         <DummyControlComponent
           position={'topright'}
           customComponent={MobileSpaceDisplay}
         />
       )}
-      <CustomControlMap position={'topright'}>
-        {showUncertaintyControl && (
-          <Box
-            className="leaflet-bar"
-            style={{ backgroundColor: 'white', padding: '2px' }}
-          >
-            <UncertaintySwitch
-              enabled={true}
-              setShowUncertainty={setShowUncertainty}
-              currentUncertainty={showUncertainty}
-            ></UncertaintySwitch>
-          </Box>
-        )}
-      </CustomControlMap>
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap position={'topright'}>
+          {showUncertaintyControl && (
+            <Box
+              className="leaflet-bar"
+              style={{ backgroundColor: 'white', padding: '2px' }}
+            >
+              <UncertaintySwitch
+                enabled={true}
+                setShowUncertainty={setShowUncertainty}
+                currentUncertainty={showUncertainty}
+              ></UncertaintySwitch>
+            </Box>
+          )}
+        </CustomControlMap>
+      ) : (
+        <> </>
+      )}
       <CustomControlMap position={'topright'}>
         <Box
           className="leaflet-bar"
