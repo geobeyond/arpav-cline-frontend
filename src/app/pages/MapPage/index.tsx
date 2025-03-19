@@ -531,6 +531,7 @@ export function MapPage(props: MapPageProps) {
     }
 
     setInProgress(true);
+
     const caption = `${isMobile
         ? currentMap.climatological_variable
         : labelFor(currentMap.climatological_variable)
@@ -571,23 +572,27 @@ export function MapPage(props: MapPageProps) {
       //@ts-ignore
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
         ? 'jpg'
-        : 'png'
+        : 'jpg'
       }`;
     filename = filename.replaceAll('_', '');
-    mapScreen
-      .takeScreen(format, {
-        captionFontSize: isMobile ? 10 : 12,
-        screenName: `${currentMap.climatological_variable}`,
-        caption: caption,
-      })
-      .then(blob => {
-        setInProgress(false);
-        saveAs(blob as Blob, filename);
-      })
-      .catch(e => {
-        setInProgress(false);
-        console.error(e);
-      });
+
+    api.downloadScreenshot(window.location.href, filename).then(() => {
+      setInProgress(false);
+    });
+    //mapScreen
+    //  .takeScreen(format, {
+    //    captionFontSize: isMobile ? 10 : 12,
+    //    screenName: `${currentMap.climatological_variable}`,
+    //    caption: caption,
+    //  })
+    //  .then(blob => {
+    //    setInProgress(false);
+    //    saveAs(blob as Blob, filename);
+    //  })
+    //  .catch(e => {
+    //    setInProgress(false);
+    //    console.error(e);
+    //  });
   };
 
   const openCharts = (latLng: LatLng) => {
@@ -611,36 +616,42 @@ export function MapPage(props: MapPageProps) {
 
   return (
     <Box sx={mapStyle}>
-      <Modal
-        open={error.length > 0}
-        onClose={closeError}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={modalStyle}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            {t(error + '.title')}
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {t(error + '.message')}
-          </Typography>
-          <Button onClick={closeError}>Ok</Button>
+      {currentMap.op !== 'screenshot' ? (
+        <Box>
+          <Modal
+            open={error.length > 0}
+            onClose={closeError}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={modalStyle}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                {t(error + '.title')}
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {t(error + '.message')}
+              </Typography>
+              <Button onClick={closeError}>Ok</Button>
+            </Box>
+          </Modal>
+          <HeaderBar />
+          <MapMenuBar
+            onDownloadMapImg={handleDownloadMapImg}
+            mode={map_mode}
+            data={map_data}
+            menus={menus}
+            combinations={combinations}
+            onMenuChange={updateCurrentMap}
+            current_map={currentMap}
+            foundLayers={foundLayers}
+            setCurrentMap={setCurrentMap}
+            openError={openError}
+            inProgress={inProgress}
+          />
         </Box>
-      </Modal>
-      <HeaderBar />
-      <MapMenuBar
-        onDownloadMapImg={handleDownloadMapImg}
-        mode={map_mode}
-        data={map_data}
-        menus={menus}
-        combinations={combinations}
-        onMenuChange={updateCurrentMap}
-        current_map={currentMap}
-        foundLayers={foundLayers}
-        setCurrentMap={setCurrentMap}
-        openError={openError}
-        inProgress={inProgress}
-      />
+      ) : (
+        <></>
+      )}
 
       <Map
         onReady={handleMapReady}

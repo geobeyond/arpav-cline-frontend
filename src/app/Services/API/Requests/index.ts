@@ -34,6 +34,35 @@ export interface iNetcdfDownload {
 const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export class RequestApi extends Http {
+  downloadScreenshot(href: string, filename: string) {
+    return this.instance
+      .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
+        params: {
+          url: href + '&op=screenshot',
+        },
+        responseType: 'blob',
+      })
+      .then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        console.log(url);
+        // create file link in browser's memory
+        const href = URL.createObjectURL(response.data);
+
+        // create "a" HTML element with href to file & click
+        const link = document.createElement('a');
+        link.href = href;
+        link.setAttribute('download', filename); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   getCapabilities(wms) {
     const fullUrl =
       BACKEND_WMS_BASE_URL +
