@@ -371,7 +371,7 @@ export class RequestApi extends Http {
     if (season) {
       filter +=
         'possible_value=' +
-        (mode === 'forecast' ? 'year_period' : 'year_period') +
+        (mode === 'forecast' ? 'year_period' : 'historical_year_period') +
         ':' +
         season +
         '&';

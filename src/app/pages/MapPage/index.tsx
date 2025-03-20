@@ -59,7 +59,7 @@ const defaultMapHistorical: any = {
   measure: 'absolute',
   reference_period: '1991_2020',
   aggregation_period: '30yr',
-  year_period: 'all_year',
+  historical_year_period: 'all_year',
   archive: 'historical',
   data_series: 'no',
 };

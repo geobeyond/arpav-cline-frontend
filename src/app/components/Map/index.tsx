@@ -362,7 +362,10 @@ const Map = (props: MapProps) => {
       <DynamicStationsLayer
         data={data}
         variable={currentMap.climatological_variable}
-        url={currentMap.observation_stations_vector_tile_layer_url}
+        url={currentMap.observation_stations_vector_tile_layer_url?.replace(
+          'http://localhost:5001',
+          'https://arpav.geobeyond.dev',
+        )}
         zIndex={575}
       ></DynamicStationsLayer>
       <VectorWrapperLayer
