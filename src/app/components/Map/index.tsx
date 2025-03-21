@@ -310,7 +310,7 @@ const Map = (props: MapProps) => {
           precision={layerConf.data_precision}
         />
       </CustomControlMap>
-      {!isMobile && (
+      {!isMobile && currentMap.op !== 'screenshot' && (
         <MousePositionComponent
           position={'bottomright'}
           customComponent={
@@ -333,39 +333,35 @@ const Map = (props: MapProps) => {
       </CustomControlMap>
       {/*<BaseLayerControl/>*/}
 
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="OpenStreetMap">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a target="_blank" rel="noopener" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Sentinel 2">
-          <TileLayer
-            url="https://tiles.maps.eox.at/wmts?layer=s2cloudless-2021_3857&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
-            attribution='&copy; <a target="_blank" rel="noopener" href="https://tiles.maps.eox.at/">Sentinel-2 cloudless</a> by EOX'
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="OpenTopoMap">
-          <TileLayer
-            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-            attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-          />
-        </LayersControl.BaseLayer>
-      </LayersControl>
-      <StationsLayer
-        data={data}
-        variable={currentMap.climatological_variable}
-        url={currentMap.observation_stations_vector_tile_layer_url}
-        zIndex={550}
-      ></StationsLayer>
+      {currentMap.op !== 'screenshot' ? (
+        <LayersControl position="topright">
+          <LayersControl.BaseLayer checked name="OpenStreetMap">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a target="_blank" rel="noopener" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Sentinel 2">
+            <TileLayer
+              url="https://tiles.maps.eox.at/wmts?layer=s2cloudless-2021_3857&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
+              attribution='&copy; <a target="_blank" rel="noopener" href="https://tiles.maps.eox.at/">Sentinel-2 cloudless</a> by EOX'
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="OpenTopoMap">
+            <TileLayer
+              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+              attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
+      ) : (
+        <></>
+      )}
+      <StationsLayer data={data} zIndex={550}></StationsLayer>
       <DynamicStationsLayer
         data={data}
         variable={currentMap.climatological_variable}
-        url={currentMap.observation_stations_vector_tile_layer_url?.replace(
-          'http://localhost:5001',
-          'https://arpav.geobeyond.dev',
-        )}
+        url={layerConf.observation_stations_vector_tile_layer_url}
         zIndex={575}
       ></DynamicStationsLayer>
       <VectorWrapperLayer

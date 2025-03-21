@@ -37,25 +37,28 @@ export const DynamicStationsLayer = (props: any) => {
       // @ts-ignore
       context.map.getPane('stationssel').style.zIndex = zIndex;
 
+      let ln = url.split('/')[4];
+
+      const vtlstyles = {};
+      vtlstyles[ln] = (properties, zoom, geometryDimension) => {
+        let opacity = 0.9;
+        let color = data === 'future' ? '#abb2b9' : '#464b52';
+        // console.log(zoom, color, opacity)
+        return {
+          color: color,
+          weight: data === 'future' ? 2 : 4,
+          radius: data === 'future' ? 5 : 10,
+          fill: true,
+          fillOpacity: 0.7,
+          opacity: opacity,
+        };
+      };
+
       // @ts-ignore
       let vectorLayer = L.vectorGrid.protobuf(url, {
         interactive: true,
         pane: 'stationssel',
-        vectorTileLayerStyles: {
-          stationssel: (properties, zoom, geometryDimension) => {
-            let opacity = 0.9;
-            let color = data === 'future' ? '#abb2b9' : '#464b52';
-            // console.log(zoom, color, opacity)
-            return {
-              color: color,
-              weight: data === 'future' ? 2 : 4,
-              radius: data === 'future' ? 5 : 10,
-              fill: true,
-              fillOpacity: 0.7,
-              opacity: opacity,
-            };
-          },
-        },
+        vectorTileLayerStyles: vtlstyles,
       });
 
       context.map.addLayer(vectorLayer);
@@ -79,6 +82,8 @@ export const DynamicStationsLayer = (props: any) => {
     context.map,
     selectCallback,
     url,
+    zIndex,
+    data,
   ]);
 
   return (

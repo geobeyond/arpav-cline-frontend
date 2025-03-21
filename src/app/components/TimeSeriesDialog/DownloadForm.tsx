@@ -151,7 +151,7 @@ export const DownloadForm = props => {
         : null,
       data.current?.series?.filter(
         x =>
-          'station' in x.info &&
+          x.info.dataset_type === 'observation' &&
           x.info.processing_method === filter.current.sensorSmoothing,
       )[0],
     ];

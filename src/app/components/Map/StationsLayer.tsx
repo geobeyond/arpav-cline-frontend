@@ -13,15 +13,8 @@ import { PopupStyle } from './styles';
 
 export const StationsLayer = (props: any) => {
   const { selected_map } = useSelector((state: any) => state.map);
-  const {
-    selectCallback,
-    selectedPoint,
-    openCharts,
-    zIndex,
-    variable,
-    data,
-    url,
-  } = props;
+  const { selectCallback, selectedPoint, openCharts, zIndex, variable, data } =
+    props;
   const map = useMap();
   const context = useLeafletContext();
   // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))

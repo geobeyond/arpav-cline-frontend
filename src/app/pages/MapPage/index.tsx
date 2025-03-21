@@ -714,6 +714,18 @@ export function MapPage(props: MapPageProps) {
           <Typography style={{ paddingRight: '5px' }}>
             © ARPAV - Arpa FVG
           </Typography>
+
+          <Typography
+            style={{
+              fontSize: 'smaller',
+              paddingLeft: '5px',
+              display: 'block',
+            }}
+          >
+            Si tratta di proiezioni climatiche e non di previsioni a lungo
+            termine. Il valore annuale ha validità in un contesto di trendss
+            trentennale.
+          </Typography>
         </div>
       )}
 

@@ -347,8 +347,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   const getLegend = () => {
     //TODO names lookup
     const series = timeseries
-      ?.filter(x => !('uncertainty_type' in x.info))
-      .filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
+      ?.filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
       .filter(
         x =>
           x.info.climatological_model === baseClimatologicalModel ||
@@ -360,7 +359,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         itemStyle: { color: getColor(item), opacity: 1 },
       }));
     const station = timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('series_elaboration') > 0)
+      ?.filter(x => x.info.dataset_type === 'observation')
       .filter(
         x => x.info.processing_method.indexOf(sensorProcessingMehtod) >= 0,
       )
@@ -379,8 +378,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //TODO names lookup
     let ret = {};
     timeseries
-      ?.filter(x => !('uncertainty_type' in x.info))
-      .filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
+      ?.filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
       .filter(
         x =>
           x.name.indexOf(baseClimatologicalModel) >= 0 ||
@@ -389,7 +387,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('station') > 0)
+      ?.filter(x => x.info.dataset_type === 'observation')
       .filter(x => x.info.processing_method === sensorProcessingMehtod)
       .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_processing'));
@@ -400,7 +398,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     if (dataset.info.scenario) {
       return colors[0][dataset.info.scenario];
     }
-    return dataset.info.series_elaboration ? '#45321b' : '#ff0000';
+    return dataset.info.dataset_type === 'observation' ? '#45321b' : '#ff0000';
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
@@ -408,7 +406,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineOpacity = dataset => {
-    return 'uncertainty_type' in dataset.info ? 0 : 1;
+    return dataset.info.dataset_type !== 'main' ? 0 : 1;
     //return dataset.forecast_model === models[0] ? 1 : 0.8;
   };
 
@@ -425,18 +423,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const getChartData = (item, series) => {
     if (
-      ('archive' in item.info &&
+      (item.info.dataset_type !== 'observation' &&
         item.info.processing_method.indexOf(processingMethod) >= 0 &&
         (item.info.climatological_model === baseClimatologicalModel ||
           item.info.climatological_model === comparisonClimatologicalModel)) ||
-      ('series_elaboration' in item.info &&
+      (item.info.dataset_type === 'obaservation' &&
         item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0)
     ) {
-      if (
-        uncert &&
-        'uncertainty_type' in item.info &&
-        item.info.uncertainty_type === 'upper_uncertainty'
-      ) {
+      if (uncert && item.info.dataset_type === 'forecast_upper_uncertainty') {
         let ret: (number | null)[] = [];
         let lbitem = series.filter(x => {
           return (
@@ -449,8 +443,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
             x.info.measure === item.info.measure &&
             x.info.scenario === item.info.scenario &&
             x.info.year_period === item.info.year_period &&
-            'uncertainty_type' in x.info &&
-            x.info.uncertainty_type !== item.info.uncertainty_type
+            x.info.dataset_type !== item.info.dataset_type &&
+            x.info.dataset_type !== 'main'
           );
         });
         let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
@@ -490,7 +484,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     return 'line';
   };
   const getStepType = dataset => {
-    return dataset.info.series_elaboration &&
+    return dataset.info.dataset_type === 'observation' &&
       dataset.info.processing_method === 'no_processing'
       ? 'middle'
       : false;
@@ -503,19 +497,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   };
 
   const getStack = dataset => {
-    if ('uncertainty_type' in dataset.info)
-      return getName(dataset).replaceAll(' ', '_');
-    else return null;
+    return getName(dataset).replaceAll(' ', '_');
   };
   const getAreaStyle = dataset => {
-    if ('uncertainty_type' in dataset.info) {
-      if (dataset.info.uncertainty_type === 'upper_uncertainty') {
-        if (dataset.info.scenario) {
-          return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
-        }
+    if (dataset.info.dataset_type.indexOf('uncertainty') >= 0) {
+      if (dataset.info.scenario) {
+        return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
       }
     }
-    return null;
   };
 
   const getXAxis = () => {
@@ -542,11 +531,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     "climatological_variable": "tas",
     "measure": "absolute",
     "scenario": "rcp26",
-    "uncertainty_type": "upper_uncertainty",
+    "dataset_type": "upper_uncertainty",
     "year_period": "year"
 }*/
   const getName = (item, mode = 'timeseries') => {
-    if ('station' in item.info) mode = 'sensor';
+    if (item.info.dataset_type === 'observation') mode = 'sensor';
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
@@ -561,13 +550,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       ...timeseries?.filter(item => {
         return (
           //no uncertainty
-          !('uncertainty_type' in item.info) &&
-          ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
+          (item.info.processing_method.indexOf(processingMethod) >= 0 &&
             (item.info.climatological_model === baseClimatologicalModel ||
               item.info.climatological_model ===
               comparisonClimatologicalModel)) ||
-            ('series_elaboration' in item.info &&
-              item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0))
+          ('series_elaboration' in item.info &&
+            item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0)
         );
       }),
     ];
@@ -577,14 +565,13 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         ...timeseries?.filter(item => {
           return (
             //no uncertainty
-            'uncertainty_type' in item.info &&
-            ((item.info.processing_method.indexOf(processingMethod) >= 0 &&
+            (item.info.dataset_type !== 'observation' &&
+              item.info.processing_method.indexOf(processingMethod) >= 0 &&
               (item.info.climatological_model === baseClimatologicalModel ||
                 item.info.climatological_model ===
                 comparisonClimatologicalModel)) ||
-              ('series_elaboration' in item.info &&
-                item.info.processing_method.indexOf(sensorProcessingMehtod) >=
-                0))
+            (item.info.dataset_type === 'observation' &&
+              item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0)
           );
         }),
       ];
@@ -624,7 +611,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp26' &&
           x.info.climatological_model === baseClimatologicalModel &&
           x.info.processing_method === processingMethod &&
-          x.info.uncertainty_type === 'lower_uncertainty',
+          x.info.dataset_type === 'forecast_lower_uncertainty',
       )[0]
       : null,
     pseriesObj.filter(
@@ -632,7 +619,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         x.info.scenario === 'rcp26' &&
         x.info.processing_method === processingMethod &&
         x.info.climatological_model === baseClimatologicalModel &&
-        !('uncertainty_type' in x.info),
+        x.info.dataset_type === 'main',
     )[0],
     baseClimatologicalModel === comparisonClimatologicalModel
       ? null
@@ -641,7 +628,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp26' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === comparisonClimatologicalModel &&
-          !('uncertainty_type' in x.info),
+          x.info.dataset_type === 'main',
       )[0],
     uncert
       ? pseriesObj.filter(
@@ -649,7 +636,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp26' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === baseClimatologicalModel &&
-          x.info.uncertainty_type === 'upper_uncertainty',
+          x.info.dataset_type === 'forecast_upper_uncertainty',
       )[0]
       : null,
     uncert
@@ -658,7 +645,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp45' &&
           x.info.climatological_model === baseClimatologicalModel &&
           x.info.processing_method === processingMethod &&
-          x.info.uncertainty_type === 'lower_uncertainty',
+          x.info.dataset_type === 'forecast_lower_uncertainty',
       )[0]
       : null,
     pseriesObj.filter(
@@ -666,7 +653,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         x.info.scenario === 'rcp45' &&
         x.info.processing_method === processingMethod &&
         x.info.climatological_model === baseClimatologicalModel &&
-        !('uncertainty_type' in x.info),
+        x.info.dataset_type === 'main',
     )[0],
     baseClimatologicalModel === comparisonClimatologicalModel
       ? null
@@ -675,7 +662,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp45' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === comparisonClimatologicalModel &&
-          !('uncertainty_type' in x.info),
+          x.info.dataset_type === 'main',
       )[0],
     uncert
       ? pseriesObj.filter(
@@ -683,7 +670,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp45' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === baseClimatologicalModel &&
-          x.info.uncertainty_type === 'upper_uncertainty',
+          x.info.dataset_type === 'forecast_upper_uncertainty',
       )[0]
       : null,
     uncert
@@ -692,7 +679,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp85' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === baseClimatologicalModel &&
-          x.info.uncertainty_type === 'lower_uncertainty',
+          x.info.dataset_type === 'forecast_lower_uncertainty',
       )[0]
       : null,
     pseriesObj.filter(
@@ -700,7 +687,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         x.info.scenario === 'rcp85' &&
         x.info.processing_method === processingMethod &&
         x.info.climatological_model === baseClimatologicalModel &&
-        !('uncertainty_type' in x.info),
+        x.info.dataset_type === 'main',
     )[0],
     baseClimatologicalModel === comparisonClimatologicalModel
       ? null
@@ -709,7 +696,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp85' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === comparisonClimatologicalModel &&
-          !('uncertainty_type' in x.info),
+          x.info.dataset_type === 'main',
       )[0],
     uncert
       ? pseriesObj.filter(
@@ -717,12 +704,12 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           x.info.scenario === 'rcp85' &&
           x.info.processing_method === processingMethod &&
           x.info.climatological_model === baseClimatologicalModel &&
-          x.info.uncertainty_type === 'upper_uncertainty',
+          x.info.dataset_type === 'forecast_upper_uncertainty',
       )[0]
       : null,
     pseriesObj.filter(
       x =>
-        'station' in x.info &&
+        x.info.dataset_type === 'observation' &&
         x.info.processing_method === sensorProcessingMehtod,
     )[0],
   ];

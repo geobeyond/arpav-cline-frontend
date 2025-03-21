@@ -749,4 +749,10 @@ export class RequestApi extends Http {
   };
 
   public getForecastAttribute = (attribute, params = {}) => {};
+
+  public getAppVersion = () => {
+    const ret = this.instance.get<any>(
+      `${BACKEND_API_URL}/coverages/configuration-parameters?offset=0&limit=100`,
+    );
+  };
 }

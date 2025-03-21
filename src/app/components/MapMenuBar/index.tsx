@@ -328,7 +328,7 @@ export function MapMenuBar(props: MapMenuBar) {
       showModal.current = false;
       console.log('activatingCV', value, combinations[value]);
       setActiveCombinations(combinations[value]);
-      localCM.current = toDefault(combinations[value + '::thirty_year']);
+      localCM.current = toDefault(combinations[value + '::30yr']);
       setCurrentMap(localCM.current);
     } else {
       const steps = [
@@ -471,7 +471,7 @@ export function MapMenuBar(props: MapMenuBar) {
     - ${labelFor(localCM.current.aggregation_period)}
     - ${labelFor(localCM.current.measure)}
     ${localCM.current.time_window &&
-        localCM.current.aggregation_period === 'thirty_year'
+        localCM.current.aggregation_period === '30yr'
         ? ' - ' + labelFor(localCM.current.time_window)
         : ''
       }

@@ -57,8 +57,8 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
       currentMap.climatological_model === 'model_ensemble'
         ? 'model_ensemble'
         : currentMap.climatological_model,
-    tsSmoothing: 'MOVING_AVERAGE_11_YEARS',
-    sensorSmoothing: 'NO_SMOOTHING',
+    tsSmoothing: 'moving_average_11_years',
+    sensorSmoothing: 'no_smoothing',
     uncertainty: true,
   });
   const timeRange = useRef<TimeRangeProps | null>();
