@@ -451,7 +451,7 @@ const Graph = (props: any) => {
       (item.info.processing_method === 'MOVING_AVERAGE_11_YEARS' &&
         item.info.scenario) ||
       (item.info.processing_method === 'NO_SMOOTHING' &&
-        item.info.climatological_varable === 'tdd')
+        item.info.climatological_variable === 'tdd')
     );
   });
   let opseriesObj = [
