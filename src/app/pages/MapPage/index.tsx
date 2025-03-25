@@ -642,39 +642,37 @@ export function MapPage(props: MapPageProps) {
 
   return (
     <Box sx={mapStyle}>
-      {currentMap.op !== 'screenshot' ? (
-        <Box>
-          <Modal
-            open={error.length > 0}
-            onClose={closeError}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={modalStyle}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                {t(error + '.title')}
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                {t(error + '.message')}
-              </Typography>
-              <Button onClick={closeError}>Ok</Button>
-            </Box>
-          </Modal>
-          <HeaderBar />
-          <MapMenuBar
-            onDownloadMapImg={handleDownloadMapImg}
-            mode={map_mode}
-            data={map_data}
-            menus={menus}
-            combinations={combinations}
-            onMenuChange={updateCurrentMap}
-            current_map={currentMap}
-            foundLayers={foundLayers}
-            setCurrentMap={setCurrentMap}
-            openError={openError}
-            inProgress={inProgress}
-          />
+      <Modal
+        open={error.length > 0}
+        onClose={closeError}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {t(error + '.title')}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            {t(error + '.message')}
+          </Typography>
+          <Button onClick={closeError}>Ok</Button>
         </Box>
+      </Modal>
+      {currentMap.op !== 'screenshot' ? <HeaderBar /> : <></>}
+      {currentMap.op !== 'screenshot' ? (
+        <MapMenuBar
+          onDownloadMapImg={handleDownloadMapImg}
+          mode={map_mode}
+          data={map_data}
+          menus={menus}
+          combinations={combinations}
+          onMenuChange={updateCurrentMap}
+          current_map={currentMap}
+          foundLayers={foundLayers}
+          setCurrentMap={setCurrentMap}
+          openError={openError}
+          inProgress={inProgress}
+        />
       ) : (
         <></>
       )}

@@ -90,7 +90,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       forecast_parameters[listKey]?.find(item => item.id === key)?.name || ''
     );
   };
-  const baseValue: number = 1976;
+  const baseValue: number = 1990;
 
   const {
     selected_map,
@@ -108,31 +108,13 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   ]);
   const [timeseries, setTimeseries] = useState<any>([]);
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
-  const colors = [
-    {
-      histo: 'rgb(69,50,27)',
-      rcp26: 'rgb(46,105,193)',
-      rcp45: 'rgb(243, 156, 18)',
-      rcp85: 'rgb(231,60,60)',
-    },
-    {
-      histo: 'rgb(82, 73, 62)',
-      rcp26: 'rgb(146, 166, 196)',
-      rcp45: 'rgb(250, 226, 187)',
-      rcp85: 'rgb(232, 169, 169)',
-    },
-  ];
-
-  const gbase = ['RCP2.6', 'RCP4.5', 'RCP8.5'];
-
-  const gmodels = [
-    { label: '--', value: 'model_ensemble' },
-    { label: 'EC-EARTH_CCLM4-8-17', value: 'ec_earth_cclm_4_8_17' },
-    { label: 'EC-EARTH_RACM022E', value: 'ec_earth_racmo22e' },
-    { label: 'EC-EARTH_RCA4', value: 'ec_earth_rca4' },
-    { label: 'HadGEM2-ES_RACM022E', value: 'hadgem2_racmo22e' },
-    { label: 'MPI-ESM-LR_REMO2009', value: 'mpi_esm_lr_remo2009' },
-  ];
+  const colors = {
+    no_processing: 'rgb(8, 145, 49)',
+    less_smoothing: 'rgb(8, 145, 49)',
+    moving_average_11_years: 'rgb(8, 145, 49)',
+    mann_kendall_trend: 'rgb(9, 8, 6)',
+    decade_aggregation: 'rgb(231,60,60)',
+  };
 
   const [localStart, setLocalStart] = useState<any>(0);
   const [localEnd, setLocalEnd] = useState<any>(100);
@@ -334,27 +316,22 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     //TODO names lookup
     const series = timeseries
       ?.filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
-      .filter(
-        x =>
-          x.info.climatological_model === baseClimatologicalModel ||
-          x.name.length < 20 ||
-          x.info.climatological_model === comparisonClimatologicalModel,
-      )
       .map(item => ({
         name: getName(item),
         itemStyle: { color: getColor(item), opacity: 1 },
       }));
-    const station = timeseries
-      ?.filter(x => x.info.dataset_type === 'observation')
-      .filter(
-        x => x.info.processing_method.indexOf(sensorProcessingMehtod) >= 0,
+    const aggregations = timeseries
+      ?.filter(
+        x =>
+          x.info.processing_method === 'mann_kendall_trend' ||
+          x.info.processing_method === 'decade_aggregation',
       )
       .map(x => ({
-        name: getName(x, 'station'),
-        itemStyle: { color: 'black', opacity: 1 },
+        name: getName(x),
+        itemStyle: { color: getColor(x), opacity: 1 },
       }));
-    if (series && station) {
-      return [...series, ...station];
+    if (series && aggregations) {
+      return [...series, ...aggregations];
     } else {
       return [];
     }
@@ -365,31 +342,26 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     let ret = {};
     timeseries
       ?.filter(x => x.info.processing_method.indexOf(processingMethod) >= 0)
-      .filter(
-        x =>
-          x.name.indexOf(baseClimatologicalModel) >= 0 ||
-          x.name.length < 20 ||
-          x.name.indexOf(comparisonClimatologicalModel) >= 0,
-      )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => x.info.dataset_type === 'observation')
-      .filter(x => x.info.processing_method === sensorProcessingMehtod)
-      .map(x => (ret[getName(x, 'station')] = true));
+      ?.filter(
+        x =>
+          x.info.processing_method === 'mann_kendall_trend' ||
+          x.info.processing_method === 'decade_aggregation',
+      )
+      .map(x => (ret[getName(x)] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_processing'));
     return ret;
   };
 
   const getColor = dataset => {
-    if (dataset.info.scenario) {
-      return colors[0][dataset.info.scenario];
-    }
-    return dataset.info.dataset_type === 'observation' ? '#45321b' : '#ff0000';
+    return colors[dataset.info.processing_method];
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
-    return 'solid';
-    //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
+    return dataset.info.processing_method === 'decade_aggregation'
+      ? 'dashed'
+      : 'solid';
   };
   const getLineOpacity = dataset => {
     return dataset.info.dataset_type.indexOf('uncertainty') >= 0 ? 0 : 1;
@@ -397,10 +369,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
 
   const getLineWidth = dataset => {
-    return dataset.info.climatological_model === 'model_ensemble' ||
-      dataset.info.dataset_type === 'observation'
-      ? 3
-      : 1;
+    return 3;
   };
 
   const getSelected = dataset => {
@@ -408,60 +377,15 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
 
   const getChartData = (item, series) => {
-    if (
-      (item.info.dataset_type !== 'observation' &&
-        item.info.processing_method.indexOf(processingMethod) >= 0 &&
-        (item.info.climatological_model === baseClimatologicalModel ||
-          item.info.climatological_model === comparisonClimatologicalModel)) ||
-      (item.info.dataset_type === 'obaservation' &&
-        item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0)
-    ) {
-      if (uncert && item.info.dataset_type === 'forecast_upper_uncertainty') {
-        let ret: (number | null)[] = [];
-        let lbitem = series.filter(x => {
-          return (
-            getName(x) === getName(item) &&
-            x.info.processing_method === processingMethod &&
-            x.info.aggregation_period === item.info.aggregation_period &&
-            x.info.climatological_model === item.info.climatological_model &&
-            x.info.climatological_variable ===
-            item.info.climatological_variable &&
-            x.info.measure === item.info.measure &&
-            x.info.scenario === item.info.scenario &&
-            x.info.year_period === item.info.year_period &&
-            x.info.dataset_type !== item.info.dataset_type &&
-            x.info.dataset_type === 'forecast_lower_uncertainty'
-          );
-        });
-        let delta = parseInt(item.values[0].datetime.split('-')[0]) - baseValue;
-        if (lbitem.length > 0) {
-          for (let i in realDataValues[item.name]) {
-            if (
-              realDataValues[item.name][i].value ||
-              realDataValues[lbitem[0].name][i].value
-            ) {
-              ret.push(
-                realDataValues[item.name][i].value -
-                realDataValues[lbitem[0].name][i].value,
-              );
-            } else {
-              ret.push(null);
-            }
-          }
-        }
-        return ret;
-      }
-    }
     return realDataValues[item.name].map(x => x.value);
   };
 
   const getGraphType = dataset => {
-    return 'line';
+    return dataset.info.processing_method === 'no_processing' ? 'bar' : 'line';
   };
   const getStepType = dataset => {
-    return dataset.info.dataset_type === 'observation' &&
-      dataset.info.processing_method === 'no_processing'
-      ? 'middle'
+    return dataset.info.processing_method === 'decade_aggregation'
+      ? 'end'
       : false;
   };
   const getZLevel = dataset => {
@@ -469,22 +393,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       dataset.info.processing_method === 'no_processing'
       ? 100
       : 10;
-  };
-
-  const getStack = dataset => {
-    if (
-      dataset.info.dataset_type === 'main' ||
-      dataset.info.dataset_type === 'observation'
-    )
-      return getName(dataset).replaceAll(' ', '_') + '__main';
-    else return getName(dataset).replaceAll(' ', '_');
-  };
-  const getAreaStyle = dataset => {
-    if (dataset.info.dataset_type.indexOf('uncertainty') >= 0) {
-      if (dataset.info.scenario) {
-        return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
-      }
-    }
   };
 
   const getXAxis = () => {
@@ -514,52 +422,13 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     "dataset_type": "upper_uncertainty",
     "year_period": "year"
 }*/
-  const getName = (item, mode = 'timeseries') => {
-    if (item.info.dataset_type === 'observation') mode = 'sensor';
-    let tdata: any = {};
-    for (let k in item.info) {
-      tdata[k] = item.info[k];
-    }
-    for (let k in item.translations.parameter_values) {
-      tdata[k] = item.translations.parameter_values[k][i18n.language];
-    }
-    if (mode === 'timeseries')
-      return `${tdata.scenario} ${tdata.climatological_model}`;
-    else return `${tdata.manager} - ${tdata.station_name}`;
+  const getName = item => {
+    return item.name;
   };
 
   useEffect(() => {
     if (timeseries) {
-      let pseriesObj = [
-        ...timeseries?.filter(item => {
-          return (
-            //no uncertainty
-            (item.info.processing_method.indexOf(processingMethod) >= 0 &&
-              (item.info.climatological_model === baseClimatologicalModel ||
-                item.info.climatological_model ===
-                comparisonClimatologicalModel)) ||
-            ('series_elaboration' in item.info &&
-              item.info.processing_method.indexOf(sensorProcessingMehtod) >= 0)
-          );
-        }),
-      ];
-      if (uncert)
-        pseriesObj = [
-          ...pseriesObj,
-          ...timeseries?.filter(item => {
-            return (
-              //no uncertainty
-              (item.info.dataset_type !== 'observation' &&
-                item.info.processing_method.indexOf(processingMethod) >= 0 &&
-                (item.info.climatological_model === baseClimatologicalModel ||
-                  item.info.climatological_model ===
-                  comparisonClimatologicalModel)) ||
-              (item.info.dataset_type === 'observation' &&
-                item.info.processing_method.indexOf(sensorProcessingMehtod) >=
-                0)
-            );
-          }),
-        ];
+      let pseriesObj = [...timeseries];
       setPseriesObj(pseriesObj);
     }
   }, [
@@ -591,112 +460,20 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   }, {});
 
   let opseriesObj = [
-    uncert
-      ? pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp26' &&
-          x.info.climatological_model === baseClimatologicalModel &&
-          x.info.processing_method === processingMethod &&
-          x.info.dataset_type === 'forecast_lower_uncertainty',
-      )[0]
-      : null,
     pseriesObj.filter(
       x =>
-        x.info.scenario === 'rcp26' &&
         x.info.processing_method === processingMethod &&
-        x.info.climatological_model === baseClimatologicalModel &&
         x.info.dataset_type === 'main',
     )[0],
-    baseClimatologicalModel === comparisonClimatologicalModel
-      ? null
-      : pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp26' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === comparisonClimatologicalModel &&
-          x.info.dataset_type === 'main',
-      )[0],
-    uncert
-      ? pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp26' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === baseClimatologicalModel &&
-          x.info.dataset_type === 'forecast_upper_uncertainty',
-      )[0]
-      : null,
-    uncert
-      ? pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp45' &&
-          x.info.climatological_model === baseClimatologicalModel &&
-          x.info.processing_method === processingMethod &&
-          x.info.dataset_type === 'forecast_lower_uncertainty',
-      )[0]
-      : null,
     pseriesObj.filter(
       x =>
-        x.info.scenario === 'rcp45' &&
-        x.info.processing_method === processingMethod &&
-        x.info.climatological_model === baseClimatologicalModel &&
+        x.info.processing_method === 'decade_aggregation' &&
         x.info.dataset_type === 'main',
     )[0],
-    baseClimatologicalModel === comparisonClimatologicalModel
-      ? null
-      : pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp45' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === comparisonClimatologicalModel &&
-          x.info.dataset_type === 'main',
-      )[0],
-    uncert
-      ? pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp45' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === baseClimatologicalModel &&
-          x.info.dataset_type === 'forecast_upper_uncertainty',
-      )[0]
-      : null,
-    uncert
-      ? pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp85' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === baseClimatologicalModel &&
-          x.info.dataset_type === 'forecast_lower_uncertainty',
-      )[0]
-      : null,
     pseriesObj.filter(
       x =>
-        x.info.scenario === 'rcp85' &&
-        x.info.processing_method === processingMethod &&
-        x.info.climatological_model === baseClimatologicalModel &&
+        x.info.processing_method === 'mann_kendall_trend' &&
         x.info.dataset_type === 'main',
-    )[0],
-    baseClimatologicalModel === comparisonClimatologicalModel
-      ? null
-      : pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp85' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === comparisonClimatologicalModel &&
-          x.info.dataset_type === 'main',
-      )[0],
-    uncert
-      ? pseriesObj.filter(
-        x =>
-          x.info.scenario === 'rcp85' &&
-          x.info.processing_method === processingMethod &&
-          x.info.climatological_model === baseClimatologicalModel &&
-          x.info.dataset_type === 'forecast_upper_uncertainty',
-      )[0]
-      : null,
-    pseriesObj.filter(
-      x =>
-        x.info.dataset_type === 'observation' &&
-        x.info.processing_method === sensorProcessingMehtod,
     )[0],
   ];
 
@@ -729,10 +506,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         },
         selected: getSelected(item),
         data: getChartData(item, timeseries),
-        stack: getStack(item),
         step: getStepType(item),
-        stackStrategy: 'all',
-        areaStyle: getAreaStyle(item),
         z: getZLevel(item),
         label: {
           formatter: '{a}-{b}:{c}',
@@ -1038,13 +812,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     }
   }, [getXAxis, timeseries]);
 
-  const setSensorSmoothing = v => {
-    if (v === 0) {
-      setSensorProcessingMethod('no_processing');
-    } else if (v === 1) {
-      setSensorProcessingMethod('moving_average_5_years');
-    }
-  };
   const setModelSmoothing = v => {
     if (v === 0) {
       setProcessingMethod('no_processing');
@@ -1066,41 +833,17 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             <TextField disabled value="Model Ensemble"></TextField>
           </FormControl>
         </Box>
+
         <Box sx={FieldContainerStyle}>
           <FormControl sx={{ width: '100%' }} size="small">
-            <InputLabel id="SelectedModel">
-              {t('app.map.timeSeriesDialog.comparisonModel')}
+            <InputLabel id="SelectedModel" shrink={true}>
+              {t('app.map.timeSeriesDialog.selectedModel')}
             </InputLabel>
-            <Select
-              labelId="SelectedModel"
-              id="SelectedModel"
-              disabled={mode === 'simple'}
-              value={comparisonClimatologicalModel}
-              label={t('app.map.timeSeriesDialog.comparisonModel')}
-              onChange={e => {
-                setComparisonClimatologicalModel(
-                  (e.target.value as string).toLowerCase().replaceAll('-', '_'),
-                );
-
-                setFilters(
-                  baseClimatologicalModel,
-                  e.target.value as string,
-                  processingMethod,
-                  sensorProcessingMehtod,
-                  uncert,
-                );
-              }}
-            >
-              {gmodels.map(m => (
-                <MenuItem key={m.value} value={m.value}>
-                  {m.label}
-                </MenuItem>
-              ))}
-            </Select>
+            <TextField disabled value="Model Ensemble"></TextField>
           </FormControl>
         </Box>
         <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ width: '50%', left: '25%' }} size="small">
+          <FormControl sx={{ width: '100%', left: '25%' }} size="small">
             <InputLabel
               id="smoothingModel"
               sx={{
@@ -1129,36 +872,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             />
           </FormControl>
         </Box>
-        <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ width: '50%', left: '25%' }} size="small">
-            <InputLabel
-              id="sensorSmoothingModel"
-              sx={{
-                position: 'absolute',
-                left: '-79px',
-                width: '300px',
-                maxWidth: '300px',
-                fontSize: '12px',
-                top: '-17px',
-              }}
-            >
-              {t('app.map.timeSeriesDialog.sensorSmoothing')}
-            </InputLabel>
-            <Slider
-              disabled={mode === 'simple'}
-              aria-label="Options"
-              defaultValue={0}
-              valueLabelFormat={valuetextSensor}
-              valueLabelDisplay="on"
-              step={1}
-              marks
-              min={0}
-              max={1}
-              //@ts-ignore
-              onChange={e => setSensorSmoothing(e.target?.value)}
-            />
-          </FormControl>
-        </Box>
+        <Box sx={FieldContainerStyle}></Box>
       </Box>
       {timeseries?.length > 0 ? (
         <Box sx={ChartContainerStyle}>
