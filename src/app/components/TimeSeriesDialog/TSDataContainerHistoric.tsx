@@ -491,10 +491,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-  ${timeseries[0].translations.parameter_values.climatological_variable[
-      i18n.language
-      ]
-      }
+  ${timeseries[0].translations.parameter_values.series_name[i18n.language]}
   `
     : '';
 
@@ -502,7 +499,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-    ${timeseries[0].translations.parameter_values.measure[i18n.language]}  -  ${timeseries[0].translations.parameter_values.year_period[i18n.language]
+    ${timeseries[0].translations.parameter_values.series_name[i18n.language]} 
       }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
         localStartYear,
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
