@@ -90,7 +90,7 @@ export function App() {
             <Route path="/barometer" element={<IndexPage />} />
             <Route
               path="/proiezioni-semplice"
-              element={<MapPage map_data="future" map_mode="simple" />}
+              element={<MapPage map_data="forecast" map_mode="simple" />}
             />
             <Route
               path="/storico-semplice"
@@ -98,7 +98,7 @@ export function App() {
             />
             <Route
               path="/proiezioni-avanzata"
-              element={<MapPage map_data="future" map_mode="advanced" />}
+              element={<MapPage map_data="forecast" map_mode="advanced" />}
             />
             <Route
               path="/storico-avanzata"

@@ -42,12 +42,12 @@ export const DynamicStationsLayer = (props: any) => {
       const vtlstyles = {};
       vtlstyles[ln] = (properties, zoom, geometryDimension) => {
         let opacity = 0.9;
-        let color = data === 'future' ? '#abb2b9' : '#464b52';
+        let color = data === 'forecast' ? '#abb2b9' : '#464b52';
         // console.log(zoom, color, opacity)
         return {
           color: color,
-          weight: data === 'future' ? 2 : 4,
-          radius: data === 'future' ? 5 : 10,
+          weight: data === 'forecast' ? 2 : 4,
+          radius: data === 'forecast' ? 5 : 10,
           fill: true,
           fillOpacity: 0.7,
           opacity: opacity,

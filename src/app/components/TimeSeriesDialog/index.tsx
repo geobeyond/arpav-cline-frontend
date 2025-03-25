@@ -11,6 +11,7 @@ import {
   TitleTSStyle,
 } from './styles';
 import TSDataContainer from './TSDataContainer';
+import TSDataContainerHistoric from './TSDataContainerHistoric';
 import { iCityItem } from '../../pages/MapPage/slice/types';
 import { DownloadForm } from './DownloadForm';
 import { selectMap } from '../../pages/MapPage/slice/selectors';
@@ -132,8 +133,24 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         </Grid>
         <Grid xs={1} />
         <Grid xs={22}>
-          {latLng && (
+          {latLng && mode === 'forecast' && (
             <TSDataContainer
+              latLng={latLng}
+              setIds={setIds}
+              mode={mode}
+              map_data={map_data}
+              setTimeRange={setTimeRange}
+              place={place}
+              setToDownload={setToDownload}
+              setFilters={setFilters}
+              currentLayer={currentLayer}
+              currentMap={currentMap}
+              setSeriesFilter={setSeriesFilter}
+              setFilledSeries={setFilledSeries}
+            />
+          )}
+          {latLng && mode != 'forecast' && (
+            <TSDataContainerHistoric
               latLng={latLng}
               setIds={setIds}
               mode={mode}

@@ -115,7 +115,7 @@ const Map = (props: MapProps) => {
     setCurrentMap = () => { },
     setCurrentYear = () => { },
     mode = 'advanced',
-    data = 'future',
+    data = 'forecast',
   } = props;
 
   const theme = useTheme();

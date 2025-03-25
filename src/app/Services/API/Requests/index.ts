@@ -531,11 +531,28 @@ export class RequestApi extends Http {
     mode: string = 'forecast',
   ) => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
-    for (let id of series) {
-      ret.push(this.getTimeserieV2(id, lat, lng, withStation));
-      if (withStation) {
-        withStation = false;
+    if (mode === 'forecast') {
+      for (let id of series) {
+        ret.push(
+          this.getTimeserieV2(
+            id,
+            lat,
+            lng,
+            withStation,
+            true,
+            true,
+            true,
+            mode,
+          ),
+        );
+        if (withStation) {
+          withStation = false;
+        }
       }
+    } else {
+      ret.push(
+        this.getTimeserieV2(series[0], lat, lng, false, true, true, true, mode),
+      );
     }
     return Promise.all(ret).then(x => {
       return this.merge.apply(this, x);
@@ -554,6 +571,24 @@ export class RequestApi extends Http {
       {},
     );
 
+  public updateCache = () => {
+    this.instance.get(`${BACKEND_API_URL}/base`).then((x: any) => {
+      const curr = localStorage.getItem('git_commit');
+      console.log('current_version', curr);
+      if (curr) {
+        if (curr !== x.git_commit) {
+          localStorage.clear();
+          console.log('localStorage cleaered');
+        }
+        localStorage.setItem('git_commit', x.git_commit);
+      } else {
+        localStorage.clear();
+        console.log('localStorage cleaered');
+        localStorage.setItem('git_commit', x.git_commit);
+      }
+    });
+  };
+
   public getTimeserieV2 = (
     serie: string,
     lat: number,
@@ -564,6 +599,7 @@ export class RequestApi extends Http {
     uncertainty: boolean = true,
     mode: string = 'forecast',
   ) => {
+    serie.indexOf('forecast') >= 0 ? (mode = 'forecast') : (mode = 'past');
     const ep =
       mode === 'forecast' ? 'forecast-time-series' : 'historical-time-series';
     let url = `${BACKEND_API_URL}/coverages/${ep}/${serie}?coords=POINT(${lng.toFixed(
@@ -572,8 +608,13 @@ export class RequestApi extends Http {
       4,
     )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING`;
     if (smoothing) {
-      url +=
-        '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
+      if (mode === 'forecast') {
+        url +=
+          '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
+      } else {
+        url +=
+          '&mann_kendall_datetime=..%2F..&include_moving_average_series=true&include_decade_aggregation_series=true&include_loess_series=true';
+      }
     }
     if (uncertainty) {
       url += '&include_coverage_uncertainty=true';
@@ -589,6 +630,8 @@ export class RequestApi extends Http {
       url += `&include_observation_data=true&observation_data_smoothing=NO_SMOOTHING&observation_data_smoothing=MOVING_AVERAGE_5_YEARS`;
     } else {
       url += '&include_observation_data=false';
+    }
+    if (mode !== 'forecast') {
     }
 
     return this.instance.get<any>(url).then((x: any) => {
@@ -688,7 +731,7 @@ export class RequestApi extends Http {
   };
 
   public getAttributes = (
-    data: string = 'future',
+    data: string = 'forecast',
     mode: string = 'advanced',
     force: boolean = false,
   ) => {
@@ -703,7 +746,7 @@ export class RequestApi extends Http {
         return d.items;
       });
     reqs.push(ret);
-    if (data === 'future') {
+    if (data === 'forecast') {
       const cret = this.instance.get<any>(
         `${BACKEND_API_URL}/coverages/forecast-variable-combinations?navigation_section=${mode}`,
       );

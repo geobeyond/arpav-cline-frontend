@@ -37,12 +37,12 @@ export const StationsLayer = (props: any) => {
       vectorTileLayerStyles: {
         stations: (properties, zoom, geometryDimension) => {
           let opacity = 0.9;
-          let color = data === 'future' ? '#bdc2cf' : '#778494';
+          let color = data === 'forecast' ? '#bdc2cf' : '#778494';
           // console.log(zoom, color, opacity)
           return {
             color: color,
-            weight: data === 'future' ? 1 : 2,
-            radius: data === 'future' ? 3 : 8,
+            weight: data === 'forecast' ? 1 : 2,
+            radius: data === 'forecast' ? 3 : 8,
             fill: true,
             fillOpacity: 0.7,
             opacity: opacity,

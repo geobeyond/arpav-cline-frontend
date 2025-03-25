@@ -71,7 +71,7 @@ export interface MapMenuBar {
 }
 
 const MAP_MODES = {
-  future: 'Proiezioni',
+  forecast: 'Proiezioni',
   past: 'Storico',
   advanced: 'Avanzata',
   simple: 'Semplice',
@@ -199,7 +199,7 @@ export function MapMenuBar(props: MapMenuBar) {
         rows: [
           {
             key:
-              map_data === 'future'
+              map_data === 'forecast'
                 ? 'aggregation_period'
                 : 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
@@ -219,11 +219,11 @@ export function MapMenuBar(props: MapMenuBar) {
             criteria: (x, c) => x?.measure,
           },
           {
-            key: map_data === 'future' ? 'time_window' : 'reference_period',
+            key: map_data === 'forecast' ? 'time_window' : 'reference_period',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
-              map_data === 'future' ? 'time_window' : 'reference_period',
-              map_data === 'future' ? 'time_window' : 'reference_period',
+              map_data === 'forecast' ? 'time_window' : 'reference_period',
+              map_data === 'forecast' ? 'time_window' : 'reference_period',
             ),
             disableable: true,
             disabled: x => x.aggregation_period !== 'thirty_year',
@@ -239,11 +239,11 @@ export function MapMenuBar(props: MapMenuBar) {
         rows: [
           {
             multicol: [5, 11, 16],
-            key: map_data === 'future' ? 'year_period' : 'year_period',
+            key: map_data === 'forecast' ? 'year_period' : 'year_period',
             groupName: '',
             ...mapParameters(
-              map_data === 'future' ? 'year_period' : 'year_period',
-              map_data === 'future' ? 'year_period' : 'year_period',
+              map_data === 'forecast' ? 'year_period' : 'year_period',
+              map_data === 'forecast' ? 'year_period' : 'year_period',
             ),
             disableable: true,
             disabled: x => false,
@@ -446,7 +446,7 @@ export function MapMenuBar(props: MapMenuBar) {
   }, [foundLayers]);
 
   const labelFor = (itm: string) => {
-    api.getConfigurationParams().then(x => console.log(x));
+    api.getConfigurationParams().then(x => { });
     const confs = localStorage.getItem('configs');
     let configs = [];
     if (confs) {

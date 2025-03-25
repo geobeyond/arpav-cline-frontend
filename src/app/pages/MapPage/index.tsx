@@ -80,7 +80,7 @@ export function MapPage(props: MapPageProps) {
   const map_mode = props.map_mode;
   const map_data = props.map_data;
   console.log(map_mode, map_data);
-  if (map_data === 'future') {
+  if (map_data === 'forecast') {
     defaultMap['archive'] = 'forecast';
   } else {
     defaultMap['archive'] = 'historical';
@@ -126,6 +126,8 @@ export function MapPage(props: MapPageProps) {
   const currentInfo = useRef(false);
   const currentHide = useRef<any>();
 
+  api.updateCache();
+
   const handleMapReady = (map: LMap) => {
     mapRef.current = map;
     const mapScreenPlugin = new SimpleMapScreenshoter(PLUGIN_OPTIONS);
@@ -143,7 +145,7 @@ export function MapPage(props: MapPageProps) {
     ncmap = { ...defaultMapHistorical, ...params };
   }
   const [currentMap, setCurrentMap] = useState(
-    map_data === 'future'
+    map_data === 'forecast'
       ? { ...defaultMap, ...params }
       : {
         ...defaultMapHistorical,
@@ -155,17 +157,21 @@ export function MapPage(props: MapPageProps) {
 
   const labelFor = (itm: string) => {
     const configs = localStorage.getItem('configs');
-    const rcps = configs ? JSON.parse(configs) : {};
-    const labelsf = rcps.map((config: any) =>
-      config.allowed_values.map(x => [
-        x.name,
-        i18n.language === 'it'
-          ? x.display_name_italian
-          : x.display_name_english,
-      ]),
-    );
-    const labels = Object.fromEntries(labelsf.flat());
-    return labels[itm];
+    const rcps = configs ? JSON.parse(configs) : [];
+    try {
+      const labelsf = rcps.map((config: any) =>
+        config.allowed_values.map(x => [
+          x.name,
+          i18n.language === 'it'
+            ? x.display_name_italian
+            : x.display_name_english,
+        ]),
+      );
+      const labels = Object.fromEntries(labelsf.flat());
+      return labels[itm];
+    } catch (ex) {
+      return '';
+    }
   };
 
   const findValueName = (key: string, listKey: string) => {
@@ -319,7 +325,7 @@ export function MapPage(props: MapPageProps) {
     console.log('currentMap', currentMap);
 
     try {
-      if (map_data === 'future') {
+      if (map_data === 'forecast') {
         api
           .getLayer(
             currentMap.climatological_variable,

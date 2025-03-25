@@ -39,29 +39,15 @@ import { full_find_keys, useMapSlice } from '../../pages/MapPage/slice';
 import { RequestApi } from '../../Services';
 import { formatYear } from '../../../utils/dates';
 import { lightBlue } from '@mui/material/colors';
+import { TSDataContainerProps } from './TSDataContainer';
 // import { saveAs } from 'file-saver';
-
-export interface TSDataContainerProps {
-  latLng: LatLng | any;
-  place?: string | null;
-  setIds: Function;
-  setTimeRange: Function;
-  setToDownload: Function;
-  setFilters: Function;
-  currentLayer: any;
-  currentMap: any;
-  setSeriesFilter: Function;
-  setFilledSeries: Function;
-  mode: string;
-  map_data: string;
-}
 
 //TODO
 // findValueName duplicated from src/app/components/DownloadDataDialog/mapDlData.tsx: put in utils ?
 //    findValueName is similar to the one used in MapBar ?
 // Use i18 for fields;
 
-const TSDataContainer = (props: TSDataContainerProps) => {
+const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const {
     latLng,
     setIds,
@@ -1267,4 +1253,4 @@ const TSDataContainer = (props: TSDataContainerProps) => {
   );
 };
 
-export default TSDataContainer;
+export default TSDataContainerHistoric;
