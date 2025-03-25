@@ -208,7 +208,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
                 vv.push(found);
               } else {
                 vv.push({
-                  value: null,
+                  value:
+                    k.indexOf('decade') >= 0 ? vv[vv.length - 1]?.value : null,
                   datetime: y.toString(),
                 });
               }
@@ -253,40 +254,17 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [processingMethod, setProcessingMethod] = useState<string>(
     'moving_average_11_years',
   );
-  const [baseClimatologicalModel, setBaseClimatologicalModel] =
-    useState<string>('model_ensemble');
-  const [comparisonClimatologicalModel, setComparisonClimatologicalModel] =
-    useState<string>(currentMap.climatological_model);
-  const [sensorProcessingMehtod, setSensorProcessingMethod] =
-    useState<string>('no_processing');
+
   const [uncert, setUncert] = useState<boolean>(true);
 
   const [pseriesObj, setPseriesObj] = useState<any>([]);
 
   useEffect(() => {
-    setFilters(
-      baseClimatologicalModel,
-      comparisonClimatologicalModel,
-      processingMethod,
-      sensorProcessingMehtod,
-      uncert,
-    );
-  }, [
-    baseClimatologicalModel,
-    comparisonClimatologicalModel,
-    processingMethod,
-    sensorProcessingMehtod,
-    uncert,
-  ]);
+    setFilters(processingMethod, uncert);
+  }, [processingMethod, uncert]);
 
   useEffect(() => {
-    setFilters(
-      baseClimatologicalModel,
-      comparisonClimatologicalModel,
-      processingMethod,
-      sensorProcessingMehtod,
-      uncert,
-    );
+    setFilters(processingMethod, uncert);
 
     setTimeRange({
       ...{
@@ -431,12 +409,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       let pseriesObj = [...timeseries];
       setPseriesObj(pseriesObj);
     }
-  }, [
-    timeseries,
-    processingMethod,
-    comparisonClimatologicalModel,
-    sensorProcessingMehtod,
-  ]);
+  }, [timeseries, processingMethod]);
 
   let seriesFilter = pseriesObj.reduce((prev, item) => {
     const onV = getName(item);
@@ -630,13 +603,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             let uv = !uncert;
             setUncert(uv);
 
-            setFilters(
-              baseClimatologicalModel,
-              comparisonClimatologicalModel,
-              processingMethod,
-              sensorProcessingMehtod,
-              uv,
-            );
+            setFilters(processingMethod, uv);
           },
           ontouchstart: () => {
             console.log('touch start');
