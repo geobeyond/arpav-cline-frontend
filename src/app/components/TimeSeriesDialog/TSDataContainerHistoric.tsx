@@ -109,11 +109,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [timeseries, setTimeseries] = useState<any>([]);
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
   const colors = {
-    no_processing: 'rgb(8, 145, 49)',
-    less_smoothing: 'rgb(8, 145, 49)',
-    moving_average_11_years: 'rgb(8, 145, 49)',
-    mann_kendall_trend: 'rgb(9, 8, 6)',
-    decade_aggregation: 'rgb(231,60,60)',
+    no_processing: 'rgb(0, 0, 0)',
+    less_smoothing: 'rgb(0, 0, 0)',
+    moving_average_11_years: 'rgb(0, 0, 0)',
+    mann_kendall_trend: 'rgb(178, 30, 30)',
+    decade_aggregation: 'rgb(60, 131, 231)',
   };
 
   const [localStart, setLocalStart] = useState<any>(0);
@@ -359,12 +359,14 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
 
   const getGraphType = dataset => {
-    return dataset.info.processing_method === 'no_processing' ? 'bar' : 'line';
+    return 'line';
   };
   const getStepType = dataset => {
     return dataset.info.processing_method === 'decade_aggregation'
       ? 'end'
-      : false;
+      : dataset.info.processing_method === 'no_processing'
+        ? 'middle'
+        : false;
   };
   const getZLevel = dataset => {
     return dataset.info.series_elaboration &&
@@ -592,23 +594,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       itemSize: 30,
       left: isMobile ? 'center' : 'right',
       feature: {
-        myTool1: {
-          show: true,
-          title: t('app.map.timeSeriesDialog.toggleUncertainty'),
-          icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
-          onclick: () => {
-            let uv = !uncert;
-            setUncert(uv);
-
-            setFilters(processingMethod, uv);
-          },
-          ontouchstart: () => {
-            console.log('touch start');
-          },
-          ontouchend: () => {
-            console.log('touch end');
-          },
-        },
         saveAsImage: {
           name: `Serie temporale ${joinNames([
             currentMap.climatological_variable,

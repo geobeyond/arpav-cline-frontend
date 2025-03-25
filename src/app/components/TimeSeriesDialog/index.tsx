@@ -133,7 +133,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         </Grid>
         <Grid xs={1} />
         <Grid xs={22}>
-          {latLng && mode === 'forecast' && (
+          {latLng && map_data === 'forecast' && (
             <TSDataContainer
               latLng={latLng}
               setIds={setIds}
@@ -149,7 +149,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
               setFilledSeries={setFilledSeries}
             />
           )}
-          {latLng && mode != 'forecast' && (
+          {latLng && map_data !== 'forecast' && (
             <TSDataContainerHistoric
               latLng={latLng}
               setIds={setIds}
