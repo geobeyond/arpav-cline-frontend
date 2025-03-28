@@ -493,8 +493,8 @@ export function MapPage(props: MapPageProps) {
       // console.log('no year');
     }
     const lcaption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
+      ? currentMap.climatological_variable
+      : labelFor(currentMap.climatological_variable)
       }
   - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -589,8 +589,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? ' - ' + labelFor(currentMap.time_window)
-        : ''
+      ? ' - ' + labelFor(currentMap.time_window)
+      : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''
@@ -718,7 +718,7 @@ export function MapPage(props: MapPageProps) {
           <Typography style={{ paddingRight: '5px' }}>
             © ARPAV - Arpa FVG
           </Typography>
-
+          <span style={{ flexBasis: '100%', height: '0' }}></span>
           <Typography
             style={{
               fontSize: 'smaller',

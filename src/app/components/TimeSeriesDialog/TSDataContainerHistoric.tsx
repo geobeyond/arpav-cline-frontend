@@ -251,9 +251,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const { t, i18n } = useTranslation();
   console.debug(i18n);
 
-  const [processingMethod, setProcessingMethod] = useState<string>(
-    'moving_average_11_years',
-  );
+  const [processingMethod, setProcessingMethod] =
+    useState<string>('moving_average');
 
   const [uncert, setUncert] = useState<boolean>(true);
 
@@ -351,7 +350,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
 
   const getSelected = dataset => {
-    return dataset.info.processing_method === processingMethod ? true : false;
+    return dataset.info.processing_method.indexOf(processingMethod) >= 0
+      ? true
+      : false;
   };
 
   const getChartData = (item, series) => {
@@ -437,7 +438,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   let opseriesObj = [
     pseriesObj.filter(
       x =>
-        x.info.processing_method === processingMethod &&
+        x.info.processing_method.indexOf(processingMethod) >= 0 &&
         x.info.dataset_type === 'main',
     )[0],
     pseriesObj.filter(

@@ -35,33 +35,39 @@ const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export class RequestApi extends Http {
   downloadScreenshot(href: string, filename: string) {
-    return this.instance
-      .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
-        params: {
-          url: href + '&op=screenshot',
-        },
-        responseType: 'blob',
-      })
-      .then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        console.log(url);
-        // create file link in browser's memory
-        const href = URL.createObjectURL(response.data);
+    href = href.replaceAll(
+      'http://localhost:3000',
+      'https://arpav.geobeyond.dev',
+    );
+    return (
+      this.instance
+        .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
+          params: {
+            url: href + '&op=screenshot',
+          },
+          responseType: 'blob',
+        })
+        //@ts-ignore
+        .then((response: Blob) => {
+          const url = window.URL.createObjectURL(response);
+          console.log(url);
+          // create file link in browser's memory
 
-        // create "a" HTML element with href to file & click
-        const link = document.createElement('a');
-        link.href = href;
-        link.setAttribute('download', filename); //or any other extension
-        document.body.appendChild(link);
-        link.click();
+          // create "a" HTML element with href to file & click
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', filename); //or any other extension
+          document.body.appendChild(link);
+          link.click();
 
-        // clean up "a" element & remove ObjectURL
-        document.body.removeChild(link);
-        URL.revokeObjectURL(href);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+          // clean up "a" element & remove ObjectURL
+          document.body.removeChild(link);
+          URL.revokeObjectURL(href);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    );
   }
   getCapabilities(wms) {
     const fullUrl =
@@ -170,7 +176,25 @@ export class RequestApi extends Http {
   public getCities = () => {
     if (localStorage.getItem('municipality-centroids')) {
       // @ts-ignore
-      return JSON.parse(localStorage.getItem('municipality-centroids'));
+      let cities = JSON.parse(localStorage.getItem('municipality-centroids'));
+      let lastCities = [];
+      if (localStorage.getItem('lastCities')) {
+        // @ts-ignore
+        lastCities = JSON.parse(localStorage.getItem('lastCities'));
+      }
+      console.log(cities, lastCities);
+      let fcities = cities.filter(city => {
+        let found = false;
+        for (let c of lastCities) {
+          if (c) {
+            console.log(c);
+            //@ts-ignore
+            if (c.label === city.label) found = true;
+          }
+        }
+        return !found;
+      });
+      return [...lastCities, ...fcities];
     } else {
       this.instance
         .get<any>(BACKEND_API_URL + '/municipalities/municipality-centroids')
@@ -634,12 +658,17 @@ export class RequestApi extends Http {
     if (mode !== 'forecast') {
     }
 
-    return this.instance.get<any>(url).then((x: any) => {
-      x.series.map(a => {
-        console.log('timeseries: ', a.name);
+    return this.instance
+      .get<any>(url)
+      .then((x: any) => {
+        x.series.map(a => {
+          console.log('timeseries: ', a.name);
+        });
+        return x;
+      })
+      .catch(error => {
+        return { series: [] };
       });
-      return x;
-    });
   };
 
   public getTimeSeriesDataPoint = (

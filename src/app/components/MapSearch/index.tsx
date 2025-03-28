@@ -97,6 +97,19 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   const currCity = useRef<string | null>();
 
   const onChange = (event, value) => {
+    let lastCitiess = localStorage.getItem('lastCities');
+    if (lastCitiess) {
+      let lastCities = JSON.parse(lastCitiess);
+      if (lastCities) {
+        lastCities.unshift(value);
+      } else {
+        lastCities = [value];
+      }
+      lastCities = lastCities.slice(0, 3);
+      localStorage.setItem('lastCities', JSON.stringify(lastCities));
+    } else {
+      localStorage.setItem('lastCities', JSON.stringify([value]));
+    }
     console.log('Ricerca per comune', event, value);
     typeof setPoint === 'function' && setPoint(value);
     if (!value) {
@@ -254,23 +267,29 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           InputProps={{
             endAdornment: (
               <>
-                <IconButton edge="end" onClick={searchPoint}>
-                  <SearchIcon fontSize={'small'} color={'secondary'} />
-                </IconButton>
-                <IconButton
-                  edge="end"
-                  onClick={() =>
-                    context.map.flyTo(
-                      [value.latlng.lat, value.latlng.lng],
-                      context.map.getZoom(),
-                    )
-                  }
-                >
-                  <ZoomInMapIcon fontSize={'small'} color={'secondary'} />
-                </IconButton>
-                <IconButton edge="end" onClick={resetMap}>
-                  <RefreshIcon fontSize={'small'} color={'secondary'} />
-                </IconButton>
+                <Tooltip title="cerca">
+                  <IconButton edge="end" onClick={searchPoint}>
+                    <SearchIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="centra">
+                  <IconButton
+                    edge="end"
+                    onClick={() =>
+                      context.map.flyTo(
+                        [value.latlng.lat, value.latlng.lng],
+                        context.map.getZoom(),
+                      )
+                    }
+                  >
+                    <ZoomInMapIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="vista iniziale">
+                  <IconButton edge="end" onClick={resetMap}>
+                    <RefreshIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
+                </Tooltip>
               </>
             ),
           }}

@@ -95,7 +95,7 @@
   "wrong_config.title": "Configurazione non valida",
   "wrong_index.message": "L'indicatore scelto non ha configurazioni valide.",
   "wrong_index.title": "Indicatore non valido",
-  "scenarios.rcp26": "RCP2.6",
-  "scenarios.rcp45": "RCP4.5",
-  "scenarios.rcp85": "RCP8.5"
+  "scenarios.rcp26": "Scenario forte mitigazione",
+  "scenarios.rcp45": "Scenario intermedio",
+  "scenarios.rcp85": "Scenario nessuna mitigazione"
 }
