@@ -158,29 +158,29 @@ const Map = (props: MapProps) => {
     setShowUncertainty(true);
     console.log('getting capabilities for ', currentLayer);
 
-    if (layerConf.wms_secondary_layer_name) {
-      if (layerConf.wms_secondary_layer_name.indexOf('{')) {
-        for (let j of Object.keys(currentMap)) {
-          layerConf.wms_secondary_layer_name =
-            layerConf.wms_secondary_layer_name.replaceAll(
-              '{' + j + '}',
-              currentMap[j],
-            );
-        }
-      }
-    }
-
-    if (layerConf.wms_main_layer_name) {
-      if (layerConf.wms_main_layer_name.indexOf('{')) {
-        for (let j of Object.keys(currentMap)) {
-          layerConf.wms_main_layer_name =
-            layerConf.wms_main_layer_name.replaceAll(
-              '{' + j + '}',
-              currentMap[j],
-            );
-        }
-      }
-    }
+    //if (layerConf.wms_secondary_layer_name) {
+    //  if (layerConf.wms_secondary_layer_name.indexOf('{')) {
+    //    for (let j of Object.keys(currentMap)) {
+    //      layerConf.wms_secondary_layer_name =
+    //        layerConf.wms_secondary_layer_name.replaceAll(
+    //          '{' + j + '}',
+    //          currentMap[j],
+    //        );
+    //    }
+    //  }
+    //}
+    //
+    //if (layerConf.wms_main_layer_name) {
+    //  if (layerConf.wms_main_layer_name.indexOf('{')) {
+    //    for (let j of Object.keys(currentMap)) {
+    //      layerConf.wms_main_layer_name =
+    //        layerConf.wms_main_layer_name.replaceAll(
+    //          '{' + j + '}',
+    //          currentMap[j],
+    //        );
+    //    }
+    //  }
+    //}
 
     api.getCapabilities(currentLayer).then((x: string) => {
       let xml = x;
@@ -386,7 +386,7 @@ const Map = (props: MapProps) => {
         layer={layerConf.wms_base_url}
         opacity={opacity}
         show={
-          showUncertainty
+          showUncertainty || data !== 'forecast'
             ? layerConf.wms_main_layer_name
             : layerConf.wms_secondary_layer_name
         }

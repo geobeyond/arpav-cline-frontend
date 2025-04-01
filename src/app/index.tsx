@@ -43,6 +43,7 @@ withTolgee(i18n, tolgee)
   .init({
     //lng: 'en', // or use i18next language detector
     supportedLngs: ['it', 'en'],
+    debug: false,
   });
 
 export function App() {

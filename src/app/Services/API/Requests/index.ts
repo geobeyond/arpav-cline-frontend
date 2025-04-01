@@ -182,12 +182,10 @@ export class RequestApi extends Http {
         // @ts-ignore
         lastCities = JSON.parse(localStorage.getItem('lastCities'));
       }
-      console.log(cities, lastCities);
       let fcities = cities.filter(city => {
         let found = false;
         for (let c of lastCities) {
           if (c) {
-            console.log(c);
             //@ts-ignore
             if (c.label === city.label) found = true;
           }
@@ -468,11 +466,14 @@ export class RequestApi extends Http {
       } else {
         // Fetch only the main data configuration
         return this.instance.get<any>(conf.url).then(response => {
-          //@ts-ignore
-          response.wms_main_layer_name = conf.wms_main_layer_name;
-          //@ts-ignore
-          response.wms_secondary_layer_name = conf.wms_secondary_layer_name;
-
+          if (conf.wms_main_layer_name) {
+            //@ts-ignore
+            response.wms_main_layer_name = conf.wms_main_layer_name;
+          }
+          if (conf.wms_secondary_layer_name) {
+            //@ts-ignore
+            response.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+          }
           localStorage.setItem(conf.url, JSON.stringify(response));
           console.log('getLayerConf: Fetched only main data');
           console.log(response);
