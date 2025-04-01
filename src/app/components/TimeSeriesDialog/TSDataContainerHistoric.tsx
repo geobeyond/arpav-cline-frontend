@@ -92,7 +92,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       forecast_parameters[listKey]?.find(item => item.id === key)?.name || ''
     );
   };
-  const baseValue: number = 1990;
+  const baseValue: number = 1992;
 
   const {
     selected_map,
@@ -125,8 +125,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [realDataValues, setRealDataValues] = useState<any>({});
 
 
-  const [mkStartYear, setMKStartYear] = useState<string | number>('..');
-  const [mkEndYear, setMKEndYear] = useState<string | number>('..');
+  const [mkStartYear, setMKStartYear] = useState<string | number>('1992');
+  const [mkEndYear, setMKEndYear] = useState<string | number>('2023');
 
 
   useEffect(() => {
