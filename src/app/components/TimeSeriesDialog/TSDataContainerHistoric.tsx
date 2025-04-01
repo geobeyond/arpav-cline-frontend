@@ -124,6 +124,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [localEndYear, setLocalEndYear] = useState<any>(2099);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
+
+  const [mkStartYear, setMKStartYear] = useState<string | number>('..');
+  const [mkEndYear, setMKEndYear] = useState<string | number>('..');
+
+
   useEffect(() => {
     const do_effect = async () => {
       setTimeseries([]);
@@ -177,7 +182,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       console.log(ids);
       setIds(ids);
       api
-        .getTimeseriesV2(ids, latLng.lat, latLng.lng, true, map_data)
+        .getTimeseriesV2(ids, latLng.lat, latLng.lng, true, map_data, mkStartYear.toString(), mkEndYear.toString())
         .then(res => {
           //@ts-ignore
           setTimeseries(res.series);
@@ -248,6 +253,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     setToDownload,
     currentLayer.ensemble_data,
     setFilledSeries,
+    mkStartYear,
+    mkEndYear,
   ]);
 
   const { t, i18n } = useTranslation();
@@ -776,10 +783,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     }
   };
 
-  const [mkStartYear, setMKStartYear] = useState<any>(1992);
-  const [mkEndYear, setMKEndYear] = useState<any>(2023);
+  const recalculate = () => {
 
-  const recalculate = () => { };
+  };
 
   return (
     <Box sx={TSDataContainerStyle}>

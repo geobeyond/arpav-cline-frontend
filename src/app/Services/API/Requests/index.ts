@@ -554,6 +554,8 @@ export class RequestApi extends Http {
     lng: number,
     withStation: boolean = true,
     mode: string = 'forecast',
+    mkfrom: string = '..',
+    mkto: string = '..',
   ) => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
     if (mode === 'forecast') {
@@ -576,7 +578,18 @@ export class RequestApi extends Http {
       }
     } else {
       ret.push(
-        this.getTimeserieV2(series[0], lat, lng, false, true, true, true, mode),
+        this.getTimeserieV2(
+          series[0],
+          lat,
+          lng,
+          false,
+          true,
+          true,
+          true,
+          mode,
+          mkfrom,
+          mkto,
+        ),
       );
     }
     return Promise.all(ret).then(x => {
@@ -678,8 +691,11 @@ export class RequestApi extends Http {
     lat: number,
     lng: number,
     year: number,
+    mode: string = 'forecast',
   ) => {
-    let url = `${BACKEND_API_URL}/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    const ep =
+      mode === 'forecast' ? 'forecast-time-series' : 'historical-time-series';
+    let url = `${BACKEND_API_URL}/coverages/${ep}/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(4)})&datetime=${year + 1}%2F${
       year - 1

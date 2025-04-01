@@ -518,7 +518,7 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid xs={4} sx={FirstRowStyle}>
+              <Grid xs={map_data === 'past' ? 8 : 4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
                     {t('app.map.menuBar.season')}
@@ -526,11 +526,6 @@ export function MapMenuBar(props: MapMenuBar) {
                 </Box>
               </Grid>
 
-              {map_data !== 'past' ? (
-                <></>
-              ) : (
-                <Grid xs={4} sx={FirstRowStyle}></Grid>
-              )}
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
