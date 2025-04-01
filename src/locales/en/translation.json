@@ -80,6 +80,7 @@
   "app.map.timeSeriesDialog.sensorSmoothing": "Station filter",
   "app.map.timeSeriesDialog.title": "Temporal series",
   "app.map.timeSeriesDialog.to": "al",
+  "app.map.timeSeriesDialog.mannkendall": "Mann Kendall",
   "app.map.timeSeriesDialog.toggleUncertainty": "Activate/deactivate uncertainty",
   "app.map.timeSeriesDialog.xUnit": "Year",
   "app.map.timeSeries.unavailable": "The temporal series for thirty years is not available",

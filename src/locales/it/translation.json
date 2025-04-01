@@ -80,6 +80,7 @@
   "app.map.timeSeriesDialog.sensorSmoothing": "Filtro Stazione",
   "app.map.timeSeriesDialog.title": "Serie temporale",
   "app.map.timeSeriesDialog.to": "al",
+  "app.map.timeSeriesDialog.mannkendall": "Mann Kendall",
   "app.map.timeSeriesDialog.toggleUncertainty": "Attiva/disattiva incertezza",
   "app.map.timeSeriesDialog.xUnit": "Anno",
   "app.map.timeSeries.unavailable": "Non è disponibile la serie temporale per la media trentennale",

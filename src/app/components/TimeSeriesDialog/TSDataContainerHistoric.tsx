@@ -12,10 +12,12 @@ import {
   Switch,
   FormControlLabel,
   RadioGroup,
+  Button,
   FormLabel,
   Radio,
   useMediaQuery,
   TextField,
+  InputAdornment,
 } from '@mui/material';
 import Slider from '@mui/material/Slider';
 
@@ -111,7 +113,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const colors = {
     no_processing: 'rgb(0, 0, 0)',
     less_smoothing: 'rgb(0, 0, 0)',
-    moving_average_11_years: 'rgb(0, 0, 0)',
+    moving_average_5_years: 'rgb(0, 0, 0)',
     mann_kendall_trend: 'rgb(178, 30, 30)',
     decade_aggregation: 'rgb(60, 131, 231)',
   };
@@ -392,7 +394,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
 
   /*{
-    "processing_method": "MOVING_AVERAGE_11_YEARS",
+    "processing_method": "moving_average_5_years",
     "coverage_identifier": "tas_annual_absolute_model_ensemble_upper_uncertainty-annual-model_ensemble-tas-absolute-rcp26-upper_uncertainty-year",
     "coverage_configuration": "tas_annual_absolute_model_ensemble_upper_uncertainty",
     "aggregation_period": "annual",
@@ -404,7 +406,15 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     "year_period": "year"
 }*/
   const getName = item => {
-    return item.name;
+    try {
+      return (
+        item.translations.parameter_values.series_name[i18n.language] +
+        ' - ' +
+        item.translations.parameter_values.processing_method[i18n.language]
+      );
+    } catch (ex) {
+      return item.name;
+    }
   };
 
   useEffect(() => {
@@ -498,7 +508,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   `
     : '';
 
-  const subText = timeseries
+  const isinter = timeseries.filter(x => x.info.station_name).length > 0
+
+  let subText = timeseries
     ? timeseries?.length === 0
       ? ''
       : `
@@ -508,12 +520,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
       }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
-      )} ${roundTo4(latLng.lng)}     © ARPAV - Arpa FVG
-  Si tratta di proiezioni climatiche e non di previsioni a lungo termine. Il valore annuale ha validità in un contesto di trend trentennale.`
+      )} ${roundTo4(latLng.lng)}; ${isinter ? 'dato da stazione' : 'dato interpolato'} © ARPAV - Arpa FVG`
     : '';
 
-  const photoCameraIconPath =
-    'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
+
+  const photoCameraIconPath = "path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z";
 
   const getBoundsLabel = name => {
     if (name.indexOf('upper') >= 0)
@@ -742,11 +753,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
 
   function valuetext(value: number) {
     if (value === 0) return t('app.map.timeSeriesDialog.noSmoothing');
-    else if (value === 1) return t('app.map.timeSeriesDialog.movingAverage');
-    else if (value === 2) return t('app.map.timeSeriesDialog.loess');
-  }
-  function valuetextSensor(value: number) {
-    if (value === 0) return t('app.map.timeSeriesDialog.noSmoothing');
     else if (value === 1)
       return t('app.map.timeSeriesDialog.movingAverageSensor');
   }
@@ -766,11 +772,14 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     if (v === 0) {
       setProcessingMethod('no_processing');
     } else if (v === 1) {
-      setProcessingMethod('moving_average_11_years');
-    } else if (v === 2) {
-      setProcessingMethod('loess_smoothing');
+      setProcessingMethod('moving_average_5_years');
     }
   };
+
+  const [mkStartYear, setMKStartYear] = useState<any>(1992);
+  const [mkEndYear, setMKEndYear] = useState<any>(2023);
+
+  const recalculate = () => { };
 
   return (
     <Box sx={TSDataContainerStyle}>
@@ -778,9 +787,27 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         <Box sx={FieldContainerStyle}>
           <FormControl sx={{ width: '100%' }} size="small">
             <InputLabel id="SelectedModel" shrink={true}>
-              {t('app.map.timeSeriesDialog.selectedModel')}
+              {t('app.map.timeSeriesDialog.mannkendall')}
             </InputLabel>
-            <TextField disabled value="Model Ensemble"></TextField>
+            <TextField
+              defaultValue={mkStartYear}
+              onChange={e => setMKStartYear(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">From: </InputAdornment>
+                ),
+              }}
+            ></TextField>
+            <TextField
+              defaultValue={mkEndYear}
+              onChange={e => setMKEndYear(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">To: </InputAdornment>
+                ),
+              }}
+            ></TextField>
+            <Button variant="contained" onClick={recalculate}>Calculate</Button>
           </FormControl>
         </Box>
 
@@ -805,7 +832,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
                 top: '-17px',
               }}
             >
-              {t('app.map.timeSeriesDialog.modelSmoothing')}
+              {t('app.map.timeSeriesDialog.sensorSmoothing')}
             </InputLabel>
             <Slider
               disabled={mode === 'simple'}
@@ -816,7 +843,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
               step={1}
               marks
               min={0}
-              max={2}
+              max={1}
               //@ts-ignore
               onChange={e => setModelSmoothing(e.target?.value)}
             />

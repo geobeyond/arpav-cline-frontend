@@ -708,28 +708,38 @@ export function MapPage(props: MapPageProps) {
         <div
           style={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'column',
             color: 'white',
             backgroundColor: 'rgb(22, 77, 54)',
           }}
         >
-          <Typography style={{ paddingLeft: '5px' }}>{caption}</Typography>
-          <span style={{ flex: '1 1 1px' }}></span>
-          <Typography style={{ paddingRight: '5px' }}>
-            © ARPAV - Arpa FVG
-          </Typography>
-          <span style={{ flexBasis: '100%', height: '0' }}></span>
-          <Typography
-            style={{
-              fontSize: 'smaller',
-              paddingLeft: '5px',
-              display: 'block',
-            }}
-          >
-            Si tratta di proiezioni climatiche e non di previsioni a lungo
-            termine. Il valore annuale ha validità in un contesto di trendss
-            trentennale.
-          </Typography>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row'
+          }}>
+            <Typography style={{ paddingLeft: '5px' }}>{caption}</Typography>
+            <span style={{ flex: '1 1 1px' }}></span>
+            <Typography style={{ paddingRight: '5px' }}>
+              © ARPAV - Arpa FVG
+            </Typography>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row'
+          }}>
+            <Typography
+              style={{
+                fontSize: 'smaller',
+                paddingLeft: '5px',
+                paddingRight: '5px',
+                display: 'block',
+              }}
+            >
+              Si tratta di proiezioni climatiche e non di previsioni a lungo
+              termine. Il valore annuale ha validità in un contesto di trendss
+              trentennale.
+            </Typography>
+          </div>
         </div>
       )}
 

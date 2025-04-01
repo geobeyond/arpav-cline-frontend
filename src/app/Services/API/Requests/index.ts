@@ -623,6 +623,8 @@ export class RequestApi extends Http {
     smoothing: boolean = true,
     uncertainty: boolean = true,
     mode: string = 'forecast',
+    mkfrom: string = '..',
+    mkto: string = '..',
   ) => {
     serie.indexOf('forecast') >= 0 ? (mode = 'forecast') : (mode = 'past');
     const ep =
@@ -637,8 +639,7 @@ export class RequestApi extends Http {
         url +=
           '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
       } else {
-        url +=
-          '&mann_kendall_datetime=..%2F..&include_moving_average_series=true&include_decade_aggregation_series=true&include_loess_series=true';
+        url += `&mann_kendall_datetime=${mkfrom}%2F${mkto}&include_moving_average_series=true&include_decade_aggregation_series=true&include_loess_series=true`;
       }
     }
     if (uncertainty) {
