@@ -92,7 +92,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       forecast_parameters[listKey]?.find(item => item.id === key)?.name || ''
     );
   };
-  const baseValue: number = 1992;
+  const baseValue: number = 1990;
+  const yeardelta: number = 2;
 
   const {
     selected_map,

@@ -806,29 +806,49 @@ export class RequestApi extends Http {
     }
 
     const p = Promise.all(reqs).then(x => {
-      let configs = x[0];
-      let combs = x[1].combinations;
+      // reconstruct configuration-parameters
+      const configs = x[0];
+      const combs = x[1].combinations;
+      const trans = x[1].translations;
 
       let possibleValues = this.extractPossibleValues(combs);
       console.log(possibleValues);
 
       let fconfigs: any[] = [];
 
-      for (let config of configs) {
-        if (
-          Object.keys(possibleValues).indexOf(config.name) >= 0 &&
-          possibleValues[config.name].length > 0
-        ) {
-          config.allowed_values = config.allowed_values.filter(x => {
-            return possibleValues[config.name].indexOf(x.name) >= 0;
+      const pv = { ...possibleValues };
+
+      for (let k in pv) {
+        let titm = {
+          name: k,
+        };
+        let avs: any[] = [];
+        for (let x of pv[k]) {
+          let tk = {};
+          if (
+            [
+              'climatological_variable',
+              'measure',
+              'aggregation_period',
+            ].indexOf(k) >= 0
+          )
+            tk = trans[k];
+          else tk = trans['other_parameters'][k];
+          avs.push({
+            name: x,
+            display_name_english: tk[x]['name']['en'],
+            display_name_italian: tk[x]['name']['en'],
+            description_english: tk[x]['description']['en'],
+            description_italian: tk[x]['description']['en'],
           });
-          fconfigs.push(config);
         }
+        titm['allowed_values'] = [...avs];
+        fconfigs.push(titm);
       }
 
       console.log(fconfigs);
 
-      localStorage.setItem('configs', JSON.stringify(configs));
+      localStorage.setItem('configs', JSON.stringify(fconfigs));
       localStorage.setItem('combs::' + mode, JSON.stringify(combs));
       return {
         items: fconfigs,
