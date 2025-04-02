@@ -29,6 +29,7 @@ import {
   IconBoxStyle,
   ExitContainerStyle,
   ExitIconStyle,
+  MulticolGroupMenuStyle,
 } from './styles';
 import { SxProps } from '@mui/system';
 
@@ -66,6 +67,7 @@ export interface RowMenuProps {
   needsSelection: Boolean;
   key: string;
   multicol?: number[];
+  multicol_size?: number[];
   groupName: string;
   items: IItem[];
   disableable?: boolean;
@@ -240,7 +242,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                     </>
                   )}
                   <RadioGroup
-                    sx={GroupMenuStyle}
+                    sx={row.multicol ? MulticolGroupMenuStyle : GroupMenuStyle}
                     aria-labelledby={`${row.key}-radio-group-label`}
                     onChange={event => {
                       handleChangeRadioGroup(event, row.key);
@@ -253,7 +255,8 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           disableGutters
                           sx={{
                             marginBottom: row.multicol?.includes(index + 1)
-                              ? '0'
+                              //@ts-ignore
+                              ? (row.multicol_size[row.multicol?.indexOf(index + 1)]).toString() + "px"
                               : '0',
                           }}
                           disabled={
@@ -267,8 +270,8 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                         >
                           <FormControlLabel
                             className={`MultiRadioSelectMenuItem ${item.selected
-                                ? 'MultiRadioSelectMenuItem-selected'
-                                : ''
+                              ? 'MultiRadioSelectMenuItem-selected'
+                              : ''
                               }`}
                             //See Sorting fields note.
                             value={item.name}

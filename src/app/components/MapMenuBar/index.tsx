@@ -238,13 +238,11 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            multicol: [5, 11, 16],
-            key: map_data === 'forecast' ? 'year_period' : 'year_period',
+            multicol: [5, 11, 17],
+            multicol_size: [160, 120, 120],
+            key: 'year_period',
             groupName: '',
-            ...mapParameters(
-              map_data === 'forecast' ? 'year_period' : 'year_period',
-              map_data === 'forecast' ? 'year_period' : 'year_period',
-            ),
+            ...mapParameters('year_period', 'year_period'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => x?.year_period || x?.year_period,
