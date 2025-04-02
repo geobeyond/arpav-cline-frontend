@@ -42,10 +42,11 @@ export interface DownloadDataDialogProps {
   configuration: any;
   menus: any;
   combinations: any;
+  mode: string;
 }
 
 const DownloadDataDialog = (props: DownloadDataDialogProps) => {
-  const { open, setOpen, configuration, menus, combinations } = props;
+  const { open, setOpen, configuration, menus, combinations, mode } = props;
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -141,6 +142,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
                   configuration={activeConfiguration}
                   combinations={combinations}
                   setActive={setActiveConfiguration}
+                  mode={mode}
                 />
               </Grid>
               <Grid xs={26}>

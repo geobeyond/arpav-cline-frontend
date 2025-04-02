@@ -62,6 +62,7 @@ export interface MapDlDataProps {
   menus: any;
   setActive: Function;
   combinations: any;
+  mode?: string;
 }
 
 const MapDlData = (props: MapDlDataProps) => {
@@ -72,6 +73,7 @@ const MapDlData = (props: MapDlDataProps) => {
   const configuration = props.configuration;
   const featureGroupRef: any = useRef();
   const { t, i18n } = useTranslation();
+  const mode = props.mode ?? 'forecast';
 
   const api = RequestApi.getInstance();
 
@@ -164,7 +166,7 @@ const MapDlData = (props: MapDlDataProps) => {
 
   const getOptions = field => {
     let x = attributes.filter(x => x.name === field);
-    if (x) {
+    if (x && x.length > 0) {
       return x[0].allowed_values.map(xx => {
         return {
           value: xx.name,
@@ -300,61 +302,64 @@ const MapDlData = (props: MapDlDataProps) => {
             </FormControl>
           </Box>
         </Box>
-        <Box sx={RowStyle}>
-          <Box>
-            <Box sx={FieldContainerStyle}>
-              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-                {t('app.map.downloader.model')}
-              </Typography>
-              <FormControl>
-                <Select
-                  sx={FullWidthStyle}
-                  value={
-                    typeof activeConfiguration.current.climatological_model ===
-                      'object'
-                      ? activeConfiguration.current.climatological_model
-                      : [activeConfiguration.current.climatological_model]
-                  }
-                  multiple
-                  name="climatological_model"
-                  onChange={e =>
-                    handleChange('climatological_model', e.target.value)
-                  }
-                >
-                  {getOptions('climatological_model').map(item => (
-                    <MenuItem key={item.value} value={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+        {mode === 'forecast' ? (
+          <Box sx={RowStyle}>
+            <Box>
+              <Box sx={FieldContainerStyle}>
+                <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                  {t('app.map.downloader.model')}
+                </Typography>
+                <FormControl>
+                  <Select
+                    sx={FullWidthStyle}
+                    value={
+                      typeof activeConfiguration.current.climatological_model ===
+                        'object'
+                        ? activeConfiguration.current.climatological_model
+                        : [activeConfiguration.current.climatological_model]
+                    }
+                    multiple
+                    name="climatological_model"
+                    onChange={e =>
+                      handleChange('climatological_model', e.target.value)
+                    }
+                  >
+                    {getOptions('climatological_model').map(item => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box sx={FieldContainerStyle}>
+                <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                  {t('app.map.downloader.scenario')}
+                </Typography>
+                <FormControl>
+                  <Select
+                    sx={FullWidthStyle}
+                    value={
+                      typeof activeConfiguration.current.scenario === 'object'
+                        ? activeConfiguration.current.scenario
+                        : [activeConfiguration.current.scenario]
+                    }
+                    multiple
+                    name="scenario"
+                    onChange={e => handleChange('scenario', e.target.value)}
+                  >
+                    {getOptions('scenario').map(item => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
           </Box>
-          <Box sx={FieldContainerStyle}>
-            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.downloader.scenario')}
-            </Typography>
-            <FormControl>
-              <Select
-                sx={FullWidthStyle}
-                value={
-                  typeof activeConfiguration.current.scenario === 'object'
-                    ? activeConfiguration.current.scenario
-                    : [activeConfiguration.current.scenario]
-                }
-                multiple
-                name="scenario"
-                onChange={e => handleChange('scenario', e.target.value)}
-              >
-                {getOptions('scenario').map(item => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
+        ) : (<></>)}
+
         <Box sx={RowStyle}>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>

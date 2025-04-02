@@ -273,6 +273,10 @@ export function MapMenuBar(props: MapMenuBar) {
   const [isDownloadDataOpen, setDownloadDataOpen] =
     React.useState<boolean>(false);
 
+  useEffect(() => {
+
+  }, [isDownloadDataOpen])
+
   const all_meas = ['absolute', 'anomaly'];
   const all_pers = ['annual', 'thirty_year'];
   const all_indx = [
@@ -670,6 +674,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 setOpen={setDownloadDataOpen}
                 combinations={combinations}
                 configuration={current_map}
+                mode={map_data}
               />
             </Box>
           </Grid>
