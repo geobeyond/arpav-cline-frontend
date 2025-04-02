@@ -53,6 +53,7 @@ import {
   LinkListItem,
 } from 'design-react-kit';
 import { RequestApi } from 'app/Services';
+import { useSearchParams } from 'react-router-dom';
 
 export interface MapMenuBar {
   onDownloadMapImg?: Function;
@@ -262,6 +263,7 @@ export function MapMenuBar(props: MapMenuBar) {
   // const [selectedValues, setSelectedValues] = React.useState<IGrpItm[][] | []>(
   //   [],
   // );
+  const [sp, setSearchParams] = useSearchParams();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
@@ -269,12 +271,42 @@ export function MapMenuBar(props: MapMenuBar) {
   // const actualState = useSelector(state => state);
   //@ts-ignore
   // const forecastParams = actualState?.map?.forecast_parameters;
-
   const [isDownloadDataOpen, setDownloadDataOpen] =
     React.useState<boolean>(false);
 
   useEffect(() => {
 
+    const _sp = new URLSearchParams(window.location.search);
+    const _params = Object.fromEntries(_sp);
+
+
+    if (Object.hasOwn(_params, 'open_dldata')) {
+      setTimeout(() => { setDownloadDataOpen(true) }, 8000);
+      delete _params['open_dldata'];
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDownloadDataOpen) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(searchParams);
+
+      const ret = {
+        ...params, ...{ open_dldata: 'true' }
+      };
+      setTimeout(() => {
+        setSearchParams(ret)
+      }, 250);
+
+    } else {
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(searchParams);
+      if (Object.hasOwn(params, 'open_dldata')) {
+        delete params['open_dldata'];
+      }
+      setSearchParams(params)
+    }
   }, [isDownloadDataOpen])
 
   const all_meas = ['absolute', 'anomaly'];
