@@ -59,7 +59,7 @@ const defaultMapHistorical: any = {
   measure: 'absolute',
   reference_period: '1991_2020',
   aggregation_period: '30yr',
-  historical_year_period: 'all_year',
+  year_period: 'all_year',
   archive: 'historical',
   data_series: 'no',
 };
@@ -493,8 +493,8 @@ export function MapPage(props: MapPageProps) {
       // console.log('no year');
     }
     const lcaption = `${isMobile
-      ? currentMap.climatological_variable
-      : labelFor(currentMap.climatological_variable)
+        ? currentMap.climatological_variable
+        : labelFor(currentMap.climatological_variable)
       }
   - ${joinNames([
         labelFor(currentMap.climatological_model),
@@ -589,8 +589,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-      ? ' - ' + labelFor(currentMap.time_window)
-      : ''
+        ? ' - ' + labelFor(currentMap.time_window)
+        : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''
@@ -713,20 +713,24 @@ export function MapPage(props: MapPageProps) {
             backgroundColor: 'rgb(22, 77, 54)',
           }}
         >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
             <Typography style={{ paddingLeft: '5px' }}>{caption}</Typography>
             <span style={{ flex: '1 1 1px' }}></span>
             <Typography style={{ paddingRight: '5px' }}>
               © ARPAV - ARPA FVG
             </Typography>
           </div>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
             <Typography
               style={{
                 fontSize: 'smaller',
