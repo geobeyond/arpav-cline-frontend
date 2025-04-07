@@ -720,7 +720,7 @@ export function MapPage(props: MapPageProps) {
             <Typography style={{ paddingLeft: '5px' }}>{caption}</Typography>
             <span style={{ flex: '1 1 1px' }}></span>
             <Typography style={{ paddingRight: '5px' }}>
-              © ARPAV - Arpa FVG
+              © ARPAV - ARPA FVG
             </Typography>
           </div>
           <div style={{
@@ -736,7 +736,7 @@ export function MapPage(props: MapPageProps) {
               }}
             >
               Si tratta di proiezioni climatiche e non di previsioni a lungo
-              termine. Il valore annuale ha validità in un contesto di trendss
+              termine. Il valore annuale ha validità in un contesto di trend
               trentennale.
             </Typography>
           </div>
