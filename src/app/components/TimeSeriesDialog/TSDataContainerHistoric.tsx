@@ -352,7 +352,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
-    return dataset.info.processing_method === 'mann_kendall_trend' && !dataset.info.processing_method_info.is_statistically_significant
+    return dataset.info.processing_method === 'mann_kendall_trend' &&
+      !dataset.info.processing_method_info.is_statistically_significant
       ? 'dashed'
       : 'solid';
   };
@@ -851,7 +852,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             <Slider
               disabled={mode === 'simple'}
               aria-label="Options"
-              defaultValue={1}
+              defaultValue={0}
               valueLabelFormat={valuetext}
               valueLabelDisplay="on"
               step={1}

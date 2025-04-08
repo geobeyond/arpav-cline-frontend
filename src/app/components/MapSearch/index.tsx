@@ -351,7 +351,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const [otsIndex, setOTsIndex] = useState(0);
 
   let tsindex = 0;
-  const baseYear = 1976;
+  const [baseYear, setBaseYear] = useState(1976);
 
   let yr = 2035;
   let oyr = 0;
@@ -375,17 +375,20 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       yr = 2035;
     }
 
+    let ctsindex = tsindex;
+
     if (oyr !== yr) {
       oyr = yr;
 
       if (timeserie) {
         if (timeserie.length > 0) {
+          setBaseYear(parseInt(timeserie[0].datetime.split('-')[0], 10));
           if (timeserie.length > 1) {
-            tsindex = yr - baseYear;
+            ctsindex = yr - baseYear;
           } else {
-            tsindex = 0;
+            ctsindex = 0;
           }
-          setTsIndex(tsindex);
+          setTsIndex(ctsindex);
         }
       }
     }

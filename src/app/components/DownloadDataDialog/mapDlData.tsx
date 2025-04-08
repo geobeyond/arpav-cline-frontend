@@ -177,7 +177,7 @@ const MapDlData = (props: MapDlDataProps) => {
         };
       });
     }
-    return {};
+    return [];
   };
 
   const toDefault = object => {
@@ -313,8 +313,8 @@ const MapDlData = (props: MapDlDataProps) => {
                   <Select
                     sx={FullWidthStyle}
                     value={
-                      typeof activeConfiguration.current.climatological_model ===
-                        'object'
+                      typeof activeConfiguration.current
+                        .climatological_model === 'object'
                         ? activeConfiguration.current.climatological_model
                         : [activeConfiguration.current.climatological_model]
                     }
@@ -358,7 +358,9 @@ const MapDlData = (props: MapDlDataProps) => {
               </Box>
             </Box>
           </Box>
-        ) : (<></>)}
+        ) : (
+          <></>
+        )}
 
         <Box sx={RowStyle}>
           <Box sx={FieldContainerStyle}>
