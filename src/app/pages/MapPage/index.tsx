@@ -54,8 +54,6 @@ const defaultMap: any = {
 
 const defaultMapHistorical: any = {
   climatological_variable: 'tas',
-  climatological_model: 'model_ensemble',
-  scenario: 'rcp85',
   measure: 'absolute',
   reference_period: '1991_2020',
   aggregation_period: '30yr',
