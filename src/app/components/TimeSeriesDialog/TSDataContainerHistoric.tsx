@@ -462,19 +462,13 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
 
   let opseriesObj = [
     pseriesObj.filter(
-      x =>
-        x.info.processing_method.indexOf(processingMethod) >= 0 &&
-        x.info.dataset_type === 'main',
+      x => x.info.processing_method.indexOf(processingMethod) >= 0,
     )[0],
     pseriesObj.filter(
-      x =>
-        x.info.processing_method === 'decade_aggregation' &&
-        x.info.dataset_type === 'main',
+      x => x.info.processing_method === 'decade_aggregation',
     )[0],
     pseriesObj.filter(
-      x =>
-        x.info.processing_method === 'mann_kendall_trend' &&
-        x.info.dataset_type === 'main',
+      x => x.info.processing_method === 'mann_kendall_trend',
     )[0],
   ];
 
@@ -826,14 +820,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           </FormControl>
         </Box>
 
-        <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ width: '100%' }} size="small">
-            <InputLabel id="SelectedModel" shrink={true}>
-              {t('app.map.timeSeriesDialog.selectedModel')}
-            </InputLabel>
-            <TextField disabled value="Model Ensemble"></TextField>
-          </FormControl>
-        </Box>
         <Box sx={FieldContainerStyle}>
           <FormControl sx={{ width: '100%', left: '25%' }} size="small">
             <InputLabel
