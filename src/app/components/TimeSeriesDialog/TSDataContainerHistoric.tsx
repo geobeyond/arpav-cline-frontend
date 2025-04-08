@@ -814,6 +814,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             </InputLabel>
             <TextField
               defaultValue={mkStartYear}
+              disabled={mode === 'simple'}
               onChange={e => setMKStartYear(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -823,6 +824,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             ></TextField>
             <TextField
               defaultValue={mkEndYear}
+              disabled={mode === 'simple'}
               onChange={e => setMKEndYear(e.target.value)}
               InputProps={{
                 startAdornment: (
