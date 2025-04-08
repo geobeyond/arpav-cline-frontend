@@ -422,12 +422,29 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
 }*/
   const getName = item => {
     try {
-      return (
-        item.translations.parameter_values.series_name[i18n.language] +
-        ' - ' +
-        item.translations.parameter_values.processing_method[i18n.language]
-      );
+      let ret = item.translations.parameter_values.station
+        ? item.translations.parameter_values.station[i18n.language]
+        : 'dato interpolato';
+
+      ret += ' - ';
+      ret +=
+        item.translations.parameter_values.processing_method[i18n.language];
+
+      if (
+        item.info.processing_method === 'mann_kendall_trend' &&
+        item.info.processing_method_info?.is_statistically_significant
+      ) {
+        ret +=
+          ' - ' +
+          (item.info.processing_method_info?.slope * 10).toFixed(
+            currentLayer?.data_precision + 1,
+          );
+        ret += ' ' + currentLayer?.unit_english + '/10y';
+      }
+
+      return ret;
     } catch (ex) {
+      console.log(ex);
       return item.name;
     }
   };
@@ -529,8 +546,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
       }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
-      )} ${roundTo4(latLng.lng)}; ${isinter ? 'dato da stazione' : 'dato interpolato'
-      } © ARPAV - Arpa FVG`
+      )} ${roundTo4(latLng.lng)}; © ARPAV - Arpa FVG`
     : '';
 
   const photoCameraIconPath =
