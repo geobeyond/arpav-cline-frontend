@@ -338,13 +338,19 @@ export function MapMenuBar(props: MapMenuBar) {
       }
     }
 
-    ret.climatological_model = 'model_ensemble';
-    ret.scenario = 'rcp85';
-    ret.aggregation_period = '30yr';
-    ret.measure = 'anomaly';
-    ret.time_window = 'tw1';
-    ret.year_period = 'winter';
-
+    if (object.archive.indexOf('historical') >= 0) {
+      ret.measure = 'absolute';
+      ret.reference_period = '1991_2020';
+      ret.aggregation_period = '30yr';
+      ret.year_period = 'all_year';
+    } else {
+      ret.climatological_model = 'model_ensemble';
+      ret.scenario = 'rcp85';
+      ret.aggregation_period = '30yr';
+      ret.measure = 'anomaly';
+      ret.time_window = 'tw1';
+      ret.year_period = 'winter';
+    }
     return ret;
   };
 
