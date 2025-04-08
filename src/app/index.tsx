@@ -23,28 +23,8 @@ import InfoPage from './pages/InfoPage';
 import DataPolicyPage from './pages/DataPolicyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
-import { DevTools, Tolgee } from '@tolgee/react';
-import { FormatSimple, I18nextPlugin, withTolgee } from '@tolgee/i18next';
-import i18next from 'i18next';
-
-const i18n = i18next;
-//@ts-ignore
-const tolgee = Tolgee().use(I18nextPlugin()).use(FormatSimple()).init({
-  apiUrl: 'https://tolgee.arpav.geobeyond.dev',
-  apiKey: 'tgpak_gfpwkzbqhbtgo4tcnfzge5leou4tezldnnsgo4tportds',
-  defaultLanguage: 'it',
-});
-
-//require('@dotenvx/dotenvx').config({ path: ['.env.staging', '.env'] });
-
-//@ts-ignore
-withTolgee(i18n, tolgee)
-  .use(initReactI18next)
-  .init({
-    //lng: 'en', // or use i18next language detector
-    supportedLngs: ['it', 'en'],
-    debug: false,
-  });
+// Import the configured i18n instance
+import { i18n } from '../locales/i18n';
 
 export function App() {
   const { t, i18n } = useTranslation();

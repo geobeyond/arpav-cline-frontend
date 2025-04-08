@@ -116,7 +116,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     less_smoothing: 'rgb(0, 0, 0)',
     moving_average_5_years: 'rgb(0, 0, 0)',
     mann_kendall_trend: 'rgb(178, 30, 30)',
-    decade_aggregation: 'rgb(60, 131, 231)',
+    decade_aggregation: 'rgb(161, 185, 218)',
   };
 
   const [localStart, setLocalStart] = useState<any>(0);
@@ -125,10 +125,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [localEndYear, setLocalEndYear] = useState<any>(2099);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
-
   const [mkStartYear, setMKStartYear] = useState<string | number>('1992');
   const [mkEndYear, setMKEndYear] = useState<string | number>('2023');
-
 
   useEffect(() => {
     const do_effect = async () => {
@@ -183,7 +181,15 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       console.log(ids);
       setIds(ids);
       api
-        .getTimeseriesV2(ids, latLng.lat, latLng.lng, true, map_data, mkStartYear.toString(), mkEndYear.toString())
+        .getTimeseriesV2(
+          ids,
+          latLng.lat,
+          latLng.lng,
+          true,
+          map_data,
+          mkStartYear.toString(),
+          mkEndYear.toString(),
+        )
         .then(res => {
           //@ts-ignore
           setTimeseries(res.series);
@@ -262,7 +268,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   console.debug(i18n);
 
   const [processingMethod, setProcessingMethod] =
-    useState<string>('moving_average');
+    useState<string>('no_processing');
 
   const [uncert, setUncert] = useState<boolean>(true);
 
@@ -346,7 +352,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     //return dataset.forecast_model === models[0] ? 'solid' : 'dashed';
   };
   const getLineType = dataset => {
-    return dataset.info.processing_method === 'decade_aggregation'
+    return dataset.info.processing_method === 'mann_kendall_trend' && !dataset.info.processing_method_info.is_statistically_significant
       ? 'dashed'
       : 'solid';
   };
@@ -516,7 +522,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   `
     : '';
 
-  const isinter = timeseries.filter(x => x.info.station_name).length > 0
+  const isinter = timeseries.filter(x => x.info.station_name).length > 0;
 
   let subText = timeseries
     ? timeseries?.length === 0
@@ -528,11 +534,12 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
       }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
-      )} ${roundTo4(latLng.lng)}; ${isinter ? 'dato da stazione' : 'dato interpolato'} © ARPAV - Arpa FVG`
+      )} ${roundTo4(latLng.lng)}; ${isinter ? 'dato da stazione' : 'dato interpolato'
+      } © ARPAV - Arpa FVG`
     : '';
 
-
-  const photoCameraIconPath = "path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z";
+  const photoCameraIconPath =
+    'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
 
   const getBoundsLabel = name => {
     if (name.indexOf('upper') >= 0)
@@ -784,9 +791,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     }
   };
 
-  const recalculate = () => {
-
-  };
+  const recalculate = () => { };
 
   return (
     <Box sx={TSDataContainerStyle}>
@@ -814,7 +819,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
                 ),
               }}
             ></TextField>
-            <Button variant="contained" onClick={recalculate}>Calculate</Button>
+            <Button variant="contained" onClick={recalculate}>
+              Calculate
+            </Button>
           </FormControl>
         </Box>
 

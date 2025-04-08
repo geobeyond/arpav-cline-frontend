@@ -243,10 +243,12 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           )}
           onChange={onChange}
           value={value}
-          isOptionEqualToValue={(option, value) => option.label === value.label}
+          isOptionEqualToValue={(option, value) =>
+            option?.label === value?.label
+          }
           getOptionLabel={option =>
-            option.name ??
-            option.label ??
+            option?.name ??
+            option?.label ??
             localStorage.getItem('currentCityLabel')
           }
         />

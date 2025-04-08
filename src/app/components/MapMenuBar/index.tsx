@@ -275,13 +275,13 @@ export function MapMenuBar(props: MapMenuBar) {
     React.useState<boolean>(false);
 
   useEffect(() => {
-
     const _sp = new URLSearchParams(window.location.search);
     const _params = Object.fromEntries(_sp);
 
-
     if (Object.hasOwn(_params, 'open_dldata')) {
-      setTimeout(() => { setDownloadDataOpen(true) }, 8000);
+      setTimeout(() => {
+        setDownloadDataOpen(true);
+      }, 8000);
       delete _params['open_dldata'];
     }
   }, []);
@@ -292,22 +292,21 @@ export function MapMenuBar(props: MapMenuBar) {
       const params = Object.fromEntries(searchParams);
 
       const ret = {
-        ...params, ...{ open_dldata: 'true' }
+        ...params,
+        ...{ open_dldata: 'true' },
       };
       setTimeout(() => {
-        setSearchParams(ret)
+        setSearchParams(ret);
       }, 250);
-
     } else {
-
       const searchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(searchParams);
       if (Object.hasOwn(params, 'open_dldata')) {
         delete params['open_dldata'];
       }
-      setSearchParams(params)
+      setSearchParams(params);
     }
-  }, [isDownloadDataOpen])
+  }, [isDownloadDataOpen]);
 
   const all_meas = ['absolute', 'anomaly'];
   const all_pers = ['annual', 'thirty_year'];
@@ -341,7 +340,7 @@ export function MapMenuBar(props: MapMenuBar) {
 
     ret.climatological_model = 'model_ensemble';
     ret.scenario = 'rcp85';
-    ret.aggregation_period = 'thirty_year';
+    ret.aggregation_period = '30yr';
     ret.measure = 'anomaly';
     ret.time_window = 'tw1';
 
