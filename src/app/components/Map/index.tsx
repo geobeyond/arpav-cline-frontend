@@ -375,7 +375,12 @@ const Map = (props: MapProps) => {
           </LayersControl.BaseLayer>
         </LayersControl>
       ) : (
-        <></>
+        <>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a target="_blank" rel="noopener" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+        </>
       )}
       <StationsLayer data={data} zIndex={550}></StationsLayer>
       <DynamicStationsLayer
