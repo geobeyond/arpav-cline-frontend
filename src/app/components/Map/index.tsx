@@ -285,17 +285,37 @@ const Map = (props: MapProps) => {
       ) : (
         <> </>
       )}
-      <CustomControlMap position={'topright'}>
-        <Box
-          className="leaflet-bar"
-          style={{ backgroundColor: 'white', padding: '2px' }}
-        >
-          <OpacityComponent
-            doSetOpacity={doSetOpacity}
-            opacity={opacity}
-          ></OpacityComponent>
-        </Box>
-      </CustomControlMap>
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap position={'topright'}>
+          <Box
+            className="leaflet-bar"
+            style={{ backgroundColor: 'white', padding: '2px' }}
+          >
+            <UncertaintySwitch
+              enabled={false}
+              setShowUncertainty={setShowUncertainty}
+              currentUncertainty={showUncertainty}
+            ></UncertaintySwitch>
+          </Box>
+        </CustomControlMap>
+      ) : (
+        <> </>
+      )}
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap position={'topright'}>
+          <Box
+            className="leaflet-bar"
+            style={{ backgroundColor: 'white', padding: '2px' }}
+          >
+            <OpacityComponent
+              doSetOpacity={doSetOpacity}
+              opacity={opacity}
+            ></OpacityComponent>
+          </Box>
+        </CustomControlMap>
+      ) : (
+        <></>
+      )}
       <CustomControlMap position={'topright'}>
         <LegendBar
           className={'leaflet-bar'}
@@ -397,30 +417,34 @@ const Map = (props: MapProps) => {
         }
         setCurrentYear={setCurrentYear}
       />
-      <CustomControlMap
-        position="bottomleft"
-        className=" leaflet-time-info"
-        style={{
-          position: 'absolute',
-          margin: 0,
-          backgroundColor: 'transparent',
-          height: '20px',
-          width: '20px',
-          bottom: '61px',
-          left: '385px',
-          display: timeStatus,
-          padding: 0,
-        }}
-      >
-        <Button innerRef={ref5} className="m-3">
-          <InfoIcon></InfoIcon>
-        </Button>
-        <UncontrolledTooltip placement="top" target={ref5}>
-          Si tratta di proiezioni climatiche e non di previsioni a lungo
-          termine. Il valore annuale ha validità in un contesto di trend
-          trentennale.
-        </UncontrolledTooltip>
-      </CustomControlMap>
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap
+          position="bottomleft"
+          className=" leaflet-time-info"
+          style={{
+            position: 'absolute',
+            margin: 0,
+            backgroundColor: 'transparent',
+            height: '20px',
+            width: '20px',
+            bottom: '61px',
+            left: '385px',
+            display: timeStatus,
+            padding: 0,
+          }}
+        >
+          <Button innerRef={ref5} className="m-3">
+            <InfoIcon></InfoIcon>
+          </Button>
+          <UncontrolledTooltip placement="top" target={ref5}>
+            Si tratta di proiezioni climatiche e non di previsioni a lungo
+            termine. Il valore annuale ha validità in un contesto di trend
+            trentennale.
+          </UncontrolledTooltip>
+        </CustomControlMap>
+      ) : (
+        <></>
+      )}
     </MapContainer>
   );
 };
