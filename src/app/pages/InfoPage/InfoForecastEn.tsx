@@ -4,15 +4,13 @@ import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import HeaderBar from 'app/components/HeaderBar';
 import { useTranslation } from 'react-i18next';
-import InfoHistoricIt from './InfoHistoricIt';
-import InfoForecastIt from './InfoForecastIt';
 
 const regioneImg = '../../../assets/img/logo_regione_veneto.png';
 const arpafvg = '../../../assets/img/arpafvg-logo.svg';
 const arpavImg = '../../../assets/img/logo_arpav.png';
 const snpaImg = '../../../assets/img/logo_SNPA.png';
 
-const InfoPage = () => {
+const InfoForecastEn = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
@@ -33,10 +31,20 @@ const InfoPage = () => {
         <PageContainer>
             <>
                 <br />
-                <InfoForecastIt />
+
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html:
+                            t('app.pages.info.p1') +
+                            t('app.pages.info.p2') +
+                            t('app.pages.info.p3') +
+                            t('app.pages.info.p4') +
+                            t('app.pages.info.p5'),
+                    }}
+                />
             </>
         </PageContainer>
     );
 };
 
-export default InfoPage;
+export default InfoForecastEn;

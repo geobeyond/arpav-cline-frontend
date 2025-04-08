@@ -343,6 +343,7 @@ export function MapMenuBar(props: MapMenuBar) {
     ret.aggregation_period = '30yr';
     ret.measure = 'anomaly';
     ret.time_window = 'tw1';
+    ret.year_period = 'winter';
 
     return ret;
   };
