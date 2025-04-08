@@ -633,6 +633,17 @@ export function MapPage(props: MapPageProps) {
     setTSOpen(true);
   };
 
+  useEffect(() => {
+    if (tSOpen === false) {
+      const sp = new URLSearchParams(window.location.search);
+      const p2o = paramsToObject(sp);
+      delete p2o['plotPopup'];
+      setSearchParams({
+        ...p2o,
+      });
+    }
+  }, [tSOpen]);
+
   const setPoint = (props: any) => {
     // console.log('==================== setPoint ====================');
     // console.log(props);

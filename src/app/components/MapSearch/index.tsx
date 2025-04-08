@@ -101,6 +101,9 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     if (lastCitiess) {
       let lastCities = JSON.parse(lastCitiess);
       if (lastCities) {
+        if (lastCities.find(x => x.label === value.label)) {
+          lastCities = lastCities.filter(x => x.label !== value.label);
+        }
         lastCities.unshift(value);
       } else {
         lastCities = [value];
