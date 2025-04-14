@@ -125,8 +125,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [localEndYear, setLocalEndYear] = useState<any>(2099);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
-  const [mkStartYear, setMKStartYear] = useState<string | number>('1992');
-  const [mkEndYear, setMKEndYear] = useState<string | number>('2023');
+  const [mkStartYear, setMKStartYear] = useState<number>(1992);
+  const [mkEndYear, setMKEndYear] = useState<number>(2023);
 
   useEffect(() => {
     const do_effect = async () => {
@@ -437,7 +437,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         ret +=
           ' - ' +
           (item.info.processing_method_info?.slope * 10).toFixed(
-            currentLayer?.data_precision + 1,
+            currentLayer?.data_precision,
           );
         ret += ' ' + currentLayer?.unit_english + '/10y';
       }
@@ -815,7 +815,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             <TextField
               defaultValue={mkStartYear}
               disabled={mode === 'simple'}
-              onChange={e => setMKStartYear(e.target.value)}
+              onChange={e => setMKStartYear(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">From: </InputAdornment>
@@ -825,15 +825,20 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             <TextField
               defaultValue={mkEndYear}
               disabled={mode === 'simple'}
-              onChange={e => setMKEndYear(e.target.value)}
+              onChange={e => setMKEndYear(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">To: </InputAdornment>
                 ),
               }}
             ></TextField>
-            <Button variant="contained" onClick={recalculate}>
-              Calculate
+            <Button
+              variant="contained"
+              disabled={mkStartYear > mkEndYear || mkEndYear - mkStartYear < 27}
+            >
+              {mkStartYear > mkEndYear || mkEndYear - mkStartYear < 27
+                ? t('app.map.timeSeriesDialog.mkError')
+                : t('app.map.timeSeriesDialog.mkOk')}
             </Button>
           </FormControl>
         </Box>
