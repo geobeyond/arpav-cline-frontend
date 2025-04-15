@@ -291,22 +291,6 @@ const Map = (props: MapProps) => {
             className="leaflet-bar"
             style={{ backgroundColor: 'white', padding: '2px' }}
           >
-            <UncertaintySwitch
-              enabled={false}
-              setShowUncertainty={setShowUncertainty}
-              currentUncertainty={showUncertainty}
-            ></UncertaintySwitch>
-          </Box>
-        </CustomControlMap>
-      ) : (
-        <> </>
-      )}
-      {currentMap.op !== 'screenshot' ? (
-        <CustomControlMap position={'topright'}>
-          <Box
-            className="leaflet-bar"
-            style={{ backgroundColor: 'white', padding: '2px' }}
-          >
             <OpacityComponent
               doSetOpacity={doSetOpacity}
               opacity={opacity}
