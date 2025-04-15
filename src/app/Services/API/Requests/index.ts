@@ -683,7 +683,7 @@ export class RequestApi extends Http {
         return x;
       })
       .catch(error => {
-        return { series: [] };
+        return { series: [{ name: '', values: [] }] };
       });
   };
 

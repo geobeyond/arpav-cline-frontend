@@ -156,28 +156,22 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       //  })
       //  .flat();
 
-      let ids = await api.createIds(
-        //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
-        {
+      let ids = await api.createIds({
+        ...currentMap,
+        ...{
+          scenario: ['rcp26', 'rcp45', 'rcp85'],
+        },
+        ...{ data_series: true },
+      });
+      if (currentLayer.ensemble_data) {
+        ids = await api.createIds({
           ...currentMap,
+          ...{ climatological_model: ['model_ensemble'] },
           ...{
             scenario: ['rcp26', 'rcp45', 'rcp85'],
           },
           ...{ data_series: true },
-        },
-      );
-      if (currentLayer.ensemble_data) {
-        ids = await api.createIds(
-          //'tas_annual_absolute_model_ensemble-annual-model_ensemble-tas-absolute-{scenario}-year',
-          {
-            ...currentMap,
-            ...{ climatological_model: ['model_ensemble'] },
-            ...{
-              scenario: ['rcp26', 'rcp45', 'rcp85'],
-            },
-            ...{ data_series: true },
-          },
-        );
+        });
       }
       console.log(ids);
       setIds(ids);
@@ -409,22 +403,10 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     }
   };
 
-  /*{
-    "processing_method": "moving_average_5_years",
-    "coverage_identifier": "tas_annual_absolute_model_ensemble_upper_uncertainty-annual-model_ensemble-tas-absolute-rcp26-upper_uncertainty-year",
-    "coverage_configuration": "tas_annual_absolute_model_ensemble_upper_uncertainty",
-    "aggregation_period": "annual",
-    "climatological_model": "model_ensemble",
-    "climatological_variable": "tas",
-    "measure": "absolute",
-    "scenario": "rcp26",
-    "dataset_type": "upper_uncertainty",
-    "year_period": "year"
-}*/
   const getName = item => {
     try {
-      let ret = item.translations.parameter_values.station
-        ? item.translations.parameter_values.station[i18n.language]
+      let ret = item.translations.parameter_values.station_name
+        ? item.translations.parameter_values.station_name[i18n.language]
         : 'dato interpolato';
 
       ret += ' - ';
