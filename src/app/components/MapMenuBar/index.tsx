@@ -349,7 +349,12 @@ export function MapMenuBar(props: MapMenuBar) {
       ret.aggregation_period = '30yr';
       ret.measure = 'anomaly';
       ret.time_window = 'tw1';
-      ret.year_period = 'winter';
+      ret.year_period =
+        ['tr', 'su30', 'fd', 'hdds', 'cdds', 'snwdays'].indexOf(
+          ret.climatological_variable,
+        ) >= 0
+          ? 'all_year'
+          : 'winter';
     }
     return ret;
   };
