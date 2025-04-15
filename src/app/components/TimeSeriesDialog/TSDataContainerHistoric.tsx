@@ -94,6 +94,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
   const baseValue: number = 1990;
   const yeardelta: number = 2;
+  const endValue: number = new Date().getFullYear();
 
   const {
     selected_map,
@@ -121,8 +122,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
 
   const [localStart, setLocalStart] = useState<any>(0);
   const [localEnd, setLocalEnd] = useState<any>(100);
-  const [localStartYear, setLocalStartYear] = useState<any>(1976);
-  const [localEndYear, setLocalEndYear] = useState<any>(2099);
+  const [localStartYear, setLocalStartYear] = useState<any>(baseValue);
+  const [localEndYear, setLocalEndYear] = useState<any>(endValue);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
   const [mkStartYear, setMKStartYear] = useState<number>(1992);
@@ -210,7 +211,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           }
           for (let k of Object.keys(dataValues)) {
             let vv: any[] = [];
-            for (let y of range(baseValue, 2100)) {
+            for (let y of range(baseValue, endValue)) {
               let found: boolean | any = false;
               for (let kk of dataValues[k]) {
                 if (y.toString() === kk.datetime) {
@@ -284,7 +285,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     setTimeRange({
       ...{
         start: 0,
-        end: 2099 - baseValue,
+        end: endValue - baseValue,
       },
       ...{
         start: localStartYear - baseValue,
@@ -394,8 +395,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   };
 
   const getXAxis = () => {
-    const cats = timeseries?.map(item => {
-      return item.values.map(x => x.datetime.split('-')[0]);
+    const cats = Object.values(realDataValues).map((item: any) => {
+      return item.map(x => x.datetime.split('-')[0]);
     });
     if (cats) {
       if (cats.length > 0) {
