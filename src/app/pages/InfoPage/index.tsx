@@ -1,4 +1,4 @@
-import { Grid, Typography, useMediaQuery } from '@mui/material';
+import { Box, Grid, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
 import PageContainer from '../../components/Modals/PageContainer';
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
@@ -6,11 +6,35 @@ import HeaderBar from 'app/components/HeaderBar';
 import { useTranslation } from 'react-i18next';
 import InfoHistoricIt from './InfoHistoricIt';
 import InfoForecastIt from './InfoForecastIt';
+import InfoForecastEn from './InfoForecastEn';
+import InfoHistoricEn from './InfoHistoricEn';
 
 const regioneImg = '../../../assets/img/logo_regione_veneto.png';
 const arpafvg = '../../../assets/img/arpafvg-logo.svg';
 const arpavImg = '../../../assets/img/logo_arpav.png';
 const snpaImg = '../../../assets/img/logo_SNPA.png';
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    mode: string;
+    value: string;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+    const { children, value, mode, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== mode}
+            id={`simple-tabpanel-${mode}`}
+            aria-labelledby={`simple-tab-${mode}`}
+            {...other}
+        >
+            {value === mode && <Box sx={{ p: 3 }}>{children}</Box>}
+        </div>
+    );
+}
 
 const InfoPage = () => {
     const theme = useTheme();
@@ -27,13 +51,32 @@ const InfoPage = () => {
         marginBottom: '30px',
     };
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const [value, setValue] = React.useState('forecast');
+
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setValue(newValue);
+    };
 
     return (
         <PageContainer>
             <>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="basic tabs example"
+                >
+                    <Tab label={t('app.index.sections.proj')} value="forecast" />
+                    <Tab label={t('app.index.sections.hist')} value="historic" />
+                </Tabs>
+
+                <CustomTabPanel value={value} mode="forecast">
+                    {i18n.language === 'it' ? <InfoForecastIt /> : <InfoForecastEn />}
+                </CustomTabPanel>
+                <CustomTabPanel value={value} mode="historic">
+                    {i18n.language === 'it' ? <InfoHistoricIt /> : <InfoHistoricEn />}
+                </CustomTabPanel>
                 <br />
-                <InfoForecastIt />
             </>
         </PageContainer>
     );
