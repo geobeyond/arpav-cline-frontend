@@ -838,9 +838,9 @@ export class RequestApi extends Http {
           avs.push({
             name: x,
             display_name_english: tk[x]['name']['en'],
-            display_name_italian: tk[x]['name']['en'],
+            display_name_italian: tk[x]['name']['it'],
             description_english: tk[x]['description']['en'],
-            description_italian: tk[x]['description']['en'],
+            description_italian: tk[x]['description']['it'],
           });
         }
         titm['allowed_values'] = [...avs];

@@ -517,8 +517,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   `
     : '';
 
-  const isinter = timeseries.filter(x => x.info.station_name).length > 0;
-
   let subText = timeseries
     ? timeseries?.length === 0
       ? ''

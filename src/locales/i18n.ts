@@ -27,16 +27,16 @@ convertLanguageJsonToObject(en);
 convertLanguageJsonToObject(it);
 
 const tolgee = Tolgee()
-  .use(I18nextPlugin())
-  .use(FormatSimple())
   .use(DevTools())
+  .use(FormatSimple())
+  .use(I18nextPlugin())
   .init({
     apiUrl:
       process.env.REACT_APP_TOLGEE_API_URL ||
       'https://tolgee.arpav.geobeyond.dev',
     apiKey:
       process.env.REACT_APP_TOLGEE_API_KEY ||
-      'tgpak_gfpwkzbqhbtgo4tcnfzge5leou4tezldnnsgo4tportds',
+      'tgpak_gfptqodemjztqojvhayxeojrnnrgk3dfnrvxcnjvn5ygq',
     defaultLanguage: 'it',
   });
 

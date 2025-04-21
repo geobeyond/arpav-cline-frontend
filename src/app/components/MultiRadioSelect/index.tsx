@@ -149,12 +149,14 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   };
 
   const translate = (item: IItem, mode: string = 'label') => {
+    if (!item) return '';
+
+    const isItalian = i18n.language.startsWith('it');
+
     if (mode === 'label') {
-      if (i18n.language === 'it') return item.display_name_italian;
-      else return item.display_name_english;
+      return isItalian ? item.display_name_italian : item.display_name_english;
     } else {
-      if (i18n.language === 'it') return item.description_italian;
-      else return item.description_english;
+      return isItalian ? item.description_italian : item.description_english;
     }
   };
 
@@ -255,8 +257,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           disableGutters
                           sx={{
                             marginBottom: row.multicol?.includes(index + 1)
-                              //@ts-ignore
-                              ? (row.multicol_size[row.multicol?.indexOf(index + 1)]).toString() + "px"
+                              ? //@ts-ignore
+                              row.multicol_size[
+                                row.multicol?.indexOf(index + 1)
+                              ].toString() + 'px'
                               : '0',
                           }}
                           disabled={
@@ -270,8 +274,8 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                         >
                           <FormControlLabel
                             className={`MultiRadioSelectMenuItem ${item.selected
-                              ? 'MultiRadioSelectMenuItem-selected'
-                              : ''
+                                ? 'MultiRadioSelectMenuItem-selected'
+                                : ''
                               }`}
                             //See Sorting fields note.
                             value={item.name}

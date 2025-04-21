@@ -9,6 +9,7 @@ import {
   Button,
   Toolbar,
   useMediaQuery,
+  MenuItem,
 } from '@mui/material';
 import {
   Headers,
@@ -48,12 +49,13 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { Link } from 'react-router-dom';
+import { ArrowDropDown } from '@mui/icons-material';
 class HeaderBarProps {
   mode?: 'compact' | 'full' = 'compact';
 }
 
 const HeaderBar = (props: HeaderBarProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   // const actualstate = useSelector(state => state);
   // const route = useLocation();
   // console.log({ route, actualstate });
@@ -62,11 +64,16 @@ const HeaderBar = (props: HeaderBarProps) => {
   const snpaImg = '/img/logo_SNPA.png';
 
   const theme = useTheme();
+  let lang = i18n.language;
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
 
   const style = {
     maxHeight: '7svh',
     minHeight: '30px',
+  };
+
+  const setLang = lang => {
+    i18n.changeLanguage(lang);
   };
 
   return (
@@ -102,6 +109,17 @@ const HeaderBar = (props: HeaderBarProps) => {
               <HeaderBrand style={HeaderBrandStyle} href="/">
                 <b className="green">{t('app.header.acronymMeaning')}</b>
               </HeaderBrand>
+              <HeaderRightZone>
+                <Dropdown className="me-3">
+                  <DropdownToggle tag="a" color="primary">
+                    {lang} <ArrowDropDown />
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <MenuItem onClick={() => setLang('it')}>IT</MenuItem>
+                    <MenuItem onClick={() => setLang('en')}>EN</MenuItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </HeaderRightZone>
               <HeaderRightZone>
                 <HeaderLinkZone>
                   <LinkList>
