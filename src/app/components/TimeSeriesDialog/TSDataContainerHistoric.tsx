@@ -92,7 +92,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       forecast_parameters[listKey]?.find(item => item.id === key)?.name || ''
     );
   };
-  const baseValue: number = 1990;
+  const baseValue: number = 1984;
   const yeardelta: number = 2;
   const endValue: number = new Date().getFullYear();
 
@@ -522,7 +522,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-    ${timeseries[0].translations.parameter_values.series_name[i18n.language]} 
+    ${timeseries[0].translations?.parameter_values.series_name[i18n.language]} 
       }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
         localStartYear,
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''

@@ -29,7 +29,7 @@
   "app.map.downloadDataDialog.user.disclaimer": "Warnings",
   "app.map.downloadDataDialog.user.disclaimerRead": "* Taken",
   "app.map.downloadDataDialog.user.disclaimerReadError": "Not selected viewing",
-  "app.map.downloadDataDialog.user.disclaimerText": "These are climatic projections and not long -term forecasts.\n",
+  "app.map.downloadDataDialog.user.disclaimerText": "These are climatic projections and not long-term forecasts.\n",
   "app.map.downloadDataDialog.user.fieldError": "The field is not valid.",
   "app.map.downloadDataDialog.user.fieldRequired": "You need to insert this field",
   "app.map.downloadDataDialog.user.goal": "* Reason",
