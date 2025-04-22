@@ -14,6 +14,7 @@ import { PopupStyle } from './styles';
 export const VectorWrapperLayer = (props: any) => {
   const currentTimeSerie = props.currentTimeserie;
   const zIndex = props.zIndex;
+  const data = props.data;
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
@@ -130,6 +131,7 @@ export const VectorWrapperLayer = (props: any) => {
             <Box sx={PopupStyle}>
               <MapPopup
                 mode={mode}
+                data={data}
                 openCharts={openCharts}
                 value={selectedPoint}
                 currentTimeserie={currentTimeSerie}

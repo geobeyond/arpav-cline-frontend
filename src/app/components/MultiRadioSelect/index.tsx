@@ -138,9 +138,10 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     ret = ret.filter(x => x);
     ret = ret.filter(
       x =>
-        (x.name.indexOf('tw') >= 0 &&
+        ((x.name.indexOf('tw') >= 0 ||
+          x.name.indexOf('climate_standard') >= 0) &&
           ret.filter(y => y.name === '30yr').length > 0) ||
-        x.name.indexOf('tw') < 0,
+        (x.name.indexOf('tw') < 0 && x.name.indexOf('climate_standard') < 0),
     );
     //@ts-ignore
     ret = ret.map(x => translate(x, mode)).join(' - ');

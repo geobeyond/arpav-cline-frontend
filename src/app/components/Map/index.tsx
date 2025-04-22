@@ -376,6 +376,7 @@ const Map = (props: MapProps) => {
       <VectorWrapperLayer
         zIndex={600}
         mode={mode}
+        data={data}
         ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
@@ -395,14 +396,15 @@ const Map = (props: MapProps) => {
         layer={layerConf.wms_base_url}
         opacity={opacity}
         show={
-          showUncertainty || data !== 'forecast'
+          showUncertainty || mode === 'advanced' || data === 'past'
             ? layerConf.wms_main_layer_name
             : layerConf.wms_secondary_layer_name
         }
         stl={layerConf.palette}
         useTime={setTimeStatus}
         isTimeseries={
-          mode !== 'simple' && currentMap.aggregation_period === 'annual'
+          (mode !== 'simple' || data === 'past') &&
+          currentMap.aggregation_period === 'annual'
         }
         setCurrentYear={setCurrentYear}
       />

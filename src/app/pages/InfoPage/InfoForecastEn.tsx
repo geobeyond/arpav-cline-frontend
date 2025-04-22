@@ -2,7 +2,7 @@ const InfoForecastIt = () => {
     return (
         <>
             <div>
-                <h1>Il cambiamento climatico</h1>
+                <h1>Climate Change (Forecast)</h1>
                 <p>
                     Le attività umane influiscono sul clima: l'aumento della
                     concentrazione di gas serra e i conseguenti cambiamenti osservati dei
