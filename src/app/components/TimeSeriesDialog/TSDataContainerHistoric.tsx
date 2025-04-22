@@ -406,8 +406,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
 
   const getName = item => {
     try {
-      let ret = item.translations.parameter_values.station_name
-        ? item.translations.parameter_values.station_name[i18n.language]
+      let ret = item.info.station_name
+        ? item.info.station_name
         : 'dato interpolato';
 
       ret += ' - ';
