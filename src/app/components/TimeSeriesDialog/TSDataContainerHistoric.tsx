@@ -236,7 +236,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           );
         });
     };
-    do_effect().catch(console.error);
+    if (mkStartYear > 1980 && mkEndYear - mkStartYear >= 27)
+      do_effect().catch(console.error);
   }, [
     selected_map,
     selectactable_parameters,
@@ -513,7 +514,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-  ${timeseries[0].translations.parameter_values.series_name[i18n.language]}
+  ${timeseries[0].translations?.parameter_values.series_name[i18n.language]}
   `
     : '';
 
@@ -795,6 +796,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             </InputLabel>
             <TextField
               defaultValue={mkStartYear}
+              type="number"
               disabled={mode === 'simple'}
               onChange={e => setMKStartYear(parseInt(e.target.value))}
               InputProps={{
@@ -805,6 +807,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             ></TextField>
             <TextField
               defaultValue={mkEndYear}
+              type="number"
               disabled={mode === 'simple'}
               onChange={e => setMKEndYear(parseInt(e.target.value))}
               InputProps={{

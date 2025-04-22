@@ -593,9 +593,13 @@ export class RequestApi extends Http {
         ),
       );
     }
-    return Promise.all(ret).then(x => {
-      return this.merge.apply(this, x);
-    });
+    return Promise.all(ret)
+      .then(x => {
+        return this.merge.apply(this, x);
+      })
+      .catch(x => {
+        console.log(x);
+      });
   };
 
   private merge = (...objs) =>
