@@ -44,7 +44,7 @@ export class RequestApi extends Http {
         .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
           params: {
             url: href + '&op=screenshot',
-            delay_seconds: '15',
+            delay_seconds: '4',
           },
           responseType: 'blob',
         })

@@ -126,8 +126,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [localEndYear, setLocalEndYear] = useState<any>(endValue);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
-  const [mkStartYear, setMKStartYear] = useState<number>(1992);
-  const [mkEndYear, setMKEndYear] = useState<number>(2023);
+  const [mkStartYear, setMKStartYear] = useState<number>(1995);
+  const [mkEndYear, setMKEndYear] = useState<number>(2024);
 
   useEffect(() => {
     const do_effect = async () => {
@@ -236,7 +236,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           );
         });
     };
-    if (mkStartYear > 1980 && mkEndYear - mkStartYear >= 27)
+    if (
+      mkStartYear > baseValue &&
+      mkEndYear - mkStartYear >= 27 &&
+      mkEndYear <= new Date().getFullYear()
+    )
       do_effect().catch(console.error);
   }, [
     selected_map,
@@ -514,7 +518,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-  ${timeseries[0].translations?.parameter_values.series_name[i18n.language]}
+  ${timeseries[0].translations?.parameter_values.variable[i18n.language]}
   `
     : '';
 
@@ -522,8 +526,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-    ${timeseries[0].translations?.parameter_values.series_name[i18n.language]} 
-      }  -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+    ${timeseries[0].translations?.parameter_values.variable[i18n.language]
+      } -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
         localStartYear,
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
       }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
@@ -818,9 +822,18 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
             ></TextField>
             <Button
               variant="contained"
-              disabled={mkStartYear > mkEndYear || mkEndYear - mkStartYear < 27}
+              disabled={
+                mkStartYear > mkEndYear ||
+                mkEndYear - mkStartYear < 27 ||
+                mkStartYear <= baseValue ||
+                mkEndYear > new Date().getFullYear()
+              }
+              onClick={recalculate}
             >
-              {mkStartYear > mkEndYear || mkEndYear - mkStartYear < 27
+              {mkStartYear > mkEndYear ||
+                mkEndYear - mkStartYear < 27 ||
+                mkStartYear <= baseValue ||
+                mkEndYear > new Date().getFullYear()
                 ? t('app.map.timeSeriesDialog.mkError')
                 : t('app.map.timeSeriesDialog.mkOk')}
             </Button>

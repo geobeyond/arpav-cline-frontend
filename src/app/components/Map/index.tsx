@@ -427,11 +427,19 @@ const Map = (props: MapProps) => {
           <Button innerRef={ref5} className="m-3">
             <InfoIcon></InfoIcon>
           </Button>
-          <UncontrolledTooltip placement="top" target={ref5}>
-            Si tratta di proiezioni climatiche e non di previsioni a lungo
-            termine. Il valore annuale ha validità in un contesto di trend
-            trentennale.
-          </UncontrolledTooltip>
+          {data !== 'past' ? (
+            <UncontrolledTooltip placement="top" target={ref5}>
+              Si tratta di proiezioni climatiche e non di previsioni a lungo
+              termine. Il valore annuale ha validità in un contesto di trend
+              trentennale.
+            </UncontrolledTooltip>
+          ) : (
+            <UncontrolledTooltip placement="top" target={ref5}>
+              Si tratta di proiezioni climatiche e non di previsioni a lungo
+              termine. Il valore annuale ha validità in un contesto di trend
+              trentennale.
+            </UncontrolledTooltip>
+          )}
         </CustomControlMap>
       ) : (
         <></>
