@@ -490,11 +490,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       dataset.info.dataset_type === 'main' ||
       dataset.info.dataset_type === 'observation'
     )
-      return getName(dataset).replaceAll(' ', '_') + '__main';
-    else return getName(dataset).replaceAll(' ', '_');
+      return dataset.info.coverage_identifier.replaceAll(' ', '_') + '__main';
+    else return dataset.info.coverage_identifier.replaceAll(' ', '_');
   };
   const getAreaStyle = dataset => {
-    if (dataset.info.dataset_type.indexOf('uncertainty') >= 0) {
+    if (dataset.info.dataset_type.indexOf('upper_uncertainty') >= 0) {
       if (dataset.info.scenario) {
         return { color: colors[1][dataset.info.scenario], opacity: 0.4 };
       }

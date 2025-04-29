@@ -72,10 +72,10 @@ export interface MapMenuBar {
 }
 
 const MAP_MODES = {
-  forecast: 'Proiezioni',
-  past: 'Storico',
-  advanced: 'Avanzata',
-  simple: 'Semplice',
+  forecast: 'app.index.sections.proj',
+  past: 'app.index.sections.hist',
+  advanced: 'app.index.sections.advanced',
+  simple: 'app.index.sections.simple',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -574,7 +574,7 @@ export function MapMenuBar(props: MapMenuBar) {
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
-                    {MAP_MODES[map_data]} - {MAP_MODES[map_mode]}
+                    {t(MAP_MODES[map_data])} - {t(MAP_MODES[map_mode])}
                   </Typography>
                 </Box>
               </Grid>
