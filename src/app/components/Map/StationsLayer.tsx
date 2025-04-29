@@ -36,16 +36,14 @@ export const StationsLayer = (props: any) => {
       pane: 'stations',
       vectorTileLayerStyles: {
         stations: (properties, zoom, geometryDimension) => {
-          let opacity = 0.9;
-          let color = '#bdc2cf';
           // console.log(zoom, color, opacity)
           return {
-            color: color,
-            weight: data === 'forecast' ? 1 : 1,
-            radius: data === 'forecast' ? 3 : 5,
+            color: '#bdc2cf',
+            weight: 1,
+            radius: 3,
             fill: true,
             fillOpacity: 0.7,
-            opacity: opacity,
+            opacity: 0.9,
           };
         },
       },
@@ -70,6 +68,7 @@ export const StationsLayer = (props: any) => {
     context.layerContainer,
     context.map,
     selectCallback,
+    zIndex,
   ]);
 
   return (

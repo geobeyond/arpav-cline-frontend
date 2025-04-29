@@ -46,27 +46,17 @@ const IndexPage = () => {
       <HeaderBar mode="full"></HeaderBar>
 
       <Hero overlay="dark" style={TopHeroStyle}>
-        <h2>Barometro del clima</h2>
+        <h2>{t('app.index.header.title')}</h2>
 
         <p>
-          <i>
-            La temperatura misurata in Veneto e le proiezioni per il futuro.
-            Dove stiamo andando?
-          </i>
+          <i>{t('app.index.header.subtitle')}</i>
         </p>
         <p>
-          Il barometro utilizza la temperatura media annuale come indicatore dei
-          cambiamenti climatici in atto e attesi. Nel grafico:
+          {t('app.index.header.descriptor')}
+
           <ul>
-            <li>
-              la temperatura registrata in Veneto negli ultimi decenni (linea
-              nera);
-            </li>
-            <li>
-              le proiezioni climatiche fino a fine secolo per tre diversi
-              scenari di riduzione delle emissioni di gas serra (linee blu,
-              gialla e rossa).
-            </li>
+            <li>{t('app.index.header.p1')}</li>
+            <li>{t('app.index.header.p2')}</li>
           </ul>
         </p>
         <Graph></Graph>

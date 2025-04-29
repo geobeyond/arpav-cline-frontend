@@ -22,6 +22,12 @@ export const translationsJson = {
   },
 };
 
+let lang = 'it';
+let l = localStorage.getItem('lang');
+if (l) {
+  lang = l;
+}
+
 // Create the 'translations' object to provide full intellisense support
 convertLanguageJsonToObject(en);
 convertLanguageJsonToObject(it);
@@ -37,7 +43,7 @@ const tolgee = Tolgee()
     apiKey:
       process.env.REACT_APP_TOLGEE_API_KEY ||
       'tgpak_gfptqodemjztqojvhayxeojrnnrgk3dfnrvxcnjvn5ygq',
-    defaultLanguage: 'it',
+    defaultLanguage: lang,
   });
 
 // Initialize i18next without Tolgee first
@@ -48,7 +54,7 @@ export const i18n = withTolgee(i18nextInstance, tolgee).init({
   resources: translationsJson,
   fallbackLng: 'en',
   supportedLngs: ['it', 'en'],
-  lng: 'it', // Default language
+  //lng: lang, // Default language
   interpolation: {
     escapeValue: false,
   },

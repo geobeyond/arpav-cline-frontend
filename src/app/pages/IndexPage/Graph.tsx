@@ -385,7 +385,7 @@ const Graph = (props: any) => {
 
   const labelFor = (itm, mode = 'default') => {
     if ('scenario' in itm.info) return rcps[itm.info.scenario];
-    else return 'Osservazioni';
+    else return t('app.index.observations');
   };
 
   const getGraphType = dataset => {
@@ -552,13 +552,11 @@ const Graph = (props: any) => {
   });
 
   const titleText = `
-     Barometro del clima
+     ${t('app.index.header.title')}
   `;
 
-  const subText = `Barometro del clima © ARPAV - Arpa FVG
-  Si tratta di proiezioni climatiche e non di previsioni 
-  a lungo termine. Il valore annuale ha validità in un 
-  contesto di trend trentennale.`;
+  const subText = `${t('app.index.header.title')} © ARPAV - Arpa FVG
+  ${t('app.index.header.disclaimer')}`;
 
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';

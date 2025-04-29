@@ -340,7 +340,7 @@ export function MapMenuBar(props: MapMenuBar) {
 
     if (object.archive.indexOf('historical') >= 0) {
       ret.measure = 'absolute';
-      ret.reference_period = '1991_2020';
+      ret.reference_period = 'climate_standard_normal_1991_2020';
       ret.aggregation_period = '30yr';
       ret.year_period = 'all_year';
     } else {

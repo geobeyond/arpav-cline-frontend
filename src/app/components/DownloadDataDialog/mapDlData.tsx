@@ -414,28 +414,55 @@ const MapDlData = (props: MapDlDataProps) => {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={FieldContainerStyle}>
-            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.downloader.quantity')}
-            </Typography>
-            <FormControl>
-              <Select
-                sx={FullWidthStyle}
-                disabled={
-                  activeConfiguration.current.aggregation_period !== '30yr'
-                }
-                value={activeConfiguration.current.time_window}
-                onChange={e => handleChange('time_window', e.target.value)}
-                name="time_window"
-              >
-                {getOptions('time_window').map(item => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+          {mode === 'forecast' ? (
+            <Box sx={FieldContainerStyle}>
+              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                {t('app.map.downloader.quantity')}
+              </Typography>
+              <FormControl>
+                <Select
+                  sx={FullWidthStyle}
+                  disabled={
+                    activeConfiguration.current.aggregation_period !== '30yr'
+                  }
+                  value={activeConfiguration.current.time_window}
+                  onChange={e => handleChange('time_window', e.target.value)}
+                  name="time_window"
+                >
+                  {getOptions('time_window').map(item => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          ) : (
+            <Box sx={FieldContainerStyle}>
+              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                {t('app.map.downloader.quantity')}
+              </Typography>
+              <FormControl>
+                <Select
+                  sx={FullWidthStyle}
+                  disabled={
+                    activeConfiguration.current.aggregation_period !== '30yr'
+                  }
+                  value={activeConfiguration.current.time_window}
+                  onChange={e =>
+                    handleChange('reference_period', e.target.value)
+                  }
+                  name="reference_period"
+                >
+                  {getOptions('reference_period').map(item => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
         </Box>
         <Box sx={RowStyle}>
           <Box sx={FieldContainerStyle}>
