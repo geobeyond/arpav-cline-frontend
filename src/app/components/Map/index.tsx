@@ -120,7 +120,7 @@ const Map = (props: MapProps) => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [wmsTimeDimension, setWmsTimeDimension] = React.useState<string>(
     '1976-07-01T00:00:00Z/2099-07-01T23:59:59Z/P1Y',
@@ -429,16 +429,13 @@ const Map = (props: MapProps) => {
           </Button>
           {data !== 'past' ? (
             <UncontrolledTooltip placement="top" target={ref5}>
-              Si tratta di proiezioni climatiche e non di previsioni a lungo
-              termine. Il valore annuale ha validità in un contesto di trend
-              trentennale.
+              {t('app.index.header.disclaimer')}
             </UncontrolledTooltip>
           ) : (
-            <UncontrolledTooltip placement="top" target={ref5}>
-              Si tratta di proiezioni climatiche e non di previsioni a lungo
-              termine. Il valore annuale ha validità in un contesto di trend
-              trentennale.
-            </UncontrolledTooltip>
+            <UncontrolledTooltip
+              placement="top"
+              target={ref5}
+            ></UncontrolledTooltip>
           )}
         </CustomControlMap>
       ) : (
