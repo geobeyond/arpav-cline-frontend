@@ -50,6 +50,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import { Link } from 'react-router-dom';
 import { ArrowDropDown } from '@mui/icons-material';
+import { useEffect } from 'react';
 class HeaderBarProps {
   mode?: 'compact' | 'full' = 'compact';
 }
@@ -73,8 +74,17 @@ const HeaderBar = (props: HeaderBarProps) => {
   };
 
   const setLang = lang => {
+    localStorage.setItem('chosenLang', lang);
     i18n.changeLanguage(lang);
   };
+
+  useEffect(() => {
+    const l = localStorage.getItem('chosenLang');
+    if (l) {
+      lang = l;
+      i18n.changeLanguage(lang);
+    }
+  });
 
   return (
     <Headers>
