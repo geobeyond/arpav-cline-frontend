@@ -52,7 +52,7 @@ const i18nextInstance = i18next.use(initReactI18next).use(LanguageDetector);
 // Then wrap it with Tolgee
 export const i18n = withTolgee(i18nextInstance, tolgee).init({
   resources: translationsJson,
-  fallbackLng: 'en',
+  fallbackLng: 'it',
   supportedLngs: ['it', 'en'],
   //lng: lang, // Default language
   interpolation: {

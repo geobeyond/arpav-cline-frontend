@@ -21,6 +21,7 @@
   "app.index.header.p1": "the temperature recorded in Veneto in recent decades (black line);",
   "app.index.header.p2": "climate projections until the end of the century for three different greenhouse gas emission reduction scenarios (blue, yellow, and red lines).",
   "app.index.header.disclaimer": "These are climate projections, not long-term forecasts.\nThe annual value is meaningful only in the context of a 30-year trend.",
+  "app.index.observations": "Observations",
   "app.map.downloadDataDialog.DLNetCDF": "Search Netcdf",
   "app.map.downloadDataDialog.map.east": "East",
   "app.map.downloadDataDialog.map.north": "North",
