@@ -8,6 +8,10 @@ import InfoHistoricIt from './InfoHistoricIt';
 import InfoForecastIt from './InfoForecastIt';
 import InfoForecastEn from './InfoForecastEn';
 import InfoHistoricEn from './InfoHistoricEn';
+import InfoBaroIt from './InfoBaroIt';
+import InfoBaroEn from './InfoBaroEn';
+import IntroEn from './IntroEn';
+import IntroIt from './IntroIt';
 
 const regioneImg = '../../../assets/img/logo_regione_veneto.png';
 const arpafvg = '../../../assets/img/arpafvg-logo.svg';
@@ -61,11 +65,14 @@ const InfoPage = () => {
     return (
         <PageContainer>
             <>
+                {i18n.language === 'it' ? <IntroIt /> : <IntroEn />}
+
                 <Tabs
                     value={value}
                     onChange={handleChange}
                     aria-label="basic tabs example"
                 >
+                    <Tab label={t('app.index.sections.barometer')} value="barometer" />
                     <Tab label={t('app.index.sections.proj')} value="forecast" />
                     <Tab label={t('app.index.sections.hist')} value="historic" />
                 </Tabs>
@@ -75,6 +82,9 @@ const InfoPage = () => {
                 </CustomTabPanel>
                 <CustomTabPanel value={value} mode="historic">
                     {i18n.language === 'it' ? <InfoHistoricIt /> : <InfoHistoricEn />}
+                </CustomTabPanel>
+                <CustomTabPanel value={value} mode="barometer">
+                    {i18n.language === 'it' ? <InfoBaroIt /> : <InfoBaroEn />}
                 </CustomTabPanel>
                 <br />
             </>

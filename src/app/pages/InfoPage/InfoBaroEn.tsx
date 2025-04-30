@@ -1,4 +1,4 @@
-const InfoHistoricEn = () => {
+const InfoBaroEn = () => {
     return (
         <>
             <div>
@@ -397,4 +397,4 @@ const InfoHistoricEn = () => {
     );
 };
 
-export default InfoHistoricEn;
+export default InfoBaroEn;
