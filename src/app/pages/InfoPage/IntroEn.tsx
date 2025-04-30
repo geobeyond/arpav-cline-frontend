@@ -2,64 +2,61 @@ const IntroEn = () => {
     return (
         <>
             <div>
-                <h1>Climate Change (Historic)</h1>
+                <h1>Climate change (historical)</h1>
                 <p>
-                    Le attività umane influiscono sul clima: l'aumento della
-                    concentrazione di gas serra e i conseguenti cambiamenti osservati dei
-                    valori climatici medi sul lungo periodo e degli estremi climatici in
-                    ogni parte del mondo ne sono evidenti segnali. Nell'area del
-                    Mediterraneo, in particolare, le condizioni che alterano l'equilibrio
-                    climatico più severe, come l'aumento delle temperature e la
-                    diminuzione delle precipitazioni estive, e la sua vulnerabilità
-                    accentuata rispetto ad altre regioni, portano a rischi climatici più
-                    gravi.
+                    Human activities affect the climate: the increase in greenhouse gas
+                    concentration and the consequent observed changes in long-term average
+                    climate values and climate extremes in every part of the world are
+                    clear signals of this. In the Mediterranean area, in particular, the
+                    conditions that alter the climate balance are more severe, such as
+                    rising temperatures and decreasing summer precipitation, and its
+                    increased vulnerability compared to other regions, leading to more
+                    serious climate risks.
                 </p>
                 <p>
-                    Una valutazione del cambiamento climatico e della sua variabilità a
-                    scala regionale diviene quindi cruciale per stimarne i potenziali
-                    impatti in futuro, per lo sviluppo di strategie di adattamento
-                    (processo di adeguamento al clima attuale o atteso e ai suoi effetti,
-                    al fine di limitare i danni o sfruttare le opportunità favorevoli) e
-                    per valutare azioni di mitigazione (qualsiasi intervento umano che
-                    riduca le emissioni o rafforzi le fonti di assorbimento dei gas
-                    serra).
+                    An assessment of climate change and its variability at a regional
+                    scale therefore becomes crucial to estimate its potential impacts in
+                    the future, for the development of adaptation strategies (process of
+                    adjustment to current or expected climate and its effects, in order to
+                    limit harm or exploit beneficial opportunities) and to evaluate
+                    mitigation actions (any human intervention that reduces emissions or
+                    strengthens greenhouse gas absorption sources).
                 </p>
 
-                <h1>La piattaforma</h1>
+                <h1>The platform</h1>
                 <p>
-                    La Piattaforma <strong>Cli</strong>ma <strong>N</strong>ord-
-                    <strong>E</strong>st (CliNE) propone
-                    <strong>proiezioni climatiche</strong> per il territorio del
-                    <strong>Nord-Est Italia</strong> attraverso
-                    <strong>tredici indicatori</strong> calcolati per possibili
-                    <strong>scenari climatici futuri</strong> e adattati ai dati raccolti
-                    dalle stazioni meteorologiche regionali.&nbsp;
+                    The <strong>Cli</strong>mate <strong>N</strong>orth-
+                    <strong>E</strong>ast (CliNE) Platform offers
+                    <strong>climate projections</strong> for the territory of
+                    <strong>North-East Italy</strong> through
+                    <strong>thirteen indicators</strong> calculated for possible
+                    <strong>future climate scenarios</strong> and adapted to data
+                    collected from regional meteorological stations.&nbsp;
                 </p>
                 <p>
-                    Tali proiezioni vengono fornite in termini di mappe e di serie
-                    temporali, per diversi orizzonti temporali e tre scenari emissivi, con
-                    la possibilità di estrazione e download dei dati per specifici punti
-                    di interesse. Inoltre, viene data la possibilità di visualizzare e
-                    confrontare la serie annuale puntuale fornita dalla proiezione con la
-                    serie storica puntuale misurata dalle stazioni di misura della rete
-                    meteo-idro-nivo regionale presenti nelle immediate vicinanze (entro 1
+                    These projections are provided in terms of maps and time series, for
+                    different time horizons and three emission scenarios, with the
+                    possibility of extraction and download of data for specific points of
+                    interest. Furthermore, it is possible to view and compare the annual
+                    point series provided by the projection with the historical point
+                    series measured by the measurement stations of the regional
+                    weather-hydro-snow network present in the immediate vicinity (within 1
                     km).
                 </p>
                 <p>
-                    Le informazioni presentate nella Piattaforma sono di utilità per
-                    decisori politici, portatori di interesse e cittadini, al fine di
-                    supportare la pianificazione del territorio, le misure di adattamento
-                    ai cambiamenti climatici e, più in generale, aumentare la conoscenza e
-                    la consapevolezza sui cambiamenti climatici in corso.
+                    The information presented in the Platform is useful for policy makers,
+                    stakeholders and citizens, in order to support territorial planning,
+                    adaptation measures to climate change and, more generally, increase
+                    knowledge and awareness about ongoing climate change.
                 </p>
                 <p>
-                    Per informazioni sull'utilizzo di CliNE è possibile consultare il
+                    For information on how to use CliNE, you can consult the
                     <a
                         href="https://github.com/venetoarpa/arpav-cline-frontend/wiki/Manuale-utente"
                         target="_blank"
                         rel="noreferrer"
                     >
-                        Manuale d'uso.
+                        User Manual.
                     </a>
                 </p>
             </div>
