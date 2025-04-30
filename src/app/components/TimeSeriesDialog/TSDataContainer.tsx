@@ -490,7 +490,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       dataset.info.dataset_type === 'main' ||
       dataset.info.dataset_type === 'observation'
     )
-      return dataset.info.coverage_identifier.replaceAll(' ', '_') + '__main';
+      return dataset.name;
     else return dataset.info.coverage_identifier.replaceAll(' ', '_');
   };
   const getAreaStyle = dataset => {
