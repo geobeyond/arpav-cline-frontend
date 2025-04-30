@@ -45,6 +45,7 @@ interface IGrpItmIndex extends IGrpItm {
 
 export interface IItem {
   name: string;
+  group?: string;
   display_name_italian: string;
   display_name_english: string;
   description_italian: string;
@@ -115,7 +116,9 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     event: React.ChangeEvent<HTMLInputElement>,
     key: string,
   ) => {
-    handleChange(key, event.target.value);
+    const k = event.target.value.split('|')[0];
+    const v = event.target.value.split('|')[1];
+    handleChange(k, v);
   };
 
   const values = valueSet
@@ -279,7 +282,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                 : ''
                               }`}
                             //See Sorting fields note.
-                            value={item.name}
+                            value={`${item.group}|${item.name}`}
                             control={<Radio />}
                             checked={item.name === current_map[row.key]}
                             label={

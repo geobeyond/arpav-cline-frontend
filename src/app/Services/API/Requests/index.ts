@@ -353,7 +353,7 @@ export class RequestApi extends Http {
     model?: string,
     scenario?: string,
     measure?: string,
-    time_period?: string,
+    time_window?: string,
     aggregation_period?: string,
     season?: string,
     mode?: string,
@@ -375,13 +375,24 @@ export class RequestApi extends Http {
     if (measure) {
       filter += 'possible_value=measure:' + measure + '&';
     }
-    if (time_period && aggregation_period !== 'annual') {
+    if (
+      time_window &&
+      //@ts-ignore
+      aggregation_period?.replace('30', 'thir').indexOf('thir') >= 0
+    ) {
       filter +=
         'possible_value=' +
         (mode === 'forecast' ? 'time_window' : 'reference_period') +
         ':' +
-        time_period +
+        time_window +
         '&';
+    }
+    if (
+      time_window &&
+      //@ts-ignore
+      aggregation_period?.replace('10', 'ten').indexOf('ten') >= 0
+    ) {
+      filter += 'possible_value=decade' + ':' + time_window + '&';
     }
     if (aggregation_period) {
       filter +=

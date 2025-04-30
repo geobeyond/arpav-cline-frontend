@@ -330,7 +330,9 @@ export function MapPage(props: MapPageProps) {
             currentMap.climatological_model,
             currentMap.scenario,
             currentMap.measure,
-            currentMap.time_window,
+            currentMap.aggregation_period.indexOf('ten') >= 0
+              ? currentMap.decade
+              : currentMap.time_window,
             currentMap.aggregation_period,
             currentMap.year_period,
           )

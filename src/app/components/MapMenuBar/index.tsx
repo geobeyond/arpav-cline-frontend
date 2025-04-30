@@ -24,7 +24,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useTheme } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 
-import { MultiRadioSelect } from '../MultiRadioSelect';
+import { IItem, MultiRadioSelect } from '../MultiRadioSelect';
 
 import {
   FirstRowStyle,
@@ -122,25 +122,29 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const api = RequestApi.getInstance();
 
-  const mapParameters = (mapKey, parameterListKey) => {
+  const mapParameters = (mapKeys, parameterListKey) => {
+    let items: IItem[] = [];
     if (forecast_parameters) {
-      const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
-      const items = fp.allowed_values?.map(item => {
-        //TODO: Controllre caso in cui fp sia vuoto
-        return {
-          ...item,
-          disabled: false,
-          selected: false, //currentMap[mapKey] === item.name,
-        };
-      });
-      //const needsSelection =
-      //  selected_map[mapKey] == null &&
-      //  items.filter(x => x.disabled === false).length > 0;
-      //return { items, needsSelection };
-      return { items, needsSelection: false };
-    } else {
-      return { items: [], needsSelection: false };
+      for (let mapKey of mapKeys) {
+        const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
+        items = items.concat(
+          fp.allowed_values?.map(item => {
+            //TODO: Controllre caso in cui fp sia vuoto
+            return {
+              ...item,
+              group: mapKey,
+              disabled: false,
+              selected: false, //currentMap[mapKey] === item.name,
+            };
+          }),
+        );
+        //const needsSelection =
+        //  selected_map[mapKey] == null &&
+        //  items.filter(x => x.disabled === false).length > 0;
+        //return { items, needsSelection };
+      }
     }
+    return { items, needsSelection: false };
   };
 
   const setItemMenus = () => ({
@@ -152,7 +156,7 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'climatological_variable',
             groupName: '',
             ...mapParameters(
-              'climatological_variable',
+              ['climatological_variable'],
               'climatological_variable',
             ),
             disableable: false,
@@ -172,7 +176,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 key: 'climatological_model',
                 groupName: t('app.map.menu.models'),
                 ...mapParameters(
-                  'climatological_model',
+                  ['climatological_model'],
                   'climatological_model',
                 ),
                 disableable: false,
@@ -187,7 +191,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 key: 'scenario',
                 disableable: false,
                 groupName: t('app.map.menu.scenarios'),
-                ...mapParameters('scenario', 'scenario'),
+                ...mapParameters(['scenario'], 'scenario'),
                 criteria: (x, c) => [],
                 disabled: x => false,
               },
@@ -204,7 +208,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 ? 'aggregation_period'
                 : 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
-            ...mapParameters('aggregation_period', 'aggregation_period'),
+            ...mapParameters(['aggregation_period'], 'aggregation_period'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => {
@@ -214,7 +218,7 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             key: 'measure',
             groupName: t('app.map.menu.valueTypes'),
-            ...mapParameters('measure', 'measure'),
+            ...mapParameters(['measure'], 'measure'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => x?.measure,
@@ -223,13 +227,22 @@ export function MapMenuBar(props: MapMenuBar) {
             key: map_data === 'forecast' ? 'time_window' : 'reference_period',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
-              map_data === 'forecast' ? 'time_window' : 'reference_period',
-              map_data === 'forecast' ? 'time_window' : 'reference_period',
+              map_data === 'forecast'
+                ? ['time_window']
+                : ['reference_period', 'decade'],
+              map_data === 'forecast'
+                ? ['time_window']
+                : ['reference_period', 'decade'],
             ),
             disableable: true,
             disabled: x => x.aggregation_period !== 'thirty_year',
             criteria: (x, c) =>
-              c.aggregation_period !== 'thirty_year' ? [] : ['tw1', 'tw2'],
+              c.aggregation_period !== 'thirty_year' &&
+                c.aggregation_period !== '30yr'
+                ? c.aggregation_period.indexOf('ten') >= 0
+                  ? ['decade_1991_2000', 'decade_2001_2010', 'decade_2011_2020']
+                  : []
+                : ['tw1', 'tw2'],
           },
         ],
       },
@@ -243,7 +256,7 @@ export function MapMenuBar(props: MapMenuBar) {
             multicol_size: [160, 120, 120],
             key: 'year_period',
             groupName: '',
-            ...mapParameters('year_period', 'year_period'),
+            ...mapParameters(['year_period'], 'year_period'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => x?.year_period || x?.year_period,
@@ -520,6 +533,11 @@ export function MapMenuBar(props: MapMenuBar) {
         ? ' - ' + labelFor(localCM.current.time_window)
         : ''
       }
+    ${localCM.current.decade &&
+        localCM.current.aggregation_period === 'ten_year'
+        ? ' - ' + labelFor(localCM.current.decade)
+        : ''
+      }
     - ${labelFor(localCM.current.year_period)}`;
     return caption;
   };
@@ -694,12 +712,12 @@ export function MapMenuBar(props: MapMenuBar) {
                 </Tooltip>
               ) : (
                 /*</Grid><IconButton
-                  onClick={() => setDownloadDataOpen(true)}
-                  disabled={true}
-                  aria-label={t('app.map.menuBar.downloadData')}
-                >
-                  <FileDownloadIcon />
-                </IconButton>*/
+                onClick={() => setDownloadDataOpen(true)}
+                disabled={true}
+                aria-label={t('app.map.menuBar.downloadData')}
+              >
+                <FileDownloadIcon />
+              </IconButton>*/
                 <Button
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
