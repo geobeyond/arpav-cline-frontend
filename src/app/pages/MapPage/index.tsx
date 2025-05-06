@@ -124,8 +124,6 @@ export function MapPage(props: MapPageProps) {
   const currentInfo = useRef(false);
   const currentHide = useRef<any>();
 
-  api.updateCache();
-
   const handleMapReady = (map: LMap) => {
     mapRef.current = map;
     const mapScreenPlugin = new SimpleMapScreenshoter(PLUGIN_OPTIONS);
@@ -191,10 +189,13 @@ export function MapPage(props: MapPageProps) {
         }, {}),
       {},
     );
+  useEffect(() => {
+    api.updateCache();
+  }, []);
 
   useEffect(() => {
     const all_meas = ['absolute', 'anomaly'];
-    const all_pers = ['annual', '30yr'];
+    const all_pers = ['annual', '30yr', 'ten_year'];
     const all_indx = [
       'tas',
       'cdds',
@@ -354,7 +355,9 @@ export function MapPage(props: MapPageProps) {
           .getHistoricLayer(
             currentMap.climatological_variable,
             currentMap.measure,
-            currentMap.reference_period,
+            currentMap.aggregation_period === '30yr'
+              ? currentMap.reference_period
+              : currentMap.decade,
             currentMap.aggregation_period,
             currentMap.year_period,
           )

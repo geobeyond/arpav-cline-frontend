@@ -235,14 +235,14 @@ export function MapMenuBar(props: MapMenuBar) {
                 : ['reference_period', 'decade'],
             ),
             disableable: true,
-            disabled: x => x.aggregation_period !== 'thirty_year',
+            disabled: x => x.aggregation_period === 'annual',
             criteria: (x, c) =>
               c.aggregation_period !== 'thirty_year' &&
                 c.aggregation_period !== '30yr'
                 ? c.aggregation_period.indexOf('ten') >= 0
                   ? ['decade_1991_2000', 'decade_2001_2010', 'decade_2011_2020']
                   : []
-                : ['tw1', 'tw2'],
+                : ['tw1', 'tw2', 'climate_standard_normal_1991_2020'],
           },
         ],
       },

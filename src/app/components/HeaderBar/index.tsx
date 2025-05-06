@@ -84,7 +84,7 @@ const HeaderBar = (props: HeaderBarProps) => {
       lang = l;
       i18n.changeLanguage(lang);
     }
-  });
+  }, []);
 
   return (
     <Headers>

@@ -626,21 +626,25 @@ export class RequestApi extends Http {
     );
 
   public updateCache = () => {
-    this.instance.get(`${BACKEND_API_URL}/base`).then((x: any) => {
-      const curr = localStorage.getItem('git_commit');
-      console.log('current_version', curr);
-      if (curr) {
-        if (curr !== x.git_commit) {
+    const lc = localStorage.getItem('last_check');
+    // @ts-ignore
+    if ((lc && new Date() - Date.parse(lc) > 20000) || lc === null)
+      this.instance.get(`${BACKEND_API_URL}/base`).then((x: any) => {
+        const curr = localStorage.getItem('git_commit');
+        console.log('current_version', curr);
+        if (curr) {
+          if (curr !== x.git_commit) {
+            localStorage.clear();
+            console.log('localStorage cleaered');
+          }
+          localStorage.setItem('git_commit', x.git_commit);
+        } else {
           localStorage.clear();
           console.log('localStorage cleaered');
+          localStorage.setItem('git_commit', x.git_commit);
         }
-        localStorage.setItem('git_commit', x.git_commit);
-      } else {
-        localStorage.clear();
-        console.log('localStorage cleaered');
-        localStorage.setItem('git_commit', x.git_commit);
-      }
-    });
+        localStorage.setItem('last_check', new Date().toString());
+      });
   };
 
   public getTimeserieV2 = (

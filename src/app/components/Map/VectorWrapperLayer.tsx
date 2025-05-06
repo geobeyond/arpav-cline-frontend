@@ -94,7 +94,7 @@ export const VectorWrapperLayer = (props: any) => {
             } catch (ex) {
               console.log(ex);
             }
-          }, 550);
+          }, 500);
           //}
         }
       });
@@ -109,6 +109,9 @@ export const VectorWrapperLayer = (props: any) => {
     ) {
       try {
         popupRef.current.closePopup();
+        setTimeout(() => {
+          popupRef.current.closePopup();
+        }, 550);
       } catch (ex) {
         console.log(ex);
       }
