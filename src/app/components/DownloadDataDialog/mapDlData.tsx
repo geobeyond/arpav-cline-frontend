@@ -50,7 +50,7 @@ export function range(
   const startBound = stop === undefined ? 0 : startOrStop;
   const stopBound = stop === undefined ? startOrStop : stop;
   return Array.from(
-    { length: Math.ceil((stopBound - startBound) / step - 1) + 1 },
+    { length: Math.ceil((stopBound - startBound) / step) + 1 },
     (_, index) => startBound + index * step,
   );
 }
@@ -233,7 +233,11 @@ const MapDlData = (props: MapDlDataProps) => {
         activeConfiguration.current.climatological_model,
         activeConfiguration.current.scenario,
         activeConfiguration.current.measure,
-        activeConfiguration.current.time_period,
+        activeConfiguration.current.archive === 'historic'
+          ? activeConfiguration.current.aggregation_period === '30yr'
+            ? activeConfiguration.current.reference_period
+            : activeConfiguration.current.decade
+          : activeConfiguration.current.time_period,
         activeConfiguration.current.aggregation_period,
         activeConfiguration.current.year_period,
       )

@@ -392,7 +392,7 @@ export class RequestApi extends Http {
       //@ts-ignore
       aggregation_period?.replace('10', 'ten').indexOf('ten') >= 0
     ) {
-      filter += 'possible_value=decade' + ':' + time_window + '&';
+      filter += 'possible_value=historical_decade' + ':' + time_window + '&';
     }
     if (aggregation_period) {
       filter +=
