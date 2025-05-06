@@ -123,7 +123,10 @@ const MapDlData = (props: MapDlDataProps) => {
     ]);
   };
 
-  const times: number[] = range(1976, 2100, 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
+  const times: number[] =
+    mode === 'forecast'
+      ? range(1976, 2100, 1)
+      : range(1980, new Date().getFullYear(), 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
 
   const [years, setYears] = React.useState<number[]>([0, times.length - 1]);
 
@@ -190,12 +193,24 @@ const MapDlData = (props: MapDlDataProps) => {
       }
     }
 
-    ret.climatological_model = 'model_ensemble';
-    ret.scenario = 'rcp85';
-    ret.aggregation_period = '30yr';
-    ret.measure = 'anomaly';
-    ret.time_window = 'tw1';
-
+    if (object.archive.indexOf('historical') >= 0) {
+      ret.measure = 'absolute';
+      ret.reference_period = 'climate_standard_normal_1991_2020';
+      ret.aggregation_period = '30yr';
+      ret.year_period = 'all_year';
+    } else {
+      ret.climatological_model = 'model_ensemble';
+      ret.scenario = 'rcp85';
+      ret.aggregation_period = '30yr';
+      ret.measure = 'anomaly';
+      ret.time_window = 'tw1';
+      ret.year_period =
+        ['tr', 'su30', 'fd', 'hdds', 'cdds', 'snwdays'].indexOf(
+          ret.climatological_variable,
+        ) >= 0
+          ? 'all_year'
+          : 'winter';
+    }
     return ret;
   };
 
@@ -423,7 +438,7 @@ const MapDlData = (props: MapDlDataProps) => {
                 <Select
                   sx={FullWidthStyle}
                   disabled={
-                    activeConfiguration.current.aggregation_period !== '30yr'
+                    activeConfiguration.current.aggregation_period === 'annual'
                   }
                   value={activeConfiguration.current.time_window}
                   onChange={e => handleChange('time_window', e.target.value)}
@@ -446,7 +461,7 @@ const MapDlData = (props: MapDlDataProps) => {
                 <Select
                   sx={FullWidthStyle}
                   disabled={
-                    activeConfiguration.current.aggregation_period !== '30yr'
+                    activeConfiguration.current.aggregation_period === 'annual'
                   }
                   value={activeConfiguration.current.time_window}
                   onChange={e =>
@@ -454,11 +469,25 @@ const MapDlData = (props: MapDlDataProps) => {
                   }
                   name="reference_period"
                 >
-                  {getOptions('reference_period').map(item => (
-                    <MenuItem key={item.value} value={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
+                  {activeConfiguration.current.aggregation_period === '30yr' ? (
+                    getOptions('reference_period').map(item => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                  {activeConfiguration.current.aggregation_period ===
+                    'ten_years' ? (
+                    getOptions('decade').map(item => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <></>
+                  )}
                 </Select>
               </FormControl>
             </Box>
@@ -615,7 +644,7 @@ const MapDlData = (props: MapDlDataProps) => {
             <span>{times[0]}</span>
             <Slider
               disabled={
-                activeConfiguration.current.aggregation_period === '30yr'
+                activeConfiguration.current.aggregation_period !== 'annual'
               }
               sx={YearsSliderStyle}
               getAriaValueText={() =>

@@ -538,7 +538,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         'app.map.timeSeriesDialog.lng',
       )} ${roundTo4(latLng.lng)}; ${timeseries[0].info.station_name
         ? ''
-        : t('app.map.timeSeriesDialog.histWarning')
+        : '\n' + t('app.map.timeSeriesDialog.histWarning')
       } © ARPAV - Arpa FVG`
     : '';
 
