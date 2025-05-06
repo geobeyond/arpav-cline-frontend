@@ -473,25 +473,30 @@ const MapDlData = (props: MapDlDataProps) => {
                   }
                   name="reference_period"
                 >
-                  {activeConfiguration.current.aggregation_period === '30yr' ? (
-                    getOptions('reference_period').map(item => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                  {activeConfiguration.current.aggregation_period ===
-                    'ten_years' ? (
-                    getOptions('decade').map(item => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <></>
-                  )}
+                  {getOptions('reference_period').map(item => (
+                    <MenuItem
+                      key={item.value}
+                      value={item.value}
+                      disabled={
+                        activeConfiguration.current.aggregation_period !==
+                        '30yr'
+                      }
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                  {getOptions('decade').map(item => (
+                    <MenuItem
+                      key={item.value}
+                      value={item.value}
+                      disabled={
+                        activeConfiguration.current.aggregation_period !==
+                        'ten_years'
+                      }
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
