@@ -472,8 +472,8 @@ export class RequestApi extends Http {
       const lc = localStorage.getItem(conf.url);
       if (lc) {
         const ret = JSON.parse(lc);
-        ret.wms_main_layer_name = conf.wms_main_layer_name;
-        ret.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+        //ret.wms_main_layer_name = conf.wms_main_layer_name;
+        //ret.wms_secondary_layer_name = conf.wms_secondary_layer_name;
         return Promise.resolve(ret);
       } else {
         // Fetch only the main data configuration
