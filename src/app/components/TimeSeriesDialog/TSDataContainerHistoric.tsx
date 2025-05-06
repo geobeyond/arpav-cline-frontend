@@ -520,7 +520,10 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-  ${timeseries[0].info?.climatological_variable}
+  ${timeseries[0].translations?.parameter_values?.climatological_variable[
+      i18n.language
+      ]
+      }
   `
     : '';
 
