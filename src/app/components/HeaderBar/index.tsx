@@ -82,8 +82,10 @@ const HeaderBar = (props: HeaderBarProps) => {
     const l = localStorage.getItem('chosenLang');
     if (l) {
       lang = l;
-      i18n.changeLanguage(lang);
+    } else {
+      lang = 'it';
     }
+    i18n.changeLanguage(lang);
   }, []);
 
   return (
