@@ -519,10 +519,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-  ${timeseries[0].translations?.parameter_values.climatological_variable[
-      i18n.language
-      ]
-      }
+  ${timeseries[0].info?.climatological_variable}
   `
     : '';
 
@@ -530,13 +527,13 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-    ${timeseries[0].translations?.parameter_values.climatological_variable[
-      i18n.language
-      ]
-      } -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
-        localStartYear,
-      )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
-      }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
+    ${timeseries[0].info?.climatological_variable} -  ${t(
+        'app.map.timeSeriesDialog.from',
+      )} ${formatYear(localStartYear)} ${t(
+        'app.map.timeSeriesDialog.to',
+      )} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''}${t(
+        'app.map.timeSeriesDialog.lat',
+      )} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
       )} ${roundTo4(latLng.lng)}; ${timeseries[0].info.station_name
         ? ''
