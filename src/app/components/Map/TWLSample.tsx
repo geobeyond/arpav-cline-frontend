@@ -29,6 +29,10 @@ export const TWLSample = (props: any) => {
   const opacity = props.opacity;
   const setCurrentYear = props.setCurrentYear;
 
+  const mode = props.mode;
+  const data = props.data;
+  const currentMap = props.currentMap;
+
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
     Object.getOwnPropertyNames(obj).filter(
@@ -198,7 +202,8 @@ export const TWLSample = (props: any) => {
             cacheBackward: 0,
             cacheForward: 0,
           });
-          if (tdWmsLayer2) {
+
+          if (currentMap === 'annual') {
             setLayer(tdWmsLayer2);
             setTimeout(() => {
               try {
@@ -258,6 +263,7 @@ export const TWLSample = (props: any) => {
     opacity,
     show,
     style,
+    currentMap,
   ]);
 
   return null;

@@ -127,17 +127,19 @@ export function MapMenuBar(props: MapMenuBar) {
     if (forecast_parameters) {
       for (let mapKey of mapKeys) {
         const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
-        items = items.concat(
-          fp.allowed_values?.map(item => {
-            //TODO: Controllre caso in cui fp sia vuoto
-            return {
-              ...item,
-              group: mapKey,
-              disabled: false,
-              selected: false, //currentMap[mapKey] === item.name,
-            };
-          }),
-        );
+        if (fp) {
+          items = items.concat(
+            fp.allowed_values?.map(item => {
+              //TODO: Controllre caso in cui fp sia vuoto
+              return {
+                ...item,
+                group: mapKey,
+                disabled: false,
+                selected: false, //currentMap[mapKey] === item.name,
+              };
+            }),
+          );
+        }
         //const needsSelection =
         //  selected_map[mapKey] == null &&
         //  items.filter(x => x.disabled === false).length > 0;

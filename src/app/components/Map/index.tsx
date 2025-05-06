@@ -407,6 +407,9 @@ const Map = (props: MapProps) => {
           currentMap.aggregation_period === 'annual'
         }
         setCurrentYear={setCurrentYear}
+        mode={mode}
+        data={data}
+        currentMap={currentMap.aggregation_period}
       />
       {currentMap.op !== 'screenshot' ? (
         <CustomControlMap
