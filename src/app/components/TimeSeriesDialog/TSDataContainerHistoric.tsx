@@ -411,7 +411,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     try {
       let ret = item.info.station_name
         ? item.info.station_name
-        : 'dato interpolato';
+        : t('app.map.timeSeriesDialog.interpolated');
 
       ret += ' - ';
       ret +=
@@ -536,7 +536,10 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
       }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
-      )} ${roundTo4(latLng.lng)}; © ARPAV - Arpa FVG`
+      )} ${roundTo4(latLng.lng)}; ${timeseries[0].info.station_name
+        ? ''
+        : t('app.map.timeSeriesDialog.histWarning')
+      } © ARPAV - Arpa FVG`
     : '';
 
   const photoCameraIconPath =
