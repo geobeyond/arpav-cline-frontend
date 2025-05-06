@@ -126,8 +126,10 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const [localEndYear, setLocalEndYear] = useState<any>(endValue);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
-  const [mkStartYear, setMKStartYear] = useState<number>(1995);
-  const [mkEndYear, setMKEndYear] = useState<number>(2024);
+  const [mkStartYear, setMKStartYear] = useState<number>(
+    new Date().getFullYear() - 30,
+  );
+  const [mkEndYear, setMKEndYear] = useState<number>(new Date().getFullYear());
 
   useEffect(() => {
     const do_effect = async () => {
