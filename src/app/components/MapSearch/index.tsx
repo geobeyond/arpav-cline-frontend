@@ -365,6 +365,10 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
       setTimeSerie([...currentTimeserie.values]);
+    } else {
+      setTimeSerie([]);
+      setTt(NaN);
+      setTv(0);
     }
     let att = yr;
     let atv = 0;
