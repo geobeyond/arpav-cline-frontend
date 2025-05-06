@@ -291,6 +291,7 @@ export class RequestApi extends Http {
     time_period?: string,
     aggregation_period?: string,
     season?: string,
+    mode?: string,
   ) => {
     const items = {
       climatological_variable: variable,
@@ -300,6 +301,7 @@ export class RequestApi extends Http {
       time_period: time_period,
       aggregation_period: aggregation_period,
       year_period: season,
+      arhchive: mode,
     };
     let titems: any[] = [];
 
@@ -324,6 +326,7 @@ export class RequestApi extends Http {
           c.time_period,
           c.aggregation_period,
           c.year_period,
+          c.mode,
         ),
       );
     }

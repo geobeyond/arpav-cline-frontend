@@ -101,23 +101,6 @@ export const VectorWrapperLayer = (props: any) => {
     map.addLayer(_vectorLayer);
   }, []);
 
-  useEffect(() => {
-    if (
-      currentTimeSerie === undefined ||
-      currentTimeSerie?.values === undefined ||
-      currentTimeSerie?.values?.length === 0
-    ) {
-      try {
-        popupRef.current.closePopup();
-        setTimeout(() => {
-          popupRef.current.closePopup();
-        }, 550);
-      } catch (ex) {
-        console.log(ex);
-      }
-    }
-  }, [currentTimeSerie]);
-
   // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))
   // const [selected, setSelected] = useState<any>(null);
 

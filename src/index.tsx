@@ -43,6 +43,14 @@ const { store } = configureAppStore();
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container!);
 
+let lang = 'it';
+const l = localStorage.getItem('chosenLang');
+if (l) {
+  lang = l;
+} else {
+  lang = 'it';
+}
+
 console.log(chalk.blue(`USING >> ${process.env.REACT_APP_BACKEND_PUBLIC_URL}`));
 
 root.render(

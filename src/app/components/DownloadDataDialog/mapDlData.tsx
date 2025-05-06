@@ -126,7 +126,7 @@ const MapDlData = (props: MapDlDataProps) => {
   const times: number[] =
     mode === 'forecast'
       ? range(1976, 2100, 1)
-      : range(1980, new Date().getFullYear(), 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
+      : range(1984, new Date().getFullYear(), 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
 
   const [years, setYears] = React.useState<number[]>([0, times.length - 1]);
 

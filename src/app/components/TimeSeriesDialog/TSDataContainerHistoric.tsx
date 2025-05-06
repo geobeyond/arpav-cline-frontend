@@ -424,7 +424,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         item.info.processing_method_info?.is_statistically_significant
       ) {
         ret +=
-          ' - ' +
+          ': ' +
+          (item.info.processing_method_info?.slope > 0 ? '+' : '-') +
           (item.info.processing_method_info?.slope * 10).toFixed(
             currentLayer?.data_precision,
           );
@@ -831,14 +832,14 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
               disabled={
                 mkStartYear > mkEndYear ||
                 mkEndYear - mkStartYear < 27 ||
-                mkStartYear <= baseValue ||
+                mkStartYear < baseValue ||
                 mkEndYear > new Date().getFullYear()
               }
               onClick={recalculate}
             >
               {mkStartYear > mkEndYear ||
                 mkEndYear - mkStartYear < 27 ||
-                mkStartYear <= baseValue ||
+                mkStartYear < baseValue ||
                 mkEndYear > new Date().getFullYear()
                 ? t('app.map.timeSeriesDialog.mkError')
                 : t('app.map.timeSeriesDialog.mkOk')}
