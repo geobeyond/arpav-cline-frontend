@@ -542,13 +542,10 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     ? timeseries?.length === 0
       ? ''
       : `
-    ${timeseries[0].info?.climatological_variable} -  ${t(
-        'app.map.timeSeriesDialog.from',
-      )} ${formatYear(localStartYear)} ${t(
-        'app.map.timeSeriesDialog.to',
-      )} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''}${t(
-        'app.map.timeSeriesDialog.lat',
-      )} ${roundTo4(latLng.lat)} ${t(
+    ${titleText} -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+        localStartYear,
+      )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
+      }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
         'app.map.timeSeriesDialog.lng',
       )} ${roundTo4(latLng.lng)}; ${timeseries[0].info.station_name
         ? ''

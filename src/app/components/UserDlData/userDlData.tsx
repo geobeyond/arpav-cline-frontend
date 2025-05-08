@@ -31,11 +31,13 @@ import { useSelector } from 'react-redux';
 export interface UserDlDataProps {
   onValidityChange?: (isValid: boolean) => void;
   onChange?: (values: any) => void;
+  mode: string;
 }
 
 const UserDlData = (props: UserDlDataProps) => {
   const onValidityChange = props.onValidityChange ?? (() => { });
   const onChange = props.onChange ?? (() => { });
+  const mode = props.mode;
 
   enum Reason {
     Study = 'study',
@@ -247,9 +249,11 @@ const UserDlData = (props: UserDlDataProps) => {
                 InputProps={{ readOnly: true }}
                 multiline
                 label={t('app.map.downloadDataDialog.user.disclaimer')}
-                defaultValue={t(
-                  'app.map.downloadDataDialog.user.disclaimerText',
-                )}
+                defaultValue={
+                  mode === 'forecast'
+                    ? t('app.map.downloadDataDialog.user.disclaimerText')
+                    : t('app.map.timeSeriesDialog.histWarning')
+                }
                 fullWidth
                 size={isMobile ? 'small' : 'medium'}
               />

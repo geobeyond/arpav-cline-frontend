@@ -147,6 +147,7 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
               </Grid>
               <Grid xs={26}>
                 <UserDlData
+                  mode={mode}
                   onChange={handleChange}
                   onValidityChange={userValidityHandleChange}
                 />

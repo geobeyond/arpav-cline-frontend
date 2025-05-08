@@ -275,6 +275,7 @@ export const DownloadForm = props => {
               {t('app.map.timeSeriesDialog.DLTimeSeries')}
             </Typography>
             <UserDlData
+              mode={mode}
               onChange={handleChange}
               onValidityChange={userValidityHandleChange}
             />
