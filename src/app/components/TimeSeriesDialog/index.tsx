@@ -168,6 +168,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         </Grid>
         <Grid xs={1} />
         <DownloadForm
+          mode={map_data}
           setOpen={setOpen}
           latLng={latLng}
           ids={ids}

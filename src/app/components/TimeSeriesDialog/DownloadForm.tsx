@@ -18,7 +18,8 @@ import PapaParse from 'papaparse';
 import JSZip from 'jszip';
 
 export const DownloadForm = props => {
-  const { setOpen, latLng, ids, timeRange, data, filter, filledSeries } = props;
+  const { setOpen, latLng, ids, timeRange, data, filter, filledSeries, mode } =
+    props;
   const { t } = useTranslation();
   const api = RequestApi.getInstance();
   const dispatch = useDispatch();

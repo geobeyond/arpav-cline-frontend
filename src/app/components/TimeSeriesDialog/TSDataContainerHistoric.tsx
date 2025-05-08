@@ -516,16 +516,27 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       };
   });
 
-  const titleText = timeseries
-    ? timeseries?.length === 0
-      ? ''
-      : `
-  ${timeseries[0].translations?.parameter_values?.climatological_variable[
-      i18n.language
-      ]
+  let titleText = '';
+  if (timeseries) {
+    if (timeseries?.length > 0) {
+      if (
+        timeseries[0].translations?.parameter_values?.climatological_variable
+      ) {
+        titleText =
+          timeseries[0].translations?.parameter_values?.climatological_variable[
+          i18n.language
+          ];
+      } else if (timeseries[0].translations?.parameter_values?.variable) {
+        titleText =
+          timeseries[0].translations?.parameter_values?.variable[i18n.language];
+      } else {
+        titleText =
+          timeseries[0].translations?.parameter_values?.series_name[
+          i18n.language
+          ];
       }
-  `
-    : '';
+    }
+  }
 
   let subText = timeseries
     ? timeseries?.length === 0
