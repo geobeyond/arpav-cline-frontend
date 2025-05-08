@@ -753,9 +753,11 @@ export function MapPage(props: MapPageProps) {
                 display: 'block',
               }}
             >
-              Si tratta di proiezioni climatiche e non di previsioni a lungo
-              termine. Il valore annuale ha validità in un contesto di trend
-              trentennale.
+              {t(
+                map_data === 'forecast'
+                  ? 'app.map.downloadDataDialog.user.disclaimerText'
+                  : 'app.map.timeSeriesDialog.histWarning',
+              )}
             </Typography>
           </div>
         </div>
