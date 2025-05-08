@@ -50,6 +50,7 @@ if (l) {
 } else {
   lang = 'it';
 }
+localStorage.setItem('chosenLang', lang);
 
 console.log(chalk.blue(`USING >> ${process.env.REACT_APP_BACKEND_PUBLIC_URL}`));
 
