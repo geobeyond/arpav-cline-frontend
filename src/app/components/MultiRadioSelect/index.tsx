@@ -142,7 +142,8 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     ret = ret.filter(
       x =>
         ((x.name.indexOf('tw') >= 0 ||
-          x.name.indexOf('climate_standard') >= 0) &&
+          x.name.indexOf('climate_standard') >= 0 ||
+          x.name.indexOf('decade') >= 0) &&
           ret.filter(y => y.name === '30yr').length > 0) ||
         (x.name.indexOf('tw') < 0 && x.name.indexOf('climate_standard') < 0),
     );
@@ -284,7 +285,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                             //See Sorting fields note.
                             value={`${item.group}|${item.name}`}
                             control={<Radio />}
-                            checked={item.name === current_map[row.key]}
+                            checked={item.name === current_map[item.group]}
                             label={
                               <Box sx={MenuLabelStyle}>
                                 <span aria-label={translate(item, 'label')}>
