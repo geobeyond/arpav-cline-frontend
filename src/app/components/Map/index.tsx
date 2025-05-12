@@ -435,10 +435,9 @@ const Map = (props: MapProps) => {
               {t('app.index.header.disclaimer')}
             </UncontrolledTooltip>
           ) : (
-            <UncontrolledTooltip
-              placement="top"
-              target={ref5}
-            ></UncontrolledTooltip>
+            <UncontrolledTooltip placement="top" target={ref5}>
+              {t('app.map.timeSeriesDialog.histWarning')}
+            </UncontrolledTooltip>
           )}
         </CustomControlMap>
       ) : (
