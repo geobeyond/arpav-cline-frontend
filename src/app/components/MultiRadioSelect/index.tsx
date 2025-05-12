@@ -285,6 +285,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                             //See Sorting fields note.
                             value={`${item.group}|${item.name}`}
                             control={<Radio />}
+                            //@ts-ignore
                             checked={item.name === current_map[item.group]}
                             label={
                               <Box sx={MenuLabelStyle}>
