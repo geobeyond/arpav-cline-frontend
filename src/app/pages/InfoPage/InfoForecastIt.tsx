@@ -2,39 +2,9 @@ const InfoForecastIt = () => {
     return (
         <>
             <div>
-                <h1>Gli elementi della piattaforma</h1>
+                <h2>Proiezioni Climatiche</h2>
 
-                <h3>1. Barometro del clima</h3>
-                <p>
-                    Il
-                    <a
-                        href="https://clima.arpa.veneto.it"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        barometro del clima
-                    </a>
-                    , analogamente al barometro che misura la pressione atmosferica usato
-                    per descrivere e prevedere l'evoluzione meteorologica, vuole essere
-                    uno strumento semplice e diretto per descrivere e prevedere il clima
-                    che cambia.
-                </p>
-                <p>
-                    In questo contesto, la temperatura media annua misurata dalle stazioni
-                    meteorologiche regionali racconta l'evoluzione del clima in Veneto
-                    fino ad oggi. Le proiezioni climatiche rappresentano possibili futuri
-                    climatici, ognuno dei quali parte dalla situazione attuale tenendo
-                    conto di sviluppi socio-economici, demografici e tecnologici che
-                    determinano panorami emissivi diversi di gas serra, causa principale
-                    del riscaldamento globale.
-                </p>
-                <p>
-                    Il confronto tra temperatura media annua rilevata e proiezioni
-                    climatiche offre una misura del clima che sta cambiando e della
-                    possibile evoluzione nel futuro.
-                </p>
-
-                <h3>2. Tredici indicatori</h3>
+                <h3>Indicatori climatici</h3>
                 <table>
                     <colgroup>
                         <col style={{ width: '40%' }}></col>
@@ -210,7 +180,7 @@ const InfoForecastIt = () => {
                     </tbody>
                 </table>
 
-                <h3>3. Medie annuali e trentennali</h3>
+                <h3>Aggregazione temporale</h3>
                 <p>
                     Per ogni indicatore sono disponibili
                     <strong>medie a livello annuale e trentennale</strong> in
@@ -225,18 +195,7 @@ const InfoForecastIt = () => {
                     calcolate le medie per i periodi 2021-2050 (futuro vicino) e 2071-2100
                     (futuro lontano).
                 </p>
-
-                <h3>4. Dati stagionali e annuali</h3>
-                <p>
-                    Gli indicatori sono calcolati su <strong>base stagionale</strong> e
-                    alcuni su <strong>base annuale</strong>, anche a seconda della
-                    tipologia dell'indicatore. Si considera la definizione climatica di
-                    stagione: inverno (dicembre-gennaio-febbraio), primavera
-                    (marzo-aprile-maggio), estate (giugno-luglio-agosto), autunno
-                    (settembre-ottobre-novembre).
-                </p>
-
-                <h3>5. Scenari e modelli climatici</h3>
+                <h3>Scenari e modelli climatici</h3>
                 <p>
                     La piattaforma CliNE utilizza <strong>tre scenari</strong>:
                 </p>
@@ -282,7 +241,7 @@ const InfoForecastIt = () => {
                     da cui derivano.
                 </p>
 
-                <h3>6. Risoluzione geografica</h3>
+                <h3>Risoluzione geografica</h3>
                 <p>
                     Per gli indicatori corretti con bias-correction il passo di griglia è
                     500 m e 5 km, rispettivamente, per quelli calcolati sulla base di

@@ -56,7 +56,7 @@ const InfoPage = () => {
     };
 
     const { t, i18n } = useTranslation();
-    const [value, setValue] = React.useState('forecast');
+    const [value, setValue] = React.useState('barometer');
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
@@ -73,8 +73,8 @@ const InfoPage = () => {
                     aria-label="basic tabs example"
                 >
                     <Tab label={t('app.index.sections.barometer')} value="barometer" />
-                    <Tab label={t('app.index.sections.proj')} value="forecast" />
                     <Tab label={t('app.index.sections.hist')} value="historic" />
+                    <Tab label={t('app.index.sections.proj')} value="forecast" />
                 </Tabs>
 
                 <CustomTabPanel value={value} mode="forecast">

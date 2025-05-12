@@ -11,15 +11,15 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
         else this._map.setupFrontLayer(x, this._map);
       }
     });
-    const url = new URL(window.location.href);
-    
-    if(url.searchParams.has('year')){
-        url.searchParams.set('year', date.getFullYear().toString());
-    } else {
-        url.searchParams.append('year', date.getFullYear().toString());
-    }
-    window.history.pushState(null, '', url.toString());
-
+    setTimeout(()=>{
+        const url = new URL(window.location.href);
+        if(url.searchParams.has('year')){
+            url.searchParams.set('year', date.getFullYear().toString());
+        } else {
+            url.searchParams.append('year', date.getFullYear().toString());
+        }
+        window.history.pushState(null, '', url.toString());
+    }, 1000);
     // @ts-ignore
     return date.getFullYear();
   },
