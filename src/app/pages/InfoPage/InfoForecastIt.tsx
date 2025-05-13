@@ -30,7 +30,7 @@ const InfoForecastIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Temperatura media giornaliera dell'aria vicino al suolo</p>
+                                <p>Temperatura media dell'aria vicino al suolo</p>
                             </td>
                         </tr>
                         <tr>
@@ -135,7 +135,7 @@ const InfoForecastIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Precipitazione giornaliera</p>
+                                <p>Precipitazione cumulata al suolo</p>
                             </td>
                         </tr>
                         <tr>
@@ -189,15 +189,23 @@ const InfoForecastIt = () => {
                     <strong>anomalia</strong>).&nbsp;
                 </p>
                 <p>
-                    Per le <strong>medie trentennali</strong> il
+                    Per le medie trentennali il
                     <strong>periodo storico di riferimento</strong> è l'intervallo
                     1976-2005, che rappresenta la climatologia passata, su cui sono state
-                    calcolate le medie per i periodi 2021-2050 (futuro vicino) e 2071-2100
+                    calcolate le medie per i periodi <strong>2021-2050</strong> (futuro
+                    vicino) e <strong>2071-2100</strong>
                     (futuro lontano).
+                </p>
+                <p>
+                    Gli indicatori sono calcolati su base stagionale e alcuni su base
+                    annuale, anche a seconda della tipologia dell'indicatore. Si considera
+                    la definizione climatica di stagione: inverno
+                    (dicembre-gennaio-febbraio), primavera (marzo-aprile-maggio), estate
+                    (giugno-luglio-agosto), autunno (settembre-ottobre-novembre).
                 </p>
                 <h3>Scenari e modelli climatici</h3>
                 <p>
-                    La piattaforma CliNE utilizza <strong>tre scenari</strong>:
+                    La piattaforma CliNE utilizza <strong>tre scenari climatici</strong>:
                 </p>
                 <p>
                     RCP2.6: scenario con <strong>forte mitigazione</strong> delle
@@ -214,7 +222,8 @@ const InfoForecastIt = () => {
                 <p>
                     RCP8.5: scenario <strong>senza mitigazione</strong> e con emissioni
                     via via crescente, cosiddetto <i>business-as-usual</i> e una
-                    concentrazione di CO2 entro fine secolo che supera i 900 ppm.
+                    concentrazione di CO2 entro fine secolo che supera i 900 ppm, come da
+                    tendenza attuale.
                 </p>
                 <p>
                     Per questi scenari la Piattaforma elabora - con un metodo di
@@ -259,7 +268,8 @@ const InfoForecastIt = () => {
                     Nell'utilizzo della Piattaforma è importante tenere presente le
                     seguenti avvertenze:
                 </p>
-                <p>
+                <ul></ul>
+                <li>
                     Sono presenti 5 diverse simulazioni modellistiche e la loro media di
                     ensemble come migliore proiezione per il futuro (Giorgi, 2005). Tutte
                     le simulazioni modellistiche sono caratterizzate da un certo grado di
@@ -279,23 +289,23 @@ const InfoForecastIt = () => {
                     modelli); per le serie annuali puntuali, oltre alla media di ensemble
                     vengono forniti gli estremi di incertezza superiore e inferiore (media
                     ensemble +/- deviazione standard dei 5 modelli).
-                </p>
-                <p>
+                </li>
+                <li>
                     Si tratta di <strong>proiezioni</strong> climatiche e non di
                     previsioni a lungo termine. Pertanto, il valore annuale non ha
                     validità come previsione (ad es. non ha alcun significato vedere quale
                     sarà la temperatura media nell'estate del 2047), ma ha validità
                     esclusivamente in un contesto di trend trentennale.
-                </p>
-                <p>
+                </li>
+                <li>
                     La <strong>risoluzione</strong> effettiva delle simulazioni
                     modellistiche è circa 2-3 volte minore rispetto al passo di griglia e
                     quindi non è possibile descrivere fenomeni al di sotto di questa
                     dimensione. Ad esempio, se il modello ha passo di griglia 11 km la
                     risoluzione effettiva è circa 30 km; nell'utilizzo dell'indicatore sul
                     singolo punto è sempre necessario tener conto di questo aspetto.&nbsp;
-                </p>
-                <p>
+                </li>
+                <li>
                     <strong>Area geografica</strong> di riferimento. Per gli indicatori
                     che si basano sulla precipitazione il bias-correction è stato operato
                     su tutta l'area di Veneto/Friuli-Venezia Giulia/Trentino-Alto Adige
@@ -308,50 +318,21 @@ const InfoForecastIt = () => {
                     solo su quest'area. In una versione futura della Piattaforma si
                     cercherà di integrare le proiezioni con la bias-correction eseguita
                     con i dati da stazione del Trentino-Alto Adige.
-                </p>
-                <p>
+                </li>
+                <li>
+                    La serie annuale puntuale fornita dalla proiezione viene messa a
+                    confronto con la serie storica puntuale misurata dalla stazione di
+                    misura della rete meteo regionale presente nelle immediate vicinanze,
+                    se quest'ultima si trova ad una distanza di 1 km dal punto di griglia
+                    del modello.
+                </li>
+                <li>
                     Sebbene gli output dei dati di origine EURO-CORDEX siano stati
                     sottoposti a procedure di controllo qualità, è possibile rimangano
                     errori non identificati.
-                </p>
-
-                <h3>Link utili</h3>
-                <p>
-                    PDF di approfondimento
-                    <a href="/cline_approfondimento.pdf" target="_blank">
-                        CliNE: sezione Proiezioni Climatiche
-                    </a>
-                </p>
-                <p>
-                    <a
-                        href="https://github.com/venetoarpa/Arpav-PPCV-backend/wiki/Manuale-utente"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        Manuale d'uso della Piattaforma
-                    </a>
-                </p>
-                <p>
-                    Codice sorgente disponibile su
-                    <a
-                        href="https://github.com/venetoarpa/Arpav-PPCV"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        Github
-                    </a>
-                </p>
-                <p>
-                    Indirizzo per informazioni e segnalazioni:
-                    <a
-                        href="mailto:cmt.rete@arpa.veneto.it"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <u>cmt.rete@arpa.veneto.it</u>
-                    </a>
-                </p>
-            </div>
+                </li>
+            </ul>
+        </div >
         </>
     );
 };

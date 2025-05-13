@@ -137,10 +137,10 @@ const InfoHistoricIt = () => {
                     <strong>anomalia</strong>).&nbsp;
                 </p>
                 <p>
-                    Come periodo di riferimento è stato preso il trentennio normale
-                    climatico 1991-2020, che rappresenta la climatologia recente.
-                    Utilizzando questo normale climatico sono state calcolate le anomalie
-                    annuali e decennali.
+                    Come periodo di riferimento è stato preso il trentennio{' '}
+                    <strong>normale climatico</strong> 1991-2020, che rappresenta la
+                    climatologia recente. Utilizzando questo normale climatico sono state
+                    calcolate le anomalie annuali e decennali.
                 </p>
                 <p>
                     Gli indicatori sono calcolati su base mensile, stagionale e annuale a
@@ -152,12 +152,27 @@ const InfoHistoricIt = () => {
 
                 <h3>Dati osservati</h3>
                 <p>
-                    Gli indicatori sono calcolati su <strong>base stagionale</strong> e
-                    alcuni su <strong>base annuale</strong>, anche a seconda della
-                    tipologia dell'indicatore. Si considera la definizione climatica di
-                    stagione: inverno (dicembre-gennaio-febbraio), primavera
-                    (marzo-aprile-maggio), estate (giugno-luglio-agosto), autunno
-                    (settembre-ottobre-novembre).
+                    La piattaforma CliNE sul territorio del Veneto utilizza le
+                    osservazioni della <strong>rete di stazioni automatiche</strong>
+                    meteo-idro-nivo di <strong>ARPA Veneto</strong>, considerando circa
+                    130 stazioni che dispongono di una serie consistente (almeno 27 anni)
+                    dal 1992 ad oggi. Le stime dei valori regionalizzati sono state
+                    calcolate mediante la spazializzazione dei dati puntuali attraverso
+                    l'applicazione del <i>Universal Kriging</i>, utilizzando come
+                    covariabile la quota e considerando anche la distanza dalla costa per
+                    alcuni indicatori.{' '}
+                </p>
+                <p>
+                    Per il territorio del Friuli Venezia Giulia vengono utilizzate circa
+                    85 stazioni automatiche della rete meteorologica regionale di{' '}
+                    <b>ARPA FVG</b> che dispongono di una serie consistente a partire dal
+                    1991.
+                </p>
+                <p>
+                    Per il calcolo del trend si è adottato lo stimatore di{' '}
+                    <i>Theil-Sen</i>, metodo più robusto rispetto alla regressione
+                    lineare; la significatività statistica del trend viene poi valutata
+                    con il test non parametrico di <i>Mann-Kendall</i>.
                 </p>
 
                 <h3>Risoluzione geografica</h3>
@@ -177,19 +192,21 @@ const InfoHistoricIt = () => {
                 </p>
                 <ul>
                     <li>
-                        Area geografica di riferimento. Per gli indicatori calcolati sul
-                        Veneto è stata operata un'interpolazione geo-spaziale che permette
-                        di ottenere un grigliato regolare su tutta la regione. I valori nei
+                        <strong>Area geografica</strong> di riferimento. Per gli indicatori
+                        calcolati sul Veneto è stata operata un'
+                        <strong>interpolazione geo-spaziale</strong> che permette di
+                        ottenere un grigliato regolare su tutta la regione. I valori nei
                         punti al di fuori delle stazioni meteorologiche, essendo frutto di
-                        interpolazione spaziale, vanno trattati come dati stimati e non come
-                        dati misurati. Per il Friuli Venezia Giulia vengono forniti solo i
-                        valori misurati a livello puntuale di stazione.
+                        <strong>interpolazione spaziale</strong>, vanno trattati come dati
+                        stimati e non come dati misurati. Per il Friuli Venezia Giulia
+                        vengono forniti solo i valori misurati a livello puntuale di
+                        stazione.
                     </li>
                     <li>
                         Nell'analisi delle serie storiche un aspetto cruciale è la
-                        significatività statistica delle linee di tendenza. Attualmente in
-                        CliNE si tiene conto della significatività del trend nel modo
-                        seguente: per le serie annuali puntuali, se il trend è
+                        <strong>significatività statistica</strong> delle linee di tendenza.
+                        Attualmente in CliNE si tiene conto della significatività del trend
+                        nel modo seguente: per le serie annuali puntuali, se il trend è
                         statisticamente significativo (con 95% di confidenza) la linea di
                         trend è continua e viene fornito il coefficiente di
                         aumento/diminuzione; in caso contrario, la linea dell'andamento è
@@ -197,9 +214,10 @@ const InfoHistoricIt = () => {
                     </li>
                     <li>
                         Nelle serie annuali puntuali viene fornito il dato da stazione se il
-                        punto selezionato è ad una distanza massima di 2.5 km dalla stazione
-                        stessa; al di fuori di questo raggio, viene fornito il dato frutto
-                        dell'interpolazione spaziale (ove esistente).
+                        punto selezionato è ad una distanza massima di{' '}
+                        <strong>2.5 km</strong> dalla stazione stessa; al di fuori di questo
+                        raggio, viene fornito il dato frutto dell'interpolazione spaziale
+                        (ove esistente).
                     </li>
                     <li>
                         Sebbene gli output dei dati di origine delle stazioni siano stati
