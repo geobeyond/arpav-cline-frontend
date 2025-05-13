@@ -207,24 +207,27 @@ const InfoForecastIt = () => {
                 <p>
                     La piattaforma CliNE utilizza <strong>tre scenari climatici</strong>:
                 </p>
-                <p>
-                    RCP2.6: scenario con <strong>forte mitigazione</strong> delle
-                    emissioni di gas serra, ovvero una concentrazione in atmosfera di CO2
-                    entro il 2100 pari a quella attuale (circa 420ppm) e che mira a
-                    mantenere il riscaldamento globale entro i 2°C rispetto ai valori
-                    preindustriali, come previsto dall'Accordo di Parigi (del 2015);&nbsp;
-                </p>
-                <p>
-                    RCP4.5: scenario intermedio di <strong>stabilizzazione</strong>,
-                    ovvero la concentrazione di CO2 si stabilizza entro fine secolo a 538
-                    ppm;
-                </p>
-                <p>
-                    RCP8.5: scenario <strong>senza mitigazione</strong> e con emissioni
-                    via via crescente, cosiddetto <i>business-as-usual</i> e una
-                    concentrazione di CO2 entro fine secolo che supera i 900 ppm, come da
-                    tendenza attuale.
-                </p>
+                <ul>
+                    <li>
+                        RCP2.6: scenario con <strong>forte mitigazione</strong> delle
+                        emissioni di gas serra, ovvero una concentrazione in atmosfera di
+                        CO2 entro il 2100 pari a quella attuale (circa 420ppm) e che mira a
+                        mantenere il riscaldamento globale entro i 2°C rispetto ai valori
+                        preindustriali, come previsto dall'Accordo di Parigi (del
+                        2015);&nbsp;
+                    </li>
+                    <li>
+                        RCP4.5: scenario intermedio di <strong>stabilizzazione</strong>,
+                        ovvero la concentrazione di CO2 si stabilizza entro fine secolo a
+                        538 ppm;
+                    </li>
+                    <li>
+                        RCP8.5: scenario <strong>senza mitigazione</strong> e con emissioni
+                        via via crescente, cosiddetto <i>business-as-usual</i> e una
+                        concentrazione di CO2 entro fine secolo che supera i 900 ppm, come
+                        da tendenza attuale.
+                    </li>
+                </ul>
                 <p>
                     Per questi scenari la Piattaforma elabora - con un metodo di
                     <i>bias-correction</i>

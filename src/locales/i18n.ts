@@ -21,14 +21,6 @@ export const translationsJson = {
     translation: it,
   },
 };
-(() => {
-  let lang = 'it';
-  let l = localStorage.getItem('chosenLang');
-  if (l) {
-    lang = l;
-  }
-  localStorage.setItem('chosenLang', lang);
-})();
 
 // Create the 'translations' object to provide full intellisense support
 convertLanguageJsonToObject(en);

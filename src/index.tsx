@@ -38,6 +38,15 @@ import { withTolgee, Tolgee, I18nextPlugin, DevTools } from '@tolgee/i18next';
 import './locales/i18n';
 import { initReactI18next } from 'react-i18next';
 
+(() => {
+  let lang = 'it';
+  let l = localStorage.getItem('chosenLang');
+  if (l) {
+    lang = l;
+  }
+  localStorage.setItem('chosenLang', lang);
+})();
+
 const { store } = configureAppStore();
 // console.log({store})
 const container = document.getElementById('root');
