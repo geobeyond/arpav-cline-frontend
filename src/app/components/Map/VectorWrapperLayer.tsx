@@ -18,7 +18,6 @@ export const VectorWrapperLayer = (props: any) => {
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
-  const { selected_map } = useSelector((state: any) => state.map);
   const { selectCallback, selectedPoint, openCharts, unit, precision, mode } =
     props;
   const map = useMap();

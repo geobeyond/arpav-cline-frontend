@@ -166,22 +166,26 @@ export const DownloadForm = props => {
         return opseriesObj;
       }
       : async () => {
-        let opseriesObj = [
-          data.current.filter(
-            x =>
-              x.info.processing_method.indexOf(filter.current.tsSmoothing) >=
-              0,
-          )[0],
-          data.current.filter(
-            x => x.info.processing_method === 'decade_aggregation',
-          )[0],
-          data.current.filter(
-            x => x.info.processing_method === 'mann_kendall_trend',
-          )[0],
-        ];
+        if (data.current.length > 0) {
+          let tdata: any[] = data.current;
+          let opseriesObj = [
+            tdata.filter(
+              x =>
+                x.info.processing_method.indexOf(
+                  filter.current.tsSmoothing,
+                ) >= 0,
+            )[0],
+            tdata.filter(
+              x => x.info.processing_method === 'decade_aggregation',
+            )[0],
+            tdata.filter(
+              x => x.info.processing_method === 'mann_kendall_trend',
+            )[0],
+          ];
 
-        await setSeriesObject(opseriesObj);
-        return opseriesObj;
+          await setSeriesObject(opseriesObj);
+          return opseriesObj;
+        }
       };
 
   useEffect(() => {
@@ -207,6 +211,7 @@ export const DownloadForm = props => {
       sfs: filter.current?.series?.flat(),
     };
     setCsvLoader(true);
+    //@ts-ignore
     let fdata = [...seriesObj];
 
     let z = new JSZip();

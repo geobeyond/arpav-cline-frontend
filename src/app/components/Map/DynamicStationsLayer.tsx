@@ -12,7 +12,6 @@ import { MapPopup } from '../MapSearch';
 import { PopupStyle } from './styles';
 
 export const DynamicStationsLayer = (props: any) => {
-  const { selected_map } = useSelector((state: any) => state.map);
   const {
     selectCallback,
     selectedPoint,
@@ -73,7 +72,6 @@ export const DynamicStationsLayer = (props: any) => {
       };
     }
   }, [
-    selected_map,
     map,
     selectedPoint,
     context.layerContainer,

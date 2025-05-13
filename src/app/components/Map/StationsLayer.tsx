@@ -12,7 +12,6 @@ import { MapPopup } from '../MapSearch';
 import { PopupStyle } from './styles';
 
 export const StationsLayer = (props: any) => {
-  const { selected_map } = useSelector((state: any) => state.map);
   const { selectCallback, selectedPoint, openCharts, zIndex, variable, data } =
     props;
   const map = useMap();
@@ -62,7 +61,6 @@ export const StationsLayer = (props: any) => {
       }
     };
   }, [
-    selected_map,
     map,
     selectedPoint,
     context.layerContainer,
