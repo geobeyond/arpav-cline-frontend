@@ -268,71 +268,75 @@ const InfoForecastIt = () => {
                     Nell'utilizzo della Piattaforma è importante tenere presente le
                     seguenti avvertenze:
                 </p>
-                <ul></ul>
-                <li>
-                    Sono presenti 5 diverse simulazioni modellistiche e la loro media di
-                    ensemble come migliore proiezione per il futuro (Giorgi, 2005). Tutte
-                    le simulazioni modellistiche sono caratterizzate da un certo grado di
-                    <strong>incertezza</strong>, che è dovuta allo scenario di emissione,
-                    alla rappresentazione dei processi fisici (fisica delle nubi, bilancio
-                    energetico alla superficie, …) e alla variabilità naturale del sistema
-                    climatico (Cubash et al, 2001). L'incertezza dei modelli considerati è
-                    fornita dalla deviazione standard dell'insieme di modelli considerati
-                    (Giorgi, 2005). Nell'utilizzo delle proiezioni, la media di ensemble
-                    può essere considerata come la proiezione futura più probabile, ma
-                    l'incertezza fornita dai diversi output delle varie simulazioni
-                    modellistiche va sempre tenuta in considerazione. Attualmente in CliNE
-                    si tiene conto dell'incertezza nei modi seguenti: per le mappe di
-                    anomalia trentennale, le aree dove i modelli non hanno un buon accordo
-                    (Stocker at el., 2013) e quindi la proiezione è incerta sono
-                    ombreggiate (media di ensemble &lt; deviazione standard dei 5
-                    modelli); per le serie annuali puntuali, oltre alla media di ensemble
-                    vengono forniti gli estremi di incertezza superiore e inferiore (media
-                    ensemble +/- deviazione standard dei 5 modelli).
-                </li>
-                <li>
-                    Si tratta di <strong>proiezioni</strong> climatiche e non di
-                    previsioni a lungo termine. Pertanto, il valore annuale non ha
-                    validità come previsione (ad es. non ha alcun significato vedere quale
-                    sarà la temperatura media nell'estate del 2047), ma ha validità
-                    esclusivamente in un contesto di trend trentennale.
-                </li>
-                <li>
-                    La <strong>risoluzione</strong> effettiva delle simulazioni
-                    modellistiche è circa 2-3 volte minore rispetto al passo di griglia e
-                    quindi non è possibile descrivere fenomeni al di sotto di questa
-                    dimensione. Ad esempio, se il modello ha passo di griglia 11 km la
-                    risoluzione effettiva è circa 30 km; nell'utilizzo dell'indicatore sul
-                    singolo punto è sempre necessario tener conto di questo aspetto.&nbsp;
-                </li>
-                <li>
-                    <strong>Area geografica</strong> di riferimento. Per gli indicatori
-                    che si basano sulla precipitazione il bias-correction è stato operato
-                    su tutta l'area di Veneto/Friuli-Venezia Giulia/Trentino-Alto Adige
-                    utilizzando il dataset ArCIS che copre il centro-Nord Italia e
-                    pertanto è presente tutta l'area interessata. La medesima area è
-                    presente per gli indicatori forniti in anomalia su cui non è stata
-                    operato il bias-correction. Per gli indicatori di temperatura il
-                    bias-correction è stato eseguito utilizzando esclusivamente le
-                    stazioni di Veneto e Friuli-Venezia Giulia, pertanto il dato è fornito
-                    solo su quest'area. In una versione futura della Piattaforma si
-                    cercherà di integrare le proiezioni con la bias-correction eseguita
-                    con i dati da stazione del Trentino-Alto Adige.
-                </li>
-                <li>
-                    La serie annuale puntuale fornita dalla proiezione viene messa a
-                    confronto con la serie storica puntuale misurata dalla stazione di
-                    misura della rete meteo regionale presente nelle immediate vicinanze,
-                    se quest'ultima si trova ad una distanza di 1 km dal punto di griglia
-                    del modello.
-                </li>
-                <li>
-                    Sebbene gli output dei dati di origine EURO-CORDEX siano stati
-                    sottoposti a procedure di controllo qualità, è possibile rimangano
-                    errori non identificati.
-                </li>
-            </ul>
-        </div >
+                <ul>
+                    <li>
+                        Sono presenti 5 diverse simulazioni modellistiche e la loro media di
+                        ensemble come migliore proiezione per il futuro (Giorgi, 2005).
+                        Tutte le simulazioni modellistiche sono caratterizzate da un certo
+                        grado di
+                        <strong>incertezza</strong>, che è dovuta allo scenario di
+                        emissione, alla rappresentazione dei processi fisici (fisica delle
+                        nubi, bilancio energetico alla superficie, …) e alla variabilità
+                        naturale del sistema climatico (Cubash et al, 2001). L'incertezza
+                        dei modelli considerati è fornita dalla deviazione standard
+                        dell'insieme di modelli considerati (Giorgi, 2005). Nell'utilizzo
+                        delle proiezioni, la media di ensemble può essere considerata come
+                        la proiezione futura più probabile, ma l'incertezza fornita dai
+                        diversi output delle varie simulazioni modellistiche va sempre
+                        tenuta in considerazione. Attualmente in CliNE si tiene conto
+                        dell'incertezza nei modi seguenti: per le mappe di anomalia
+                        trentennale, le aree dove i modelli non hanno un buon accordo
+                        (Stocker at el., 2013) e quindi la proiezione è incerta sono
+                        ombreggiate (media di ensemble &lt; deviazione standard dei 5
+                        modelli); per le serie annuali puntuali, oltre alla media di
+                        ensemble vengono forniti gli estremi di incertezza superiore e
+                        inferiore (media ensemble +/- deviazione standard dei 5 modelli).
+                    </li>
+                    <li>
+                        Si tratta di <strong>proiezioni</strong> climatiche e non di
+                        previsioni a lungo termine. Pertanto, il valore annuale non ha
+                        validità come previsione (ad es. non ha alcun significato vedere
+                        quale sarà la temperatura media nell'estate del 2047), ma ha
+                        validità esclusivamente in un contesto di trend trentennale.
+                    </li>
+                    <li>
+                        La <strong>risoluzione</strong> effettiva delle simulazioni
+                        modellistiche è circa 2-3 volte minore rispetto al passo di griglia
+                        e quindi non è possibile descrivere fenomeni al di sotto di questa
+                        dimensione. Ad esempio, se il modello ha passo di griglia 11 km la
+                        risoluzione effettiva è circa 30 km; nell'utilizzo dell'indicatore
+                        sul singolo punto è sempre necessario tener conto di questo
+                        aspetto.&nbsp;
+                    </li>
+                    <li>
+                        <strong>Area geografica</strong> di riferimento. Per gli indicatori
+                        che si basano sulla precipitazione il bias-correction è stato
+                        operato su tutta l'area di Veneto/Friuli-Venezia
+                        Giulia/Trentino-Alto Adige utilizzando il dataset ArCIS che copre il
+                        centro-Nord Italia e pertanto è presente tutta l'area interessata.
+                        La medesima area è presente per gli indicatori forniti in anomalia
+                        su cui non è stata operato il bias-correction. Per gli indicatori di
+                        temperatura il bias-correction è stato eseguito utilizzando
+                        esclusivamente le stazioni di Veneto e Friuli-Venezia Giulia,
+                        pertanto il dato è fornito solo su quest'area. In una versione
+                        futura della Piattaforma si cercherà di integrare le proiezioni con
+                        la bias-correction eseguita con i dati da stazione del Trentino-Alto
+                        Adige.
+                    </li>
+                    <li>
+                        La serie annuale puntuale fornita dalla proiezione viene messa a
+                        confronto con la serie storica puntuale misurata dalla stazione di
+                        misura della rete meteo regionale presente nelle immediate
+                        vicinanze, se quest'ultima si trova ad una distanza di 1 km dal
+                        punto di griglia del modello.
+                    </li>
+                    <li>
+                        Sebbene gli output dei dati di origine EURO-CORDEX siano stati
+                        sottoposti a procedure di controllo qualità, è possibile rimangano
+                        errori non identificati.
+                    </li>
+                </ul>
+            </div>
         </>
     );
 };
