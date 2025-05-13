@@ -538,20 +538,24 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     }
   }
 
-  let subText = timeseries
-    ? timeseries?.length === 0
-      ? ''
-      : `
-    ${titleText} -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
-        localStartYear,
-      )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(localEndYear)} - ${place ? place + ' - ' : ''
-      }${t('app.map.timeSeriesDialog.lat')} ${roundTo4(latLng.lat)} ${t(
-        'app.map.timeSeriesDialog.lng',
-      )} ${roundTo4(latLng.lng)}; ${timeseries[0].info.station_name
+  let subText =
+    '\n\n' + timeseries
+      ? timeseries?.length === 0
         ? ''
-        : '\n' + t('app.map.timeSeriesDialog.histWarning')
-      } © ARPAV - Arpa FVG`
-    : '';
+        : `
+    ${titleText} -  ${t('app.map.timeSeriesDialog.from')} ${formatYear(
+          localStartYear,
+        )} ${t('app.map.timeSeriesDialog.to')} ${formatYear(
+          localEndYear,
+        )} - ${place ? place + ' - ' : ''}${t(
+          'app.map.timeSeriesDialog.lat',
+        )} ${roundTo4(latLng.lat)} ${t(
+          'app.map.timeSeriesDialog.lng',
+        )} ${roundTo4(latLng.lng)}; ${timeseries[0].info.station_name
+          ? ''
+          : '\n' + t('app.map.timeSeriesDialog.histWarning')
+        } © ARPAV - Arpa FVG`
+      : '';
 
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';
@@ -570,7 +574,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       subtext: subText,
       textStyle: isMobile ? { width: 300, overflow: 'break' } : {},
       subtextStyle: isMobile ? { width: 300, overflow: 'break' } : {},
-      itemGap: -22,
+      itemGap: 2,
       top: '5%',
       left: 'center',
     },
