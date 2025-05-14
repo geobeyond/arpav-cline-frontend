@@ -343,7 +343,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     mode,
     data,
   } = props;
-  const { cities, selected_map } = useSelector((state: any) => state.map);
+  //const { cities, selected_map } = useSelector((state: any) => state.map);
 
   const [timeserie, setTimeSerie] = useState<any[]>([]);
   const map = useMap();
