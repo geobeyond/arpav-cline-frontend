@@ -50,7 +50,7 @@ export const i18n = withTolgee(i18nextInstance, tolgee).init({
   resources: translationsJson,
   fallbackLng: 'it',
   supportedLngs: ['it', 'en'],
-  //lng: lang, // Default language
+  lng: 'it', // Default language
   interpolation: {
     escapeValue: false,
   },

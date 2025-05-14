@@ -542,11 +542,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     '\n\n' + timeseries
       ? timeseries?.length === 0
         ? ''
-        : `
-    ${timeseries[0].translations?.parameter_values?.aggregation_period[
-        i18n.language
-        ]
-        } - ${timeseries[0].translations?.parameter_values?.measure[i18n.language]
+        : `${timeseries[0].translations?.parameter_values?.measure[i18n.language]
         } - ${timeseries[0].translations?.parameter_values?.year_period[
         i18n.language
         ]

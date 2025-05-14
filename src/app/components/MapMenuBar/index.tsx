@@ -551,7 +551,7 @@ export function MapMenuBar(props: MapMenuBar) {
           container
           rowSpacing={0}
           columnSpacing={{ xs: 0 }}
-          columns={{ xs: 7, def: 21 }}
+          columns={{ xs: 7, def: 20 }}
           sx={GridContainerStyle}
         >
           {isMobile ? (
@@ -593,14 +593,39 @@ export function MapMenuBar(props: MapMenuBar) {
 
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
-                  <Typography sx={MenuLabelStyle}>
-                    {t(MAP_MODES[map_data])} - {t(MAP_MODES[map_mode])}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid xs={1} sx={FirstRowStyle}>
-                <Box>
-                  <Typography sx={MenuLabelStyle}></Typography>
+                  <DropdownToggle>
+                    <MenuIcon />{' '}
+                    <Typography sx={MenuLabelStyle}>
+                      {t(MAP_MODES[map_data])} - {t(MAP_MODES[map_mode])}
+                    </Typography>
+                  </DropdownToggle>
+                  <DropdownMenu style={{ zIndex: 100000000 }}>
+                    <LinkList>
+                      <LinkListItem inDropdown href="/">
+                        {t('app.index.sections.barometer')}
+                      </LinkListItem>
+                      <LinkListItem divider />
+                      <LinkListItem header inDropdown>
+                        {t('app.index.sections.proj')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/proiezioni-semplice">
+                        {t('app.index.sections.simple')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/proiezioni-avanzata">
+                        {t('app.index.sections.advanced')}
+                      </LinkListItem>
+                      <LinkListItem divider />
+                      <LinkListItem header inDropdown>
+                        {t('app.index.sections.hist')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/storico-semplice">
+                        {t('app.index.sections.simple')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/storico-avanzata">
+                        {t('app.index.sections.advanced')}
+                      </LinkListItem>
+                    </LinkList>
+                  </DropdownMenu>
                 </Box>
               </Grid>
             </>
@@ -773,40 +798,42 @@ export function MapMenuBar(props: MapMenuBar) {
               )}
             </Box>
           </Grid>
-          <Grid xs={1} def={1} sx={SecondRowStyle}>
-            <Box sx={ButtonBoxStyle}>
-              <DropdownToggle>
-                <MenuIcon />
-              </DropdownToggle>
-              <DropdownMenu style={{ zIndex: 100000000 }}>
-                <LinkList>
-                  <LinkListItem inDropdown href="/">
-                    {t('app.index.sections.barometer')}
-                  </LinkListItem>
-                  <LinkListItem divider />
-                  <LinkListItem header inDropdown>
-                    {t('app.index.sections.proj')}
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/proiezioni-semplice">
-                    {t('app.index.sections.simple')}
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/proiezioni-avanzata">
-                    {t('app.index.sections.advanced')}
-                  </LinkListItem>
-                  <LinkListItem divider />
-                  <LinkListItem header inDropdown>
-                    {t('app.index.sections.hist')}
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/storico-semplice">
-                    {t('app.index.sections.simple')}
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/storico-avanzata">
-                    {t('app.index.sections.advanced')}
-                  </LinkListItem>
-                </LinkList>
-              </DropdownMenu>
-            </Box>
-          </Grid>
+          {isMobile && (
+            <Grid xs={1} def={1} sx={SecondRowStyle}>
+              <Box sx={ButtonBoxStyle}>
+                <DropdownToggle>
+                  <MenuIcon />
+                </DropdownToggle>
+                <DropdownMenu style={{ zIndex: 100000000 }}>
+                  <LinkList>
+                    <LinkListItem inDropdown href="/">
+                      {t('app.index.sections.barometer')}
+                    </LinkListItem>
+                    <LinkListItem divider />
+                    <LinkListItem header inDropdown>
+                      {t('app.index.sections.proj')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/proiezioni-semplice">
+                      {t('app.index.sections.simple')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/proiezioni-avanzata">
+                      {t('app.index.sections.advanced')}
+                    </LinkListItem>
+                    <LinkListItem divider />
+                    <LinkListItem header inDropdown>
+                      {t('app.index.sections.hist')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/storico-semplice">
+                      {t('app.index.sections.simple')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/storico-avanzata">
+                      {t('app.index.sections.advanced')}
+                    </LinkListItem>
+                  </LinkList>
+                </DropdownMenu>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </Toolbar>
       {isMobile && (
