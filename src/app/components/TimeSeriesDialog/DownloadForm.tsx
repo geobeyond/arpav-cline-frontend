@@ -51,7 +51,7 @@ export const DownloadForm = props => {
       ? async () => {
         let opseriesObj = [
           filter.current.uncertainty
-            ? data.current.filter(
+            ? data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp26' &&
                 x.info.climatological_model === filter.current.mainModel &&
@@ -59,7 +59,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'forecast_lower_uncertainty',
             )[0]
             : null,
-          data.current.filter(
+          data.current.series.filter(
             x =>
               x.info.scenario === 'rcp26' &&
               x.info.processing_method === filter.current.tsSmoothing &&
@@ -68,7 +68,7 @@ export const DownloadForm = props => {
           )[0],
           filter.current.mainModel === filter.current.secondaryModel
             ? null
-            : data.current.filter(
+            : data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp26' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -77,7 +77,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'main',
             )[0],
           filter.current.uncertainty
-            ? data.current.filter(
+            ? data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp26' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -86,7 +86,7 @@ export const DownloadForm = props => {
             )[0]
             : null,
           filter.current.uncertainty
-            ? data.current.filter(
+            ? data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp45' &&
                 x.info.climatological_model === filter.current.mainModel &&
@@ -94,7 +94,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'forecast_lower_uncertainty',
             )[0]
             : null,
-          data.current.filter(
+          data.current.series.filter(
             x =>
               x.info.scenario === 'rcp45' &&
               x.info.processing_method === filter.current.tsSmoothing &&
@@ -103,7 +103,7 @@ export const DownloadForm = props => {
           )[0],
           filter.current.mainModel === filter.current.secondaryModel
             ? null
-            : data.current.filter(
+            : data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp45' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -112,7 +112,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'main',
             )[0],
           filter.current.uncertainty
-            ? data.current.filter(
+            ? data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp45' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -121,7 +121,7 @@ export const DownloadForm = props => {
             )[0]
             : null,
           filter.current.uncertainty
-            ? data.current.filter(
+            ? data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp85' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -129,7 +129,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'forecast_lower_uncertainty',
             )[0]
             : null,
-          data.current.filter(
+          data.current.series.filter(
             x =>
               x.info.scenario === 'rcp85' &&
               x.info.processing_method === filter.current.tsSmoothing &&
@@ -138,7 +138,7 @@ export const DownloadForm = props => {
           )[0],
           filter.current.mainModel === filter.current.secondaryModel
             ? null
-            : data.current.filter(
+            : data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp85' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -147,7 +147,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'main',
             )[0],
           filter.current.uncertainty
-            ? data.current.filter(
+            ? data.current.series.filter(
               x =>
                 x.info.scenario === 'rcp85' &&
                 x.info.processing_method === filter.current.tsSmoothing &&
@@ -155,7 +155,7 @@ export const DownloadForm = props => {
                 x.info.dataset_type === 'forecast_upper_uncertainty',
             )[0]
             : null,
-          data.current.filter(
+          data.current.series.filter(
             x =>
               x.info.dataset_type === 'observation' &&
               x.info.processing_method === filter.current.sensorSmoothing,
@@ -166,14 +166,13 @@ export const DownloadForm = props => {
         return opseriesObj;
       }
       : async () => {
-        if (data.current.length > 0) {
-          let tdata: any[] = data.current;
+        if (data.current.series.length > 0) {
+          let tdata: any[] = data.current.series;
           let opseriesObj = [
             tdata.filter(
               x =>
-                x.info.processing_method.indexOf(
-                  filter.current.tsSmoothing,
-                ) >= 0,
+                x.info.processing_method.indexOf(filter.current.mainModel) >=
+                0,
             )[0],
             tdata.filter(
               x => x.info.processing_method === 'decade_aggregation',
@@ -222,10 +221,7 @@ export const DownloadForm = props => {
           filterParams.sfs === undefined ||
           filterParams.sfs.indexOf(ffdata.name) >= 0
         ) {
-          ffdata.values =
-            filledSeries.current[
-            ffdata.name + '__' + ffdata.info.processing_method
-            ];
+          ffdata.values = filledSeries.current[ffdata.name];
           console.log(fdata[f]);
           const pu = PapaParse.unparse(
             ffdata.values.slice(filterParams.start, filterParams.end + 1),
@@ -272,10 +268,7 @@ export const DownloadForm = props => {
           filterParams.sfs === undefined ||
           filterParams.sfs.indexOf(ffdata.name) >= 0
         ) {
-          ffdata.values =
-            filledSeries.current[
-            ffdata.name + '__' + ffdata.info.processing_method
-            ];
+          ffdata.values = filledSeries.current[ffdata.name];
           ffdata.values = ffdata.values.slice(
             filterParams.start,
             filterParams.end + 1,
