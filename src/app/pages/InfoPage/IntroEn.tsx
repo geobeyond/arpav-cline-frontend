@@ -2,7 +2,7 @@ const IntroEn = () => {
     return (
         <>
             <div>
-                <h1>Climate change (historical)</h1>
+                <h1>Climate change</h1>
                 <p>
                     Human activities affect the climate: the increase in greenhouse gas
                     concentration and the consequent observed changes in long-term average
@@ -49,14 +49,40 @@ const IntroEn = () => {
                     adaptation measures to climate change and, more generally, increase
                     knowledge and awareness about ongoing climate change.
                 </p>
+                <h2>Useful Links</h2>
                 <p>
-                    For information on how to use CliNE, you can consult the
+                    PDF documentation
+                    <a href="/cline_approfondimento.pdf" target="_blank">
+                        CliNE: sezione Proiezioni Climatiche
+                    </a>
+                </p>
+                <p>
                     <a
-                        href="https://github.com/venetoarpa/arpav-cline-frontend/wiki/Manuale-utente"
+                        href="https://github.com/venetoarpa/Arpav-PPCV-backend/wiki/Manuale-utente"
                         target="_blank"
                         rel="noreferrer"
                     >
-                        User Manual.
+                        Platform user manual
+                    </a>
+                </p>
+                <p>
+                    Sourcecode, available on
+                    <a
+                        href="https://github.com/venetoarpa/Arpav-PPCV"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        Github
+                    </a>
+                </p>
+                <p>
+                    Mail address for suggestions and questions:
+                    <a
+                        href="mailto:cmt.rete@arpa.veneto.it"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <u>cmt.rete@arpa.veneto.it</u>
                     </a>
                 </p>
             </div>
