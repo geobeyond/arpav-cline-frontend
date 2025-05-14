@@ -63,7 +63,7 @@ const IntroIt = () => {
         </p>
         <h2>Link utili</h2>
         <p>
-          PDF di approfondimento
+          PDF di approfondimento{' '}
           <a href="/cline_approfondimento.pdf" target="_blank">
             CliNE: sezione Proiezioni Climatiche
           </a>
@@ -78,7 +78,7 @@ const IntroIt = () => {
           </a>
         </p>
         <p>
-          Codice sorgente disponibile su
+          Codice sorgente disponibile su{' '}
           <a
             href="https://github.com/venetoarpa/Arpav-PPCV"
             target="_blank"
@@ -94,6 +94,7 @@ const IntroIt = () => {
             target="_blank"
             rel="noreferrer"
           >
+            {' '}
             <u>cmt.rete@arpa.veneto.it</u>
           </a>
         </p>

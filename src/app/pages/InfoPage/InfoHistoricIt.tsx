@@ -130,10 +130,10 @@ const InfoHistoricIt = () => {
 
                 <h3>Aggregazione temporale</h3>
                 <p>
-                    Per ogni indicatore sono disponibili
-                    <strong>medie a livello annuale, decennale e trentennale</strong> in
+                    Per ogni indicatore sono disponibili{' '}
+                    <strong>medie a livello annuale, decennale e trentennale</strong> in{' '}
                     <strong>valore assoluto</strong> o in termini di variazione del valore
-                    atteso nel futuro rispetto al periodo di riferimento (
+                    atteso nel futuro rispetto al periodo di riferimento ({' '}
                     <strong>anomalia</strong>).&nbsp;
                 </p>
                 <p>
