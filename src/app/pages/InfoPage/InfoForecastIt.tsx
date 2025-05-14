@@ -200,7 +200,7 @@ const InfoForecastIt = () => {
                     <strong>periodo storico di riferimento</strong> è l'intervallo
                     1976-2005, che rappresenta la climatologia passata, su cui sono state
                     calcolate le medie per i periodi <strong>2021-2050</strong> (futuro
-                    vicino) e <strong>2071-2100</strong>
+                    vicino) e <strong>2071-2100</strong>&nbsp;
                     (futuro lontano).
                 </p>
                 <p>
