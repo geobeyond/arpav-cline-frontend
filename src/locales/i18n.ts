@@ -38,6 +38,8 @@ const tolgee = Tolgee()
       process.env.REACT_APP_TOLGEE_API_KEY ||
       'tgpak_gfptqodemjztqojvhayxeojrnnrgk3dfnrvxcnjvn5ygq',
     defaultLanguage: 'it',
+    availableLanguages: ['it', 'en'],
+    fallbackLanguage: 'it',
   });
 
 // Initialize i18next without Tolgee first
@@ -52,7 +54,7 @@ export const i18n = withTolgee(i18nextInstance, tolgee).init({
   interpolation: {
     escapeValue: false,
   },
-  debug: true,
+  debug: false,
 });
 
 export default i18n;
