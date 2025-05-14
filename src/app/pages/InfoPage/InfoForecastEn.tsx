@@ -1,6 +1,13 @@
 const InfoForecastEn = () => {
     return (
         <>
+            <style>
+                {`
+            tr:nth-child(2n) {
+                background: #cccccc;
+        }
+        `}
+            </style>
             <div>
                 <h2>Climate Projections</h2>
 

@@ -1,6 +1,13 @@
 const InfoHistoricEn = () => {
     return (
         <>
+            <style>
+                {`
+            tr:nth-child(2n) {
+                background: #cccccc;
+        }
+        `}
+            </style>
             <div>
                 <h2>Historical Climatology</h2>
 

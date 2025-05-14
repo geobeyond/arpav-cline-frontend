@@ -1,6 +1,13 @@
 const InfoHistoricIt = () => {
     return (
         <>
+            <style>
+                {`
+                tr:nth-child(2n) {
+                    background: #cccccc;
+            }
+            `}
+            </style>
             <div>
                 <h2>Climatologia Storica</h2>
 
