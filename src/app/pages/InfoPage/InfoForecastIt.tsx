@@ -283,7 +283,7 @@ const InfoForecastIt = () => {
                         Sono presenti 5 diverse simulazioni modellistiche e la loro media di
                         ensemble come migliore proiezione per il futuro (Giorgi, 2005).
                         Tutte le simulazioni modellistiche sono caratterizzate da un certo
-                        grado di
+                        grado di&nbsp;
                         <strong>incertezza</strong>, che è dovuta allo scenario di
                         emissione, alla rappresentazione dei processi fisici (fisica delle
                         nubi, bilancio energetico alla superficie, …) e alla variabilità
