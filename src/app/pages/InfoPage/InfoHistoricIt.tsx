@@ -145,7 +145,7 @@ const InfoHistoricIt = () => {
                 </p>
                 <p>
                     Come periodo di riferimento è stato preso il trentennio{' '}
-                    <strong>normale climatico</strong> 1991-2020, che rappresenta la
+                    <strong>normale climatico 1991-2020</strong>, che rappresenta la
                     climatologia recente. Utilizzando questo normale climatico sono state
                     calcolate le anomalie annuali e decennali.
                 </p>
