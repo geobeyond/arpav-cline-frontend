@@ -47,7 +47,7 @@ const InfoHistoricIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Temperatura minima giornaliera dell'aria vicino al suolo</p>
+                                <p>Media della temperatura minima giornaliera dell'aria vicino al suolo</p>
                             </td>
                         </tr>
                         <tr>
@@ -57,7 +57,7 @@ const InfoHistoricIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Temperatura massima giornaliera dell'aria vicino al suolo</p>
+                                <p>Media della temperatura massima giornaliera dell'aria vicino al suolo</p>
                             </td>
                         </tr>
                         <tr>
@@ -129,7 +129,7 @@ const InfoHistoricIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Precipitazione giornaliera</p>
+                                <p>Precipitazione cumulata vicino al suolo</p>
                             </td>
                         </tr>
                     </tbody>
@@ -145,7 +145,7 @@ const InfoHistoricIt = () => {
                 </p>
                 <p>
                     Come periodo di riferimento è stato preso il trentennio{' '}
-                    <strong>normale climatico</strong> 1991-2020, che rappresenta la
+                    <strong>normale climatico 1991-2020</strong>, che rappresenta la
                     climatologia recente. Utilizzando questo normale climatico sono state
                     calcolate le anomalie annuali e decennali.
                 </p>
@@ -160,7 +160,7 @@ const InfoHistoricIt = () => {
                 <h3>Dati osservati</h3>
                 <p>
                     La piattaforma CliNE sul territorio del Veneto utilizza le
-                    osservazioni della <strong>rete di stazioni automatiche</strong>
+                    osservazioni della <strong>rete di stazioni automatiche</strong>&nbsp;
                     meteo-idro-nivo di <strong>ARPA Veneto</strong>, considerando circa
                     130 stazioni che dispongono di una serie consistente (almeno 27 anni)
                     dal 1992 ad oggi. Le stime dei valori regionalizzati sono state
@@ -203,14 +203,14 @@ const InfoHistoricIt = () => {
                         calcolati sul Veneto è stata operata un'
                         <strong>interpolazione geo-spaziale</strong> che permette di
                         ottenere un grigliato regolare su tutta la regione. I valori nei
-                        punti al di fuori delle stazioni meteorologiche, essendo frutto di
+                        punti al di fuori delle stazioni meteorologiche, essendo frutto di&nbsp;
                         <strong>interpolazione spaziale</strong>, vanno trattati come dati
                         stimati e non come dati misurati. Per il Friuli Venezia Giulia
                         vengono forniti solo i valori misurati a livello puntuale di
                         stazione.
                     </li>
                     <li>
-                        Nell'analisi delle serie storiche un aspetto cruciale è la
+                        Nell'analisi delle serie storiche un aspetto cruciale è la&nbsp;
                         <strong>significatività statistica</strong> delle linee di tendenza.
                         Attualmente in CliNE si tiene conto della significatività del trend
                         nel modo seguente: per le serie annuali puntuali, se il trend è

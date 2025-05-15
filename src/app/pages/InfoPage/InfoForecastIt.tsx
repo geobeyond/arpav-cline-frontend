@@ -47,7 +47,7 @@ const InfoForecastIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Temperatura minima giornaliera dell'aria vicino al suolo</p>
+                                <p>Media della temperatura minima giornaliera dell'aria vicino al suolo</p>
                             </td>
                         </tr>
                         <tr>
@@ -57,7 +57,7 @@ const InfoForecastIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Temperatura massima giornaliera dell'aria vicino al suolo</p>
+                                <p>Media della temperatura massima giornaliera dell'aria vicino al suolo</p>
                             </td>
                         </tr>
                         <tr>
@@ -189,16 +189,16 @@ const InfoForecastIt = () => {
 
                 <h3>Aggregazione temporale</h3>
                 <p>
-                    Per ogni indicatore sono disponibili
-                    <strong>medie a livello annuale e trentennale</strong> in
+                    Per ogni indicatore sono disponibili&nbsp;
+                    <strong>medie a livello annuale e trentennale</strong> in&nbsp;
                     <strong>valore assoluto</strong> o in termini di variazione del valore
                     atteso nel futuro rispetto al periodo di riferimento (
                     <strong>anomalia</strong>).&nbsp;
                 </p>
                 <p>
-                    Per le medie trentennali il
-                    <strong>periodo storico di riferimento</strong> è l'intervallo
-                    1976-2005, che rappresenta la climatologia passata, su cui sono state
+                    Per le medie trentennali il&nbsp;
+                    <strong>periodo storico di riferimento</strong> è l'intervallo&nbsp;
+                    <strong>1976-2005</strong>, che rappresenta la climatologia passata, su cui sono state
                     calcolate le medie per i periodi <strong>2021-2050</strong> (futuro
                     vicino) e <strong>2071-2100</strong>&nbsp;
                     (futuro lontano).
@@ -240,9 +240,9 @@ const InfoForecastIt = () => {
                     <i>bias-correction</i>
                     che tiene conto dei dati della rete delle stazioni meteorologiche
                     regionali - proiezioni che meglio rappresentano la realtà locale: sono
-                    utilizzati <strong>cinque diversi modelli</strong>
+                    utilizzati <strong>cinque diversi modelli</strong>&nbsp;
                     climatici e una <strong>media di ensemble</strong> come migliore
-                    proiezione per il futuro. I cinque modelli sono
+                    proiezione per il futuro. I cinque modelli sono&nbsp;
                     <strong>modelli climatici a scala regionale</strong> del progetto
                     EURO-CORDEX (
                     <a
@@ -337,7 +337,7 @@ const InfoForecastIt = () => {
                         La serie annuale puntuale fornita dalla proiezione viene messa a
                         confronto con la serie storica puntuale misurata dalla stazione di
                         misura della rete meteo regionale presente nelle immediate
-                        vicinanze, se quest'ultima si trova ad una distanza di 1 km dal
+                        vicinanze, se quest'ultima si trova ad una distanza di <strong>1 km</strong> dal
                         punto di griglia del modello.
                     </li>
                     <li>
