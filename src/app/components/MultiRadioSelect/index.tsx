@@ -129,7 +129,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
       let ri = 0;
       for (let row of vs.rows) {
         ri++;
-        let vv: string = '';
+        let vv: string | undefined = '';
         if (row.key === 'reference_period') {
           let vk = row.key;
           if (current_map['aggregation_period'] === 'ten_year') {
