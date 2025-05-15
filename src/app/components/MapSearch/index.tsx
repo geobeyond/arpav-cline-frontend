@@ -88,14 +88,18 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     vectorLayer,
     customClick,
   } = props;
+  const [cities, setCities] = useState<any>([]);
   const api = RequestApi.getInstance();
-  const cities = api.getCities();
   const map = useMap();
   const context = useLeafletContext();
   const { t, i18n } = useTranslation();
   const resetMap = () => context.map.flyTo(defaultCenter, defaultZoom);
 
   const currCity = useRef<string | null>();
+
+  useEffect(() => {
+    api.getCities(setCities);
+  }, [setCities]);
 
   const onChange = (event, value) => {
     let lastCitiess = localStorage.getItem('lastCities');
@@ -216,7 +220,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
       const position = api
         .findMunicipality(value?.latlng.lat, value?.latlng.lng)
         .then((geoj: any) => {
-          if (geoj.features.length > 0) {
+          if (geoj?.features?.length > 0) {
             if (value) {
               value.name = geoj.features[0].properties.name;
               value.label = geoj.features[0].properties.name;
@@ -231,32 +235,36 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   // @ts-ignore
   return (
     <Box component="form" className={className} sx={MapSearchContainerStyle}>
-      <Box sx={MapSearchFirstRowStyle}>
-        <Autocomplete
-          onKeyPress={e => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
+      {cities?.length > 0 ? (
+        <Box sx={MapSearchFirstRowStyle}>
+          <Autocomplete
+            onKeyPress={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
+            size={'small'}
+            // disablePortal
+            options={cities}
+            sx={AutocompleteSyle}
+            renderInput={params => (
+              <TextField {...params} label="" placeholder={t('app.search')} />
+            )}
+            onChange={onChange}
+            value={value}
+            isOptionEqualToValue={(option, value) =>
+              option?.label === value?.label
             }
-          }}
-          size={'small'}
-          // disablePortal
-          options={cities}
-          sx={AutocompleteSyle}
-          renderInput={params => (
-            <TextField {...params} label="" placeholder={t('app.search')} />
-          )}
-          onChange={onChange}
-          value={value}
-          isOptionEqualToValue={(option, value) =>
-            option?.label === value?.label
-          }
-          getOptionLabel={option =>
-            option?.name ??
-            option?.label ??
-            localStorage.getItem('currentCityLabel')
-          }
-        />
-      </Box>
+            getOptionLabel={option =>
+              option?.name ??
+              option?.label ??
+              localStorage.getItem('currentCityLabel')
+            }
+          />
+        </Box>
+      ) : (
+        <></>
+      )}
 
       <Box sx={MapSearchSecondRowStyle}>
         <TextField

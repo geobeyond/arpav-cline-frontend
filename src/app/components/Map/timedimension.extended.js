@@ -11,10 +11,10 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
         else this._map.setupFrontLayer(x, this._map);
       }
     });
+    if(document.getElementsByClassName(
+        'leaflet-bar-timecontrol',
+      )[0].style.display !== 'none'){
     setTimeout(()=>{
-        if(document.getElementsByClassName(
-            'leaflet-bar-timecontrol',
-          )[0].style.display !== 'none'){
             const url = new URL(window.location.href);
             if(url.searchParams.size > 2){
                 if(url.searchParams.has('year')){
@@ -24,8 +24,8 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
                 }
                 window.history.pushState(null, '', url.toString());
             }
+        }, 1000);
         }
-    }, 1000);
     // @ts-ignore
     return date.getFullYear();
   },

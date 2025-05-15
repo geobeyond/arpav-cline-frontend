@@ -174,7 +174,7 @@ export class RequestApi extends Http {
     return this.classInstance;
   }
 
-  public getCities = () => {
+  public getCities = callback => {
     if (localStorage.getItem('municipality-centroids')) {
       // @ts-ignore
       let cities = JSON.parse(localStorage.getItem('municipality-centroids'));
@@ -184,7 +184,7 @@ export class RequestApi extends Http {
         lastCities = JSON.parse(localStorage.getItem('lastCities'));
       }
       let fcities = cities.filter(city => {
-        let found = false;
+        let found = lastCities.length === 0;
         for (let c of lastCities) {
           if (c) {
             //@ts-ignore
@@ -193,7 +193,7 @@ export class RequestApi extends Http {
         }
         return !found;
       });
-      return [...lastCities, ...fcities];
+      callback([...lastCities, ...fcities]);
     } else {
       this.instance
         .get<any>(BACKEND_API_URL + '/municipalities/municipality-centroids')
@@ -210,10 +210,10 @@ export class RequestApi extends Http {
         })
         .then(x => {
           localStorage.setItem('municipality-centroids', JSON.stringify(x));
+          callback(x);
         });
-      // @ts-ignore
-      return JSON.parse(localStorage.getItem('municipality-centroids'));
     }
+    return null;
   };
 
   public getHistoricLayer = (
