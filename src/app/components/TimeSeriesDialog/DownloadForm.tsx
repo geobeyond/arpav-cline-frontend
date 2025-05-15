@@ -166,7 +166,7 @@ export const DownloadForm = props => {
         return opseriesObj;
       }
       : async () => {
-        if (data.current.series.length > 0) {
+        if (data.current.series?.length > 0) {
           let tdata: any[] = data.current.series;
           let opseriesObj = [
             tdata.filter(
