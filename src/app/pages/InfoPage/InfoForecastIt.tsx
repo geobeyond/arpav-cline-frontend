@@ -197,7 +197,7 @@ const InfoForecastIt = () => {
                 </p>
                 <p>
                     Per le medie trentennali il&nbsp;
-                    <strong>periodo storico di riferimento</strong> è l'intervallo&nbsp
+                    <strong>periodo storico di riferimento</strong> è l'intervallo&nbsp;
                     <strong>1976-2005</strong>, che rappresenta la climatologia passata, su cui sono state
                     calcolate le medie per i periodi <strong>2021-2050</strong> (futuro
                     vicino) e <strong>2071-2100</strong>&nbsp;
@@ -240,7 +240,7 @@ const InfoForecastIt = () => {
                     <i>bias-correction</i>
                     che tiene conto dei dati della rete delle stazioni meteorologiche
                     regionali - proiezioni che meglio rappresentano la realtà locale: sono
-                    utilizzati <strong>cinque diversi modelli</strong>&nbsp
+                    utilizzati <strong>cinque diversi modelli</strong>&nbsp;
                     climatici e una <strong>media di ensemble</strong> come migliore
                     proiezione per il futuro. I cinque modelli sono&nbsp;
                     <strong>modelli climatici a scala regionale</strong> del progetto
