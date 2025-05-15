@@ -28,12 +28,12 @@ const IntroIt = () => {
         <h1>La piattaforma CliNE</h1>
         <p>
           La Piattaforma <strong>Cli</strong>ma <strong>N</strong>ord-
-          <strong>E</strong>st (CliNE) propone il
-          <strong>quador climeatico</strong> passato e futuro per il territorio
+          <strong>E</strong>st (CliNE) propone il&nbsp;
+          <strong>quadro climatico</strong> passato e futuro per il territorio
           del
           <strong>Nord-Est Italia</strong> attraverso una serie di{' '}
           <strong>indicatori climatici</strong> che tengono conto dei{' '}
-          <b>dati</b>
+          <b>dati</b>&nbsp;
           raccolti dalle <b>stazioni meteorologiche regionali</b>.&nbsp;
         </p>
         <p>
