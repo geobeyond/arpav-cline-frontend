@@ -288,8 +288,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         end: endValue - baseValue,
       },
       ...{
-        start: localStartYear - baseValue,
-        end: localEndYear - baseValue,
+        start: parseInt(localStartYear) - baseValue,
+        end: parseInt(localEndYear) - baseValue,
       },
     });
   });
@@ -747,19 +747,25 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     const { startValue, endValue, start, end } = chart.getOption().dataZoom[0];
 
     if (start >= 0) {
-      //console.log('[STF] dataZoomHandle(2)', start);
+      console.log('[STF] dataZoomHandle(2)', start);
       setLocalStart(start);
     }
     if (end >= 0) {
-      //console.log('[STF] dataZoomHandle(3)', end);
+      console.log('[STF] dataZoomHandle(3)', end);
       setLocalEnd(end);
     }
     if (startValue >= 0) {
-      //console.log('[STF] dataZoomHandle(4)', chart.getOption().xAxis[0].data[startValue]);
+      console.log(
+        '[STF] dataZoomHandle(4)',
+        chart.getOption().xAxis[0].data[startValue],
+      );
       setLocalStartYear(chart.getOption().xAxis[0].data[startValue]);
     }
     if (endValue >= 0) {
-      //console.log('[STF] dataZoomHandle(5)', chart.getOption().xAxis[0].data[endValue]);
+      console.log(
+        '[STF] dataZoomHandle(5)',
+        chart.getOption().xAxis[0].data[endValue],
+      );
       setLocalEndYear(chart.getOption().xAxis[0].data[endValue]);
     }
 
@@ -922,66 +928,78 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>Da:</span>&nbsp;&nbsp;
           <input
-            type="text"
+            type="number"
             maxLength={4}
             placeholder="Da:"
+            min={baseValue}
+            max={new Date().getFullYear()}
             value={localStartYear}
             onChange={event => {
-              setLocalStartYear(event?.target?.value);
-              const startValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex(
-                  (item: any) => item === event?.target?.value,
-                );
-              const endValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex((item: any) => item === localEndYear);
-              //console.log('[STF]', startValue, endValue);
-              if (startValue !== -1 && endValue !== -1) {
-                chartRef.current.getEchartsInstance().dispatchAction({
-                  type: 'dataZoom',
-                  dataZoomIndex: 0,
-                  startValue: startValue,
-                  endValue: endValue,
-                });
+              let v = parseInt(event?.target?.value);
+              if (v >= baseValue && v <= new Date().getFullYear()) {
+                setLocalStartYear(event?.target?.value);
+                const startValue = chartRef.current
+                  .getEchartsInstance()
+                  .getOption()
+                  .xAxis[0].data.findIndex(
+                    (item: any) => item === event?.target?.value,
+                  );
+                const endValue = chartRef.current
+                  .getEchartsInstance()
+                  .getOption()
+                  .xAxis[0].data.findIndex(
+                    (item: any) => item === localEndYear.toString(),
+                  );
+                //console.log('[STF]', startValue, endValue);
+                if (startValue !== -1 && endValue !== -1) {
+                  chartRef.current.getEchartsInstance().dispatchAction({
+                    type: 'dataZoom',
+                    dataZoomIndex: 0,
+                    startValue: startValue,
+                    endValue: endValue,
+                  });
+                }
+                str(startValue, endValue);
               }
-              str(startValue, endValue);
             }}
           />
         </Box>
         <Box sx={RowContainerStyle}>
           <span>A:</span>&nbsp;&nbsp;
           <input
-            type="text"
+            type="number"
+            max={new Date().getFullYear()}
+            min={baseValue}
             maxLength={4}
             placeholder="A:"
             value={localEndYear}
             onChange={event => {
-              setLocalEndYear(event?.target?.value);
-              const startValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex(
-                  (item: any) => item === localStartYear,
-                );
-              const endValue = chartRef.current
-                .getEchartsInstance()
-                .getOption()
-                .xAxis[0].data.findIndex(
-                  (item: any) => item === event?.target?.value,
-                );
-              //console.log('[STF]', startValue, endValue);
-              if (startValue !== -1 && endValue !== -1) {
-                chartRef.current.getEchartsInstance().dispatchAction({
-                  type: 'dataZoom',
-                  dataZoomIndex: 0,
-                  startValue: startValue,
-                  endValue: endValue,
-                });
+              let v = parseInt(event?.target?.value);
+              if (v >= baseValue && v <= new Date().getFullYear()) {
+                setLocalEndYear(event?.target?.value);
+                const startValue = chartRef.current
+                  .getEchartsInstance()
+                  .getOption()
+                  .xAxis[0].data.findIndex(
+                    (item: any) => item === localStartYear.toString(),
+                  );
+                const endValue = chartRef.current
+                  .getEchartsInstance()
+                  .getOption()
+                  .xAxis[0].data.findIndex(
+                    (item: any) => item === event?.target?.value,
+                  );
+                //console.log('[STF]', startValue, endValue);
+                if (startValue !== -1 && endValue !== -1) {
+                  chartRef.current.getEchartsInstance().dispatchAction({
+                    type: 'dataZoom',
+                    dataZoomIndex: 0,
+                    startValue: startValue,
+                    endValue: endValue,
+                  });
+                }
+                str(startValue, endValue);
               }
-              str(startValue, endValue);
             }}
           />
         </Box>
