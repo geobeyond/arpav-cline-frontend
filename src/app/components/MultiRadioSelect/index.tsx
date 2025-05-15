@@ -121,15 +121,31 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     handleChange(k, v);
   };
 
-  const values = valueSet
-    .map(({ rows }) =>
-      rows.map(
-        ({ items }) =>
-          items.find(x => x.name === current_map[rows[0].key])?.name,
-      ),
-    )
-    .flat()
-    .filter(x => x);
+  const [values, setValues] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    let v: string[] = [];
+    for (let vs of valueSet) {
+      let ri = 0;
+      for (let row of vs.rows) {
+        ri++;
+        let vv: string = '';
+        if (row.key === 'reference_period') {
+          let vk = row.key;
+          if (current_map['aggregation_period'] === 'ten_year') {
+            vk = 'decade';
+          }
+          vv = row.items.find(x => x.name === current_map[vk])?.name;
+        } else {
+          vv = row.items.find(x => x.name === current_map[row.key])?.name;
+        }
+        if (vv) {
+          v.push(vv);
+        }
+      }
+    }
+    setValues(v);
+  }, [valueSet]);
 
   const renderSelectedValue = (mode: string = 'label') => {
     let ret: any = valueSet.map((rs, index) =>
@@ -139,17 +155,17 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     );
     ret = ret.flat();
     ret = ret.filter(x => x);
-    ret = ret.filter(
-      x =>
-        ((x.name.indexOf('tw') >= 0 ||
-          x.name.indexOf('climate_standard') >= 0 ||
-          x.name.indexOf('decade') >= 0) &&
-          (ret.filter(y => y.name === '30yr').length > 0 ||
-            ret.filter(y => y.name === 'ten').length > 0)) ||
-        (x.name.indexOf('tw') < 0 &&
-          x.name.indexOf('climate_standard') < 0 &&
-          x.name.indexOf('decade') < 0),
-    );
+    //ret = ret.filter(
+    //  x =>
+    //    ((x.name.indexOf('tw') >= 0 ||
+    //      x.name.indexOf('climate_standard') >= 0 ||
+    //      x.name.indexOf('ten') >= 0) &&
+    //      (ret.filter(y => y.name === '30yr').length > 0 ||
+    //        ret.filter(y => y.name === 'ten').length > 0)) ||
+    //    (x.name.indexOf('tw') < 0 &&
+    //      x.name.indexOf('climate_standard') < 0 &&
+    //      x.name.indexOf('ten') < 0),
+    //);
     //@ts-ignore
     ret = ret.map(x => translate(x, mode)).join(' - ');
 
