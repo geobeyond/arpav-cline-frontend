@@ -30,7 +30,7 @@ const IntroIt = () => {
           La Piattaforma <strong>Cli</strong>ma <strong>N</strong>ord-
           <strong>E</strong>st (CliNE) propone il&nbsp;
           <strong>quadro climatico</strong> passato e futuro per il territorio
-          del
+          del&nbsp;
           <strong>Nord-Est Italia</strong> attraverso una serie di{' '}
           <strong>indicatori climatici</strong> che tengono conto dei{' '}
           <b>dati</b>&nbsp;
