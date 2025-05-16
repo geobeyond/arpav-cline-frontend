@@ -233,13 +233,14 @@ const MapDlData = (props: MapDlDataProps) => {
         activeConfiguration.current.climatological_model,
         activeConfiguration.current.scenario,
         activeConfiguration.current.measure,
-        activeConfiguration.current.archive === 'historic'
+        activeConfiguration.current.archive === 'historical'
           ? activeConfiguration.current.aggregation_period === '30yr'
             ? activeConfiguration.current.reference_period
             : activeConfiguration.current.decade
           : activeConfiguration.current.time_period,
         activeConfiguration.current.aggregation_period,
         activeConfiguration.current.year_period,
+        activeConfiguration.current.archive,
       )
       .then(x => {
         setFound(x.items.length);

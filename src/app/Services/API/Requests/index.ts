@@ -94,6 +94,14 @@ export class RequestApi extends Http {
    * @returns {Promise<AxiosResponse<any>>} The response of the request.
    */
   getForecastData(configuration: any, dataSet?: any, language: string = 'it') {
+    return getNetCDFData(configuration, dataSet, language, "forecast");
+  }
+
+  getHistoricalData(configuration:any, dataSet?:any, language: string="it"){
+    return getNetCDFData(configuration, dataSet, language, "historical");
+  }
+
+  getNetCDFData(configuration:any, dataSet: any, language: string='it', mode:string="forecast"){
     let configs = [];
     return this.getConfigurationParams().then(configs => {
       const labelsf = configs.map((config: any) =>
@@ -119,7 +127,7 @@ export class RequestApi extends Http {
         delete innerConf.time_window;
       }
       return this.instance
-        .get<any>(BACKEND_API_URL + '/coverages/forecast-data?', {
+        .get<any>(BACKEND_API_URL + mode === "forecast"?'/coverages/forecast-data?':"/coverages/historical-data?", {
           params: { offset: 0, limit: 100, ...innerConf },
           paramsSerializer: { indexes: null },
           timeout: 30000,
@@ -165,6 +173,8 @@ export class RequestApi extends Http {
         });
     });
   }
+
+
 
   protected static classInstance?: RequestApi;
   public static getInstance() {
@@ -301,7 +311,7 @@ export class RequestApi extends Http {
       time_period: time_period,
       aggregation_period: aggregation_period,
       year_period: season,
-      arhchive: mode,
+      archive: mode,
     };
     let titems: any[] = [];
 
@@ -326,7 +336,7 @@ export class RequestApi extends Http {
           c.time_period,
           c.aggregation_period,
           c.year_period,
-          c.mode,
+          c.archive,
         ),
       );
     }

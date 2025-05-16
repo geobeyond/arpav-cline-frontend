@@ -79,9 +79,15 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   };
 
   const getLinks = configuration => {
-    api.getForecastData(configuration, dataSet.current).then((finds: any) => {
-      setList(finds);
-    });
+    if (mode === 'forecast'){
+      api.getForecastData(configuration, dataSet.current).then((finds: any) => {
+        setList(finds);
+      });
+    } else {
+      api.getHistoricalData(configuration, dataset.current).then((finds: any) => {
+        setLst(finds);
+      });
+    }
   };
 
   const [downloads, setDownloads] = React.useState([]);
