@@ -928,11 +928,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>Da:</span>&nbsp;&nbsp;
           <input
-            type="number"
+            type="text"
             maxLength={4}
             placeholder="Da:"
-            min={baseValue}
-            max={new Date().getFullYear()}
             value={localStartYear}
             onChange={event => {
               let v = parseInt(event?.target?.value);
@@ -967,9 +965,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>A:</span>&nbsp;&nbsp;
           <input
-            type="number"
-            max={new Date().getFullYear()}
-            min={baseValue}
+            type="text"
             maxLength={4}
             placeholder="A:"
             value={localEndYear}

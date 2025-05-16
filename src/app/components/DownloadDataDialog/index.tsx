@@ -125,7 +125,10 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           <Grid xs={26}>
             <Typography variant={'h6'} sx={TitleDownloadStyle}>
               {t('app.header.acronymMeaning')} -{' '}
-              {t('app.header.dataDownloadModule')}
+              {mode === 'forecast'
+                ? t('app.index.sections.proj')
+                : t('app.index.sections.hist')}
+              : {t('app.header.dataDownloadModule')}
             </Typography>
           </Grid>
           <Grid xs={1} sx={CloseIconContStyle}>
