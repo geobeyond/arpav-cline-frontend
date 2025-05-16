@@ -57,7 +57,7 @@ const defaultMapHistorical: any = {
   measure: 'absolute',
   reference_period: 'climate_standard_normal_1991_2020',
   aggregation_period: '30yr',
-  decade: '',
+  decade: 'decade_2011_2020',
   year_period: 'all_year',
   archive: 'historical',
   data_series: 'no',
