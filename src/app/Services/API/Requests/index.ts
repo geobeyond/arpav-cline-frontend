@@ -94,14 +94,23 @@ export class RequestApi extends Http {
    * @returns {Promise<AxiosResponse<any>>} The response of the request.
    */
   getForecastData(configuration: any, dataSet?: any, language: string = 'it') {
-    return getNetCDFData(configuration, dataSet, language, "forecast");
+    return this.getNetCDFData(configuration, dataSet, language, 'forecast');
   }
 
-  getHistoricalData(configuration:any, dataSet?:any, language: string="it"){
-    return getNetCDFData(configuration, dataSet, language, "historical");
+  getHistoricalData(
+    configuration: any,
+    dataSet?: any,
+    language: string = 'it',
+  ) {
+    return this.getNetCDFData(configuration, dataSet, language, 'historical');
   }
 
-  getNetCDFData(configuration:any, dataSet: any, language: string='it', mode:string="forecast"){
+  getNetCDFData(
+    configuration: any,
+    dataSet: any,
+    language: string = 'it',
+    mode: string = 'forecast',
+  ) {
     let configs = [];
     return this.getConfigurationParams().then(configs => {
       const labelsf = configs.map((config: any) =>
@@ -127,11 +136,16 @@ export class RequestApi extends Http {
         delete innerConf.time_window;
       }
       return this.instance
-        .get<any>(BACKEND_API_URL + mode === "forecast"?'/coverages/forecast-data?':"/coverages/historical-data?", {
-          params: { offset: 0, limit: 100, ...innerConf },
-          paramsSerializer: { indexes: null },
-          timeout: 30000,
-        })
+        .get<any>(
+          BACKEND_API_URL + mode === 'forecast'
+            ? '/coverages/forecast-data?'
+            : '/coverages/historical-data?',
+          {
+            params: { offset: 0, limit: 100, ...innerConf },
+            paramsSerializer: { indexes: null },
+            timeout: 30000,
+          },
+        )
         .then((found: any) => {
           /**
            * Maps the array of coverage download links to an array of objects containing the URL and label of the coverage.
@@ -161,8 +175,10 @@ export class RequestApi extends Http {
                 dconf.climatological_variable
                   ? dconf.climatological_variable
                   : dconf.historical_variable
-              } - ${dconf.archive} - ${dconf.climatological_model} - ${
-                dconf.scenario
+              } - ${dconf.archive} ${
+                dconf.archive.indexOf('rical') >= 0
+                  ? ''
+                  : '- ' + dconf.climatological_model + ' - ' + dconf.scenario
               } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
               (dconf.time_period ? `${dconf.time_period} - ` : '') +
               `${dconf.year_period}` +
@@ -173,8 +189,6 @@ export class RequestApi extends Http {
         });
     });
   }
-
-
 
   protected static classInstance?: RequestApi;
   public static getInstance() {

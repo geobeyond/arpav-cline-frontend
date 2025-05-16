@@ -84,6 +84,10 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
         setList(finds);
       });
     } else {
+      if (configuration['reference_period'].indexOf('decade') >= 0) {
+        configuration['decade'] = configuration['reference_period'];
+        delete configuration['reference_period'];
+      }
       api
         .getHistoricalData(configuration, dataSet.current)
         .then((finds: any) => {

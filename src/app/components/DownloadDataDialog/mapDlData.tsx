@@ -492,7 +492,7 @@ const MapDlData = (props: MapDlDataProps) => {
                       value={item.value}
                       disabled={
                         activeConfiguration.current.aggregation_period !==
-                        'ten_years'
+                        'ten_year'
                       }
                     >
                       {item.label}
