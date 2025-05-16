@@ -148,13 +148,27 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   }, [valueSet]);
 
   const renderSelectedValue = (mode: string = 'label') => {
-    let ret: any = valueSet.map((rs, index) =>
-      rs.rows.map((row, iindex) =>
-        row.items.find(x => x.name === current_map[row.key]),
-      ),
-    );
-    ret = ret.flat();
-    ret = ret.filter(x => x);
+    let ret: any[] = [];
+    for (let vs of valueSet) {
+      let ri = 0;
+      for (let row of vs.rows) {
+        ri++;
+        let vv: any = null;
+        if (row.key === 'reference_period') {
+          let vk = row.key;
+          if (current_map['aggregation_period'] === 'ten_year') {
+            vk = 'decade';
+          }
+          vv = row.items.find(x => x.name === current_map[vk]);
+        } else {
+          vv = row.items.find(x => x.name === current_map[row.key]);
+        }
+        if (vv) {
+          ret.push(vv);
+        }
+      }
+    }
+
     //ret = ret.filter(
     //  x =>
     //    ((x.name.indexOf('tw') >= 0 ||
