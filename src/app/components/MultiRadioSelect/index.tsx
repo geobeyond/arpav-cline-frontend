@@ -154,6 +154,12 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
       for (let row of vs.rows) {
         ri++;
         let vv: any = null;
+        if (
+          current_map['aggregation_period'] === 'annual' &&
+          row.key === 'reference_period'
+        ) {
+          continue;
+        }
         if (row.key === 'reference_period') {
           let vk = row.key;
           if (current_map['aggregation_period'] === 'ten_year') {
