@@ -836,7 +836,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
               onChange={e => setMKStartYear(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">From: </InputAdornment>
+                  <InputAdornment position="start">{t('app.label.from')}</InputAdornment>
                 ),
               }}
             ></TextField>
@@ -847,7 +847,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
               onChange={e => setMKEndYear(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">To: </InputAdornment>
+                  <InputAdornment position="start">{t('app.label.to')}</InputAdornment>
                 ),
               }}
             ></TextField>
@@ -926,11 +926,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
       )}
       <Box sx={FieldContainerStyle}>
         <Box sx={RowContainerStyle}>
-          <span>Da:</span>&nbsp;&nbsp;
+          <span>{t('app.label.from')}</span>&nbsp;&nbsp;
           <input
             type="text"
             maxLength={4}
-            placeholder="Da:"
+            placeholder={t('app.label.from')}
             value={localStartYear}
             onChange={event => {
               let v = parseInt(event?.target?.value);
@@ -963,11 +963,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           />
         </Box>
         <Box sx={RowContainerStyle}>
-          <span>A:</span>&nbsp;&nbsp;
+          <span>{t('app.label.to')}</span>&nbsp;&nbsp;
           <input
             type="text"
             maxLength={4}
-            placeholder="A:"
+            placeholder={t('app.label.to')}
             value={localEndYear}
             onChange={event => {
               let v = parseInt(event?.target?.value);
