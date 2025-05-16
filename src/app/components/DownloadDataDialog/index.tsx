@@ -79,14 +79,16 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   };
 
   const getLinks = configuration => {
-    if (mode === 'forecast'){
+    if (mode === 'forecast') {
       api.getForecastData(configuration, dataSet.current).then((finds: any) => {
         setList(finds);
       });
     } else {
-      api.getHistoricalData(configuration, dataset.current).then((finds: any) => {
-        setLst(finds);
-      });
+      api
+        .getHistoricalData(configuration, dataSet.current)
+        .then((finds: any) => {
+          setList(finds);
+        });
     }
   };
 
