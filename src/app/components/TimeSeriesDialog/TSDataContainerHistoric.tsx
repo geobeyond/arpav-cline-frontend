@@ -836,7 +836,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
               onChange={e => setMKStartYear(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">{t('app.label.from')}</InputAdornment>
+                  <InputAdornment position="start">
+                    {t('app.label.from')}
+                  </InputAdornment>
                 ),
               }}
             ></TextField>
@@ -847,7 +849,9 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
               onChange={e => setMKEndYear(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">{t('app.label.to')}</InputAdornment>
+                  <InputAdornment position="start">
+                    {t('app.label.to')}
+                  </InputAdornment>
                 ),
               }}
             ></TextField>
@@ -928,14 +932,14 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>{t('app.label.from')}</span>&nbsp;&nbsp;
           <input
-            type="text"
+            type="number"
             maxLength={4}
             placeholder={t('app.label.from')}
             value={localStartYear}
             onChange={event => {
               let v = parseInt(event?.target?.value);
+              setLocalStartYear(event?.target?.value);
               if (v >= baseValue && v <= new Date().getFullYear()) {
-                setLocalStartYear(event?.target?.value);
                 const startValue = chartRef.current
                   .getEchartsInstance()
                   .getOption()
@@ -965,14 +969,14 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>{t('app.label.to')}</span>&nbsp;&nbsp;
           <input
-            type="text"
+            type="number"
             maxLength={4}
             placeholder={t('app.label.to')}
             value={localEndYear}
             onChange={event => {
               let v = parseInt(event?.target?.value);
+              setLocalEndYear(event?.target?.value);
               if (v >= baseValue && v <= new Date().getFullYear()) {
-                setLocalEndYear(event?.target?.value);
                 const startValue = chartRef.current
                   .getEchartsInstance()
                   .getOption()

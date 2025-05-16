@@ -1200,11 +1200,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
       )}
       <Box sx={FieldContainerStyle}>
         <Box sx={RowContainerStyle}>
-          <span>Da:</span>&nbsp;&nbsp;
+          <span>{t('app.label.from')}</span>&nbsp;&nbsp;
           <input
             type="text"
             maxLength={4}
-            placeholder="Da:"
+            placeholder={t('app.label.from')}
             value={localStartYear}
             onChange={event => {
               setLocalStartYear(event?.target?.value);
@@ -1232,11 +1232,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           />
         </Box>
         <Box sx={RowContainerStyle}>
-          <span>A:</span>&nbsp;&nbsp;
+          <span>{t('app.label.to')}</span>&nbsp;&nbsp;
           <input
             type="text"
             maxLength={4}
-            placeholder="A:"
+            placeholder={t('app.label.to')}
             value={localEndYear}
             onChange={event => {
               setLocalEndYear(event?.target?.value);
