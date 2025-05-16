@@ -215,7 +215,7 @@ export class RequestApi extends Http {
             if (c.label === city.label) found = true;
           }
         }
-        return !found;
+        return !found || lastCities.length === 0;
       });
       callback([...lastCities, ...fcities]);
     } else {
