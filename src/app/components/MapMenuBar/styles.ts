@@ -79,7 +79,7 @@ export const FirstRowStyle = theme => ({
   fontFamily: 'Titillium Web, Helvetica, sans-serif',
   paddingLeft: 2,
   '& .dropdown-toggle': {
-    padding: '0 24px',
+    padding: '0 0',
     color: '#164d36',
     '& *': {
       display: 'inline-block',
