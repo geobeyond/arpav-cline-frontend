@@ -168,7 +168,7 @@ const MapDlData = (props: MapDlDataProps) => {
   }, [downLoadBounds, onChange]);
 
   const getOptions = field => {
-    let x = attributes.filter(x => x.name === field);
+    let x = attributes?.filter(x => x.name === field);
     if (x && x.length > 0) {
       return x[0].allowed_values.map(xx => {
         return {
@@ -203,6 +203,7 @@ const MapDlData = (props: MapDlDataProps) => {
       ret.scenario = 'rcp85';
       ret.aggregation_period = '30yr';
       ret.measure = 'anomaly';
+      ret.decade = 'decade_2011_2020';
       ret.time_window = 'tw1';
       ret.year_period =
         ['tr', 'su30', 'fd', 'hdds', 'cdds', 'snwdays'].indexOf(
@@ -225,6 +226,25 @@ const MapDlData = (props: MapDlDataProps) => {
       const conf = { ...activeConfiguration.current, ...{ [field]: value } };
       activeConfiguration.current = conf;
       setActive(activeConfiguration.current);
+    }
+
+    if (
+      field === 'aggregation_period' &&
+      activeConfiguration.current.archive === 'historical'
+    ) {
+      if (activeConfiguration.current.aggregation_period === '30yr') {
+        activeConfiguration.current = {
+          ...activeConfiguration.current,
+          ...{ time_window: 'climate_standard_normal_1991_2020' },
+        };
+      } else if (
+        activeConfiguration.current.aggregation_period === 'ten_year'
+      ) {
+        activeConfiguration.current = {
+          ...activeConfiguration.current,
+          ...{ time_window: 'decade_2011_2020' },
+        };
+      }
     }
 
     api

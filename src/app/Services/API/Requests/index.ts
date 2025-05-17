@@ -595,6 +595,8 @@ export class RequestApi extends Http {
     mode: string = 'forecast',
     mkfrom: string = '..',
     mkto: string = '..',
+    measure?: string,
+    year_period?: string,
   ) => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
     if (mode === 'forecast') {
@@ -628,6 +630,8 @@ export class RequestApi extends Http {
           mode,
           mkfrom,
           mkto,
+          measure,
+          year_period,
         ),
       );
     }
@@ -674,6 +678,33 @@ export class RequestApi extends Http {
       });
   };
 
+  translations = {
+    measure: {
+      absolute: { it: 'Valore assoluto', en: 'Absolute value' },
+      anomaly: { it: 'Anomalia', en: 'Anomaly' },
+    },
+    year_period: {
+      all_year: { it: 'Anno', en: 'All year' },
+      yearly: { it: 'Anno', en: 'All year' },
+      winter: { it: 'Inverno', en: '' },
+      sprng: { it: 'Primavera', en: '' },
+      summer: { it: 'Estate', en: '' },
+      autumn: { it: 'Autunno', en: '' },
+      january: { it: 'Gennaio', en: '' },
+      february: { it: 'Febbraio', en: '' },
+      march: { it: 'Marzo', en: '' },
+      april: { it: 'Aprile', en: '' },
+      may: { it: 'Maggio', en: '' },
+      june: { it: 'Giugno', en: '' },
+      july: { it: 'Luglio', en: '' },
+      august: { it: 'Agosto', en: '' },
+      september: { it: 'Settembre', en: '' },
+      october: { it: 'Ottobre', en: '' },
+      november: { it: 'Novembre', en: '' },
+      december: { it: 'Dicembre', en: '' },
+    },
+  };
+
   public getTimeserieV2 = (
     serie: string,
     lat: number,
@@ -685,6 +716,8 @@ export class RequestApi extends Http {
     mode: string = 'forecast',
     mkfrom: string = '..',
     mkto: string = '..',
+    measure?: string,
+    year_period?: string,
   ) => {
     serie.indexOf('forecast') >= 0 ? (mode = 'forecast') : (mode = 'past');
     const ep =
@@ -723,8 +756,17 @@ export class RequestApi extends Http {
     return this.instance
       .get<any>(url)
       .then((x: any) => {
-        x.series.map(a => {
-          console.log('timeseries: ', a.name);
+        x.series.map(s => {
+          console.log('timeseries: ', s.name);
+          console.log('      info: ', s.info);
+          if (s.name.indexOf('station') === 0) {
+            if (!s.translations.parameter_values.measure && measure)
+              s.translations.parameter_values['measure'] =
+                this.translations['measure'][measure];
+            if (!s.translations.parameter_values.year_period && year_period)
+              s.translations.parameter_values['year_period'] =
+                this.translations['year_period'][year_period];
+          }
         });
         return x;
       })

@@ -186,6 +186,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           map_data,
           mkStartYear.toString(),
           mkEndYear.toString(),
+          'absolute',
+          currentMap.year_period,
         )
         .then(res => {
           //@ts-ignore
