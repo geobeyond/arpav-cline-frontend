@@ -190,9 +190,6 @@ export function MapPage(props: MapPageProps) {
         }, {}),
       {},
     );
-  useEffect(() => {
-    api.updateCache();
-  }, []);
 
   useEffect(() => {
     const all_meas = ['absolute', 'anomaly'];

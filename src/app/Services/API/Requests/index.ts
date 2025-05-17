@@ -666,13 +666,18 @@ export class RequestApi extends Http {
         if (curr) {
           if (curr !== x.git_commit) {
             localStorage.clear();
-            console.log('localStorage cleaered');
+            console.log('localStorage cleared');
           }
           localStorage.setItem('git_commit', x.git_commit);
         } else {
           localStorage.clear();
-          console.log('localStorage cleaered');
+          console.log('localStorage cleared');
           localStorage.setItem('git_commit', x.git_commit);
+
+          setTimeout(() => {
+            //@ts-ignore
+            window.location = window.location;
+          }, 6000);
         }
         localStorage.setItem('last_check', new Date().toString());
       });
@@ -685,23 +690,22 @@ export class RequestApi extends Http {
     },
     year_period: {
       all_year: { it: 'Anno', en: 'All year' },
-      yearly: { it: 'Anno', en: 'All year' },
-      winter: { it: 'Inverno', en: '' },
-      sprng: { it: 'Primavera', en: '' },
-      summer: { it: 'Estate', en: '' },
-      autumn: { it: 'Autunno', en: '' },
-      january: { it: 'Gennaio', en: '' },
-      february: { it: 'Febbraio', en: '' },
-      march: { it: 'Marzo', en: '' },
-      april: { it: 'Aprile', en: '' },
-      may: { it: 'Maggio', en: '' },
-      june: { it: 'Giugno', en: '' },
-      july: { it: 'Luglio', en: '' },
-      august: { it: 'Agosto', en: '' },
-      september: { it: 'Settembre', en: '' },
-      october: { it: 'Ottobre', en: '' },
-      november: { it: 'Novembre', en: '' },
-      december: { it: 'Dicembre', en: '' },
+      winter: { it: 'Inverno', en: 'Winter' },
+      sprng: { it: 'Primavera', en: 'Spring' },
+      summer: { it: 'Estate', en: 'Summer' },
+      autumn: { it: 'Autunno', en: 'Autumn' },
+      january: { it: 'Gennaio', en: 'January' },
+      february: { it: 'Febbraio', en: 'February' },
+      march: { it: 'Marzo', en: 'March' },
+      april: { it: 'Aprile', en: 'April' },
+      may: { it: 'Maggio', en: 'May' },
+      june: { it: 'Giugno', en: 'June' },
+      july: { it: 'Luglio', en: 'July' },
+      august: { it: 'Agosto', en: 'August' },
+      september: { it: 'Settembre', en: 'September' },
+      october: { it: 'Ottobre', en: 'October' },
+      november: { it: 'Novembre', en: 'November' },
+      december: { it: 'Dicembre', en: 'December' },
     },
   };
 
@@ -948,10 +952,4 @@ export class RequestApi extends Http {
   };
 
   public getForecastAttribute = (attribute, params = {}) => {};
-
-  public getAppVersion = () => {
-    const ret = this.instance.get<any>(
-      `${BACKEND_API_URL}/coverages/configuration-parameters?offset=0&limit=100`,
-    );
-  };
 }

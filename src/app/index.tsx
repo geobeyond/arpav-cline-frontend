@@ -25,9 +25,11 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 // Import the configured i18n instance
 import { i18n } from '../locales/i18n';
+import { RequestApi } from './Services/API/Requests';
 
 export function App() {
   const { t, i18n } = useTranslation();
+  const api = RequestApi.getInstance();
   // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const theme = React.useMemo(
@@ -53,6 +55,8 @@ export function App() {
       g.src = u + 'matomo.js';
       s.parentNode?.insertBefore(g, s);
     })();
+
+    api.updateCache();
   }, []);
 
   return (
