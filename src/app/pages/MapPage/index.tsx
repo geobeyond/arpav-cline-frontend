@@ -60,6 +60,7 @@ const defaultMapHistorical: any = {
   decade: 'decade_2011_2020',
   year_period: 'all_year',
   archive: 'historical',
+  year: new Date().getFullYear() - 1,
   data_series: 'no',
 };
 
