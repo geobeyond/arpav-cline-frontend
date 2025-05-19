@@ -43,7 +43,7 @@ import {
 } from './styles';
 import DownloadDataDialog from '../DownloadDataDialog';
 import { useEffect, useState, useRef } from 'react';
-import { useMapSlice } from '../../pages/MapPage/slice';
+//import { useMapSlice } from '../../pages/MapPage/slice';
 import { MenuSelectionMobileStyle } from './styles';
 import SnowSunIcon from '../../icons/SnowSunIcon';
 import {
@@ -112,7 +112,7 @@ export function MapMenuBar(props: MapMenuBar) {
   //} = useSelector(state => state?.map as MapState);
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
-  const actions = useMapSlice();
+  //const actions = useMapSlice();
   const localCM = useRef<any>(current_map);
 
   const changingParameter = useRef<string>('climatological_variable');

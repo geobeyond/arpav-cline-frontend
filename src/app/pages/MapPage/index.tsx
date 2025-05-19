@@ -208,7 +208,10 @@ export function MapPage(props: MapPageProps) {
     ];
 
     const changeables = ['measure', 'year_period', 'time_window'];
-    setCurrentMap({ ...searchParams });
+    //@ts-ignore
+    if (searchParams.length > 2) {
+      setCurrentMap({ ...searchParams });
+    }
     api.getAttributes(map_data, map_mode).then(x => {
       //@ts-ignore
       setMenus(x.items);
@@ -285,7 +288,10 @@ export function MapPage(props: MapPageProps) {
       }
       setCombinations(combos);
     });
-    setCurrentMap({ ...searchParams });
+    //@ts-ignore
+    if (searchParams.length > 2) {
+      setCurrentMap({ ...searchParams });
+    }
     if (searchParams.get('plotPopup')) {
       setTSOpen(true);
     }
@@ -448,12 +454,7 @@ export function MapPage(props: MapPageProps) {
   }, [currentMap]);
 
   function paramsToObject(entries) {
-    const result = {};
-    for (const [key, value] of entries) {
-      // each 'entry' is a [key, value] tuple
-      result[key] = value;
-    }
-    return result;
+    return Object.fromEntries(entries);
   }
 
   useEffect(() => {

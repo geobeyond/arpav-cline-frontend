@@ -1,4 +1,11 @@
-import { find_keys } from '../app/pages/MapPage/slice';
+const find_keys = [
+  'variable',
+  'forecast_model',
+  'scenario',
+  'data_series',
+  'year_period',
+  'value_type',
+];
 
 export const getValuesFor = (
   dictKey: string,
