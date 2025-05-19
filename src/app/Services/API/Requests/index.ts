@@ -677,7 +677,7 @@ export class RequestApi extends Http {
           setTimeout(() => {
             //@ts-ignore
             window.location = window.location;
-          }, 6000);
+          }, 2000);
         }
         localStorage.setItem('last_check', new Date().toString());
       });
