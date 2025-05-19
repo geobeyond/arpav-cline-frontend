@@ -764,12 +764,14 @@ export class RequestApi extends Http {
           console.log('timeseries: ', s.name);
           console.log('      info: ', s.info);
           if (s.name.indexOf('station') === 0) {
-            if (!s.translations.parameter_values.measure && measure)
-              s.translations.parameter_values['measure'] =
-                this.translations['measure'][measure];
-            if (!s.translations.parameter_values.year_period && year_period)
-              s.translations.parameter_values['year_period'] =
-                this.translations['year_period'][year_period];
+            if (measure)
+              if (!s.translations.parameter_values.measure && measure)
+                s.translations.parameter_values['measure'] =
+                  this.translations['measure'][measure];
+            if (year_period)
+              if (!s.translations.parameter_values.year_period && year_period)
+                s.translations.parameter_values['year_period'] =
+                  this.translations['year_period'][year_period];
           }
         });
         return x;

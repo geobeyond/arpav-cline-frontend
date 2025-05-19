@@ -364,7 +364,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const [otsIndex, setOTsIndex] = useState(0);
 
   let tsindex = 0;
-  const [baseYear, setBaseYear] = useState(1976);
+  const [baseYear, setBaseYear] = useState(data === 'forecast' ? 1976 : 1984);
 
   let yr = 2035;
   let oyr = 0;
@@ -378,6 +378,9 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       setTt(NaN);
       setTv(0);
     }
+
+    let fy = parseInt(currentTimeserie.values[0].datetime.split('-')[0]);
+    setBaseYear(fy);
     let att = yr;
     let atv = 0;
     let yrfield = document.getElementsByClassName('timecontrol-date');
@@ -409,7 +412,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         }
       }
     }
-  });
+  }, [baseYear]);
 
   useEffect(() => {
     // @ts-ignore
@@ -420,7 +423,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       const index = dt - baseYear;
       setTsIndex(index);
     });
-  });
+  }, [baseYear]);
 
   useEffect(() => {
     let ctt = timeserie[tsIndex]?.datetime;

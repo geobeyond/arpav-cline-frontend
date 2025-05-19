@@ -47,6 +47,10 @@ export const TWLSample = (props: any) => {
         const url = new URL(window.location.href);
 
         if (url.searchParams.has('year')) {
+          console.log(
+            'setting current year from TWLSample if',
+            url.searchParams.get('year'),
+          );
           setCurrentYear(
             parseInt(
               url.searchParams.get('year') ||
@@ -55,6 +59,7 @@ export const TWLSample = (props: any) => {
           );
         } else {
           let dt = new Date().getFullYear();
+          console.log('setting current year from TWLSample else', dt);
           setCurrentYear(dt);
         }
         //setTimeout(() => {

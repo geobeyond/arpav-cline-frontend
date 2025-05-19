@@ -18,7 +18,7 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
             const url = new URL(window.location.href);
             if(url.searchParams.size > 2){
                 if(url.searchParams.has('year')){
-                    //url.searchParams.set('year', date.getFullYear().toString());
+                    //url.searchParams.set('year', date.getFullYear().toString());s
                 } else {
                     url.searchParams.append('year', date.getFullYear().toString());
                 }
