@@ -75,6 +75,7 @@ const HeaderBar = (props: HeaderBarProps) => {
 
   const setLang = lang => {
     localStorage.setItem('chosenLang', lang);
+    localStorage.setItem('chosenLang', lang);
     i18n.changeLanguage(lang);
   };
 
@@ -86,6 +87,9 @@ const HeaderBar = (props: HeaderBarProps) => {
       lang = 'it';
     }
     i18n.changeLanguage(lang);
+    setTimeout(() => {
+      i18n.changeLanguage(lang);
+    }, 300);
   }, []);
 
   return (
