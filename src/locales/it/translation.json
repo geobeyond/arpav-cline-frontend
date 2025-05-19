@@ -92,7 +92,7 @@
   "app.map.timeSeriesDialog.saveAsImage": "Salva immagine",
   "app.map.timeSeriesDialog.selectedModel": "Modello di riferimento",
   "app.map.timeSeriesDialog.sensorSmoothing": "Filtro Stazione",
-  "app.map.timeSeriesDialog.title": "Serie temporale",
+  "app.map.timeSeriesDialog.title": "serie temporale",
   "app.map.timeSeriesDialog.to": "al",
   "app.map.timeSeriesDialog.mannkendall": "calcolo trend",
   "app.map.timeSeriesDialog.toggleUncertainty": "Attiva/disattiva incertezza",
