@@ -50,11 +50,11 @@ export const TWLSample = (props: any) => {
           setCurrentYear(
             parseInt(
               url.searchParams.get('year') ||
-              new Date(+data.time).getFullYear().toString(),
+              new Date().getFullYear().toString(),
             ),
           );
         } else {
-          let dt = new Date(+data.time).getFullYear();
+          let dt = new Date().getFullYear();
           setCurrentYear(dt);
         }
         //setTimeout(() => {
