@@ -364,7 +364,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const [otsIndex, setOTsIndex] = useState(0);
 
   let tsindex = 0;
-  const [baseYear, setBaseYear] = useState(data === 'forecast' ? 1976 : 1984);
+  const [baseYear, setBaseYear] = useState<number>();
 
   let yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
   let oyr = 0;
@@ -379,6 +379,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       setTimeSerie([]);
       setTt(NaN);
       setTv(0);
+      setBaseYear(data === 'forecast' ? 1976 : 1984);
     }
   }, [currentTimeserie]);
 
@@ -417,6 +418,11 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
             );
             if (found_year.length > 0) {
               ctsindex = timeserie.indexOf(found_year[0]);
+
+              //@ts-ignore
+              map.timeDimension.setCurrentTime(
+                new Date(found_year[0].datetime).getTime(),
+              );
             } else {
               ctsindex = 0;
             }
@@ -433,11 +439,21 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   useEffect(() => {
     // @ts-ignore
     map.timeDimension.on('timeloading', data => {
-      let dt = new Date(+data.time).getFullYear();
-      console.log(dt);
-      setOTsIndex(tsIndex);
-      const index = dt - baseYear;
-      setTsIndex(index);
+      if (baseYear) {
+        let dt = new Date(+data.time).getFullYear();
+        console.log(dt);
+        setOTsIndex(tsIndex);
+        const index = dt - baseYear;
+        setTsIndex(index);
+
+        let url = new URL(window.location.href);
+        if (url.searchParams.has('year')) {
+          url.searchParams.set('year', dt.toString());
+        } else {
+          url.searchParams.append('year', dt.toString());
+        }
+        window.history.pushState(null, '', url.toString());
+      }
     });
   }, [baseYear]);
 

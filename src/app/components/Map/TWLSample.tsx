@@ -46,24 +46,9 @@ export const TWLSample = (props: any) => {
       map.timeDimension.on('timeloading', data => {
         const url = new URL(window.location.href);
 
-        if (url.searchParams.has('year')) {
-          setTimeout(() => {
-            console.log(
-              'setting current year from TWLSample if',
-              url.searchParams.get('year'),
-            );
-            setCurrentYear(
-              parseInt(
-                url.searchParams.get('year') ||
-                new Date().getFullYear().toString(),
-              ),
-            );
-          }, 500);
-        } else {
-          let dt = new Date(+data.time).getFullYear();
-          console.log('setting current year from TWLSample else', dt);
-          setCurrentYear(dt);
-        }
+        let dt = new Date(+data.time).getFullYear();
+        console.log('setting current year from Leaflet Timedmension:', dt);
+        setCurrentYear(dt);
         //setTimeout(() => {
         //  let layers = document.getElementsByClassName('leaflet-layer');
         //  let tx = false;
