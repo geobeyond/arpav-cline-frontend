@@ -11,7 +11,7 @@ const InfoBaroIt = () => {
                 </p>
                 <p>
                     In questo contesto, la temperatura media annua misurata dalle stazioni
-                    meteorologiche regionali racconta l'evoluzione del clima in Veneto
+                    meteorologiche regionali racconta l'evoluzione del clima in Veneto e Friuli Venezia Giulia 
                     fino ad oggi. Le proiezioni climatiche rappresentano possibili futuri
                     climatici, ognuno dei quali parte dalla situazione attuale tenendo
                     conto di sviluppi socio-economici, demografici e tecnologici che
