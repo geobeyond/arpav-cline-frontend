@@ -58,7 +58,7 @@ export const TWLSample = (props: any) => {
             ),
           );
         } else {
-          let dt = new Date().getFullYear();
+          let dt = new Date(+data.time).getFullYear();
           console.log('setting current year from TWLSample else', dt);
           setCurrentYear(dt);
         }

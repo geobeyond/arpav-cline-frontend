@@ -366,33 +366,41 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let tsindex = 0;
   const [baseYear, setBaseYear] = useState(data === 'forecast' ? 1976 : 1984);
 
-  let yr = 2035;
+  let yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
   let oyr = 0;
   let otsindex = 0;
 
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
       setTimeSerie([...currentTimeserie.values]);
+      let fy = parseInt(currentTimeserie.values[0].datetime.split('-')[0]);
+      setBaseYear(fy);
     } else {
       setTimeSerie([]);
       setTt(NaN);
       setTv(0);
     }
+  }, [currentTimeserie]);
 
-    let fy = parseInt(currentTimeserie.values[0].datetime.split('-')[0]);
-    setBaseYear(fy);
+  useEffect(() => {
     let att = yr;
     let atv = 0;
+    let url = new URL(window.location.href);
+    let yrparam = url.searchParams.get('year');
     let yrfield = document.getElementsByClassName('timecontrol-date');
-    let yrstring = '2035';
-    if (yrfield.length > 0) {
+    let yrstring =
+      data === 'forecast' ? '2035' : (new Date().getFullYear() - 1).toString();
+    if (yrparam) {
+      yrstring = yrparam;
+    } else if (yrfield.length > 0) {
       yrstring = yrfield[0].textContent!;
     }
     try {
       yr = parseInt(yrstring, 10);
-      if (isNaN(yr)) yr = 2035;
+      if (isNaN(yr))
+        yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
     } catch (ex) {
-      yr = 2035;
+      yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
     }
 
     let ctsindex = tsindex;
@@ -404,7 +412,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         if (timeserie.length > 0) {
           setBaseYear(parseInt(timeserie[0].datetime.split('-')[0], 10));
           if (timeserie.length > 1) {
-            ctsindex = yr - baseYear;
+            let found_year = timeserie.filter(
+              x => x.datetime.split('-')[0] === yr.toString(),
+            );
+            if (found_year.length > 0) {
+              ctsindex = timeserie.indexOf(found_year[0]);
+            } else {
+              ctsindex = 0;
+            }
+            //ctsindex = yr - baseYear;
           } else {
             ctsindex = 0;
           }
@@ -412,7 +428,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         }
       }
     }
-  }, [baseYear]);
+  }, [timeserie, baseYear]);
 
   useEffect(() => {
     // @ts-ignore
