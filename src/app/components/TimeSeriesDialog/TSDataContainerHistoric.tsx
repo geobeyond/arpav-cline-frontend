@@ -426,8 +426,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         item.info.processing_method_info?.is_statistically_significant
       ) {
         ret +=
-          ': ' +
-          (item.info.processing_method_info?.slope > 0 ? '+' : '-') +
+          ' ' +
+          (item.info.processing_method_info?.slope > 0 ? '+' : '') +
           (item.info.processing_method_info?.slope * 10).toFixed(
             currentLayer?.data_precision,
           );
