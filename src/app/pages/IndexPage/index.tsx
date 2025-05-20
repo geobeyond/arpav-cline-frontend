@@ -34,7 +34,7 @@ import IntroIt from './IntroIt';
 import IntroEn from './IntroEn';
 
 const IndexPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   const regioneImg = '/img/logo_regione_veneto.png';

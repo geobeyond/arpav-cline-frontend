@@ -19,11 +19,6 @@
   "app.label.from": "Da:",
   "app.label.to": "A:",
 
-  "app.index.header.title": "Barometro del Clima",
-  "app.index.header.subtitle": "La temperatura misurata in Veneto e le proiezioni per il futuro. Dove stiamo andando?",
-  "app.index.header.descriptor": "Il barometro utilizza la temperatura media annuale come indicatore dei cambiamenti climatici in atto e attesi. Nel grafico:",
-  "app.index.header.p1": "la temperatura registrata in Veneto negli ultimi decenni (linea nera);",
-  "app.index.header.p2": "le proiezioni climatiche fino a fine secolo per tre diversi scenari di riduzione delle emissioni di gas serra (linee blu, gialla e rossa).",
   "app.index.header.disclaimer": "Si tratta di proiezioni climatiche e non di previsioni \na lungo termine. Il valore annuale ha validità in un \ncontesto di trend trentennale.",
   "app.index.observations": "Osservazoni",
   "app.map.downloadDataDialog.DLNetCDF": "Cerca NetCDF",
