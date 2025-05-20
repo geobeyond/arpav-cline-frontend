@@ -60,7 +60,7 @@ const defaultMapHistorical: any = {
   decade: 'decade_2011_2020',
   year_period: 'all_year',
   archive: 'historical',
-  //year: new Date().getFullYear() - 1,
+  year: new Date().getFullYear() - 1,
   data_series: 'no',
 };
 
@@ -494,20 +494,33 @@ export function MapPage(props: MapPageProps) {
     } catch (e) {
       // console.log('no year');
     }
-    const lcaption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
-      }
+    const lcaption = `${labelFor(currentMap.climatological_variable)}
   - ${joinNames([
-        labelFor(currentMap.climatological_model),
-        labelFor(currentMap.scenario),
-      ])}
+      labelFor(currentMap.climatological_model),
+      labelFor(currentMap.scenario),
+    ])}
   - ${joinNames([
-        labelFor(currentMap.aggregation_period),
-        labelFor(currentMap.measure),
-      ])}
-    ${currentMap.time_window && currentMap.aggregation_period === '30yr'
+      labelFor(currentMap.aggregation_period),
+      labelFor(currentMap.measure),
+    ])}
+    ${currentMap.time_window &&
+        currentMap.aggregation_period === '30yr' &&
+        currentMap.archive === 'forecast'
         ? labelFor(currentMap.time_window)
+        : ''
+      }
+      
+    ${currentMap.reference_period &&
+        currentMap.aggregation_period === '30yr' &&
+        currentMap.archive !== 'forecast'
+        ? labelFor(currentMap.reference_period)
+        : ''
+      }
+      
+    ${currentMap.decade &&
+        currentMap.aggregation_period === 'ten_year' &&
+        currentMap.archive !== 'forecast'
+        ? labelFor(currentMap.decade)
         : ''
       }
   - ${labelFor(currentMap.year_period)}
