@@ -30,6 +30,8 @@ import { AttStyle, HeroStyle, TopHeroStyle, AttributionStyle } from './styles';
 import HeaderBar from 'app/components/HeaderBar';
 import Graph from './Graph';
 import { Box, Typography } from '@mui/material';
+import IntroIt from './IntroIt';
+import IntroEn from './IntroEn';
 
 const IndexPage = () => {
   const { t } = useTranslation();
@@ -46,19 +48,8 @@ const IndexPage = () => {
       <HeaderBar mode="full"></HeaderBar>
 
       <Hero overlay="dark" style={TopHeroStyle}>
-        <h2>{t('app.index.header.title')}</h2>
+        {i18n.language === 'it' ? <IntroIt /> : <IntroEn />}
 
-        <p>
-          <i>{t('app.index.header.subtitle')}</i>
-        </p>
-        <p>
-          {t('app.index.header.descriptor')}
-
-          <ul>
-            <li>{t('app.index.header.p1')}</li>
-            <li>{t('app.index.header.p2')}</li>
-          </ul>
-        </p>
         <Graph></Graph>
       </Hero>
       <Section></Section>

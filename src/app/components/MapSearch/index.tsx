@@ -391,10 +391,10 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     let yrfield = document.getElementsByClassName('timecontrol-date');
     let yrstring =
       data === 'forecast' ? '2035' : (new Date().getFullYear() - 1).toString();
-    if (yrparam) {
-      yrstring = yrparam;
-    } else if (yrfield.length > 0) {
+    if (yrfield.length > 0) {
       yrstring = yrfield[0].textContent!;
+    } else if (yrparam) {
+      yrstring = yrparam;
     }
     try {
       yr = parseInt(yrstring, 10);

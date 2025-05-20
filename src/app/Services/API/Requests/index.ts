@@ -44,7 +44,7 @@ export class RequestApi extends Http {
         .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
           params: {
             url: href + '&op=screenshot',
-            delay_seconds: '12',
+            delay_seconds: '15',
           },
           responseType: 'blob',
         })
@@ -181,6 +181,8 @@ export class RequestApi extends Http {
                   : '- ' + dconf.climatological_model + ' - ' + dconf.scenario
               } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
               (dconf.time_period ? `${dconf.time_period} - ` : '') +
+              (dconf.reference_period ? `${dconf.reference_period} - ` : '') +
+              (dconf.decade ? `${dconf.decade} - ` : '') +
               `${dconf.year_period}` +
               (dconf.uncertainty_type ? ` - ${dconf.uncertainty_type}` : '');
             return { url, rawLabel: label, label: labelout };
