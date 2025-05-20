@@ -485,8 +485,7 @@ export function MapPage(props: MapPageProps) {
     let year = '';
     try {
       year =
-        currentMap.aggregation_period === 'annual' ||
-          currentMap.aggregation_period === 'test'
+        currentMap.aggregation_period === 'annual'
           ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
             .getFullYear()
             .toString()
