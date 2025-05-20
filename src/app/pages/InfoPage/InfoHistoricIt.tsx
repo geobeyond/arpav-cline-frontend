@@ -37,7 +37,7 @@ const InfoHistoricIt = () => {
                                 </p>
                             </td>
                             <td>
-                                <p>Temperatura media giornaliera dell'aria vicino al suolo</p>
+                                <p>Temperatura media dell'aria vicino al suolo</p>
                             </td>
                         </tr>
                         <tr>
