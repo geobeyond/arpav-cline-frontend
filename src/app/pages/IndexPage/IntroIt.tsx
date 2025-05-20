@@ -5,7 +5,7 @@ const IntroIt = () => {
 
       <p>
         <i>
-          La temperatura misurata in Veneto e le proiezioni per il futuro. Dove
+          La temperatura misurata in Veneto e Friuli Venezia Giulia e le proiezioni per il futuro. Dove
           stiamo andando?
         </i>
       </p>
@@ -14,7 +14,7 @@ const IntroIt = () => {
         cambiamenti climatici in atto e attesi. Nel grafico:
         <ul>
           <li>
-            la temperatura registrata in Veneto negli ultimi decenni (linea
+            la temperatura registrata in Veneto e Friuli Venezia Giulia negli ultimi decenni (linea
             nera);
           </li>
           <li>
