@@ -331,7 +331,7 @@ export const CompactValueRenderer = ({ time, value, unit, precision }) => {
           ? value
             ?.toFixed(precision)
             .replaceAll('.', i18n.language === 'it' ? ',' : '.')
-          : '-'}
+          : '-'}{' '}
         {unit}
       </div>
       <span style={{ flex: '1 1 1px' }}></span>
