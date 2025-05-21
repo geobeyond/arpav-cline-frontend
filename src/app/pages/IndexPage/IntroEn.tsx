@@ -5,8 +5,8 @@ const IntroEn = () => {
 
       <p>
         <i>
-          Measured temperature in Veneto and projections for the future. Where
-          are we going?
+          Measured temperature in Veneto and Friuli Venezia Giulia and
+          projections for the future. Where are we going?
         </i>
       </p>
       <p>
@@ -14,7 +14,8 @@ const IntroEn = () => {
         ongoing and expected climate change. In the chart:
         <ul>
           <li>
-            the temperature recorded in Veneto over recent decades (black line);
+            the temperature recorded in Veneto and Friuli Venezia Giulia over
+            recent decades (black line);
           </li>
           <li>
             climate projections until the end of the century for three different
