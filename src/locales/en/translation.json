@@ -78,6 +78,7 @@
   "app.map.timeSeriesDialog.DLTimeSeries": "Download time series",
   "app.map.timeSeriesDialog.from": "from",
   "app.map.timeSeriesDialog.lat": "LAT",
+  "app.map.timeSeriesDialog.decade": "decade",
   "app.map.timeSeriesDialog.lng": "LONG",
   "app.map.timeSeriesDialog.loess": "LOESS (locally estimated scatterplot smoothing)",
   "app.map.timeSeriesDialog.modelSmoothing": "Model filter",

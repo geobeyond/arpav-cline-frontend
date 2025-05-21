@@ -431,7 +431,12 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           (item.info.processing_method_info?.slope * 10).toFixed(
             currentLayer?.data_precision,
           );
-        ret += ' ' + currentLayer?.unit_english + '/10y';
+        ret +=
+          ' ' + i18n.language === 'it'
+            ? currentLayer?.unit_italian
+            : currentLayer?.unit_english +
+            '/' +
+            t('app.map.timeSeriesDialog.decade');
       }
 
       return ret;

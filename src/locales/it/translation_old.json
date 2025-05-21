@@ -64,7 +64,7 @@
   "app.map.downloadDataDialog.map.east": "Est",
   "app.map.timeSeries.unavailable": "Non è disponibile la serie temporale per la media trentennale",
   "app.map.timeSeries.available": "Visualizza la serie temporale per il punto selezionato",
-  "app.map.timeSeriesDialog.title": "Serie temporale",
+  "app.map.timeSeriesDialog.title": "serie temporale",
   "app.map.timeSeriesDialog.lat": "LAT",
   "app.map.timeSeriesDialog.lng": "LONG",
   "app.map.timeSeriesDialog.from": "dal",
