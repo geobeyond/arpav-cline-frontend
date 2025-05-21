@@ -430,7 +430,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           (item.info.processing_method_info?.slope > 0 ? '+' : '') +
           (item.info.processing_method_info?.slope * 10).toFixed(
             currentLayer?.data_precision,
-          );
+          ) +
+          ' ';
         ret +=
           ' ' + i18n.language === 'it'
             ? currentLayer?.unit_italian
