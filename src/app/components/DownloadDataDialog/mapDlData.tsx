@@ -195,15 +195,15 @@ const MapDlData = (props: MapDlDataProps) => {
 
     if (object.archive.indexOf('historical') >= 0) {
       ret.measure = 'absolute';
-      ret.reference_period = 'climate_standard_normal_1991_2020';
       ret.aggregation_period = '30yr';
+      ret.reference_period = 'climate_standard_normal_1991_2020';
+      ret.decade = 'decade_2011_2020';
       ret.year_period = 'all_year';
     } else {
       ret.climatological_model = 'model_ensemble';
       ret.scenario = 'rcp85';
-      ret.aggregation_period = '30yr';
       ret.measure = 'anomaly';
-      ret.decade = 'decade_2011_2020';
+      ret.aggregation_period = '30yr';
       ret.time_window = 'tw1';
       ret.year_period =
         ['tr', 'su30', 'fd', 'hdds', 'cdds', 'snwdays'].indexOf(

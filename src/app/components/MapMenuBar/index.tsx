@@ -357,6 +357,7 @@ export function MapMenuBar(props: MapMenuBar) {
       ret.measure = 'absolute';
       ret.reference_period = 'climate_standard_normal_1991_2020';
       ret.aggregation_period = '30yr';
+      ret.decade = 'decade_2011_2020';
       ret.year_period = 'all_year';
     } else {
       ret.climatological_model = 'model_ensemble';
