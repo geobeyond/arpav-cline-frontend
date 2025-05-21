@@ -21,7 +21,9 @@ const InfoBaroIt = () => {
                 <p>
                     Il confronto tra temperatura media annua rilevata e proiezioni
                     climatiche offre una misura del clima che sta cambiando e della
-                    possibile evoluzione nel futuro.
+                    possibile evoluzione nel futuro. In particolare, si osserva che il trend rilevato 
+                    nell'ultimo trentennio in Veneto e Friuli Venezia Giulia (0.6°C/decennio) è di 
+                    gran lunga maggiore di quello previsto dallo scenario senza mitigazione (0.2°C/decennio).
                 </p>
             </div>
         </>
