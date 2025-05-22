@@ -232,20 +232,22 @@ const MapDlData = (props: MapDlDataProps) => {
       field === 'aggregation_period' &&
       activeConfiguration.current.archive === 'historical'
     ) {
-      if (activeConfiguration.current.aggregation_period === '30yr') {
+      if (value === '30yr') {
         activeConfiguration.current = {
           ...activeConfiguration.current,
           ...{ time_window: 'climate_standard_normal_1991_2020' },
+          ...{ reference_period: 'climate_standard_normal_1991_2020' },
         };
-      } else if (
-        activeConfiguration.current.aggregation_period === 'ten_year'
-      ) {
+      } else if (value === 'ten_year') {
         activeConfiguration.current = {
           ...activeConfiguration.current,
+          ...{ decade: 'decade_2011_2020' },
           ...{ time_window: 'decade_2011_2020' },
         };
       }
     }
+
+    setActive(activeConfiguration.current);
 
     api
       .getLayers(
@@ -256,7 +258,9 @@ const MapDlData = (props: MapDlDataProps) => {
         activeConfiguration.current.archive === 'historical'
           ? activeConfiguration.current.aggregation_period === '30yr'
             ? activeConfiguration.current.reference_period
-            : activeConfiguration.current.decade
+            : activeConfiguration.current.aggregation_period === 'ten_year'
+              ? activeConfiguration.current.decade
+              : activeConfiguration.current.time_period
           : activeConfiguration.current.time_period,
         activeConfiguration.current.aggregation_period,
         activeConfiguration.current.year_period,
