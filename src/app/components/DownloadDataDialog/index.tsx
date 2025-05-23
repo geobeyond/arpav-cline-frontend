@@ -84,9 +84,22 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
         setList(finds);
       });
     } else {
-      if (configuration['reference_period'].indexOf('decade') >= 0) {
-        configuration['decade'] = configuration['reference_period'];
-        delete configuration['reference_period'];
+      if (configuration['aggregation_period'].indexOf('ten') >= 0) {
+        //configuration['decade'] = configuration['reference_period'];
+        try {
+          delete configuration['reference_period'];
+        } catch (ex) { }
+        try {
+          delete configuration['time_window'];
+        } catch (ex) { }
+      } else if (configuration['aggregation_period'].indexOf('30') >= 0) {
+        //configuration['reference_period'] = configuration['decade'];
+        try {
+          delete configuration['decade'];
+        } catch (ex) { }
+        try {
+          delete configuration['time_window'];
+        } catch (ex) { }
       }
       api
         .getHistoricalData(configuration, dataSet.current)
