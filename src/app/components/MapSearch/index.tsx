@@ -33,6 +33,7 @@ import { RestartAlt } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
 import { RequestApi } from '../../Services';
+import { useSearchParams } from 'react-router-dom';
 
 export interface MapSearchProps {
   className?: string;
@@ -356,6 +357,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const [timeserie, setTimeSerie] = useState<any[]>([]);
   const map = useMap();
   const context = useLeafletContext();
+  const [sp, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
 
   let [tt, setTt] = useState(2035);
@@ -369,6 +371,8 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
   let oyr = 0;
   let otsindex = 0;
+
+  const [ap, setAp] = useState<string>('30yr');
 
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
@@ -458,6 +462,16 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   }, [baseYear]);
 
   useEffect(() => {
+    let url = new URL(window.location.href);
+    if (url.searchParams.has('aggregation_period')) {
+      //@ts-ignore
+      setAp(url.searchParams.get('aggregation_period'));
+    } else {
+      setAp('30yr');
+    }
+  }, [sp]);
+
+  useEffect(() => {
     let ctt = timeserie[tsIndex]?.datetime;
     let ctv = timeserie[tsIndex]?.value;
 
@@ -467,14 +481,16 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie && (mode !== 'simple' || data === 'past') && (
-        <CompactValueRenderer
-          time={tt}
-          value={tv}
-          unit={unit}
-          precision={precision}
-        />
-      )}
+      {timeserie &&
+        (((mode !== 'simple' || data === 'past') && ap !== '30yr') ||
+          (data === 'past' && ap === '30yr')) && (
+          <CompactValueRenderer
+            time={tt}
+            value={tv}
+            unit={unit}
+            precision={precision}
+          />
+        )}
       <span style={{ flex: '1 1 1px' }}></span>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <span style={{ flex: '1 1 1px' }}></span>
