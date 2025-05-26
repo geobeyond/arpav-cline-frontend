@@ -220,12 +220,10 @@ const MapDlData = (props: MapDlDataProps) => {
     if (field === 'climatological_variable') {
       setActiveCombination(combinations[value]);
       const conf = toDefault(combinations[value]);
-      activeConfiguration.current = conf;
-      setActive(activeConfiguration.current);
+      activeConfiguration.current = { ...conf };
     } else {
       const conf = { ...activeConfiguration.current, ...{ [field]: value } };
       activeConfiguration.current = conf;
-      setActive(activeConfiguration.current);
     }
 
     if (
@@ -497,9 +495,7 @@ const MapDlData = (props: MapDlDataProps) => {
                     activeConfiguration.current.aggregation_period === 'annual'
                   }
                   value={activeConfiguration.current.time_window}
-                  onChange={e =>
-                    handleChange('reference_period', e.target.value)
-                  }
+                  onChange={e => handleChange('time_window', e.target.value)}
                   name="reference_period"
                 >
                   {getOptions('reference_period').map(item => (
