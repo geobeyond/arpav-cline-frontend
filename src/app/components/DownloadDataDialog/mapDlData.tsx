@@ -235,14 +235,18 @@ const MapDlData = (props: MapDlDataProps) => {
       if (value === '30yr') {
         activeConfiguration.current = {
           ...activeConfiguration.current,
-          ...{ time_window: 'climate_standard_normal_1991_2020' },
-          ...{ reference_period: 'climate_standard_normal_1991_2020' },
+          ...{
+            time_window: 'climate_standard_normal_1991_2020',
+            reference_period: 'climate_standard_normal_1991_2020',
+          },
         };
       } else if (value === 'ten_year') {
         activeConfiguration.current = {
           ...activeConfiguration.current,
-          ...{ decade: 'decade_2011_2020' },
-          ...{ time_window: 'decade_2011_2020' },
+          ...{
+            decade: 'decade_2011_2020',
+            time_window: 'decade_2011_2020',
+          },
         };
       }
     }
