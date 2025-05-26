@@ -132,9 +132,6 @@ export class RequestApi extends Http {
         },
       };
       delete innerConf.archive;
-      if (innerConf.aggregation_period === 'annual') {
-        delete innerConf.time_window;
-      }
       return this.instance
         .get<any>(
           BACKEND_API_URL + mode === 'forecast'

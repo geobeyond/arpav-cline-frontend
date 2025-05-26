@@ -100,6 +100,16 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
         try {
           delete configuration['time_window'];
         } catch (ex) { }
+      } else if (configuration['aggregation_period'].indexOf('annual') >= 0) {
+        try {
+          delete configuration['decade'];
+        } catch (ex) { }
+        try {
+          delete configuration['reference_period'];
+        } catch (ex) { }
+        try {
+          delete configuration['time_window'];
+        } catch (ex) { }
       }
       api
         .getHistoricalData(configuration, dataSet.current)
