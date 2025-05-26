@@ -119,7 +119,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         <Grid xs={22}>
           <Typography variant={'h6'} sx={TitleTSStyle}>
             {t('app.header.acronymMeaning')} -{' '}
-            {mode === 'forecast'
+            {map_data === 'forecast'
               ? t('app.index.sections.proj')
               : t('app.index.sections.hist')}
             : {t('app.header.timeseries')}
