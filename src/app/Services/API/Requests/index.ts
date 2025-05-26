@@ -132,17 +132,17 @@ export class RequestApi extends Http {
         },
       };
       delete innerConf.archive;
+      const url =
+        BACKEND_API_URL +
+        (mode === 'forecast'
+          ? '/coverages/forecast-data?'
+          : '/coverages/historical-data?');
       return this.instance
-        .get<any>(
-          BACKEND_API_URL + mode === 'forecast'
-            ? '/coverages/forecast-data?'
-            : '/coverages/historical-data?',
-          {
-            params: { offset: 0, limit: 100, ...innerConf },
-            paramsSerializer: { indexes: null },
-            timeout: 30000,
-          },
-        )
+        .get<any>(url, {
+          params: { offset: 0, limit: 100, ...innerConf },
+          paramsSerializer: { indexes: null },
+          timeout: 30000,
+        })
         .then((found: any) => {
           /**
            * Maps the array of coverage download links to an array of objects containing the URL and label of the coverage.
