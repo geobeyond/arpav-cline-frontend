@@ -765,6 +765,7 @@ export function MapPage(props: MapPageProps) {
                 display: 'block',
               }}
             >
+              {t('app.map.downloadDataDialog.user.disclaimer')}:{' '}
               {t(
                 map_data === 'forecast'
                   ? 'app.map.downloadDataDialog.user.disclaimerText'
