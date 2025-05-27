@@ -18,8 +18,9 @@
 
   "app.label.from": "From:",
   "app.label.to": "To:",
-
   "app.index.header.title": "Climate Barometer",
+  "app.map.mkdays": "days",
+
   "app.index.header.disclaimer": "These are climate projections, not long-term forecasts. \nThe annual value is valid only in a \nthirty-year trend context.",
   "app.index.observations": "Observations",
   "app.map.downloadDataDialog.DLNetCDF": "Search NetCDF",

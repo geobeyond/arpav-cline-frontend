@@ -432,11 +432,10 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           ) +
           ' ';
         ret +=
-          ' ' + i18n.language === 'it'
-            ? currentLayer?.unit_italian
-            : currentLayer?.unit_english +
-            '/' +
-            t('app.map.timeSeriesDialog.decade');
+          ' ' +
+          t('app.map.mkdays') +
+          '/' +
+          t('app.map.timeSeriesDialog.decade');
       }
 
       return ret;

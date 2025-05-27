@@ -19,6 +19,7 @@
   "app.label.from": "Da:",
   "app.label.to": "A:",
   "app.index.header.title": "Barometro del Clima",
+  "app.map.mkdays": "gg",
 
   "app.index.header.disclaimer": "Si tratta di proiezioni climatiche e non di previsioni \na lungo termine. Il valore annuale ha validità in un \ncontesto di trend trentennale.",
   "app.index.observations": "Osservazoni",

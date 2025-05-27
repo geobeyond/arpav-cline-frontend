@@ -40,6 +40,23 @@ export const TWLSample = (props: any) => {
     );
 
   useEffect(() => {
+    const url = new URL(window.location.href);
+    if (
+      url.searchParams.has('op') &&
+      url.searchParams.get('op') === 'screenshot'
+    ) {
+      if (url.searchParams.has('year')) {
+        const y = url.searchParams.get('year');
+        if (y) {
+          setTimeout(() => {
+            setCurrentYear(parseInt(y));
+          }, 1250);
+        }
+      }
+    }
+  }, [tLayer]);
+
+  useEffect(() => {
     if (lyr && show) {
       const map = context.map;
       // @ts-ignore
