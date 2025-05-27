@@ -93,7 +93,6 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
     );
   };
   const baseValue: number = 1984;
-  const yeardelta: number = 2;
   const endValue: number = new Date().getFullYear();
 
   const {

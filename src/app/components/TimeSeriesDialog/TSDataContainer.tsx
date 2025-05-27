@@ -105,6 +105,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     );
   };
   const baseValue: number = 1976;
+  const endValue: number = 2100;
 
   const {
     selected_map,
@@ -150,8 +151,8 @@ const TSDataContainer = (props: TSDataContainerProps) => {
 
   const [localStart, setLocalStart] = useState<any>(0);
   const [localEnd, setLocalEnd] = useState<any>(100);
-  const [localStartYear, setLocalStartYear] = useState<any>(1976);
-  const [localEndYear, setLocalEndYear] = useState<any>(2099);
+  const [localStartYear, setLocalStartYear] = useState<any>(baseValue);
+  const [localEndYear, setLocalEndYear] = useState<any>(endValue - 1);
   const [realDataValues, setRealDataValues] = useState<any>({});
 
   useEffect(() => {
@@ -228,7 +229,7 @@ const TSDataContainer = (props: TSDataContainerProps) => {
           }
           for (let k of Object.keys(dataValues)) {
             let vv: any[] = [];
-            for (let y of range(baseValue, 2100)) {
+            for (let y of range(baseValue, endValue)) {
               let found: boolean | any = false;
               for (let kk of dataValues[k]) {
                 if (y.toString() === kk.datetime) {
@@ -323,11 +324,11 @@ const TSDataContainer = (props: TSDataContainerProps) => {
     setTimeRange({
       ...{
         start: 0,
-        end: 2099 - baseValue,
+        end: endValue - 1 - baseValue,
       },
       ...{
-        start: localStartYear - baseValue,
-        end: localEndYear - baseValue,
+        start: parseInt(localStartYear) - baseValue,
+        end: parseInt(localEndYear) - baseValue,
       },
     });
   });
@@ -1202,11 +1203,14 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>{t('app.label.from')}</span>&nbsp;&nbsp;
           <input
-            type="text"
+            type="number"
+            min={baseValue}
+            max={endValue}
             maxLength={4}
             placeholder={t('app.label.from')}
             value={localStartYear}
             onChange={event => {
+              let v = parseInt(event?.target?.value);
               setLocalStartYear(event?.target?.value);
               const startValue = chartRef.current
                 .getEchartsInstance()
@@ -1217,7 +1221,9 @@ const TSDataContainer = (props: TSDataContainerProps) => {
               const endValue = chartRef.current
                 .getEchartsInstance()
                 .getOption()
-                .xAxis[0].data.findIndex((item: any) => item === localEndYear);
+                .xAxis[0].data.findIndex(
+                  (item: any) => item === localEndYear.toString(),
+                );
               //console.log('[STF]', startValue, endValue);
               if (startValue !== -1 && endValue !== -1) {
                 chartRef.current.getEchartsInstance().dispatchAction({
@@ -1234,17 +1240,20 @@ const TSDataContainer = (props: TSDataContainerProps) => {
         <Box sx={RowContainerStyle}>
           <span>{t('app.label.to')}</span>&nbsp;&nbsp;
           <input
-            type="text"
+            type="number"
+            min={baseValue}
+            max={endValue}
             maxLength={4}
             placeholder={t('app.label.to')}
             value={localEndYear}
             onChange={event => {
+              let v = parseInt(event?.target?.value);
               setLocalEndYear(event?.target?.value);
               const startValue = chartRef.current
                 .getEchartsInstance()
                 .getOption()
                 .xAxis[0].data.findIndex(
-                  (item: any) => item === localStartYear,
+                  (item: any) => item === localStartYear.toString(),
                 );
               const endValue = chartRef.current
                 .getEchartsInstance()
