@@ -80,6 +80,9 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
 
   const getLinks = configuration => {
     if (mode === 'forecast') {
+      if (configuration['aggregation_period'] === 'annual') {
+        delete configuration['time_window'];
+      }
       api.getForecastData(configuration, dataSet.current).then((finds: any) => {
         setList(finds);
       });
