@@ -226,90 +226,123 @@ const MapDlData = (props: MapDlDataProps) => {
       const conf = { ...activeConfiguration.current, ...{ [field]: value } };
       activeConfiguration.current = conf;
     }
-    setTimeout(() => {
-      setActive(activeConfiguration.current);
-      if (
-        field === 'aggregation_period' &&
-        activeConfiguration.current.archive === 'historical'
-      ) {
-        if (value === '30yr') {
-          activeConfiguration.current = {
-            ...activeConfiguration.current,
-            ...{
-              time_window: 'climate_standard_normal_1991_2020',
-              reference_period: 'climate_standard_normal_1991_2020',
-            },
-          };
-        } else if (value === 'ten_year') {
-          activeConfiguration.current = {
-            ...activeConfiguration.current,
-            ...{
-              decade: 'decade_2011_2020',
-              time_window: 'decade_2011_2020',
-            },
-          };
-        }
+    setActive(activeConfiguration.current);
+    if (
+      field === 'aggregation_period' &&
+      activeConfiguration.current.archive === 'historical'
+    ) {
+      if (value === '30yr') {
+        activeConfiguration.current = {
+          ...activeConfiguration.current,
+          ...{
+            time_window: 'climate_standard_normal_1991_2020',
+            reference_period: 'climate_standard_normal_1991_2020',
+          },
+        };
+      } else if (value === 'ten_year') {
+        activeConfiguration.current = {
+          ...activeConfiguration.current,
+          ...{
+            decade: 'decade_2011_2020',
+            time_window: 'decade_2011_2020',
+          },
+        };
       }
+    }
 
-      setActive(activeConfiguration.current);
+    if (
+      field === 'time_window' &&
+      activeConfiguration.current.archive === 'historical'
+    ) {
+      if (value.indexOf('climate_standard') >= 0) {
+        let nd = {
+          ...activeConfiguration.current,
+          ...{
+            reference_period: value,
+          },
+        };
+        try {
+          delete nd.decade;
+        } catch (ex) { }
+        try {
+          delete nd.time_window;
+        } catch (ex) { }
+        activeConfiguration.current = { ...nd };
+      } else if (value.indexOf('decade') >= 0) {
+        let nd = {
+          ...activeConfiguration.current,
+          ...{
+            decade: value,
+          },
+        };
+        try {
+          delete nd.reference_period;
+        } catch (ex) { }
+        try {
+          delete nd.time_window;
+        } catch (ex) { }
+        activeConfiguration.current = { ...nd };
+      }
+    }
 
-      api
-        .getLayers(
-          activeConfiguration.current.climatological_variable,
-          activeConfiguration.current.climatological_model,
-          activeConfiguration.current.scenario,
-          activeConfiguration.current.measure,
-          activeConfiguration.current.archive === 'historical'
-            ? activeConfiguration.current.aggregation_period === '30yr'
-              ? activeConfiguration.current.reference_period
-              : activeConfiguration.current.aggregation_period === 'ten_year'
-                ? activeConfiguration.current.decade
-                : activeConfiguration.current.time_period
-            : activeConfiguration.current.time_period,
-          activeConfiguration.current.aggregation_period,
-          activeConfiguration.current.year_period,
-          activeConfiguration.current.archive,
-        )
-        .then(x => {
-          setFound(x.items.length);
-          if (x.items.length === 0) {
-            openError('wrong_config');
-            activeConfiguration.current = {
-              ...activeConfiguration.current,
-              ...(field === 'climatological_model' && value.length === 0
-                ? { climatological_model: ['model_ensemble'] }
-                : {
-                  climatological_model:
-                    activeConfiguration.current.climatological_model,
-                }),
-              ...(field === 'year_period'
-                ? {
-                  year_period: previousSeason.current,
-                }
-                : {
-                  year_period: activeConfiguration.current.year_period,
-                }),
-              ...(field === 'aggregation_period'
-                ? {
-                  measure:
-                    activeConfiguration.current.measure === 'absolute'
-                      ? 'anomaly'
-                      : 'absolute',
-                }
-                : {}),
-              ...(field === 'measure'
-                ? {
-                  measure:
-                    activeConfiguration.current.measure === 'absolute'
-                      ? 'anomaly'
-                      : 'absolute',
-                }
-                : {}),
-            };
-            setActive(activeConfiguration.current);
-          }
-        });
-    }, 100);
+    setActive(activeConfiguration.current);
+
+    api
+      .getLayers(
+        activeConfiguration.current.climatological_variable,
+        activeConfiguration.current.climatological_model,
+        activeConfiguration.current.scenario,
+        activeConfiguration.current.measure,
+        activeConfiguration.current.archive === 'historical'
+          ? activeConfiguration.current.aggregation_period === '30yr'
+            ? activeConfiguration.current.reference_period
+            : activeConfiguration.current.aggregation_period === 'ten_year'
+              ? activeConfiguration.current.decade
+              : activeConfiguration.current.time_period
+          : activeConfiguration.current.time_period,
+        activeConfiguration.current.aggregation_period,
+        activeConfiguration.current.year_period,
+        activeConfiguration.current.archive,
+      )
+      .then(x => {
+        setFound(x.items.length);
+        if (x.items.length === 0) {
+          openError('wrong_config');
+          activeConfiguration.current = {
+            ...activeConfiguration.current,
+            ...(field === 'climatological_model' && value.length === 0
+              ? { climatological_model: ['model_ensemble'] }
+              : {
+                climatological_model:
+                  activeConfiguration.current.climatological_model,
+              }),
+            ...(field === 'year_period'
+              ? {
+                year_period: previousSeason.current,
+              }
+              : {
+                year_period: activeConfiguration.current.year_period,
+              }),
+            ...(field === 'aggregation_period'
+              ? {
+                measure:
+                  activeConfiguration.current.measure === 'absolute'
+                    ? 'anomaly'
+                    : 'absolute',
+              }
+              : {}),
+            ...(field === 'measure'
+              ? {
+                measure:
+                  activeConfiguration.current.measure === 'absolute'
+                    ? 'anomaly'
+                    : 'absolute',
+              }
+              : {}),
+          };
+          setActive(activeConfiguration.current);
+        }
+      });
   };
 
   const modalStyle = {
