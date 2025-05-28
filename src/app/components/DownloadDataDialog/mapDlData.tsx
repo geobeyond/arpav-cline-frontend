@@ -264,9 +264,6 @@ const MapDlData = (props: MapDlDataProps) => {
         try {
           delete nd.decade;
         } catch (ex) { }
-        try {
-          delete nd.time_window;
-        } catch (ex) { }
         activeConfiguration.current = { ...nd };
       } else if (value.indexOf('decade') >= 0) {
         let nd = {
@@ -277,9 +274,6 @@ const MapDlData = (props: MapDlDataProps) => {
         };
         try {
           delete nd.reference_period;
-        } catch (ex) { }
-        try {
-          delete nd.time_window;
         } catch (ex) { }
         activeConfiguration.current = { ...nd };
       }
@@ -530,10 +524,7 @@ const MapDlData = (props: MapDlDataProps) => {
                   disabled={
                     activeConfiguration.current.aggregation_period === 'annual'
                   }
-                  value={
-                    activeConfiguration.current.time_window ||
-                    'climate_standard_normal_1991_2020'
-                  }
+                  value={activeConfiguration.current.time_window || ''}
                   onChange={e => handleChange('time_window', e.target.value)}
                   name="time_window"
                 >

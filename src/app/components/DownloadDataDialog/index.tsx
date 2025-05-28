@@ -79,46 +79,45 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   };
 
   const getLinks = configuration => {
+    let searchconf = { ...configuration };
     if (mode === 'forecast') {
-      if (configuration['aggregation_period'] === 'annual') {
-        delete configuration['time_window'];
+      if (searchconf['aggregation_period'] === 'annual') {
+        delete searchconf['time_window'];
       }
-      api.getForecastData(configuration, dataSet.current).then((finds: any) => {
+      api.getForecastData(searchconf, dataSet.current).then((finds: any) => {
         setList(finds);
       });
     } else {
-      if (configuration['aggregation_period'].indexOf('ten') >= 0) {
-        //configuration['decade'] = configuration['reference_period'];
+      if (searchconf['aggregation_period'].indexOf('ten') >= 0) {
+        //searchconf['decade'] = searchconf['reference_period'];
         try {
-          delete configuration['reference_period'];
+          delete searchconf['reference_period'];
         } catch (ex) { }
         try {
-          delete configuration['time_window'];
+          delete searchconf['time_window'];
         } catch (ex) { }
-      } else if (configuration['aggregation_period'].indexOf('30') >= 0) {
-        //configuration['reference_period'] = configuration['decade'];
+      } else if (searchconf['aggregation_period'].indexOf('30') >= 0) {
+        //searchconf['reference_period'] = searchconf['decade'];
         try {
-          delete configuration['decade'];
-        } catch (ex) { }
-        try {
-          delete configuration['time_window'];
-        } catch (ex) { }
-      } else if (configuration['aggregation_period'].indexOf('annual') >= 0) {
-        try {
-          delete configuration['decade'];
+          delete searchconf['decade'];
         } catch (ex) { }
         try {
-          delete configuration['reference_period'];
+          delete searchconf['time_window'];
+        } catch (ex) { }
+      } else if (searchconf['aggregation_period'].indexOf('annual') >= 0) {
+        try {
+          delete searchconf['decade'];
         } catch (ex) { }
         try {
-          delete configuration['time_window'];
+          delete searchconf['reference_period'];
+        } catch (ex) { }
+        try {
+          delete searchconf['time_window'];
         } catch (ex) { }
       }
-      api
-        .getHistoricalData(configuration, dataSet.current)
-        .then((finds: any) => {
-          setList(finds);
-        });
+      api.getHistoricalData(searchconf, dataSet.current).then((finds: any) => {
+        setList(finds);
+      });
     }
   };
 

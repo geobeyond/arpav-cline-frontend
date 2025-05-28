@@ -49,47 +49,71 @@ export const TWLSample = (props: any) => {
         const y = url.searchParams.get('year');
         if (y) {
           setTimeout(() => {
-            setCurrentYear(parseInt(y));
+            setCurrYear(parseInt(y));
           }, 1250);
         }
       }
     }
   }, [tLayer]);
 
+  const setCurrYear = yr => {
+    setCurrentYear(yr);
+  };
+
   useEffect(() => {
     if (lyr && show) {
+      const url = new URL(window.location.href);
+      if (
+        url.searchParams.has('op') &&
+        url.searchParams.get('op') === 'screenshot'
+      ) {
+        if (url.searchParams.has('year')) {
+          const y = url.searchParams.get('year');
+          if (y) {
+            setTimeout(() => {
+              setCurrYear(parseInt(y));
+            }, 1250);
+          }
+        }
+      }
+
       const map = context.map;
       // @ts-ignore
       map.timeDimension.on('timeloading', data => {
         const url = new URL(window.location.href);
-
-        let dt = new Date(+data.time).getFullYear();
-        console.log('setting current year from Leaflet Timedmension:', dt);
-        setCurrentYear(dt);
-        //setTimeout(() => {
-        //  let layers = document.getElementsByClassName('leaflet-layer');
-        //  let tx = false;
-        //  //@ts-ignore
-        //  for (const t of layers) {
-        //    if (t.style.display === 'none') {
-        //      tx = true;
-        //    }
-        //  }
-        //
-        //  if (tx) {
-        //    let first = true;
-        //    //@ts-ignore
-        //    for (const t of layers) {
-        //      if (t.style['z-index'] === '500') {
-        //        if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
-        //          t.style.display = 'block';
-        //        } else {
-        //          t.style.display = 'none';
-        //        }
-        //      }
-        //    }
-        //  }
-        //}, 250);
+        if (
+          url.searchParams.has('op') &&
+          url.searchParams.get('op') !== 'screenshot'
+        ) {
+        } else {
+          let dt = new Date(+data.time).getFullYear();
+          console.log('setting current year from Leaflet Timedmension:', dt);
+          setCurrYear(dt);
+          //setTimeout(() => {
+          //  let layers = document.getElementsByClassName('leaflet-layer');
+          //  let tx = false;
+          //  //@ts-ignore
+          //  for (const t of layers) {
+          //    if (t.style.display === 'none') {
+          //      tx = true;
+          //    }
+          //  }
+          //
+          //  if (tx) {
+          //    let first = true;
+          //    //@ts-ignore
+          //    for (const t of layers) {
+          //      if (t.style['z-index'] === '500') {
+          //        if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
+          //          t.style.display = 'block';
+          //        } else {
+          //          t.style.display = 'none';
+          //        }
+          //      }
+          //    }
+          //  }
+          //}, 250);
+        }
       });
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
