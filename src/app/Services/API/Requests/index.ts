@@ -122,7 +122,12 @@ export class RequestApi extends Http {
           ],
         ]),
       );
-      const labels = Object.fromEntries(labelsf.flat());
+      let labels = Object.fromEntries(labelsf.flat());
+      labels['thirty_year'] = labels['30yr'];
+      if (language === 'it') {
+        labels['historical'][1] = 'Dati storici';
+        //labels['forecast'][1] = 'Predizioni';
+      }
       const innerConf = {
         ...configuration,
         ...{
@@ -173,7 +178,8 @@ export class RequestApi extends Http {
                   ? dconf.climatological_variable
                   : dconf.historical_variable
               } - ${dconf.archive} ${
-                dconf.archive.indexOf('rical') >= 0
+                dconf.archive.indexOf('rical') >= 0 ||
+                dconf.archive.indexOf('storic') >= 0
                   ? ''
                   : '- ' + dconf.climatological_model + ' - ' + dconf.scenario
               } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
