@@ -18,8 +18,15 @@ export const VectorWrapperLayer = (props: any) => {
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
-  const { selectCallback, selectedPoint, openCharts, unit, precision, mode } =
-    props;
+  const {
+    selectCallback,
+    selectedPoint,
+    openCharts,
+    unit,
+    precision,
+    mode,
+    ap,
+  } = props;
   const map = useMap();
   const context = useLeafletContext();
 
@@ -122,6 +129,7 @@ export const VectorWrapperLayer = (props: any) => {
                 currentTimeserie={currentTimeSerie}
                 unit={unit}
                 precision={precision}
+                ap={ap}
               ></MapPopup>
             </Box>
           </Popup>

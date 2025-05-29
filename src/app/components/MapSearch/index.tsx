@@ -56,6 +56,7 @@ export interface MapPopupProps {
   precision: number;
   mode?: string;
   data?: string;
+  ap?: string;
 }
 
 export const ValueRenderer = ({ time, value, unit }) => {
@@ -351,13 +352,13 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     currentTimeserie,
     mode,
     data,
+    ap,
   } = props;
   //const { cities, selected_map } = useSelector((state: any) => state.map);
 
   const [timeserie, setTimeSerie] = useState<any[]>([]);
   const map = useMap();
   const context = useLeafletContext();
-  const [sp, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
 
   let [tt, setTt] = useState(2035);
@@ -371,8 +372,6 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
   let oyr = 0;
   let otsindex = 0;
-
-  const [ap, setAp] = useState<string>('30yr');
 
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
@@ -462,16 +461,6 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   }, [baseYear]);
 
   useEffect(() => {
-    let url = new URL(window.location.href);
-    if (url.searchParams.has('aggregation_period')) {
-      //@ts-ignore
-      setAp(url.searchParams.get('aggregation_period'));
-    } else {
-      setAp('30yr');
-    }
-  }, [sp]);
-
-  useEffect(() => {
     let ctt = timeserie[tsIndex]?.datetime;
     let ctv = timeserie[tsIndex]?.value;
 
@@ -482,8 +471,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {timeserie &&
-        (mode !== 'simple' ||
-          (mode === 'simple' && (data === 'past' || ap === '30yr'))) && (
+        (mode !== 'simple' || (mode === 'simple' && ap !== 'annual')) && (
           <CompactValueRenderer
             time={tt}
             value={tv}

@@ -377,6 +377,7 @@ const Map = (props: MapProps) => {
         zIndex={600}
         mode={mode}
         data={data}
+        ap={currentMap.aggregation_period}
         ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
