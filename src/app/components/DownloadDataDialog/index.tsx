@@ -48,7 +48,7 @@ export interface DownloadDataDialogProps {
 const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   const { open, setOpen, configuration, menus, combinations, mode } = props;
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
@@ -84,9 +84,11 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
       if (searchconf['aggregation_period'] === 'annual') {
         delete searchconf['time_window'];
       }
-      api.getForecastData(searchconf, dataSet.current).then((finds: any) => {
-        setList(finds);
-      });
+      api
+        .getForecastData(searchconf, dataSet.current, i18n.language)
+        .then((finds: any) => {
+          setList(finds);
+        });
     } else {
       if (searchconf['aggregation_period'].indexOf('ten') >= 0) {
         //searchconf['decade'] = searchconf['reference_period'];
@@ -115,9 +117,11 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           delete searchconf['time_window'];
         } catch (ex) { }
       }
-      api.getHistoricalData(searchconf, dataSet.current).then((finds: any) => {
-        setList(finds);
-      });
+      api
+        .getHistoricalData(searchconf, dataSet.current, i18n.language)
+        .then((finds: any) => {
+          setList(finds);
+        });
     }
   };
 
