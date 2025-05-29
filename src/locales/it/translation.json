@@ -24,6 +24,7 @@
   "app.index.header.disclaimer": "Si tratta di proiezioni climatiche e non di previsioni \na lungo termine. Il valore annuale ha validità in un \ncontesto di trend trentennale.",
   "app.index.observations": "Osservazoni",
   "app.map.downloadDataDialog.DLNetCDF": "Cerca NetCDF",
+  "app.map.downloadDataDialog.downloadLinks": "Estrazioni Scaricabili",
   "app.map.downloadDataDialog.map.east": "Est",
   "app.map.downloadDataDialog.map.north": "Nord",
   "app.map.downloadDataDialog.map.south": "Sud",

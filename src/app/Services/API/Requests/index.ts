@@ -125,7 +125,18 @@ export class RequestApi extends Http {
       let labels = Object.fromEntries(labelsf.flat());
       labels['thirty_year'] = labels['30yr'];
       if (language === 'it') {
-        labels['historical'][1] = 'Dati storici';
+        if (!labels['historical']) {
+          labels['historical'] = ['archive', 'Dati storici'];
+        } else {
+          labels['historical'][1] = 'Dati storici';
+        }
+
+        if (!labels['forecast']) {
+          labels['forecast'] = ['archive', 'Dati predittivi'];
+        } else {
+          labels['forecast'][1] = 'Dati predittivi';
+        }
+
         //labels['forecast'][1] = 'Predizioni';
       }
       const innerConf = {

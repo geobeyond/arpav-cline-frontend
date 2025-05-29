@@ -32,6 +32,7 @@ export const TWLSample = (props: any) => {
   const mode = props.mode;
   const data = props.data;
   const currentMap = props.currentMap;
+  const [isSh, setIsSh] = useState(false);
 
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
@@ -45,6 +46,7 @@ export const TWLSample = (props: any) => {
       url.searchParams.has('op') &&
       url.searchParams.get('op') === 'screenshot'
     ) {
+      setIsSh(true);
       if (url.searchParams.has('year')) {
         const y = url.searchParams.get('year');
         if (y) {
@@ -58,10 +60,13 @@ export const TWLSample = (props: any) => {
 
   const setCurrYear = yr => {
     setCurrentYear(yr);
+    //@ts-ignore
+    context.map.timeDimension.setCurrentTime(yr);
   };
 
   useEffect(() => {
     if (lyr && show) {
+      const map = context.map;
       const url = new URL(window.location.href);
       if (
         url.searchParams.has('op') &&
@@ -77,13 +82,12 @@ export const TWLSample = (props: any) => {
         }
       }
 
-      const map = context.map;
       // @ts-ignore
       map.timeDimension.on('timeloading', data => {
         const url = new URL(window.location.href);
         if (
           url.searchParams.has('op') &&
-          url.searchParams.get('op') !== 'screenshot'
+          url.searchParams.get('op') === 'screenshot'
         ) {
         } else {
           let dt = new Date(+data.time).getFullYear();
@@ -236,7 +240,7 @@ export const TWLSample = (props: any) => {
             cacheForward: 0,
           });
 
-          if (currentMap === 'annual') {
+          if (currentMap === 'annual' && !isSh) {
             setLayer(tdWmsLayer2);
             setTimeout(() => {
               try {
@@ -297,6 +301,7 @@ export const TWLSample = (props: any) => {
     show,
     style,
     currentMap,
+    isSh,
   ]);
 
   return null;
