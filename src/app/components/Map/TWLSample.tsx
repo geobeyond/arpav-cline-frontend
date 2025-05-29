@@ -59,9 +59,11 @@ export const TWLSample = (props: any) => {
   }, [tLayer]);
 
   const setCurrYear = yr => {
+    const date = new Date();
+    date.setFullYear(yr + 1);
     setCurrentYear(yr);
     //@ts-ignore
-    context.map.timeDimension.setCurrentTime(yr);
+    context.map.timeDimension.setCurrentTime(date.getTime());
   };
 
   useEffect(() => {
@@ -72,6 +74,7 @@ export const TWLSample = (props: any) => {
         url.searchParams.has('op') &&
         url.searchParams.get('op') === 'screenshot'
       ) {
+        setIsSh(true);
         if (url.searchParams.has('year')) {
           const y = url.searchParams.get('year');
           if (y) {
@@ -89,6 +92,7 @@ export const TWLSample = (props: any) => {
           url.searchParams.has('op') &&
           url.searchParams.get('op') === 'screenshot'
         ) {
+          setIsSh(true);
         } else {
           let dt = new Date(+data.time).getFullYear();
           console.log('setting current year from Leaflet Timedmension:', dt);
@@ -240,23 +244,39 @@ export const TWLSample = (props: any) => {
             cacheForward: 0,
           });
 
-          if (currentMap === 'annual' && !isSh) {
+          if (currentMap === 'annual') {
             setLayer(tdWmsLayer2);
-            setTimeout(() => {
+            if (!isSh) {
+              setTimeout(() => {
+                try {
+                  // @ts-ignore
+                  map._controlContainer.getElementsByClassName(
+                    'leaflet-bar-timecontrol',
+                  )[0].style.display = 'flex';
+                  // @ts-ignore
+                  map._controlContainer.getElementsByClassName(
+                    'leaflet-time-info',
+                  )[0].style.display = 'flex';
+                  setTimestatus('flex');
+                } catch (e) {
+                  // console.log(e)
+                }
+              }, 250);
+            } else {
               try {
                 // @ts-ignore
                 map._controlContainer.getElementsByClassName(
                   'leaflet-bar-timecontrol',
-                )[0].style.display = 'flex';
+                )[0].style.display = 'none';
                 // @ts-ignore
                 map._controlContainer.getElementsByClassName(
                   'leaflet-time-info',
-                )[0].style.display = 'flex';
-                setTimestatus('flex');
+                )[0].style.display = 'none';
+                setTimestatus('none');
               } catch (e) {
                 // console.log(e)
               }
-            }, 250);
+            }
             layer.current = tdWmsLayer2;
             currentLayer = tdWmsLayer2;
             setTLayer(tdWmsLayer2);

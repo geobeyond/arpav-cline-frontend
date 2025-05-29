@@ -34,6 +34,7 @@ import { saveAs } from 'file-saver';
 import useCustomSnackbar from '../../../utils/useCustomSnackbar';
 import HeaderBar from '../../components/HeaderBar';
 import { RequestApi } from 'app/Services';
+import { url } from 'inspector';
 
 interface MapPageProps {
   map_mode: string;
@@ -579,14 +580,21 @@ export function MapPage(props: MapPageProps) {
 
   const handleDownloadMapImg = () => {
     const format = 'image';
+    let url = new URL(window.location.href);
+    let yrparam = url.searchParams.get('year');
     let year = '';
+    if (yrparam) {
+      year = yrparam;
+    }
     try {
       year =
         currentMap.aggregation_period === 'annual' ||
           currentMap.aggregation_period === 'test'
-          ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
-            .getFullYear()
-            .toString()
+          ? year
+            ? year
+            : new Date((mapRef.current as any).timeDimension?.getCurrentTime())
+              .getFullYear()
+              .toString()
           : '';
       console.log('showing year', year);
     } catch (e) {
