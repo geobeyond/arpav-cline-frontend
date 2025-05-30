@@ -33,6 +33,20 @@ export const TWLSample = (props: any) => {
   const data = props.data;
   const currentMap = props.currentMap;
   const [isSh, setIsSh] = useState(false);
+  const setCY = yr => {
+    localStorage.setItem('currentYear', yr.toString());
+  };
+
+  const getCY = () => {
+    const cy = localStorage.getItem('currentYear');
+    if (cy) {
+      return cy;
+    } else {
+      return 0;
+    }
+  };
+
+  const [yearSet, setYearSet] = useState(false);
 
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
@@ -60,10 +74,15 @@ export const TWLSample = (props: any) => {
 
   const setCurrYear = yr => {
     const date = new Date();
-    date.setFullYear(yr + 1);
-    setCurrentYear(yr);
-    //@ts-ignore
-    context.map.timeDimension.setCurrentTime(date.getTime());
+    if (getCY() !== yr) {
+      setTimeout(() => {
+        date.setFullYear(yr + 1);
+        setCurrentYear(yr);
+        //@ts-ignore
+        context.map.timeDimension.setCurrentTime(date.getTime());
+        setCY(yr);
+      }, 50);
+    }
   };
 
   useEffect(() => {
@@ -94,9 +113,12 @@ export const TWLSample = (props: any) => {
         ) {
           setIsSh(true);
         } else {
-          let dt = new Date(+data.time).getFullYear();
-          console.log('setting current year from Leaflet Timedmension:', dt);
-          setCurrYear(dt);
+          if (!yearSet) {
+            let dt = new Date(+data.time).getFullYear();
+            console.log('setting current year from Leaflet Timedmension:', dt);
+            setCurrYear(dt);
+            setYearSet(true);
+          }
           //setTimeout(() => {
           //  let layers = document.getElementsByClassName('leaflet-layer');
           //  let tx = false;
