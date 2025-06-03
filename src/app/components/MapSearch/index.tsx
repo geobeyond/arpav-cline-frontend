@@ -391,11 +391,14 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
-      setObservation(currentTimeserie.info.dataset_type === 'observation');
+      if (currentTimeserie.info.dataset_type) {
+        setObservation(currentTimeserie.info.dataset_type === 'observation');
+      }
       setTimeSerie([...currentTimeserie.values]);
       let fy = parseInt(currentTimeserie.values[0].datetime.split('-')[0]);
       doSetBaseYear(fy);
     } else {
+      setObservation(false);
       setTimeSerie([]);
       setTt(NaN);
       setTv(0);
