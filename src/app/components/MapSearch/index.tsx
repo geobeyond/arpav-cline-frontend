@@ -478,14 +478,6 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
       setOTsIndex(tsIndex);
       const index = dt - getBaseYear();
       setTsIndex(index);
-
-      let url = new URL(window.location.href);
-      if (url.searchParams.has('year')) {
-        url.searchParams.set('year', dt.toString());
-      } else {
-        url.searchParams.append('year', dt.toString());
-      }
-      window.history.pushState(null, '', url.toString());
     });
   }, []);
 
