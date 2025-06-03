@@ -439,26 +439,24 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     }
   }, [timeserie, baseYear]);
 
-  useEffect(() => {
-    // @ts-ignore
-    map.timeDimension.on('timeloading', data => {
-      if (baseYear) {
-        let dt = new Date(+data.time).getFullYear();
-        console.log(dt);
-        setOTsIndex(tsIndex);
-        const index = dt - baseYear;
-        setTsIndex(index);
+  //@ts-ignore
+  map.timeDimension.on('timeloading', data => {
+    if (baseYear) {
+      let dt = new Date(+data.time).getFullYear();
+      console.log(dt);
+      setOTsIndex(tsIndex);
+      const index = dt - baseYear;
+      setTsIndex(index);
 
-        let url = new URL(window.location.href);
-        if (url.searchParams.has('year')) {
-          url.searchParams.set('year', dt.toString());
-        } else {
-          url.searchParams.append('year', dt.toString());
-        }
-        window.history.pushState(null, '', url.toString());
+      let url = new URL(window.location.href);
+      if (url.searchParams.has('year')) {
+        url.searchParams.set('year', dt.toString());
+      } else {
+        url.searchParams.append('year', dt.toString());
       }
-    });
-  }, [baseYear]);
+      window.history.pushState(null, '', url.toString());
+    }
+  });
 
   useEffect(() => {
     let ctt = timeserie[tsIndex]?.datetime;
