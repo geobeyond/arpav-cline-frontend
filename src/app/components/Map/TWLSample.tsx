@@ -65,19 +65,22 @@ export const TWLSample = (props: any) => {
         const y = url.searchParams.get('year');
         if (y) {
           setTimeout(() => {
-            setCurrYear(parseInt(y), mode);
+            setCurrYear(parseInt(y), data);
           }, 1250);
         }
       }
     }
   }, [tLayer]);
 
-  const setCurrYear = (yr, mode = 'forecast') => {
+  const setCurrYear = (yr, data = 'forecast') => {
     const date = new Date();
-    if (getCY() !== (yr + (mode === 'forecast' ? 0 : 1)).toString()) {
+    if (
+      getCY() !== (yr + (data === 'forecast' ? 0 : 1)).toString() &&
+      getCY() != yr.toString()
+    ) {
       setTimeout(() => {
         console.log('setting current year from Leaflet Timedmension:', yr);
-        date.setFullYear(yr + (mode === 'forecast' ? 0 : 1));
+        date.setFullYear(yr + (data === 'forecast' ? 0 : 1));
         setCurrentYear(yr);
         setCY(yr);
         setYearSet(true);
@@ -107,7 +110,7 @@ export const TWLSample = (props: any) => {
       }
 
       // @ts-ignore
-      map.timeDimension.on('timeloading', data => {
+      map.timeDimension.on('timeloading', cdata => {
         const url = new URL(window.location.href);
         if (
           url.searchParams.has('op') &&
@@ -116,8 +119,8 @@ export const TWLSample = (props: any) => {
           setIsSh(true);
         } else {
           if (!yearSet) {
-            let dt = new Date(+data.time).getFullYear();
-            setCurrYear(dt, mode);
+            let dt = new Date(+cdata.time).getFullYear();
+            setCurrYear(dt, data);
           }
           //setTimeout(() => {
           //  let layers = document.getElementsByClassName('leaflet-layer');

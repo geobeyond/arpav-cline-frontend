@@ -452,26 +452,28 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     }
   }, [timeserie, baseYear]);
 
-  //@ts-ignore
-  map.timeDimension.on('timeloading', data => {
-    if (baseYear) {
-      let dt = new Date(+data.time).getFullYear();
-      if (getCY() !== dt.toString()) {
-        console.log(dt);
-        setOTsIndex(tsIndex);
-        const index = dt - baseYear;
-        setTsIndex(index);
+  useEffect(() => {
+    //@ts-ignore
+    map.timeDimension.on('timeloading', data => {
+      if (baseYear) {
+        let dt = new Date(+data.time).getFullYear();
+        if (getCY() !== dt.toString()) {
+          console.log(dt);
+          setOTsIndex(tsIndex);
+          const index = dt - baseYear;
+          setTsIndex(index);
 
-        let url = new URL(window.location.href);
-        if (url.searchParams.has('year')) {
-          url.searchParams.set('year', dt.toString());
-        } else {
-          url.searchParams.append('year', dt.toString());
+          let url = new URL(window.location.href);
+          if (url.searchParams.has('year')) {
+            url.searchParams.set('year', dt.toString());
+          } else {
+            url.searchParams.append('year', dt.toString());
+          }
+          window.history.pushState(null, '', url.toString());
         }
-        window.history.pushState(null, '', url.toString());
       }
-    }
-  });
+    });
+  }, []);
 
   useEffect(() => {
     let ctt = timeserie[tsIndex]?.datetime;
