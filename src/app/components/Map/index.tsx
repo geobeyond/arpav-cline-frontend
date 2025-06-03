@@ -397,7 +397,7 @@ const Map = (props: MapProps) => {
         layer={layerConf.wms_base_url}
         opacity={opacity}
         show={
-          showUncertainty || mode === 'advanced' || data === 'past'
+          showUncertainty || mode !== 'advanced' || data === 'past'
             ? layerConf.wms_main_layer_name
             : layerConf.wms_secondary_layer_name
         }
