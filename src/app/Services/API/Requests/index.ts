@@ -132,9 +132,9 @@ export class RequestApi extends Http {
         }
 
         if (!labels['forecast']) {
-          labels['forecast'] = ['archive', 'Dati predittivi'];
+          labels['forecast'] = ['archive', 'Proiezioni'];
         } else {
-          labels['forecast'][1] = 'Dati predittivi';
+          labels['forecast'][1] = 'Proiezioni';
         }
 
         //labels['forecast'][1] = 'Predizioni';

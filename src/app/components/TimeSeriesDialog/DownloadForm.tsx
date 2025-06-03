@@ -47,7 +47,7 @@ export const DownloadForm = props => {
   };
 
   const refreshSeriesObject =
-    mode === 'forecast'
+    mode === 'forecast' && data.current.series
       ? async () => {
         let opseriesObj = [
           filter.current.uncertainty
