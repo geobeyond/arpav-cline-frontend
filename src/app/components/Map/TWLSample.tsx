@@ -74,11 +74,11 @@ export const TWLSample = (props: any) => {
 
   const setCurrYear = (yr, mode = 'forecast') => {
     const date = new Date();
-    if (getCY() !== yr) {
+    if (getCY() !== yr.toString()) {
       console.log('setting current year from Leaflet Timedmension:', yr);
 
       setTimeout(() => {
-        date.setFullYear(yr + (mode === 'forecast ' ? 0 : 1));
+        date.setFullYear(yr + (mode === 'forecast' ? 0 : 1));
         setCurrentYear(yr);
         setCY(yr);
         setYearSet(true);
