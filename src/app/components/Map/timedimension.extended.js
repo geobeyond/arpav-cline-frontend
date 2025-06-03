@@ -14,7 +14,7 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
     if(document.getElementsByClassName(
         'leaflet-bar-timecontrol',
       )[0].style.display !== 'none'){
-    setTimeout(()=>{
+    
             const url = new URL(window.location.href);
             if(url.searchParams.size > 2){
                 if(url.searchParams.has('year')){
@@ -24,7 +24,6 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
                 }
                 window.history.pushState(null, '', url.toString());
             }
-        }, 1000);
         }
     // @ts-ignore
     return date.getFullYear();

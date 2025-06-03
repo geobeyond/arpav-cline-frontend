@@ -86,6 +86,14 @@ export const TWLSample = (props: any) => {
         setYearSet(true);
         //@ts-ignore
         //context.map.timeDimension.setCurrentTime(date.getTime());
+
+        let url = new URL(window.location.href);
+        if (url.searchParams.has('year')) {
+          url.searchParams.set('year', yr.toString());
+        } else {
+          url.searchParams.append('year', yr.toString());
+        }
+        window.history.pushState(null, '', url.toString());
       }, 50);
     }
   };
