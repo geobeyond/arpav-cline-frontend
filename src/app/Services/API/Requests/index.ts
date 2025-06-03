@@ -138,6 +138,18 @@ export class RequestApi extends Http {
         }
 
         //labels['forecast'][1] = 'Predizioni';
+      } else {
+        if (!labels['historical']) {
+          labels['historical'] = ['archive', 'Historical data'];
+        } else {
+          labels['historical'][1] = 'Historical data';
+        }
+
+        if (!labels['forecast']) {
+          labels['forecast'] = ['archive', 'Projecions'];
+        } else {
+          labels['forecast'][1] = 'Projecions';
+        }
       }
       const innerConf = {
         ...configuration,

@@ -75,8 +75,8 @@ export const TWLSample = (props: any) => {
   const setCurrYear = (yr, data = 'forecast') => {
     const date = new Date();
     if (
-      getCY() !== (yr + (data === 'forecast' ? 0 : 1)).toString() &&
-      getCY() != yr.toString()
+      getCY() !== (yr + (data === 'forecast' ? 0 : 1)).toString() ||
+      getCY() !== yr.toString()
     ) {
       setTimeout(() => {
         console.log('setting current year from Leaflet Timedmension:', yr);
@@ -85,7 +85,7 @@ export const TWLSample = (props: any) => {
         setCY(yr);
         setYearSet(true);
         //@ts-ignore
-        context.map.timeDimension.setCurrentTime(date.getTime());
+        //context.map.timeDimension.setCurrentTime(date.getTime());
       }, 50);
     }
   };

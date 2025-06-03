@@ -373,16 +373,33 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let oyr = 0;
   let otsindex = 0;
 
+  const [isObservation, setObservation] = useState<boolean>(false);
+
+  const doSetBaseYear = yr => {
+    localStorage.setItem('baseYear', yr.toString());
+    setBaseYear(yr);
+  };
+
+  const getBaseYear = () => {
+    const by = localStorage.getItem('baseYear');
+    if (by) {
+      return parseInt(by);
+    } else {
+      return data === 'forecast' ? 1976 : 1984;
+    }
+  };
+
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
+      setObservation(currentTimeserie.info.dataset_type === 'observation');
       setTimeSerie([...currentTimeserie.values]);
       let fy = parseInt(currentTimeserie.values[0].datetime.split('-')[0]);
-      setBaseYear(fy);
+      doSetBaseYear(fy);
     } else {
       setTimeSerie([]);
       setTt(NaN);
       setTv(0);
-      setBaseYear(data === 'forecast' ? 1976 : 1984);
+      doSetBaseYear(data === 'forecast' ? 1976 : 1984);
     }
   }, [currentTimeserie]);
 
@@ -427,7 +444,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
       if (timeserie) {
         if (timeserie.length > 0) {
-          setBaseYear(parseInt(timeserie[0].datetime.split('-')[0], 10));
+          doSetBaseYear(parseInt(timeserie[0].datetime.split('-')[0], 10));
           if (timeserie.length > 1) {
             let found_year = timeserie.filter(
               x => x.datetime.split('-')[0] === yr.toString(),
@@ -436,9 +453,9 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
               ctsindex = timeserie.indexOf(found_year[0]);
 
               //@ts-ignore
-              map.timeDimension.setCurrentTime(
-                new Date(found_year[0].datetime).getTime(),
-              );
+              //map.timeDimension.setCurrentTime(
+              //  new Date(found_year[0].datetime).getTime(),
+              //);
             } else {
               ctsindex = 0;
             }
@@ -455,23 +472,20 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   useEffect(() => {
     //@ts-ignore
     map.timeDimension.on('timeloading', data => {
-      if (baseYear) {
-        let dt = new Date(+data.time).getFullYear();
-        if (getCY() !== dt.toString()) {
-          console.log(dt);
-          setOTsIndex(tsIndex);
-          const index = dt - baseYear;
-          setTsIndex(index);
+      console.log('timeloading', data);
+      let dt = new Date(+data.time).getFullYear() + (isObservation ? 1 : 0);
+      console.log(dt);
+      setOTsIndex(tsIndex);
+      const index = dt - getBaseYear();
+      setTsIndex(index);
 
-          let url = new URL(window.location.href);
-          if (url.searchParams.has('year')) {
-            url.searchParams.set('year', dt.toString());
-          } else {
-            url.searchParams.append('year', dt.toString());
-          }
-          window.history.pushState(null, '', url.toString());
-        }
+      let url = new URL(window.location.href);
+      if (url.searchParams.has('year')) {
+        url.searchParams.set('year', dt.toString());
+      } else {
+        url.searchParams.append('year', dt.toString());
       }
+      window.history.pushState(null, '', url.toString());
     });
   }, []);
 
