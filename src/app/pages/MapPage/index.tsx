@@ -485,12 +485,12 @@ export function MapPage(props: MapPageProps) {
   useEffect(() => {
     let year = '';
     try {
-      year =
-        currentMap.aggregation_period === 'annual'
-          ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
-            .getFullYear()
-            .toString()
-          : '';
+      let url = new URL(window.location.href);
+      if (url.searchParams.has('year')) {
+        //@ts-ignore
+        year = url.searchParams.get('year');
+      }
+
       console.log('showing year', year);
     } catch (e) {
       // console.log('no year');
@@ -585,8 +585,7 @@ export function MapPage(props: MapPageProps) {
     let year = '';
     if (yrparam) {
       year = yrparam;
-    }
-    try {
+    } else {
       year =
         currentMap.aggregation_period === 'annual' ||
           currentMap.aggregation_period === 'test'
@@ -597,8 +596,6 @@ export function MapPage(props: MapPageProps) {
               .toString()
           : '';
       console.log('showing year', year);
-    } catch (e) {
-      // console.log('no year');
     }
 
     setInProgress(true);

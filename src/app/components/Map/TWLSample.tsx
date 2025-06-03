@@ -125,6 +125,14 @@ export const TWLSample = (props: any) => {
           url.searchParams.get('op') === 'screenshot'
         ) {
           setIsSh(true);
+          if (url.searchParams.has('year')) {
+            const y = url.searchParams.get('year');
+            if (y) {
+              setTimeout(() => {
+                setCurrYear(parseInt(y), mode);
+              }, 1250);
+            }
+          }
         } else {
           if (!yearSet) {
             let dt = new Date(+cdata.time).getFullYear();

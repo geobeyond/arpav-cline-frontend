@@ -421,18 +421,17 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     let atv = 0;
     let url = new URL(window.location.href);
     let yrparam = url.searchParams.get('year');
-    let yrfield = document.getElementsByClassName('timecontrol-date');
-    let yrstring =
-      data === 'forecast' ? '2035' : (new Date().getFullYear() - 1).toString();
-    if (yrfield.length > 0) {
-      yrstring = yrfield[0].textContent!;
-    } else if (yrparam) {
+    let yrstring: string | null | undefined = null;
+
+    if (yrparam) {
       yrstring = yrparam;
     }
     try {
-      yr = parseInt(yrstring, 10);
-      if (isNaN(yr))
-        yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+      if (yrstring) {
+        yr = parseInt(yrstring, 10);
+        if (isNaN(yr))
+          yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+      }
     } catch (ex) {
       yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
     }
