@@ -386,6 +386,19 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     }
   }, [currentTimeserie]);
 
+  const setCY = yr => {
+    localStorage.setItem('currentYear', yr.toString());
+  };
+
+  const getCY = () => {
+    const cy = localStorage.getItem('currentYear');
+    if (cy) {
+      return cy;
+    } else {
+      return 0;
+    }
+  };
+
   useEffect(() => {
     let att = yr;
     let atv = 0;
@@ -443,18 +456,20 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   map.timeDimension.on('timeloading', data => {
     if (baseYear) {
       let dt = new Date(+data.time).getFullYear();
-      console.log(dt);
-      setOTsIndex(tsIndex);
-      const index = dt - baseYear;
-      setTsIndex(index);
+      if (getCY() !== dt.toString()) {
+        console.log(dt);
+        setOTsIndex(tsIndex);
+        const index = dt - baseYear;
+        setTsIndex(index);
 
-      let url = new URL(window.location.href);
-      if (url.searchParams.has('year')) {
-        url.searchParams.set('year', dt.toString());
-      } else {
-        url.searchParams.append('year', dt.toString());
+        let url = new URL(window.location.href);
+        if (url.searchParams.has('year')) {
+          url.searchParams.set('year', dt.toString());
+        } else {
+          url.searchParams.append('year', dt.toString());
+        }
+        window.history.pushState(null, '', url.toString());
       }
-      window.history.pushState(null, '', url.toString());
     }
   });
 
