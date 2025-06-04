@@ -11,6 +11,7 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
         else this._map.setupFrontLayer(x, this._map);
       }
     });
+    localStorage.setItem('currentYear', date.getFullYear().toString())
     if(document.getElementsByClassName(
         'leaflet-bar-timecontrol',
       )[0].style.display !== 'none'){
@@ -18,7 +19,7 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
             const url = new URL(window.location.href);
             if(url.searchParams.size > 2){
                 if(url.searchParams.has('year')){
-                    //url.searchParams.set('year', date.getFullYear().toString());s
+                    url.searchParams.set('year', date.getFullYear().toString());
                 } else {
                     url.searchParams.append('year', date.getFullYear().toString());
                 }

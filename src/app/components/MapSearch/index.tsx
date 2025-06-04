@@ -34,6 +34,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
 import { RequestApi } from '../../Services';
 import { useSearchParams } from 'react-router-dom';
+import { isNullOrUndefined } from 'util';
 
 export interface MapSearchProps {
   className?: string;
@@ -369,7 +370,9 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   let tsindex = 0;
   const [baseYear, setBaseYear] = useState<number>();
 
-  let yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+  const [yr, setYr] = useState<number>(
+    data === 'forecast' ? 2035 : new Date().getFullYear() - 1,
+  );
   let oyr = 0;
   let otsindex = 0;
 
@@ -391,7 +394,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
-      if (currentTimeserie.info.dataset_type) {
+      if (currentTimeserie.info && currentTimeserie.info.dataset_type) {
         setObservation(currentTimeserie.info.dataset_type === 'observation');
       }
       setTimeSerie([...currentTimeserie.values]);
@@ -425,31 +428,37 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     let url = new URL(window.location.href);
     let yrparam = url.searchParams.get('year');
     let yrstring: string | null | undefined = null;
+    let cyr = 0;
 
     if (yrparam) {
       yrstring = yrparam;
     }
+    //if (yrstring === null || yrstring === undefined) {
+    yrstring = localStorage.getItem('currentYear');
+    //}
+
     try {
       if (yrstring) {
-        yr = parseInt(yrstring, 10);
+        cyr = parseInt(yrstring, 10);
         if (isNaN(yr))
-          yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+          cyr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
       }
     } catch (ex) {
-      yr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+      cyr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
     }
+    setYr(cyr);
 
     let ctsindex = tsindex;
 
-    if (oyr !== yr) {
-      oyr = yr;
+    if (oyr !== cyr) {
+      oyr = cyr;
 
       if (timeserie) {
         if (timeserie.length > 0) {
           doSetBaseYear(parseInt(timeserie[0].datetime.split('-')[0], 10));
           if (timeserie.length > 1) {
             let found_year = timeserie.filter(
-              x => x.datetime.split('-')[0] === yr.toString(),
+              x => x.datetime.split('-')[0] === cyr.toString(),
             );
             if (found_year.length > 0) {
               ctsindex = timeserie.indexOf(found_year[0]);
