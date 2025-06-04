@@ -93,6 +93,7 @@ export const TWLSample = (props: any) => {
         } else {
           url.searchParams.append('year', yr.toString());
         }
+        console.log('setting history to', url.toString());
         window.history.pushState(null, '', url.toString());
       }, 50);
     }

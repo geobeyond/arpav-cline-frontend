@@ -491,6 +491,13 @@ export function MapPage(props: MapPageProps) {
         year = url.searchParams.get('year');
       }
 
+      if (isNaN(parseFloat(year))) {
+        //@ts-ignore
+        year = document
+          .getElementsByClassName('leaflet-bar-timecontrol')[0]
+          .textContent;
+      }
+
       console.log('showing year', year);
     } catch (e) {
       // console.log('no year');
@@ -609,8 +616,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? ' - ' + labelFor(currentMap.time_window)
-        : ''
+      ? ' - ' + labelFor(currentMap.time_window)
+      : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''

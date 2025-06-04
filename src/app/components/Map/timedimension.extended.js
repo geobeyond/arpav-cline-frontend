@@ -22,6 +22,7 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
                 } else {
                     url.searchParams.append('year', date.getFullYear().toString());
                 }
+                console.log('setting history to', url.toString());
                 window.history.pushState(null, '', url.toString());
             }
         }
