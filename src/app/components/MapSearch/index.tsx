@@ -503,7 +503,7 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {timeserie &&
-        (mode !== 'simple' || (mode === 'simple' && ap !== 'annual')) && (
+        (mode !== 'simple' || (mode === 'simple' && data !== 'forecast')) && (
           <CompactValueRenderer
             time={tt}
             value={tv}
