@@ -489,12 +489,12 @@ export function MapPage(props: MapPageProps) {
       if (url.searchParams.has('year')) {
         //@ts-ignore
         year = url.searchParams.get('year');
+        localStorage.setItem('currentYear', year);
       }
 
       if (isNaN(parseFloat(year))) {
         //@ts-ignore
-        year = document
-          .getElementsByClassName('leaflet-bar-timecontrol')[0]
+        year = document.getElementsByClassName('leaflet-bar-timecontrol')[0]
           .textContent;
       }
 
@@ -507,7 +507,7 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.climatological_model),
       labelFor(currentMap.scenario),
     ])}
-  - ${joinNames([
+  ${currentMap.archive !== 'forecast' ? '' : '-'} ${joinNames([
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])}
@@ -616,8 +616,8 @@ export function MapPage(props: MapPageProps) {
       labelFor(currentMap.aggregation_period),
       labelFor(currentMap.measure),
     ])} ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-      ? ' - ' + labelFor(currentMap.time_window)
-      : ''
+        ? ' - ' + labelFor(currentMap.time_window)
+        : ''
       } - ${labelFor(currentMap.year_period)} ${currentMap.aggregation_period != '30yr' && currentYear
         ? ` - Anno ${year}`
         : ''

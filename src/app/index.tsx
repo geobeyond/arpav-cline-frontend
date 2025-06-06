@@ -59,6 +59,32 @@ export function App() {
     api.updateCache();
   }, []);
 
+  React.useEffect(() => {
+    let year = '';
+    let url = new URL(window.location.href);
+    try {
+      if (url.searchParams.has('year')) {
+        //@ts-ignore
+        year = url.searchParams.get('year');
+        localStorage.setItem('currentYear', year);
+      }
+    } catch (e) {
+      // console.log('no year')
+    }
+    let lang = 'it';
+    try {
+      if (url.searchParams.has('lang')) {
+        //@ts-ignore
+        lang = url.searchParams.get('lang');
+        localStorage.setItem('chosenLang', lang);
+        localStorage.setItem('i18nextLng', lang);
+        i18n.changeLanguage(lang);
+      }
+    } catch (e) {
+      // console.log('no year');
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={3}>
