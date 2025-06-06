@@ -430,12 +430,13 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     let yrstring: string | null | undefined = null;
     let cyr = 0;
 
-    if (yrparam) {
-      yrstring = yrparam;
-    }
     //if (yrstring === null || yrstring === undefined) {
     yrstring = localStorage.getItem('currentYear');
     //}
+
+    if (yrparam) {
+      yrstring = yrparam;
+    }
 
     try {
       if (yrstring) {
