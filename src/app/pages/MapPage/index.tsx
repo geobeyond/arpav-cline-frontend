@@ -629,9 +629,11 @@ export function MapPage(props: MapPageProps) {
       }`;
     filename = filename.replaceAll('_', '');
 
-    api.downloadScreenshot(window.location.href, filename).then(() => {
-      setInProgress(false);
-    });
+    api
+      .downloadScreenshot(window.location.href, filename, i18n.language)
+      .then(() => {
+        setInProgress(false);
+      });
     //mapScreen
     //  .takeScreen(format, {
     //    captionFontSize: isMobile ? 10 : 12,

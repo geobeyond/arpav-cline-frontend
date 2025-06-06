@@ -34,7 +34,7 @@ export interface iNetcdfDownload {
 const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export class RequestApi extends Http {
-  downloadScreenshot(href: string, filename: string) {
+  downloadScreenshot(href: string, filename: string, lang: string) {
     href = href.replaceAll(
       'http://localhost:3000',
       'https://arpav.geobeyond.dev',
@@ -43,7 +43,7 @@ export class RequestApi extends Http {
       this.instance
         .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
           params: {
-            url: href + '&op=screenshot',
+            url: href + '&op=screenshot&lang=' + lang,
             delay_seconds: '15',
           },
           responseType: 'blob',
