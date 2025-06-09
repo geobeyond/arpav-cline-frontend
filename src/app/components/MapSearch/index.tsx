@@ -426,15 +426,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     let att = yr;
     let atv = 0;
     let url = new URL(window.location.href);
-    let yrparam = url.searchParams.get('year');
     let yrstring: string | null | undefined = null;
     let cyr = 0;
 
     //if (yrstring === null || yrstring === undefined) {
     yrstring = localStorage.getItem('currentYear');
+    let yrparam = url.searchParams.get('year');
     //}
 
-    if (yrparam) {
+    if (!yrstring) {
       yrstring = yrparam;
     }
 
