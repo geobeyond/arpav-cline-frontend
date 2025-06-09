@@ -413,8 +413,8 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
   const getName = item => {
     try {
       let ret = item.info.station_name
-        ? item.info.manager ? + ' ' + item.info.station_name
-          : t('app.map.timeSeriesDialog.interpolated');
+        ? item.info.manager + ' ' + item.info.station_name
+        : t('app.map.timeSeriesDialog.interpolated');
 
       ret += ' - ';
       ret +=
