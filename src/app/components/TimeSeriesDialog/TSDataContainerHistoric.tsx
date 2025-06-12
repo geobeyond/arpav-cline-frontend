@@ -433,11 +433,11 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
           ' ';
         ret +=
           ' ' +
-            i18n.language === 'en'
+          (i18n.language === 'en'
             ? currentLayer?.unit_english
-            : currentLayer?.unit_italian +
-            '/' +
-            t('app.map.timeSeriesDialog.decade');
+            : currentLayer?.unit_italian) +
+          '/' +
+          t('app.map.timeSeriesDialog.decade');
       }
 
       return ret;
