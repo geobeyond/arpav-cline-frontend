@@ -93,9 +93,7 @@ export function MapMenuBar(props: MapMenuBar) {
   const inProgress = props.inProgress || false;
 
   const activeCombinations = useRef(
-    Object.keys(combinations).length > 0
-      ? combinations['tas::thirty_year']
-      : {},
+    Object.keys(combinations).length > 0 ? combinations['tas::30yr'] : {},
   );
 
   const setActiveCombinations = combo => {
@@ -238,6 +236,7 @@ export function MapMenuBar(props: MapMenuBar) {
             ),
             disableable: true,
             disabled: x => x.aggregation_period === 'annual',
+            default: ['tw1', 'tw2', 'climate_standard_normal_1991_2020'],
             criteria: (x, c) =>
               c.aggregation_period !== 'thirty_year' &&
                 c.aggregation_period !== '30yr'
@@ -495,16 +494,16 @@ export function MapMenuBar(props: MapMenuBar) {
       localCM.current = { ...nm };
       console.log(localCM.current);
       setCurrentMap(localCM.current);
-
-      setActiveCombinations(
-        combinations[localCM.current.climatological_variable],
-      );
     } else {
       if (onMenuChange) {
         onMenuChange(false);
       }
     }
   }, [foundLayers]);
+
+  useEffect(() => {
+    setActiveCombinations(combinations['tas::30yr']);
+  }, []);
 
   const labelFor = (itm: string) => {
     api.getConfigurationParams().then(x => { });
