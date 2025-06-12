@@ -461,8 +461,9 @@ export function MapPage(props: MapPageProps) {
 
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {
+      const lsp = new URLSearchParams(window.location.search);
       setSearchParams({
-        ...paramsToObject(sp),
+        ...paramsToObject(lsp),
         ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
       });
 
