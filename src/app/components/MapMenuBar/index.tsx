@@ -526,21 +526,35 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const selectedValueToString = () => {
     const caption = `${labelFor(localCM.current.climatological_variable)}
-    - ${labelFor(localCM.current.climatological_model)}
-    - ${labelFor(localCM.current.scenario)}
-    - ${labelFor(localCM.current.aggregation_period)}
-    - ${labelFor(localCM.current.measure)}
+    ${localCM.current.archive === 'historical' ? '' :
+        ' - ' + labelFor(localCM.current.climatological_model) + ' - ' +
+        labelFor(localCM.current.scenario)
+      }
+  ${localCM.current.archive !== 'forecast' ? '' : '-'} ${labelFor(
+        localCM.current.aggregation_period,
+      )} - ${labelFor(localCM.current.measure)}
     ${localCM.current.time_window &&
-        localCM.current.aggregation_period === '30yr'
-        ? ' - ' + labelFor(localCM.current.time_window)
+        localCM.current.aggregation_period === '30yr' &&
+        localCM.current.archive === 'forecast'
+        ? labelFor(localCM.current.time_window)
         : ''
       }
+      
+    ${localCM.current.reference_period &&
+        localCM.current.aggregation_period === '30yr' &&
+        localCM.current.archive !== 'forecast'
+        ? labelFor(localCM.current.reference_period)
+        : ''
+      }
+      
     ${localCM.current.decade &&
-        localCM.current.aggregation_period === 'ten_year'
-        ? ' - ' + labelFor(localCM.current.decade)
+        localCM.current.aggregation_period === 'ten_year' &&
+        localCM.current.archive !== 'forecast'
+        ? labelFor(localCM.current.decade)
         : ''
       }
-    - ${labelFor(localCM.current.year_period)}`;
+  - ${labelFor(localCM.current.year_period)}`; // string or function, added caption to bottom of screen
+
     return caption;
   };
 
