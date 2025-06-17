@@ -526,13 +526,16 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const selectedValueToString = () => {
     const caption = `${labelFor(localCM.current.climatological_variable)}
-    ${localCM.current.archive === 'historical' ? '' :
-        ' - ' + labelFor(localCM.current.climatological_model) + ' - ' +
+    ${localCM.current.archive === 'historical'
+        ? ''
+        : ' - ' +
+        labelFor(localCM.current.climatological_model) +
+        ' - ' +
         labelFor(localCM.current.scenario)
       }
-  ${localCM.current.archive !== 'forecast' ? '' : '-'} ${labelFor(
-        localCM.current.aggregation_period,
-      )} - ${labelFor(localCM.current.measure)}
+  - ${labelFor(localCM.current.aggregation_period)} - ${labelFor(
+        localCM.current.measure,
+      )}
     ${localCM.current.time_window &&
         localCM.current.aggregation_period === '30yr' &&
         localCM.current.archive === 'forecast'

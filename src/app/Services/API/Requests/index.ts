@@ -719,7 +719,7 @@ export class RequestApi extends Http {
     year_period: {
       all_year: { it: 'Anno', en: 'All year' },
       winter: { it: 'Inverno', en: 'Winter' },
-      sprng: { it: 'Primavera', en: 'Spring' },
+      spring: { it: 'Primavera', en: 'Spring' },
       summer: { it: 'Estate', en: 'Summer' },
       autumn: { it: 'Autunno', en: 'Autumn' },
       january: { it: 'Gennaio', en: 'January' },
