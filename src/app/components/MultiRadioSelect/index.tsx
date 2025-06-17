@@ -291,7 +291,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                     </>
                   )}
                   <RadioGroup
-                    sx={row.multicol ? MulticolGroupMenuStyle : GroupMenuStyle}
+                    sx={(!isMobile && row.multicol) ? MulticolGroupMenuStyle : GroupMenuStyle}
                     aria-labelledby={`${row.key}-radio-group-label`}
                     onChange={event => {
                       handleChangeRadioGroup(event, row.key);
@@ -303,7 +303,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                           key={item.name}
                           disableGutters
                           sx={{
-                            marginBottom: row.multicol?.includes(index + 1)
+                            marginBottom: (!isMobile && row.multicol?.includes(index + 1))
                               ? //@ts-ignore
                               row.multicol_size[
                                 row.multicol?.indexOf(index + 1)
@@ -335,7 +335,9 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                   {translate(item, 'label')}
                                 </span>
                                 {isMobile ? (
-                                  <Typography variant={'caption'}>
+                                  <Typography variant={'caption'} sx={{
+   "line-height": "1",
+    "margin-top": "-8px"}}>
                                     {translate(item, 'description')}
                                   </Typography>
                                 ) : (
