@@ -100,11 +100,22 @@ const HeaderBar = (props: HeaderBarProps) => {
               <a style={HeaderBrandStyle} href="/">
                 <b className="green">{t('app.header.acronymMeaning')}</b>
               </a>
+              
+                <Dropdown className="me-3">
+                  <DropdownToggle tag="a" color="primary">
+                    {lang} <ArrowDropDown />
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <MenuItem onClick={() => setLang('it')}>IT</MenuItem>
+                    <MenuItem onClick={() => setLang('en')}>EN</MenuItem>
+                  </DropdownMenu>
+                </Dropdown>
               <Dropdown className="me-3">
                 <DropdownToggle tag="a" color="primary">
                   <MenuIcon />
                 </DropdownToggle>
                 <DropdownMenu style={{ width: 200 }}>
+                  
                   <LinkList>
                     <LinkListItem href="/info" style={LinkStyle}>
                       {t('app.header.menu.info')}
