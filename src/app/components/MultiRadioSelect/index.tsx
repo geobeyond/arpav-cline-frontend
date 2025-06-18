@@ -307,7 +307,7 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                               ? //@ts-ignore
                               row.multicol_size[
                                 row.multicol?.indexOf(index + 1)
-                              ].toString() + 'px'
+                              ].toString() + 'px':isMobile?"14px"
                               : '0',
                           }}
                           disabled={

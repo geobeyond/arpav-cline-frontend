@@ -884,7 +884,7 @@ const TSDataContainerHistoric = (props: TSDataContainerProps) => {
         </Box>
 
         <Box sx={FieldContainerStyle}>
-          <FormControl sx={{ width: '100%', left: '25%' }} size="small">
+          <FormControl sx={{ width: isMobile?'50%':'100%', left: '25%' }} size="small">
             <InputLabel
               id="smoothingModel"
               sx={{
