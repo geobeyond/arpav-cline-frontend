@@ -92,7 +92,7 @@ const IntroIt = () => {
             target="_blank"
             rel="noreferrer"
           >
-            Video tutorial Proeizioni climatiche
+            Video tutorial Proiezioni climatiche
           </a>
         </p>
         <p>
