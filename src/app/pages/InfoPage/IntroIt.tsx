@@ -78,6 +78,24 @@ const IntroIt = () => {
           </a>
         </p>
         <p>
+          <a
+            href="https://youtu.be/CZIT77gOAM8"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Video tutorial Climatologia storica
+          </a>
+        </p>
+        <p>
+          <a
+            href=" https://youtu.be/5pzjuQ0ygP8"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Video tutorial Proeizioni climatiche
+          </a>
+        </p>
+        <p>
           Codice sorgente disponibile su{' '}
           <a
             href="https://github.com/venetoarpa/Arpav-PPCV"
