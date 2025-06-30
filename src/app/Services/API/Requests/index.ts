@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { Http } from '../Http';
 import { P } from 'app/pages/NotFoundPage/P';
-import { BACKEND_API_URL } from '../../../../utils/constants';
+import {
+  BACKEND_API_URL,
+  BACKEND_WMS_BASE_URL,
+} from '../../../../utils/constants';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -31,9 +34,46 @@ export interface iNetcdfDownload {
 const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export class RequestApi extends Http {
+  downloadScreenshot(href: string, filename: string, lang: string) {
+    href = href.replaceAll(
+      'http://localhost:3000',
+      'https://arpav.geobeyond.dev',
+    );
+    return (
+      this.instance
+        .get<any>(BACKEND_API_URL + '/maps/map-screenshot', {
+          params: {
+            url: href + '&op=screenshot&lang=' + lang,
+            delay_seconds: '18',
+          },
+          responseType: 'blob',
+        })
+        //@ts-ignore
+        .then((response: Blob) => {
+          const url = window.URL.createObjectURL(response);
+          console.log(url);
+          // create file link in browser's memory
+
+          // create "a" HTML element with href to file & click
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', filename); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+
+          // clean up "a" element & remove ObjectURL
+          document.body.removeChild(link);
+          URL.revokeObjectURL(href);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    );
+  }
   getCapabilities(wms) {
     const fullUrl =
-      'https://arpav.geobeyond.dev/api/v2/coverages/wms/' +
+      BACKEND_WMS_BASE_URL +
+      '/' +
       wms +
       '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&verbose=true';
 
@@ -54,6 +94,23 @@ export class RequestApi extends Http {
    * @returns {Promise<AxiosResponse<any>>} The response of the request.
    */
   getForecastData(configuration: any, dataSet?: any, language: string = 'it') {
+    return this.getNetCDFData(configuration, dataSet, language, 'forecast');
+  }
+
+  getHistoricalData(
+    configuration: any,
+    dataSet?: any,
+    language: string = 'it',
+  ) {
+    return this.getNetCDFData(configuration, dataSet, language, 'historical');
+  }
+
+  getNetCDFData(
+    configuration: any,
+    dataSet: any,
+    language: string = 'it',
+    mode: string = 'forecast',
+  ) {
     let configs = [];
     return this.getConfigurationParams().then(configs => {
       const labelsf = configs.map((config: any) =>
@@ -65,14 +122,51 @@ export class RequestApi extends Http {
           ],
         ]),
       );
-      const labels = Object.fromEntries(labelsf.flat());
-      const innerConf = { ...configuration };
-      delete innerConf.archive;
-      if (innerConf.aggregation_period === 'annual') {
-        delete innerConf.time_window;
+      let labels = Object.fromEntries(labelsf.flat());
+      labels['thirty_year'] = labels['30yr'];
+      if (language === 'it') {
+        if (!labels['historical']) {
+          labels['historical'] = ['archive', 'Dati storici'];
+        } else {
+          labels['historical'][1] = 'Dati storici';
+        }
+
+        if (!labels['forecast']) {
+          labels['forecast'] = ['archive', 'Proiezioni'];
+        } else {
+          labels['forecast'][1] = 'Proiezioni';
+        }
+
+        //labels['forecast'][1] = 'Predizioni';
+      } else {
+        if (!labels['historical']) {
+          labels['historical'] = ['archive', 'Historical data'];
+        } else {
+          labels['historical'][1] = 'Historical data';
+        }
+
+        if (!labels['forecast']) {
+          labels['forecast'] = ['archive', 'Projecions'];
+        } else {
+          labels['forecast'][1] = 'Projecions';
+        }
       }
+      const innerConf = {
+        ...configuration,
+        ...{
+          download_reason: dataSet.downloadReason,
+          entity_name: dataSet.entity_name,
+          is_public_sector: dataSet.is_public_sector === 'true',
+        },
+      };
+      delete innerConf.archive;
+      const url =
+        BACKEND_API_URL +
+        (mode === 'forecast'
+          ? '/coverages/forecast-data?'
+          : '/coverages/historical-data?');
       return this.instance
-        .get<any>(BACKEND_API_URL + '/coverages/forecast-data?', {
+        .get<any>(url, {
           params: { offset: 0, limit: 100, ...innerConf },
           paramsSerializer: { indexes: null },
           timeout: 30000,
@@ -106,10 +200,15 @@ export class RequestApi extends Http {
                 dconf.climatological_variable
                   ? dconf.climatological_variable
                   : dconf.historical_variable
-              } - ${dconf.archive} - ${dconf.climatological_model} - ${
-                dconf.scenario
+              } - ${dconf.archive} ${
+                dconf.archive.indexOf('rical') >= 0 ||
+                dconf.archive.indexOf('storic') >= 0
+                  ? ''
+                  : '- ' + dconf.climatological_model + ' - ' + dconf.scenario
               } - ${dconf.aggregation_period} - ${dconf.measure} - ` +
               (dconf.time_period ? `${dconf.time_period} - ` : '') +
+              (dconf.reference_period ? `${dconf.reference_period} - ` : '') +
+              (dconf.decade ? `${dconf.decade} - ` : '') +
               `${dconf.year_period}` +
               (dconf.uncertainty_type ? ` - ${dconf.uncertainty_type}` : '');
             return { url, rawLabel: label, label: labelout };
@@ -127,10 +226,26 @@ export class RequestApi extends Http {
     return this.classInstance;
   }
 
-  public getCities = () => {
+  public getCities = callback => {
     if (localStorage.getItem('municipality-centroids')) {
       // @ts-ignore
-      return JSON.parse(localStorage.getItem('municipality-centroids'));
+      let cities = JSON.parse(localStorage.getItem('municipality-centroids'));
+      let lastCities = [];
+      if (localStorage.getItem('lastCities')) {
+        // @ts-ignore
+        lastCities = JSON.parse(localStorage.getItem('lastCities'));
+      }
+      let fcities = cities.filter(city => {
+        let found = lastCities.length === 0;
+        for (let c of lastCities) {
+          if (c) {
+            //@ts-ignore
+            if (c.label === city.label) found = true;
+          }
+        }
+        return !found || lastCities.length === 0;
+      });
+      callback([...lastCities, ...fcities]);
     } else {
       this.instance
         .get<any>(BACKEND_API_URL + '/municipalities/municipality-centroids')
@@ -147,10 +262,29 @@ export class RequestApi extends Http {
         })
         .then(x => {
           localStorage.setItem('municipality-centroids', JSON.stringify(x));
+          callback(x);
         });
-      // @ts-ignore
-      return JSON.parse(localStorage.getItem('municipality-centroids'));
     }
+    return null;
+  };
+
+  public getHistoricLayer = (
+    variable?,
+    measure?,
+    time_period?,
+    aggregation_period?,
+    season?,
+  ) => {
+    return this.doGetLayer(
+      variable,
+      undefined,
+      undefined,
+      measure,
+      time_period,
+      aggregation_period,
+      season,
+      'historical',
+    );
   };
 
   public getLayer = (
@@ -209,6 +343,7 @@ export class RequestApi extends Http {
     time_period?: string,
     aggregation_period?: string,
     season?: string,
+    mode?: string,
   ) => {
     const items = {
       climatological_variable: variable,
@@ -218,6 +353,7 @@ export class RequestApi extends Http {
       time_period: time_period,
       aggregation_period: aggregation_period,
       year_period: season,
+      archive: mode,
     };
     let titems: any[] = [];
 
@@ -242,6 +378,7 @@ export class RequestApi extends Http {
           c.time_period,
           c.aggregation_period,
           c.year_period,
+          c.archive,
         ),
       );
     }
@@ -271,10 +408,14 @@ export class RequestApi extends Http {
     model?: string,
     scenario?: string,
     measure?: string,
-    time_period?: string,
+    time_window?: string,
     aggregation_period?: string,
     season?: string,
+    mode?: string,
   ) => {
+    if (!mode) {
+      mode = 'forecast';
+    }
     // Create the filter string based on the given parameters.
     let filter = '';
     if (variable) {
@@ -289,18 +430,44 @@ export class RequestApi extends Http {
     if (measure) {
       filter += 'possible_value=measure:' + measure + '&';
     }
-    if (time_period && aggregation_period !== 'annual') {
-      filter += 'possible_value=time_window:' + time_period + '&';
+    if (
+      time_window &&
+      //@ts-ignore
+      aggregation_period?.replace('30', 'thir').indexOf('thir') >= 0
+    ) {
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast' ? 'time_window' : 'reference_period') +
+        ':' +
+        time_window +
+        '&';
+    }
+    if (
+      time_window &&
+      //@ts-ignore
+      aggregation_period?.replace('10', 'ten').indexOf('ten') >= 0
+    ) {
+      filter += 'possible_value=historical_decade' + ':' + time_window + '&';
     }
     if (aggregation_period) {
-      filter += 'possible_value=aggregation_period:' + aggregation_period + '&';
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast' ? 'aggregation_period' : 'aggregation_period') +
+        ':' +
+        aggregation_period +
+        '&';
     }
     if (season) {
-      filter += 'possible_value=year_period:' + season + '&';
+      filter +=
+        'possible_value=' +
+        (mode === 'forecast' ? 'year_period' : 'historical_year_period') +
+        ':' +
+        season +
+        '&';
     }
+    filter += 'possible_value=archive:' + mode + '&';
 
-    const fullUrl =
-      BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter;
+    const fullUrl = BACKEND_API_URL + '/coverages/coverages?' + filter;
 
     console.log(fullUrl);
     const d = localStorage.getItem(fullUrl);
@@ -308,30 +475,32 @@ export class RequestApi extends Http {
       return Promise.resolve(JSON.parse(d)).then((x: any) => {
         console.log(x);
         // If the response contains items, filter out the ones with uncertainty.
-        if (x.items.length > 0) {
-          let xx = x.items.filter(
-            itm =>
-              JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
-          );
-          return { items: xx };
-        } else return x;
+        //if (x.items.length > 0) {
+        //  let xx = x.items.filter(
+        //    itm =>
+        //      JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
+        //  );
+        //  return { items: xx };
+        //} else
+        return x;
       });
     }
 
     // Make the request to the API.
     return this.instance
-      .get<any>(BACKEND_API_URL + '/coverages/coverage-identifiers?' + filter)
+      .get<any>(BACKEND_API_URL + '/coverages/coverages?' + filter)
       .then((x: any) => {
         localStorage.setItem(fullUrl, JSON.stringify(x));
         console.log(x);
         // If the response contains items, filter out the ones with uncertainty.
-        if (x.items.length > 0) {
-          let xx = x.items.filter(
-            itm =>
-              JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
-          );
-          return { items: xx };
-        } else return x;
+        //if (x.items.length > 0) {
+        //  let xx = x.items.filter(
+        //    itm =>
+        //      JSON.stringify(itm.possible_values).indexOf('uncertainty') < 0,
+        //  );
+        //  return { items: xx };
+        //} else
+        return x;
       });
   };
   /**
@@ -345,10 +514,8 @@ export class RequestApi extends Http {
     if ('ensemble_data' in conf) {
       // Fetch both the main and ensemble data configurations concurrently
       return Promise.all([
-        this.instance.get<any>(conf.related_coverage_configuration_url),
-        this.instance.get<any>(
-          conf.ensemble_data.related_coverage_configuration_url,
-        ),
+        this.instance.get<any>(conf.url),
+        this.instance.get<any>(conf.ensemble_data.url),
       ]).then(responses => {
         console.log('getLayerConf: Fetched both main and ensemble data');
         console.log(responses);
@@ -357,22 +524,28 @@ export class RequestApi extends Http {
         return responses[0];
       });
     } else {
-      const lc = localStorage.getItem(conf.related_coverage_configuration_url);
+      const lc = localStorage.getItem(conf.url);
       if (lc) {
-        return Promise.resolve(JSON.parse(lc));
+        const ret = JSON.parse(lc);
+        //ret.wms_main_layer_name = conf.wms_main_layer_name;
+        //ret.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+        return Promise.resolve(ret);
       } else {
         // Fetch only the main data configuration
-        return this.instance
-          .get<any>(conf.related_coverage_configuration_url)
-          .then(response => {
-            localStorage.setItem(
-              conf.related_coverage_configuration_url,
-              JSON.stringify(response),
-            );
-            console.log('getLayerConf: Fetched only main data');
-            console.log(response);
-            return response;
-          });
+        return this.instance.get<any>(conf.url).then(response => {
+          if (conf.wms_main_layer_name) {
+            //@ts-ignore
+            response.wms_main_layer_name = conf.wms_main_layer_name;
+          }
+          if (conf.wms_secondary_layer_name) {
+            //@ts-ignore
+            response.wms_secondary_layer_name = conf.wms_secondary_layer_name;
+          }
+          localStorage.setItem(conf.url, JSON.stringify(response));
+          console.log('getLayerConf: Fetched only main data');
+          console.log(response);
+          return response;
+        });
       }
     }
   };
@@ -407,7 +580,8 @@ export class RequestApi extends Http {
     return res;
   };
 
-  public createIds(pattern: string, items: any) {
+  public createIds(items: any) {
+    console.log('pattern');
     let ret: string[] = [];
     let titems: any[] = [];
 
@@ -421,14 +595,24 @@ export class RequestApi extends Http {
       }
     }
     const combs = this.cartesianProduct(titems);
+    const reqs: Promise<any>[] = [];
     for (const c of combs) {
-      let tpattern = pattern;
-      for (let j of Object.keys(c)) {
-        tpattern = tpattern.replaceAll('{' + j + '}', c[j]);
-      }
-      ret.push(tpattern);
+      reqs.push(
+        this.doGetLayer(
+          c.climatological_variable,
+          c.climatological_model,
+          c.scenario,
+          c.measure,
+          c.time_period,
+          c.aggregation_period,
+          c.year_period,
+          c.archive,
+        ),
+      );
     }
-    return ret;
+    return Promise.all(reqs).then(data => {
+      return data.map(x => x.items[0].identifier);
+    });
   }
 
   public getTimeseriesV2 = (
@@ -436,17 +620,56 @@ export class RequestApi extends Http {
     lat: number,
     lng: number,
     withStation: boolean = true,
+    mode: string = 'forecast',
+    mkfrom: string = '..',
+    mkto: string = '..',
+    measure?: string,
+    year_period?: string,
   ) => {
     const ret: Promise<AxiosResponse<any, any>>[] = [];
-    for (let id of series) {
-      ret.push(this.getTimeserieV2(id, lat, lng, withStation));
-      if (withStation) {
-        withStation = false;
+    if (mode === 'forecast') {
+      for (let id of series) {
+        ret.push(
+          this.getTimeserieV2(
+            id,
+            lat,
+            lng,
+            withStation,
+            true,
+            true,
+            true,
+            mode,
+          ),
+        );
+        if (withStation) {
+          withStation = false;
+        }
       }
+    } else {
+      ret.push(
+        this.getTimeserieV2(
+          series[0],
+          lat,
+          lng,
+          false,
+          true,
+          true,
+          true,
+          mode,
+          mkfrom,
+          mkto,
+          measure,
+          year_period,
+        ),
+      );
     }
-    return Promise.all(ret).then(x => {
-      return this.merge.apply(this, x);
-    });
+    return Promise.all(ret)
+      .then(x => {
+        return this.merge.apply(this, x);
+      })
+      .catch(x => {
+        console.log(x);
+      });
   };
 
   private merge = (...objs) =>
@@ -461,6 +684,59 @@ export class RequestApi extends Http {
       {},
     );
 
+  public updateCache = () => {
+    const lc = localStorage.getItem('last_check');
+    // @ts-ignore
+    if ((lc && new Date() - Date.parse(lc) > 20000) || lc === null)
+      this.instance.get(`${BACKEND_API_URL}/base`).then((x: any) => {
+        const curr = localStorage.getItem('git_commit');
+        console.log('current_version', curr);
+        if (curr) {
+          if (curr !== x.git_commit) {
+            localStorage.clear();
+            console.log('localStorage cleared');
+          }
+          localStorage.setItem('git_commit', x.git_commit);
+        } else {
+          localStorage.clear();
+          console.log('localStorage cleared');
+          localStorage.setItem('git_commit', x.git_commit);
+
+          setTimeout(() => {
+            //@ts-ignore
+            window.location = window.location;
+          }, 2000);
+        }
+        localStorage.setItem('last_check', new Date().toString());
+      });
+  };
+
+  translations = {
+    measure: {
+      absolute: { it: 'Valore assoluto', en: 'Absolute value' },
+      anomaly: { it: 'Anomalia', en: 'Anomaly' },
+    },
+    year_period: {
+      all_year: { it: 'Anno', en: 'All year' },
+      winter: { it: 'Inverno', en: 'Winter' },
+      spring: { it: 'Primavera', en: 'Spring' },
+      summer: { it: 'Estate', en: 'Summer' },
+      autumn: { it: 'Autunno', en: 'Autumn' },
+      january: { it: 'Gennaio', en: 'January' },
+      february: { it: 'Febbraio', en: 'February' },
+      march: { it: 'Marzo', en: 'March' },
+      april: { it: 'Aprile', en: 'April' },
+      may: { it: 'Maggio', en: 'May' },
+      june: { it: 'Giugno', en: 'June' },
+      july: { it: 'Luglio', en: 'July' },
+      august: { it: 'Agosto', en: 'August' },
+      september: { it: 'Settembre', en: 'September' },
+      october: { it: 'Ottobre', en: 'October' },
+      november: { it: 'Novembre', en: 'November' },
+      december: { it: 'Dicembre', en: 'December' },
+    },
+  };
+
   public getTimeserieV2 = (
     serie: string,
     lat: number,
@@ -469,15 +745,27 @@ export class RequestApi extends Http {
     related: boolean = true,
     smoothing: boolean = true,
     uncertainty: boolean = true,
+    mode: string = 'forecast',
+    mkfrom: string = '..',
+    mkto: string = '..',
+    measure?: string,
+    year_period?: string,
   ) => {
-    let url = `${BACKEND_API_URL}/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    serie.indexOf('forecast') >= 0 ? (mode = 'forecast') : (mode = 'past');
+    const ep =
+      mode === 'forecast' ? 'forecast-time-series' : 'historical-time-series';
+    let url = `${BACKEND_API_URL}/coverages/${ep}/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(
       4,
     )})&datetime=..%2F..&include_coverage_data=true&coverage_data_smoothing=NO_SMOOTHING`;
     if (smoothing) {
-      url +=
-        '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
+      if (mode === 'forecast') {
+        url +=
+          '&coverage_data_smoothing=MOVING_AVERAGE_11_YEARS&coverage_data_smoothing=LOESS_SMOOTHING';
+      } else {
+        url += `&mann_kendall_datetime=${mkfrom}%2F${mkto}&include_moving_average_series=true&include_decade_aggregation_series=true&include_loess_series=true`;
+      }
     }
     if (uncertainty) {
       url += '&include_coverage_uncertainty=true';
@@ -494,13 +782,31 @@ export class RequestApi extends Http {
     } else {
       url += '&include_observation_data=false';
     }
+    if (mode !== 'forecast') {
+    }
 
-    return this.instance.get<any>(url).then((x: any) => {
-      x.series.map(a => {
-        console.log('timeseries: ', a.name);
+    return this.instance
+      .get<any>(url)
+      .then((x: any) => {
+        x.series.map(s => {
+          console.log('timeseries: ', s.name);
+          console.log('      info: ', s.info);
+          if (s.name.indexOf('station') === 0) {
+            if (measure)
+              if (!s.translations.parameter_values.measure && measure)
+                s.translations.parameter_values['measure'] =
+                  this.translations['measure'][measure];
+            if (year_period)
+              if (!s.translations.parameter_values.year_period && year_period)
+                s.translations.parameter_values['year_period'] =
+                  this.translations['year_period'][year_period];
+          }
+        });
+        return x;
+      })
+      .catch(error => {
+        return { series: [{ name: '', values: [] }] };
       });
-      return x;
-    });
   };
 
   public getTimeSeriesDataPoint = (
@@ -508,8 +814,11 @@ export class RequestApi extends Http {
     lat: number,
     lng: number,
     year: number,
+    mode: string = 'forecast',
   ) => {
-    let url = `${BACKEND_API_URL}/coverages/time-series/${serie}?coords=POINT(${lng.toFixed(
+    const ep =
+      mode === 'forecast' ? 'forecast-time-series' : 'historical-time-series';
+    let url = `${BACKEND_API_URL}/coverages/${ep}/${serie}?coords=POINT(${lng.toFixed(
       4,
     )} ${lat.toFixed(4)})&datetime=${year + 1}%2F${
       year - 1
@@ -562,10 +871,41 @@ export class RequestApi extends Http {
       });
   };
 
+  public extractPossibleValues = combinations => {
+    const possibleValues = {};
+
+    combinations.forEach(comb => {
+      Object.keys(comb).forEach(key => {
+        if (key === 'other_parameters') {
+          Object.keys(comb[key]).forEach(param => {
+            if (!possibleValues[param]) {
+              possibleValues[param] = new Set();
+            }
+            comb[key][param].forEach(value => possibleValues[param].add(value));
+          });
+        } else {
+          if (!possibleValues[key]) {
+            possibleValues[key] = new Set();
+          }
+          possibleValues[key].add(comb[key]);
+        }
+      });
+    });
+
+    // Convert sets to arrays
+    Object.keys(possibleValues).forEach(key => {
+      possibleValues[key] = Array.from(possibleValues[key]);
+    });
+
+    return possibleValues;
+  };
+
   public getAttributes = (
-    mode: string = 'forecast',
+    data: string = 'forecast',
+    mode: string = 'advanced',
     force: boolean = false,
   ) => {
+    console.log('getAttributes', data, mode, force);
     let reqs: any[] = [];
 
     const ret = this.instance
@@ -576,24 +916,66 @@ export class RequestApi extends Http {
         return d.items;
       });
     reqs.push(ret);
-    if (mode === 'forecast') {
+    if (data === 'forecast') {
       const cret = this.instance.get<any>(
-        `${BACKEND_API_URL}/coverages/forecast-variable-combinations`,
+        `${BACKEND_API_URL}/coverages/forecast-variable-combinations?navigation_section=${mode}`,
       );
       reqs.push(cret);
     } else {
       const cret = this.instance.get<any>(
-        `${BACKEND_API_URL}/coverages/historical-variable-combinations`,
+        `${BACKEND_API_URL}/coverages/historical-variable-combinations?navigation_section=${mode}`,
       );
       reqs.push(cret);
     }
 
     const p = Promise.all(reqs).then(x => {
-      localStorage.setItem('configs', JSON.stringify(x[0]));
-      localStorage.setItem('combs::' + mode, JSON.stringify(x[1]));
+      // reconstruct configuration-parameters
+      const configs = x[0];
+      const combs = x[1].combinations;
+      const trans = x[1].translations;
+
+      let possibleValues = this.extractPossibleValues(combs);
+      console.log(possibleValues);
+
+      let fconfigs: any[] = [];
+
+      const pv = { ...possibleValues };
+
+      for (let k in pv) {
+        let titm = {
+          name: k,
+        };
+        let avs: any[] = [];
+        for (let x of pv[k]) {
+          let tk = {};
+          if (
+            [
+              'climatological_variable',
+              'measure',
+              'aggregation_period',
+            ].indexOf(k) >= 0
+          )
+            tk = trans[k];
+          else tk = trans['other_parameters'][k];
+          avs.push({
+            name: x,
+            display_name_english: tk[x]['name']['en'],
+            display_name_italian: tk[x]['name']['it'],
+            description_english: tk[x]['description']['en'],
+            description_italian: tk[x]['description']['it'],
+          });
+        }
+        titm['allowed_values'] = [...avs];
+        fconfigs.push(titm);
+      }
+
+      console.log(fconfigs);
+
+      localStorage.setItem('configs', JSON.stringify(fconfigs));
+      localStorage.setItem('combs::' + mode, JSON.stringify(combs));
       return {
-        items: x[0],
-        combinations: x[1].combinations,
+        items: fconfigs,
+        combinations: combs,
       };
     });
     return p;

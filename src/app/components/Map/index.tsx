@@ -44,6 +44,7 @@ import { RequestApi } from 'app/Services';
 import { UncertaintySwitch } from './UncertaintySwitch';
 import { useTranslation } from 'react-i18next';
 import { StationsLayer } from './StationsLayer';
+import { DynamicStationsLayer } from './DynamicStationsLayer';
 
 // import {BaseLayerControl} from "./BaseLayerControl";
 
@@ -95,6 +96,8 @@ interface MapProps {
   currentTimeserie?: any;
   setCurrentMap?: Function;
   setCurrentYear?: Function;
+  mode: string;
+  data: string;
 }
 
 const Map = (props: MapProps) => {
@@ -111,11 +114,13 @@ const Map = (props: MapProps) => {
     currentTimeserie = {},
     setCurrentMap = () => { },
     setCurrentYear = () => { },
+    mode = 'advanced',
+    data = 'forecast',
   } = props;
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [wmsTimeDimension, setWmsTimeDimension] = React.useState<string>(
     '1976-07-01T00:00:00Z/2099-07-01T23:59:59Z/P1Y',
@@ -149,8 +154,33 @@ const Map = (props: MapProps) => {
 
   useEffect(() => {
     console.log(layerConf);
+    console.log(currentMap);
     setShowUncertainty(true);
     console.log('getting capabilities for ', currentLayer);
+
+    //if (layerConf.wms_secondary_layer_name) {
+    //  if (layerConf.wms_secondary_layer_name.indexOf('{')) {
+    //    for (let j of Object.keys(currentMap)) {
+    //      layerConf.wms_secondary_layer_name =
+    //        layerConf.wms_secondary_layer_name.replaceAll(
+    //          '{' + j + '}',
+    //          currentMap[j],
+    //        );
+    //    }
+    //  }
+    //}
+    //
+    //if (layerConf.wms_main_layer_name) {
+    //  if (layerConf.wms_main_layer_name.indexOf('{')) {
+    //    for (let j of Object.keys(currentMap)) {
+    //      layerConf.wms_main_layer_name =
+    //        layerConf.wms_main_layer_name.replaceAll(
+    //          '{' + j + '}',
+    //          currentMap[j],
+    //        );
+    //    }
+    //  }
+    //}
 
     api.getCapabilities(currentLayer).then((x: string) => {
       let xml = x;
@@ -191,6 +221,7 @@ const Map = (props: MapProps) => {
       zoom={defaultZoom}
       maxZoom={19}
       zoomControl={false}
+      hash={true}
       // @ts-ignore
       timeDimensionControl={true}
       timeDimensionextendedControl={true}
@@ -225,38 +256,50 @@ const Map = (props: MapProps) => {
     >
       <ScaleControl imperial={false} />
 
-      <ZoomControl position={'topright'} />
+      {currentMap.op !== 'screenshot' ? (
+        <ZoomControl position={'topright'} />
+      ) : (
+        <></>
+      )}
       {isMobile && (
         <DummyControlComponent
           position={'topright'}
           customComponent={MobileSpaceDisplay}
         />
       )}
-      <CustomControlMap position={'topright'}>
-        {showUncertaintyControl && (
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap position={'topright'}>
+          {showUncertaintyControl && (
+            <Box
+              className="leaflet-bar"
+              style={{ backgroundColor: 'white', padding: '2px' }}
+            >
+              <UncertaintySwitch
+                enabled={true}
+                setShowUncertainty={setShowUncertainty}
+                currentUncertainty={showUncertainty}
+              ></UncertaintySwitch>
+            </Box>
+          )}
+        </CustomControlMap>
+      ) : (
+        <> </>
+      )}
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap position={'topright'}>
           <Box
             className="leaflet-bar"
             style={{ backgroundColor: 'white', padding: '2px' }}
           >
-            <UncertaintySwitch
-              enabled={true}
-              setShowUncertainty={setShowUncertainty}
-              currentUncertainty={showUncertainty}
-            ></UncertaintySwitch>
+            <OpacityComponent
+              doSetOpacity={doSetOpacity}
+              opacity={opacity}
+            ></OpacityComponent>
           </Box>
-        )}
-      </CustomControlMap>
-      <CustomControlMap position={'topright'}>
-        <Box
-          className="leaflet-bar"
-          style={{ backgroundColor: 'white', padding: '2px' }}
-        >
-          <OpacityComponent
-            doSetOpacity={doSetOpacity}
-            opacity={opacity}
-          ></OpacityComponent>
-        </Box>
-      </CustomControlMap>
+        </CustomControlMap>
+      ) : (
+        <></>
+      )}
       <CustomControlMap position={'topright'}>
         <LegendBar
           className={'leaflet-bar'}
@@ -271,7 +314,7 @@ const Map = (props: MapProps) => {
           precision={layerConf.data_precision}
         />
       </CustomControlMap>
-      {!isMobile && (
+      {!isMobile && currentMap.op !== 'screenshot' && (
         <MousePositionComponent
           position={'bottomright'}
           customComponent={
@@ -294,29 +337,47 @@ const Map = (props: MapProps) => {
       </CustomControlMap>
       {/*<BaseLayerControl/>*/}
 
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="OpenStreetMap">
+      {currentMap.op !== 'screenshot' ? (
+        <LayersControl position="topright">
+          <LayersControl.BaseLayer checked name="OpenStreetMap">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a target="_blank" rel="noopener" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Sentinel 2">
+            <TileLayer
+              url="https://tiles.maps.eox.at/wmts?layer=s2cloudless-2021_3857&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
+              attribution='&copy; <a target="_blank" rel="noopener" href="https://tiles.maps.eox.at/">Sentinel-2 cloudless</a> by EOX'
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="OpenTopoMap">
+            <TileLayer
+              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+              attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
+      ) : (
+        <>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a target="_blank" rel="noopener" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Sentinel 2">
-          <TileLayer
-            url="https://tiles.maps.eox.at/wmts?layer=s2cloudless-2021_3857&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
-            attribution='&copy; <a target="_blank" rel="noopener" href="https://tiles.maps.eox.at/">Sentinel-2 cloudless</a> by EOX'
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="OpenTopoMap">
-          <TileLayer
-            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-            attribution='map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-          />
-        </LayersControl.BaseLayer>
-      </LayersControl>
-      <StationsLayer zIndex={550}></StationsLayer>
+        </>
+      )}
+      <StationsLayer data={data} zIndex={550}></StationsLayer>
+      <DynamicStationsLayer
+        data={data}
+        variable={currentMap.climatological_variable}
+        url={layerConf.observation_stations_vector_tile_layer_url}
+        zIndex={575}
+      ></DynamicStationsLayer>
       <VectorWrapperLayer
         zIndex={600}
+        mode={mode}
+        data={data}
+        ap={currentMap.aggregation_period}
         ref={vectorWrapperRef}
         selectCallback={point => setPoint(point)}
         selectedPoint={selectedPoint}
@@ -333,42 +394,56 @@ const Map = (props: MapProps) => {
 
       <TWLSample
         zIndex={500}
-        layer={currentLayer}
+        layer={layerConf.wms_base_url}
         opacity={opacity}
         show={
-          showUncertainty
+          showUncertainty || data === 'past'
             ? layerConf.wms_main_layer_name
             : layerConf.wms_secondary_layer_name
         }
         stl={layerConf.palette}
         useTime={setTimeStatus}
-        isTimeseries={currentMap.aggregation_period === 'annual'}
+        isTimeseries={
+          (mode !== 'simple' || data === 'past') &&
+          currentMap.aggregation_period === 'annual'
+        }
         setCurrentYear={setCurrentYear}
+        mode={mode}
+        data={data}
+        currentMap={currentMap.aggregation_period}
       />
-      <CustomControlMap
-        position="bottomleft"
-        className=" leaflet-time-info"
-        style={{
-          position: 'absolute',
-          margin: 0,
-          backgroundColor: 'transparent',
-          height: '20px',
-          width: '20px',
-          bottom: '61px',
-          left: '385px',
-          display: timeStatus,
-          padding: 0,
-        }}
-      >
-        <Button innerRef={ref5} className="m-3">
-          <InfoIcon></InfoIcon>
-        </Button>
-        <UncontrolledTooltip placement="top" target={ref5}>
-          Si tratta di proiezioni climatiche e non di previsioni a lungo
-          termine. Il valore annuale ha validità in un contesto di trend
-          trentennale.
-        </UncontrolledTooltip>
-      </CustomControlMap>
+      {currentMap.op !== 'screenshot' ? (
+        <CustomControlMap
+          position="bottomleft"
+          className=" leaflet-time-info"
+          style={{
+            position: 'absolute',
+            margin: 0,
+            backgroundColor: 'transparent',
+            height: '20px',
+            width: '20px',
+            bottom: '61px',
+            left: '385px',
+            display: timeStatus,
+            padding: 0,
+          }}
+        >
+          <Button innerRef={ref5} className="m-3">
+            <InfoIcon></InfoIcon>
+          </Button>
+          {data !== 'past' ? (
+            <UncontrolledTooltip placement="top" target={ref5}>
+              {t('app.index.header.disclaimer')}
+            </UncontrolledTooltip>
+          ) : (
+            <UncontrolledTooltip placement="top" target={ref5}>
+              {t('app.map.timeSeriesDialog.histWarning')}
+            </UncontrolledTooltip>
+          )}
+        </CustomControlMap>
+      ) : (
+        <></>
+      )}
     </MapContainer>
   );
 };

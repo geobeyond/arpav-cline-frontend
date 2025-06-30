@@ -1,6 +1,13 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import {
+  DevTools,
+  FormatSimple,
+  I18nextPlugin,
+  Tolgee,
+  withTolgee,
+} from '@tolgee/i18next';
 
 import en from './en/translation.json';
 import it from './it/translation.json';
@@ -15,26 +22,39 @@ export const translationsJson = {
   },
 };
 
-// Create the 'translations' object to provide full intellisense support for the static json files.
+// Create the 'translations' object to provide full intellisense support
 convertLanguageJsonToObject(en);
 convertLanguageJsonToObject(it);
 
-export const i18n = i18next
-  // pass the i18n instance to react-i18next.
-  .use(initReactI18next)
-  // detect user language
-  // learn more: https://github.com/i18next/i18next-browser-languageDetector
-  .use(LanguageDetector)
-  // init i18next
-  // for all options read: https://www.i18next.com/overview/configuration-options
+const tolgee = Tolgee()
+  .use(DevTools())
+  .use(FormatSimple())
+  .use(I18nextPlugin())
   .init({
-    resources: translationsJson,
-    lng: 'it', //This overrides the LanguageDetector. Set it to undefined for disabling.
-    fallbackLng: 'en',
-    debug:
-      process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test',
-
-    interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
-    },
+    apiUrl:
+      process.env.REACT_APP_TOLGEE_API_URL ||
+      'https://tolgee.arpav.geobeyond.dev',
+    apiKey:
+      process.env.REACT_APP_TOLGEE_API_KEY ||
+      'tgpak_gfptqodemjztqojvhayxeojrnnrgk3dfnrvxcnjvn5ygq',
+    defaultLanguage: 'it',
+    availableLanguages: ['it', 'en'],
+    fallbackLanguage: 'it',
   });
+
+// Initialize i18next without Tolgee first
+const i18nextInstance = i18next.use(initReactI18next).use(LanguageDetector);
+
+// Then wrap it with Tolgee
+export const i18n = withTolgee(i18nextInstance, tolgee).init({
+  resources: translationsJson,
+  fallbackLng: 'it',
+  supportedLngs: ['it', 'en'],
+  lng: 'it', // Default language
+  interpolation: {
+    escapeValue: false,
+  },
+  debug: false,
+});
+
+export default i18n;

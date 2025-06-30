@@ -29,6 +29,7 @@ import {
   IconBoxStyle,
   ExitContainerStyle,
   ExitIconStyle,
+  MulticolGroupMenuStyle,
 } from './styles';
 import { SxProps } from '@mui/system';
 
@@ -44,6 +45,7 @@ interface IGrpItmIndex extends IGrpItm {
 
 export interface IItem {
   name: string;
+  group?: string;
   display_name_italian: string;
   display_name_english: string;
   description_italian: string;
@@ -65,6 +67,8 @@ export interface RowMenuProps {
   criteria?: (activeCombinations: any, current: any) => string[];
   needsSelection: Boolean;
   key: string;
+  multicol?: number[];
+  multicol_size?: number[];
   groupName: string;
   items: IItem[];
   disableable?: boolean;
@@ -112,33 +116,78 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
     event: React.ChangeEvent<HTMLInputElement>,
     key: string,
   ) => {
-    handleChange(key, event.target.value);
+    const k = event.target.value.split('|')[0];
+    const v = event.target.value.split('|')[1];
+    handleChange(k, v);
   };
 
-  const values = valueSet
-    .map(({ rows }) =>
-      rows.map(
-        ({ items }) =>
-          items.find(x => x.name === current_map[rows[0].key])?.name,
-      ),
-    )
-    .flat()
-    .filter(x => x);
+  const [values, setValues] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    let v: string[] = [];
+    for (let vs of valueSet) {
+      let ri = 0;
+      for (let row of vs.rows) {
+        ri++;
+        let vv: string | undefined = '';
+        if (row.key === 'reference_period') {
+          let vk = row.key;
+          if (current_map['aggregation_period'] === 'ten_year') {
+            vk = 'decade';
+          }
+          vv = row.items.find(x => x.name === current_map[vk])?.name;
+        } else {
+          vv = row.items.find(x => x.name === current_map[row.key])?.name;
+        }
+        if (vv) {
+          v.push(vv);
+        }
+      }
+    }
+    setValues(v);
+  }, [valueSet]);
 
   const renderSelectedValue = (mode: string = 'label') => {
-    let ret: any = valueSet.map((rs, index) =>
-      rs.rows.map((row, iindex) =>
-        row.items.find(x => x.name === current_map[row.key]),
-      ),
-    );
-    ret = ret.flat();
-    ret = ret.filter(x => x);
-    ret = ret.filter(
-      x =>
-        (x.name.indexOf('tw') >= 0 &&
-          ret.filter(y => y.name === '30yr').length > 0) ||
-        x.name.indexOf('tw') < 0,
-    );
+    let ret: any[] = [];
+    for (let vs of valueSet) {
+      let ri = 0;
+      for (let row of vs.rows) {
+        ri++;
+        let vv: any = null;
+        if (
+          current_map['aggregation_period'] === 'annual' &&
+          (row.key === 'reference_period' ||
+            row.key === 'decade' ||
+            row.key === 'time_window')
+        ) {
+          continue;
+        }
+        if (row.key === 'reference_period') {
+          let vk = row.key;
+          if (current_map['aggregation_period'] === 'ten_year') {
+            vk = 'decade';
+          }
+          vv = row.items.find(x => x.name === current_map[vk]);
+        } else {
+          vv = row.items.find(x => x.name === current_map[row.key]);
+        }
+        if (vv) {
+          ret.push(vv);
+        }
+      }
+    }
+
+    //ret = ret.filter(
+    //  x =>
+    //    ((x.name.indexOf('tw') >= 0 ||
+    //      x.name.indexOf('climate_standard') >= 0 ||
+    //      x.name.indexOf('ten') >= 0) &&
+    //      (ret.filter(y => y.name === '30yr').length > 0 ||
+    //        ret.filter(y => y.name === 'ten').length > 0)) ||
+    //    (x.name.indexOf('tw') < 0 &&
+    //      x.name.indexOf('climate_standard') < 0 &&
+    //      x.name.indexOf('ten') < 0),
+    //);
     //@ts-ignore
     ret = ret.map(x => translate(x, mode)).join(' - ');
 
@@ -146,17 +195,20 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
   };
 
   const translate = (item: IItem, mode: string = 'label') => {
+    if (!item) return '';
+
+    const isItalian = i18n.language.startsWith('it');
+
     if (mode === 'label') {
-      if (i18n.language === 'it') return item.display_name_italian;
-      else return item.display_name_english;
+      return isItalian ? item.display_name_italian : item.display_name_english;
     } else {
-      if (i18n.language === 'it') return item.description_italian;
-      else return item.description_english;
+      return isItalian ? item.description_italian : item.description_english;
     }
   };
 
   const getFieldsByCriteria = (row, setting, current) => {
     if (JSON.stringify(setting) === JSON.stringify({})) {
+      if (row.default) return row.default;
       return row.items.map(x => x.name);
     }
     const r = row.criteria(setting, current);
@@ -239,17 +291,25 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                     </>
                   )}
                   <RadioGroup
-                    sx={GroupMenuStyle}
+                    sx={(!isMobile && row.multicol) ? MulticolGroupMenuStyle : GroupMenuStyle}
                     aria-labelledby={`${row.key}-radio-group-label`}
                     onChange={event => {
                       handleChangeRadioGroup(event, row.key);
                     }}
                   >
-                    {row.items.map(item => {
+                    {row.items.map((item, index) => {
                       return (
                         <MenuItem
                           key={item.name}
                           disableGutters
+                          sx={{
+                            marginBottom: (!isMobile && row.multicol?.includes(index + 1))
+                              ? //@ts-ignore
+                              row.multicol_size[
+                                row.multicol?.indexOf(index + 1)
+                              ].toString() + 'px':isMobile?"30px"
+                              : '0',
+                          }}
                           disabled={
                             row.disableable &&
                             getFieldsByCriteria(
@@ -265,16 +325,19 @@ export function MultiRadioSelect(props: MultiRadioSelectProps) {
                                 : ''
                               }`}
                             //See Sorting fields note.
-                            value={item.name}
+                            value={`${item.group}|${item.name}`}
                             control={<Radio />}
-                            checked={item.name === current_map[row.key]}
+                            //@ts-ignore
+                            checked={item.name === current_map[item.group]}
                             label={
                               <Box sx={MenuLabelStyle}>
                                 <span aria-label={translate(item, 'label')}>
                                   {translate(item, 'label')}
                                 </span>
                                 {isMobile ? (
-                                  <Typography variant={'caption'}>
+                                  <Typography variant={'caption'} sx={{
+   "line-height": "1",
+    "margin-top": "-8px"}}>
                                     {translate(item, 'description')}
                                   </Typography>
                                 ) : (

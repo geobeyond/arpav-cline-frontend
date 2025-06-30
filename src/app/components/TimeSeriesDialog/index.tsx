@@ -11,6 +11,7 @@ import {
   TitleTSStyle,
 } from './styles';
 import TSDataContainer from './TSDataContainer';
+import TSDataContainerHistoric from './TSDataContainerHistoric';
 import { iCityItem } from '../../pages/MapPage/slice/types';
 import { DownloadForm } from './DownloadForm';
 import { selectMap } from '../../pages/MapPage/slice/selectors';
@@ -22,6 +23,8 @@ export interface TimeSeriesDialogProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   currentLayer: any;
   currentMap: any;
+  mode: string;
+  map_data: string;
 }
 
 export interface TimeRangeProps {
@@ -36,6 +39,8 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
     selectedPoint,
     currentLayer,
     currentMap,
+    mode,
+    map_data,
   } = props;
   const latLng = selectedPoint
     ? new LatLng(selectedPoint.latlng.lat, selectedPoint.latlng.lng)
@@ -53,8 +58,8 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
       currentMap.climatological_model === 'model_ensemble'
         ? 'model_ensemble'
         : currentMap.climatological_model,
-    tsSmoothing: 'MOVING_AVERAGE_11_YEARS',
-    sensorSmoothing: 'NO_SMOOTHING',
+    tsSmoothing: 'moving_average_11_years',
+    sensorSmoothing: 'no_smoothing',
     uncertainty: true,
   });
   const timeRange = useRef<TimeRangeProps | null>();
@@ -113,7 +118,11 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         <Grid xs={1} />
         <Grid xs={22}>
           <Typography variant={'h6'} sx={TitleTSStyle}>
-            {t('app.header.timeseries')}
+            {t('app.header.acronymMeaning')} -{' '}
+            {map_data === 'forecast'
+              ? t('app.index.sections.proj')
+              : t('app.index.sections.hist')}
+            : {t('app.header.timeseries')}
           </Typography>
         </Grid>
         <Grid xs={1} sx={CloseIconContStyle}>
@@ -128,10 +137,28 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         </Grid>
         <Grid xs={1} />
         <Grid xs={22}>
-          {latLng && (
+          {latLng && map_data === 'forecast' && (
             <TSDataContainer
               latLng={latLng}
               setIds={setIds}
+              mode={mode}
+              map_data={map_data}
+              setTimeRange={setTimeRange}
+              place={place}
+              setToDownload={setToDownload}
+              setFilters={setFilters}
+              currentLayer={currentLayer}
+              currentMap={currentMap}
+              setSeriesFilter={setSeriesFilter}
+              setFilledSeries={setFilledSeries}
+            />
+          )}
+          {latLng && map_data !== 'forecast' && (
+            <TSDataContainerHistoric
+              latLng={latLng}
+              setIds={setIds}
+              mode={mode}
+              map_data={map_data}
               setTimeRange={setTimeRange}
               place={place}
               setToDownload={setToDownload}
@@ -145,6 +172,7 @@ const TimeSeriesDialog = (props: TimeSeriesDialogProps) => {
         </Grid>
         <Grid xs={1} />
         <DownloadForm
+          mode={map_data}
           setOpen={setOpen}
           latLng={latLng}
           ids={ids}

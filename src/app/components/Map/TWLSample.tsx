@@ -29,6 +29,25 @@ export const TWLSample = (props: any) => {
   const opacity = props.opacity;
   const setCurrentYear = props.setCurrentYear;
 
+  const mode = props.mode;
+  const data = props.data;
+  const currentMap = props.currentMap;
+  const [isSh, setIsSh] = useState(false);
+  const setCY = yr => {
+    localStorage.setItem('currentYear', yr.toString());
+  };
+
+  const getCY = () => {
+    const cy = localStorage.getItem('currentYear');
+    if (cy) {
+      return cy;
+    } else {
+      return 0;
+    }
+  };
+
+  const [yearSet, setYearSet] = useState(false);
+
   const [tLayer, setTLayer] = useState<any>();
   const getMethods = obj =>
     Object.getOwnPropertyNames(obj).filter(
@@ -36,37 +55,115 @@ export const TWLSample = (props: any) => {
     );
 
   useEffect(() => {
+    const url = new URL(window.location.href);
+    if (
+      url.searchParams.has('op') &&
+      url.searchParams.get('op') === 'screenshot'
+    ) {
+      setIsSh(true);
+      if (url.searchParams.has('year')) {
+        const y = url.searchParams.get('year');
+        if (y) {
+          setTimeout(() => {
+            setCurrYear(parseInt(y), data);
+          }, 1250);
+        }
+      }
+    }
+  }, [tLayer]);
+
+  const setCurrYear = (yr, data = 'forecast') => {
+    const date = new Date();
+    if (
+      getCY() !== (yr + (data === 'forecast' ? 0 : 1)).toString() ||
+      getCY() !== yr.toString()
+    ) {
+      setTimeout(() => {
+        console.log('setting current year from Leaflet Timedmension:', yr);
+        date.setFullYear(yr + (data === 'forecast' ? 0 : 1));
+        setCurrentYear(yr);
+        setCY(yr);
+        setYearSet(true);
+        //@ts-ignore
+        //context.map.timeDimension.setCurrentTime(date.getTime());
+
+        let url = new URL(window.location.href);
+        if (url.searchParams.has('year')) {
+          url.searchParams.set('year', yr.toString());
+        } else {
+          url.searchParams.append('year', yr.toString());
+        }
+        console.log('setting history to', url.toString());
+        window.history.pushState(null, '', url.toString());
+      }, 50);
+    }
+  };
+
+  useEffect(() => {
     if (lyr && show) {
       const map = context.map;
-      // @ts-ignore
-      map.timeDimension.on('timeloading', data => {
-        let dt = new Date(+data.time).getFullYear();
-        setCurrentYear(dt);
+      const url = new URL(window.location.href);
+      if (
+        url.searchParams.has('op') &&
+        url.searchParams.get('op') === 'screenshot'
+      ) {
+        setIsSh(true);
+        if (url.searchParams.has('year')) {
+          const y = url.searchParams.get('year');
+          if (y) {
+            setTimeout(() => {
+              setCurrYear(parseInt(y), mode);
+            }, 1250);
+          }
+        }
+      }
 
-        //setTimeout(() => {
-        //  let layers = document.getElementsByClassName('leaflet-layer');
-        //  let tx = false;
-        //  //@ts-ignore
-        //  for (const t of layers) {
-        //    if (t.style.display === 'none') {
-        //      tx = true;
-        //    }
-        //  }
-//
-        //  if (tx) {
-        //    let first = true;
-        //    //@ts-ignore
-        //    for (const t of layers) {
-        //      if (t.style['z-index'] === '500') {
-        //        if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
-        //          t.style.display = 'block';
-        //        } else {
-        //          t.style.display = 'none';
-        //        }
-        //      }
-        //    }
-        //  }
-        //}, 250);
+      // @ts-ignore
+      map.timeDimension.on('timeloading', cdata => {
+        const url = new URL(window.location.href);
+        if (
+          url.searchParams.has('op') &&
+          url.searchParams.get('op') === 'screenshot'
+        ) {
+          setIsSh(true);
+          if (url.searchParams.has('year')) {
+            const y = url.searchParams.get('year');
+            if (y) {
+              setTimeout(() => {
+                setCurrYear(parseInt(y), mode);
+              }, 1250);
+            }
+          }
+        } else {
+          if (!yearSet) {
+            let dt = new Date(+cdata.time).getFullYear();
+            setCurrYear(dt, data);
+          }
+          //setTimeout(() => {
+          //  let layers = document.getElementsByClassName('leaflet-layer');
+          //  let tx = false;
+          //  //@ts-ignore
+          //  for (const t of layers) {
+          //    if (t.style.display === 'none') {
+          //      tx = true;
+          //    }
+          //  }
+          //
+          //  if (tx) {
+          //    let first = true;
+          //    //@ts-ignore
+          //    for (const t of layers) {
+          //      if (t.style['z-index'] === '500') {
+          //        if (t.innerHTML.indexOf('time=' + (dt - 1).toString()) >= 0) {
+          //          t.style.display = 'block';
+          //        } else {
+          //          t.style.display = 'none';
+          //        }
+          //      }
+          //    }
+          //  }
+          //}, 250);
+        }
       });
       // @ts-ignore
       //if (!map.setupFrontLayer) map.setupFrontLayer = setupFrontLayer;
@@ -98,7 +195,7 @@ export const TWLSample = (props: any) => {
           attribution:
             '&copy; <a target="_blank" rel="noopener" href="/data">ARPAV - Arpa FVG</a>',
         };
-        const tlUrl = `${BACKEND_WMS_BASE_URL}/${selected_map_path}`;
+        const tlUrl = selected_map_path; //`${BACKEND_WMS_BASE_URL}/${selected_map_path}`;
         // @ts-ignore
         const wmsLayer = new TileLayer.WMS(tlUrl, {
           ...params,
@@ -188,20 +285,41 @@ export const TWLSample = (props: any) => {
             cacheBackward: 0,
             cacheForward: 0,
           });
-          if (tdWmsLayer2) {
+
+          if (currentMap === 'annual') {
             setLayer(tdWmsLayer2);
-            try {
-              // @ts-ignore
-              map._controlContainer.getElementsByClassName(
-                'leaflet-bar-timecontrol',
-              )[0].style.display = 'flex';
-              // @ts-ignore
-              map._controlContainer.getElementsByClassName(
-                'leaflet-time-info',
-              )[0].style.display = 'flex';
-              setTimestatus('flex');
-            } catch (e) {
-              // console.log(e)
+            if (!isSh) {
+              setTimeout(() => {
+                try {
+                  // @ts-ignore
+                  map._controlContainer.getElementsByClassName(
+                    'leaflet-bar-timecontrol',
+                  )[0].style.display = 'flex';
+                  // @ts-ignore
+                  map._controlContainer.getElementsByClassName(
+                    'leaflet-time-info',
+                  )[0].style.display = 'flex';
+                  setTimestatus('flex');
+                } catch (e) {
+                  // console.log(e)
+                }
+              }, 250);
+            } else {
+              setTimeout(() => {
+                try {
+                  // @ts-ignore
+                  map._controlContainer.getElementsByClassName(
+                    'leaflet-bar-timecontrol',
+                  )[0].style.display = 'none';
+                  // @ts-ignore
+                  map._controlContainer.getElementsByClassName(
+                    'leaflet-time-info',
+                  )[0].style.display = 'none';
+                  setTimestatus('none');
+                } catch (e) {
+                  // console.log(e)
+                }
+              }, 250);
             }
             layer.current = tdWmsLayer2;
             currentLayer = tdWmsLayer2;
@@ -210,26 +328,27 @@ export const TWLSample = (props: any) => {
           }
         } else {
           setLayer(wmsLayer);
-          try {
-            // @ts-ignore
-            map._controlContainer.getElementsByClassName(
-              'leaflet-bar-timecontrol',
-            )[0].style.display = 'none';
-            // @ts-ignore
-            map._controlContainer.getElementsByClassName(
-              'leaflet-time-info',
-            )[0].style.display = 'none';
-            setTimestatus('none');
-          } catch (e) {
-            // console.log(e)
-          }
+          setTimeout(() => {
+            try {
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-bar-timecontrol',
+              )[0].style.display = 'none';
+              // @ts-ignore
+              map._controlContainer.getElementsByClassName(
+                'leaflet-time-info',
+              )[0].style.display = 'none';
+              setTimestatus('none');
+            } catch (e) {
+              // console.log(e)
+            }
+          }, 250);
           layer.current = wmsLayer;
           currentLayer = wmsLayer;
           setTLayer(wmsLayer);
           //}
           map.addLayer(wmsLayer);
         }
-
 
         return () => {
           map.removeLayer(currentLayer);
@@ -245,6 +364,8 @@ export const TWLSample = (props: any) => {
     opacity,
     show,
     style,
+    currentMap,
+    isSh,
   ]);
 
   return null;

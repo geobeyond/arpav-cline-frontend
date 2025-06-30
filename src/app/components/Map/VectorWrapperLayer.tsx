@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLeafletContext, withPane } from '@react-leaflet/core';
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet.vectorgrid';
-import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants'
+import { BACKEND_VECTOR_TILES_URL } from '../../../utils/constants';
 
 import { Button, Paper, Box, IconButton, Typography } from '@mui/material';
 import { MapPopup } from '../MapSearch';
@@ -14,11 +14,19 @@ import { PopupStyle } from './styles';
 export const VectorWrapperLayer = (props: any) => {
   const currentTimeSerie = props.currentTimeserie;
   const zIndex = props.zIndex;
+  const data = props.data;
   const [refReady, setRefReady] = useState(false);
   let popupRef: any = useRef();
 
-  const { selected_map } = useSelector((state: any) => state.map);
-  const { selectCallback, selectedPoint, openCharts, unit, precision } = props;
+  const {
+    selectCallback,
+    selectedPoint,
+    openCharts,
+    unit,
+    precision,
+    mode,
+    ap,
+  } = props;
   const map = useMap();
   const context = useLeafletContext();
 
@@ -92,26 +100,12 @@ export const VectorWrapperLayer = (props: any) => {
             } catch (ex) {
               console.log(ex);
             }
-          }, 550);
+          }, 500);
           //}
         }
       });
     map.addLayer(_vectorLayer);
   }, []);
-
-  useEffect(() => {
-    if (
-      currentTimeSerie === undefined ||
-      currentTimeSerie?.values === undefined ||
-      currentTimeSerie?.values?.length === 0
-    ) {
-      try {
-        popupRef.current.closePopup();
-      } catch (ex) {
-        console.log(ex);
-      }
-    }
-  }, [currentTimeSerie]);
 
   // console.log(context.map.latLngToLayerPoint(selectedPoint.latlng))
   // const [selected, setSelected] = useState<any>(null);
@@ -128,11 +122,14 @@ export const VectorWrapperLayer = (props: any) => {
           <Popup>
             <Box sx={PopupStyle}>
               <MapPopup
+                mode={mode}
+                data={data}
                 openCharts={openCharts}
                 value={selectedPoint}
                 currentTimeserie={currentTimeSerie}
                 unit={unit}
                 precision={precision}
+                ap={ap}
               ></MapPopup>
             </Box>
           </Popup>

@@ -33,6 +33,8 @@ import { RestartAlt } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
 import { RequestApi } from '../../Services';
+import { useSearchParams } from 'react-router-dom';
+import { isNullOrUndefined } from 'util';
 
 export interface MapSearchProps {
   className?: string;
@@ -53,6 +55,9 @@ export interface MapPopupProps {
   currentTimeserie: any;
   unit: string;
   precision: number;
+  mode?: string;
+  data?: string;
+  ap?: string;
 }
 
 export const ValueRenderer = ({ time, value, unit }) => {
@@ -86,8 +91,8 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
     vectorLayer,
     customClick,
   } = props;
+  const [cities, setCities] = useState<any>([]);
   const api = RequestApi.getInstance();
-  const cities = api.getCities();
   const map = useMap();
   const context = useLeafletContext();
   const { t, i18n } = useTranslation();
@@ -95,7 +100,27 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
 
   const currCity = useRef<string | null>();
 
+  useEffect(() => {
+    api.getCities(setCities);
+  }, [setCities]);
+
   const onChange = (event, value) => {
+    let lastCitiess = localStorage.getItem('lastCities');
+    if (lastCitiess) {
+      let lastCities = JSON.parse(lastCitiess);
+      if (lastCities) {
+        if (lastCities.find(x => x.label === value.label)) {
+          lastCities = lastCities.filter(x => x.label !== value.label);
+        }
+        lastCities.unshift(value);
+      } else {
+        lastCities = [value];
+      }
+      lastCities = lastCities.slice(0, 3);
+      localStorage.setItem('lastCities', JSON.stringify(lastCities));
+    } else {
+      localStorage.setItem('lastCities', JSON.stringify([value]));
+    }
     console.log('Ricerca per comune', event, value);
     typeof setPoint === 'function' && setPoint(value);
     if (!value) {
@@ -198,7 +223,7 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
       const position = api
         .findMunicipality(value?.latlng.lat, value?.latlng.lng)
         .then((geoj: any) => {
-          if (geoj.features.length > 0) {
+          if (geoj?.features?.length > 0) {
             if (value) {
               value.name = geoj.features[0].properties.name;
               value.label = geoj.features[0].properties.name;
@@ -213,30 +238,36 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
   // @ts-ignore
   return (
     <Box component="form" className={className} sx={MapSearchContainerStyle}>
-      <Box sx={MapSearchFirstRowStyle}>
-        <Autocomplete
-          onKeyPress={e => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
+      {cities?.length > 0 ? (
+        <Box sx={MapSearchFirstRowStyle}>
+          <Autocomplete
+            onKeyPress={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
+            size={'small'}
+            // disablePortal
+            options={cities}
+            sx={AutocompleteSyle}
+            renderInput={params => (
+              <TextField {...params} label="" placeholder={t('app.search')} />
+            )}
+            onChange={onChange}
+            value={value}
+            isOptionEqualToValue={(option, value) =>
+              option?.label === value?.label
             }
-          }}
-          size={'small'}
-          // disablePortal
-          options={cities}
-          sx={AutocompleteSyle}
-          renderInput={params => (
-            <TextField {...params} label="" placeholder="Ricerca per comune" />
-          )}
-          onChange={onChange}
-          value={value}
-          isOptionEqualToValue={(option, value) => option.label === value.label}
-          getOptionLabel={option =>
-            option.name ??
-            option.label ??
-            localStorage.getItem('currentCityLabel')
-          }
-        />
-      </Box>
+            getOptionLabel={option =>
+              option?.name ??
+              option?.label ??
+              localStorage.getItem('currentCityLabel')
+            }
+          />
+        </Box>
+      ) : (
+        <></>
+      )}
 
       <Box sx={MapSearchSecondRowStyle}>
         <TextField
@@ -253,23 +284,29 @@ export const MapSearch: React.FunctionComponent<MapSearchProps> = props => {
           InputProps={{
             endAdornment: (
               <>
-                <IconButton edge="end" onClick={searchPoint}>
-                  <SearchIcon fontSize={'small'} color={'secondary'} />
-                </IconButton>
-                <IconButton
-                  edge="end"
-                  onClick={() =>
-                    context.map.flyTo(
-                      [value.latlng.lat, value.latlng.lng],
-                      context.map.getZoom(),
-                    )
-                  }
-                >
-                  <ZoomInMapIcon fontSize={'small'} color={'secondary'} />
-                </IconButton>
-                <IconButton edge="end" onClick={resetMap}>
-                  <RefreshIcon fontSize={'small'} color={'secondary'} />
-                </IconButton>
+                <Tooltip title="cerca">
+                  <IconButton edge="end" onClick={searchPoint}>
+                    <SearchIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="centra">
+                  <IconButton
+                    edge="end"
+                    onClick={() =>
+                      context.map.flyTo(
+                        [value.latlng.lat, value.latlng.lng],
+                        context.map.getZoom(),
+                      )
+                    }
+                  >
+                    <ZoomInMapIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="vista iniziale">
+                  <IconButton edge="end" onClick={resetMap}>
+                    <RefreshIcon fontSize={'small'} color={'secondary'} />
+                  </IconButton>
+                </Tooltip>
               </>
             ),
           }}
@@ -297,7 +334,7 @@ export const CompactValueRenderer = ({ time, value, unit, precision }) => {
           ? value
             ?.toFixed(precision)
             .replaceAll('.', i18n.language === 'it' ? ',' : '.')
-          : '-'}
+          : '-'}{' '}
         {unit}
       </div>
       <span style={{ flex: '1 1 1px' }}></span>
@@ -314,8 +351,11 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
     unit,
     precision,
     currentTimeserie,
+    mode,
+    data,
+    ap,
   } = props;
-  const { cities, selected_map } = useSelector((state: any) => state.map);
+  //const { cities, selected_map } = useSelector((state: any) => state.map);
 
   const [timeserie, setTimeSerie] = useState<any[]>([]);
   const map = useMap();
@@ -328,56 +368,130 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
   const [otsIndex, setOTsIndex] = useState(0);
 
   let tsindex = 0;
-  const baseYear = 1976;
+  const [baseYear, setBaseYear] = useState<number>();
 
-  let yr = 2035;
+  const [yr, setYr] = useState<number>(
+    data === 'forecast' ? 2035 : new Date().getFullYear() - 1,
+  );
   let oyr = 0;
   let otsindex = 0;
 
+  const [isObservation, setObservation] = useState<boolean>(false);
+
+  const doSetBaseYear = yr => {
+    localStorage.setItem('baseYear', yr.toString());
+    setBaseYear(yr);
+  };
+
+  const getBaseYear = () => {
+    const by = localStorage.getItem('baseYear');
+    if (by) {
+      return parseInt(by);
+    } else {
+      return data === 'forecast' ? 1976 : 1984;
+    }
+  };
+
   useEffect(() => {
     if (currentTimeserie && currentTimeserie.values) {
+      if (currentTimeserie.info && currentTimeserie.info.dataset_type) {
+        setObservation(currentTimeserie.info.dataset_type === 'observation');
+      }
       setTimeSerie([...currentTimeserie.values]);
+      let fy = parseInt(currentTimeserie.values[0].datetime.split('-')[0]);
+      doSetBaseYear(fy);
+    } else {
+      setObservation(false);
+      setTimeSerie([]);
+      setTt(NaN);
+      setTv(0);
+      doSetBaseYear(data === 'forecast' ? 1976 : 1984);
     }
+  }, [currentTimeserie]);
+
+  const setCY = yr => {
+    localStorage.setItem('currentYear', yr.toString());
+  };
+
+  const getCY = () => {
+    const cy = localStorage.getItem('currentYear');
+    if (cy) {
+      return cy;
+    } else {
+      return 0;
+    }
+  };
+
+  useEffect(() => {
     let att = yr;
     let atv = 0;
-    let yrfield = document.getElementsByClassName('timecontrol-date');
-    let yrstring = '2035';
-    if (yrfield.length > 0) {
-      yrstring = yrfield[0].textContent!;
-    }
-    try {
-      yr = parseInt(yrstring, 10);
-      if (isNaN(yr)) yr = 2035;
-    } catch (ex) {
-      yr = 2035;
+    let url = new URL(window.location.href);
+    let yrstring: string | null | undefined = null;
+    let cyr = 0;
+
+    //if (yrstring === null || yrstring === undefined) {
+    yrstring = localStorage.getItem('currentYear');
+    let yrparam = url.searchParams.get('year');
+    //}
+
+    if (!yrstring) {
+      yrstring = yrparam;
     }
 
-    if (oyr !== yr) {
-      oyr = yr;
+    try {
+      if (yrstring) {
+        cyr = parseInt(yrstring, 10);
+        if (isNaN(yr))
+          cyr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+      }
+    } catch (ex) {
+      cyr = data === 'forecast' ? 2035 : new Date().getFullYear() - 1;
+    }
+    setYr(cyr);
+
+    let ctsindex = tsindex;
+
+    if (oyr !== cyr) {
+      oyr = cyr;
 
       if (timeserie) {
         if (timeserie.length > 0) {
+          doSetBaseYear(parseInt(timeserie[0].datetime.split('-')[0], 10));
           if (timeserie.length > 1) {
-            tsindex = yr - baseYear;
+            let found_year = timeserie.filter(
+              x => x.datetime.split('-')[0] === cyr.toString(),
+            );
+            if (found_year.length > 0) {
+              ctsindex = timeserie.indexOf(found_year[0]);
+
+              //@ts-ignore
+              //map.timeDimension.setCurrentTime(
+              //  new Date(found_year[0].datetime).getTime(),
+              //);
+            } else {
+              ctsindex = 0;
+            }
+            //ctsindex = yr - baseYear;
           } else {
-            tsindex = 0;
+            ctsindex = 0;
           }
-          setTsIndex(tsindex);
+          setTsIndex(ctsindex);
         }
       }
     }
-  });
+  }, [timeserie, baseYear]);
 
   useEffect(() => {
-    // @ts-ignore
+    //@ts-ignore
     map.timeDimension.on('timeloading', data => {
-      let dt = new Date(+data.time).getFullYear();
+      console.log('timeloading', data);
+      let dt = new Date(+data.time).getFullYear() + (isObservation ? 1 : 0);
       console.log(dt);
       setOTsIndex(tsIndex);
-      const index = dt - baseYear;
+      const index = dt - getBaseYear();
       setTsIndex(index);
     });
-  });
+  }, []);
 
   useEffect(() => {
     let ctt = timeserie[tsIndex]?.datetime;
@@ -389,14 +503,15 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {timeserie && (
-        <CompactValueRenderer
-          time={tt}
-          value={tv}
-          unit={unit}
-          precision={precision}
-        />
-      )}
+      {timeserie &&
+        (!(mode === 'simple' && data === 'forecast' && ap === 'annual')) && (
+          <CompactValueRenderer
+            time={tt}
+            value={tv}
+            unit={unit}
+            precision={precision}
+          />
+        )}
       <span style={{ flex: '1 1 1px' }}></span>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <span style={{ flex: '1 1 1px' }}></span>
@@ -420,6 +535,9 @@ export const MapPopup: React.FunctionComponent<MapPopupProps> = props => {
         </Tooltip>
         <span style={{ flex: '1 1 1px' }}></span>
       </div>
+      {mode === 'simple' && data !== 'past' && (
+        <span style={{ flex: '1 1 1px' }}></span>
+      )}
     </div>
   );
 };

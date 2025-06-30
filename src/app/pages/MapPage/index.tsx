@@ -34,6 +34,7 @@ import { saveAs } from 'file-saver';
 import useCustomSnackbar from '../../../utils/useCustomSnackbar';
 import HeaderBar from '../../components/HeaderBar';
 import { RequestApi } from 'app/Services';
+import { url } from 'inspector';
 
 interface MapPageProps {
   map_mode: string;
@@ -48,7 +49,19 @@ const defaultMap: any = {
   time_window: 'tw1',
   aggregation_period: '30yr',
   year_period: 'winter',
+  archive: 'forecast',
+  data_series: 'no',
+};
 
+const defaultMapHistorical: any = {
+  climatological_variable: 'tas',
+  measure: 'absolute',
+  reference_period: 'climate_standard_normal_1991_2020',
+  aggregation_period: '30yr',
+  decade: 'decade_2011_2020',
+  year_period: 'all_year',
+  archive: 'historical',
+  year: new Date().getFullYear() - 1,
   data_series: 'no',
 };
 
@@ -67,7 +80,8 @@ const modalStyle = {
 export function MapPage(props: MapPageProps) {
   const map_mode = props.map_mode;
   const map_data = props.map_data;
-  if (map_data === 'future') {
+  console.log(map_mode, map_data);
+  if (map_data === 'forecast') {
     defaultMap['archive'] = 'forecast';
   } else {
     defaultMap['archive'] = 'historical';
@@ -94,6 +108,8 @@ export function MapPage(props: MapPageProps) {
   const [mapScreen, setMapScreen] = useState<any>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
   const api = new RequestApi();
+
+  const [caption, setCaption] = useState('');
 
   const [currentLayer, setCurrentLayer] = useState('');
   const [currentLayerConfig, setCurrentLayerConfig] = useState({});
@@ -124,26 +140,37 @@ export function MapPage(props: MapPageProps) {
   const params = Object.fromEntries(searchParams);
 
   let ncmap = { ...defaultMap, ...params };
-  const [currentMap, setCurrentMap] = useState({
-    ...defaultMap,
-    ...params,
-  });
+  if (map_data === 'history') {
+    ncmap = { ...defaultMapHistorical, ...params };
+  }
+  const [currentMap, setCurrentMap] = useState(
+    map_data === 'forecast'
+      ? { ...defaultMap, ...params }
+      : {
+        ...defaultMapHistorical,
+        ...params,
+      },
+  );
 
   const joinNames = (names: string[]) => names.filter(name => name).join(' - ');
 
   const labelFor = (itm: string) => {
     const configs = localStorage.getItem('configs');
-    const rcps = configs ? JSON.parse(configs) : {};
-    const labelsf = rcps.map((config: any) =>
-      config.allowed_values.map(x => [
-        x.name,
-        i18n.language === 'it'
-          ? x.display_name_italian
-          : x.display_name_english,
-      ]),
-    );
-    const labels = Object.fromEntries(labelsf.flat());
-    return labels[itm];
+    const rcps = configs ? JSON.parse(configs) : [];
+    try {
+      const labelsf = rcps.map((config: any) =>
+        config.allowed_values.map(x => [
+          x.name,
+          i18n.language === 'it'
+            ? x.display_name_italian
+            : x.display_name_english,
+        ]),
+      );
+      const labels = Object.fromEntries(labelsf.flat());
+      return labels[itm];
+    } catch (ex) {
+      return '';
+    }
   };
 
   const findValueName = (key: string, listKey: string) => {
@@ -168,7 +195,7 @@ export function MapPage(props: MapPageProps) {
 
   useEffect(() => {
     const all_meas = ['absolute', 'anomaly'];
-    const all_pers = ['annual', '30yr'];
+    const all_pers = ['annual', '30yr', 'ten_year'];
     const all_indx = [
       'tas',
       'cdds',
@@ -183,8 +210,12 @@ export function MapPage(props: MapPageProps) {
     ];
 
     const changeables = ['measure', 'year_period', 'time_window'];
-    setCurrentMap({ ...searchParams });
-    api.getAttributes().then(x => {
+    //@ts-ignore
+    if (searchParams.length > 2) {
+      setCurrentMap({ ...searchParams });
+    }
+    api.getAttributes(map_data, map_mode).then(x => {
+      //@ts-ignore
       setMenus(x.items);
       let combos = x.combinations.reduce((prev, cur) => {
         for (let k of Object.keys(defaultMap)) {
@@ -195,9 +226,9 @@ export function MapPage(props: MapPageProps) {
             }
           }
         }
-        const kk = cur.variable + '::' + cur.aggregation_period;
-        const km = cur.variable + '::' + cur.measure;
-        const ki = cur.variable;
+        const kk = cur.climatological_variable + '::' + cur.aggregation_period;
+        const km = cur.climatological_variable + '::' + cur.measure;
+        const ki = cur.climatological_variable;
         cur.kk = kk;
         cur.ki = ki;
         if (ki in prev) {
@@ -213,7 +244,7 @@ export function MapPage(props: MapPageProps) {
         } else {
           prev = {
             ...prev,
-            [cur.variable + '::' + cur.aggregation_period]: {
+            [cur.climatological_variable + '::' + cur.aggregation_period]: {
               [cur.measure]: cur.other_parameters,
             },
           };
@@ -223,7 +254,7 @@ export function MapPage(props: MapPageProps) {
         } else {
           prev = {
             ...prev,
-            [cur.variable + '::' + cur.measure]: {
+            [cur.climatological_variable + '::' + cur.measure]: {
               [cur.aggregation_period]: cur.other_parameters,
             },
           };
@@ -259,7 +290,13 @@ export function MapPage(props: MapPageProps) {
       }
       setCombinations(combos);
     });
-    setCurrentMap({ ...searchParams });
+    //@ts-ignore
+    if (searchParams.length > 2) {
+      setCurrentMap({ ...searchParams });
+    }
+    if (searchParams.get('plotPopup')) {
+      setTSOpen(true);
+    }
 
     //if(searchParams.get('lat') && searchParams.get('lng')){
     //  setTimeout(()=>{
@@ -293,31 +330,102 @@ export function MapPage(props: MapPageProps) {
     console.log('currentMap', currentMap);
 
     try {
-      api
-        .getLayer(
-          currentMap.climatological_variable,
-          currentMap.climatological_model,
-          currentMap.scenario,
-          currentMap.measure,
-          currentMap.time_window,
-          currentMap.aggregation_period,
-          currentMap.year_period,
-        )
-        .then((x: any) => {
-          console.log(x);
-          setCurrentMap(currentMap);
-          setFoundLayers(x.items.length);
-          if (x.items.length === 1) {
-            api.getLayerConf(x.items[0]).then(conf => {
-              setCurrentLayer(x.items[0].identifier);
-              setCurrentLayerConfig(conf);
-              setLoading(false);
-            });
-          } else {
-          }
-        });
+      if (map_data === 'forecast') {
+        api
+          .getLayer(
+            currentMap.climatological_variable,
+            currentMap.climatological_model,
+            currentMap.scenario,
+            currentMap.measure,
+            currentMap.aggregation_period.indexOf('ten') >= 0
+              ? currentMap.decade
+              : currentMap.time_window,
+            currentMap.aggregation_period,
+            currentMap.year_period,
+          )
+          .then((x: any) => {
+            console.log(x);
+            setCurrentMap(currentMap);
+            setFoundLayers(x.items.length);
+            if (x.items.length === 1) {
+              api.getLayerConf(x.items[0]).then(conf => {
+                setCurrentLayer(x.items[0].identifier);
+                setCurrentLayerConfig(conf);
+                setLoading(false);
+              });
+            } else {
+            }
+          });
+      } else {
+        api
+          .getHistoricLayer(
+            currentMap.climatological_variable,
+            currentMap.measure,
+            currentMap.aggregation_period === '30yr'
+              ? currentMap.reference_period
+              : currentMap.decade,
+            currentMap.aggregation_period,
+            currentMap.year_period,
+          )
+          .then((x: any) => {
+            console.log(x);
+            setCurrentMap(currentMap);
+            setFoundLayers(x.items.length);
+            if (x.items.length === 1) {
+              api.getLayerConf(x.items[0]).then(conf => {
+                setCurrentLayer(x.items[0].identifier);
+                setCurrentLayerConfig(conf);
+                setLoading(false);
+              });
+            } else {
+            }
+          });
+      }
     } catch (e) {
       console.log(e);
+    }
+
+    if ('lat' in currentMap) {
+      setTimeout(() => {
+        // @ts-ignore
+        const found: any = Object.values(mapRef.current?._layers).find(
+          // @ts-ignore
+          x => x._url && x._url.includes('municipalities'),
+        );
+        api
+          .findMunicipality(currentMap.lat, currentMap.lng)
+          .then((geoj: any) => {
+            setSelectedPoint({
+              name: geoj.features[0].properties.name,
+              value: geoj.features[0].properties.name,
+              latlng: {
+                lat: parseFloat(currentMap.lat),
+                lng: parseFloat(currentMap.lng),
+              },
+            });
+            found.setFeatureStyle(geoj.features[0].properties.name, {
+              color: '#164d36',
+              weight: 2,
+              radius: 1,
+              fill: true,
+              fillOpacity: 0,
+              opacity: 1,
+            });
+            // @ts-ignore
+            found.fire('click', {
+              // @ts-ignore
+              latlng: L.latLng([
+                parseFloat(currentMap.lat),
+                parseFloat(currentMap.lng),
+              ]),
+              // latlng: found.latlng,
+              layer: {
+                properties: geoj.features[0].properties,
+              },
+              label: geoj.features[0].properties.name,
+            });
+          });
+      }, 250);
     }
 
     //@ts-ignore
@@ -348,20 +456,17 @@ export function MapPage(props: MapPageProps) {
   }, [currentMap]);
 
   function paramsToObject(entries) {
-    const result = {}
-    for(const [key, value] of entries) { // each 'entry' is a [key, value] tuple
-      result[key] = value;
-    }
-    return result;
+    return Object.fromEntries(entries);
   }
-  
 
   useEffect(() => {
     if (currentLayer.length > 0 && selectedPoint) {
+      const lsp = new URLSearchParams(window.location.search);
       setSearchParams({
-        ...paramsToObject(sp),
+        ...paramsToObject(lsp),
         ...{ lat: selectedPoint.latlng.lat, lng: selectedPoint.latlng.lng },
       });
+
       api
         .getTimeserieV2(
           currentLayer,
@@ -377,6 +482,64 @@ export function MapPage(props: MapPageProps) {
         });
     }
   }, [selectedPoint, currentLayer]);
+
+  useEffect(() => {
+    let year = '';
+    try {
+      let url = new URL(window.location.href);
+      if (url.searchParams.has('year')) {
+        //@ts-ignore
+        year = url.searchParams.get('year');
+        localStorage.setItem('currentYear', year);
+      }
+
+      if (isNaN(parseFloat(year))) {
+        //@ts-ignore
+        year = document.getElementsByClassName('leaflet-bar-timecontrol')[0]
+          .textContent;
+      }
+
+      console.log('showing year', year);
+    } catch (e) {
+      // console.log('no year');
+    }
+    const lcaption = `${labelFor(currentMap.climatological_variable)}
+  - ${joinNames([
+      labelFor(currentMap.climatological_model),
+      labelFor(currentMap.scenario),
+    ])}
+  ${currentMap.archive !== 'forecast' ? '' : '-'} ${joinNames([
+      labelFor(currentMap.aggregation_period),
+      labelFor(currentMap.measure),
+    ])}
+    ${currentMap.time_window &&
+        currentMap.aggregation_period === '30yr' &&
+        currentMap.archive === 'forecast'
+        ? labelFor(currentMap.time_window)
+        : ''
+      }
+      
+    ${currentMap.reference_period &&
+        currentMap.aggregation_period === '30yr' &&
+        currentMap.archive !== 'forecast'
+        ? labelFor(currentMap.reference_period)
+        : ''
+      }
+      
+    ${currentMap.decade &&
+        currentMap.aggregation_period === 'ten_year' &&
+        currentMap.archive !== 'forecast'
+        ? labelFor(currentMap.decade)
+        : ''
+      }
+  - ${labelFor(currentMap.year_period)}
+  ${currentMap.aggregation_period != '30yr' && currentYear
+        ? ` - Anno ${year}`
+        : ''
+      } `; // string or function, added caption to bottom of screen
+
+    setCaption(lcaption);
+  }, [currentMap]);
 
   const PLUGIN_OPTIONS: PluginOptions = {
     cropImageByInnerWH: true, // crop blank opacity from image borders
@@ -425,42 +588,25 @@ export function MapPage(props: MapPageProps) {
 
   const handleDownloadMapImg = () => {
     const format = 'image';
+    let url = new URL(window.location.href);
+    let yrparam = url.searchParams.get('year');
     let year = '';
-    try {
+    if (yrparam) {
+      year = yrparam;
+    } else {
       year =
         currentMap.aggregation_period === 'annual' ||
           currentMap.aggregation_period === 'test'
-          ? new Date((mapRef.current as any).timeDimension?.getCurrentTime())
-            .getFullYear()
-            .toString()
+          ? year
+            ? year
+            : new Date((mapRef.current as any).timeDimension?.getCurrentTime())
+              .getFullYear()
+              .toString()
           : '';
       console.log('showing year', year);
-    } catch (e) {
-      // console.log('no year');
     }
 
     setInProgress(true);
-    const caption = `${isMobile
-        ? currentMap.climatological_variable
-        : labelFor(currentMap.climatological_variable)
-      }
-    - ${joinNames([
-        labelFor(currentMap.climatological_model),
-        labelFor(currentMap.scenario),
-      ])}
-    - ${joinNames([
-        labelFor(currentMap.aggregation_period),
-        labelFor(currentMap.measure),
-      ])}
-      ${currentMap.time_window && currentMap.aggregation_period === '30yr'
-        ? labelFor(currentMap.time_window)
-        : ''
-      }
-    - ${labelFor(currentMap.year_period)}
-    ${currentMap.aggregation_period != '30yr' && currentYear
-        ? ` - Anno ${year}`
-        : ''
-      } © ARPAV - Arpa FVG`; // string or function, added caption to bottom of screen
 
     let filename = `Screenshot ${labelFor(
       currentMap.climatological_variable,
@@ -479,31 +625,54 @@ export function MapPage(props: MapPageProps) {
       }.${
       //@ts-ignore
       navigator?.userAgentData?.platform.toLowerCase().indexOf('linux') >= 0
-        ? 'jpg'
+        ? 'png'
         : 'png'
       }`;
     filename = filename.replaceAll('_', '');
-    mapScreen
-      .takeScreen(format, {
-        captionFontSize: isMobile ? 10 : 12,
-        screenName: `${currentMap.climatological_variable}`,
-        caption: caption,
-      })
-      .then(blob => {
+
+    api
+      .downloadScreenshot(window.location.href, filename, i18n.language)
+      .then(() => {
         setInProgress(false);
-        saveAs(blob as Blob, filename);
-      })
-      .catch(e => {
-        setInProgress(false);
-        console.error(e);
       });
+    //mapScreen
+    //  .takeScreen(format, {
+    //    captionFontSize: isMobile ? 10 : 12,
+    //    screenName: `${currentMap.climatological_variable}`,
+    //    caption: caption,
+    //  })
+    //  .then(blob => {
+    //    setInProgress(false);
+    //    saveAs(blob as Blob, filename);
+    //  })
+    //  .catch(e => {
+    //    setInProgress(false);
+    //    console.error(e);
+    //  });
   };
 
   const openCharts = (latLng: LatLng) => {
     coordRef.current = latLng;
 
+    const sp = new URLSearchParams(window.location.search);
+    setSearchParams({
+      ...paramsToObject(sp),
+      ...{ plotPopup: 'true' },
+    });
+
     setTSOpen(true);
   };
+
+  useEffect(() => {
+    if (tSOpen === false) {
+      const sp = new URLSearchParams(window.location.search);
+      const p2o = paramsToObject(sp);
+      delete p2o['plotPopup'];
+      setSearchParams({
+        ...p2o,
+      });
+    }
+  }, [tSOpen]);
 
   const setPoint = (props: any) => {
     // console.log('==================== setPoint ====================');
@@ -530,20 +699,24 @@ export function MapPage(props: MapPageProps) {
           <Button onClick={closeError}>Ok</Button>
         </Box>
       </Modal>
-      <HeaderBar />
-      <MapMenuBar
-        onDownloadMapImg={handleDownloadMapImg}
-        mode={map_mode}
-        data={map_data}
-        menus={menus}
-        combinations={combinations}
-        onMenuChange={updateCurrentMap}
-        current_map={currentMap}
-        foundLayers={foundLayers}
-        setCurrentMap={setCurrentMap}
-        openError={openError}
-        inProgress={inProgress}
-      />
+      {currentMap.op !== 'screenshot' ? <HeaderBar /> : <></>}
+      {currentMap.op !== 'screenshot' ? (
+        <MapMenuBar
+          onDownloadMapImg={handleDownloadMapImg}
+          mode={map_mode}
+          data={map_data}
+          menus={menus}
+          combinations={combinations}
+          onMenuChange={updateCurrentMap}
+          current_map={currentMap}
+          foundLayers={foundLayers}
+          setCurrentMap={setCurrentMap}
+          openError={openError}
+          inProgress={inProgress}
+        />
+      ) : (
+        <></>
+      )}
 
       <Map
         onReady={handleMapReady}
@@ -556,15 +729,67 @@ export function MapPage(props: MapPageProps) {
         currentTimeserie={currentTimeSerie}
         setCurrentMap={setCurrentMap}
         setCurrentYear={setCurrentYear}
+        mode={map_mode}
+        data={map_data}
       />
 
       <TimeSeriesDialog
+        mode={map_mode}
+        map_data={map_data}
         selectedPoint={selectedPoint}
         open={tSOpen}
         setOpen={setTSOpen}
         currentLayer={currentLayerConfig}
         currentMap={currentMap}
       />
+
+      {currentMap.op !== 'screenshot' ? (
+        <></>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            color: 'white',
+            backgroundColor: 'rgb(22, 77, 54)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
+            <Typography style={{ paddingLeft: '5px' }}>{caption}</Typography>
+            <span style={{ flex: '1 1 1px' }}></span>
+            <Typography style={{ paddingRight: '5px' }}>
+              © ARPAV - ARPA FVG
+            </Typography>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
+            <Typography
+              style={{
+                fontSize: 'smaller',
+                paddingLeft: '5px',
+                paddingRight: '5px',
+                display: 'block',
+              }}
+            >
+              {t('app.map.downloadDataDialog.user.disclaimer')}:{' '}
+              {t(
+                map_data === 'forecast'
+                  ? 'app.map.downloadDataDialog.user.disclaimerText'
+                  : 'app.map.timeSeriesDialog.histWarning',
+              )}
+            </Typography>
+          </div>
+        </div>
+      )}
 
       {/*TODO Backdrop only for debug?*/}
       <Modal open={loading} sx={SpinnerStyle}>

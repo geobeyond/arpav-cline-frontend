@@ -26,7 +26,7 @@ import {
   ModalStyle,
   TitleDownloadStyle,
   ExtractionStyle,
-  BoxExtractionStyle
+  BoxExtractionStyle,
 } from './styles';
 import MapDlData from './mapDlData';
 import UserDlData from '../UserDlData/userDlData';
@@ -42,12 +42,13 @@ export interface DownloadDataDialogProps {
   configuration: any;
   menus: any;
   combinations: any;
+  mode: string;
 }
 
 const DownloadDataDialog = (props: DownloadDataDialogProps) => {
-  const { open, setOpen, configuration, menus, combinations } = props;
+  const { open, setOpen, configuration, menus, combinations, mode } = props;
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const actions = useMapSlice();
 
@@ -78,9 +79,50 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
   };
 
   const getLinks = configuration => {
-    api.getForecastData(configuration, dataSet.current).then((finds: any) => {
-      setList(finds);
-    });
+    let searchconf = { ...configuration };
+    if (mode === 'forecast') {
+      if (searchconf['aggregation_period'] === 'annual') {
+        delete searchconf['time_window'];
+      }
+      api
+        .getForecastData(searchconf, dataSet.current, i18n.language)
+        .then((finds: any) => {
+          setList(finds);
+        });
+    } else {
+      if (searchconf['aggregation_period'].indexOf('ten') >= 0) {
+        //searchconf['decade'] = searchconf['reference_period'];
+        try {
+          delete searchconf['reference_period'];
+        } catch (ex) { }
+        try {
+          delete searchconf['time_window'];
+        } catch (ex) { }
+      } else if (searchconf['aggregation_period'].indexOf('30') >= 0) {
+        //searchconf['reference_period'] = searchconf['decade'];
+        try {
+          delete searchconf['decade'];
+        } catch (ex) { }
+        try {
+          delete searchconf['time_window'];
+        } catch (ex) { }
+      } else if (searchconf['aggregation_period'].indexOf('annual') >= 0) {
+        try {
+          delete searchconf['decade'];
+        } catch (ex) { }
+        try {
+          delete searchconf['reference_period'];
+        } catch (ex) { }
+        try {
+          delete searchconf['time_window'];
+        } catch (ex) { }
+      }
+      api
+        .getHistoricalData(searchconf, dataSet.current, i18n.language)
+        .then((finds: any) => {
+          setList(finds);
+        });
+    }
   };
 
   const [downloads, setDownloads] = React.useState([]);
@@ -98,7 +140,6 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
     setDownloadUrl(url);
   };
 
-
   return (
     <>
       <Modal open={open} sx={DownloadModalStyle}>
@@ -112,7 +153,11 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           <Grid xs={1}></Grid>
           <Grid xs={26}>
             <Typography variant={'h6'} sx={TitleDownloadStyle}>
-              {t('app.header.acronymMeaning')} - Modulo scarica dati
+              {t('app.header.acronymMeaning')} -{' '}
+              {mode === 'forecast'
+                ? t('app.index.sections.proj')
+                : t('app.index.sections.hist')}
+              : {t('app.header.dataDownloadModule')}
             </Typography>
           </Grid>
           <Grid xs={1} sx={CloseIconContStyle}>
@@ -141,10 +186,12 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
                   configuration={activeConfiguration}
                   combinations={combinations}
                   setActive={setActiveConfiguration}
+                  mode={mode}
                 />
               </Grid>
               <Grid xs={26}>
                 <UserDlData
+                  mode={mode}
                   onChange={handleChange}
                   onValidityChange={userValidityHandleChange}
                 />
@@ -194,7 +241,9 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
           >
             <Grid xs={1}></Grid>
             <Grid xs={26}>
-              <Typography variant={'h6'} sx={TitleDownloadStyle}>Estrazioni scaricabili</Typography>
+              <Typography variant={'h6'} sx={TitleDownloadStyle}>
+                {t('app.map.downloadDataDialog.downloadLinks')}
+              </Typography>
             </Grid>
             <Grid xs={1} sx={CloseIconContStyle}>
               <IconButton
@@ -209,8 +258,19 @@ const DownloadDataDialog = (props: DownloadDataDialogProps) => {
             <Grid xs={28}>
               <LinkList>
                 {links.map((x: any) => (
-                  <LinkListItem className='icon-left' href={x.url}>
-                    <Icon color='primary' icon='it-chevron-right' aria-hidden />
+                  <LinkListItem
+                    className="icon-left"
+                    href={
+                      x.url +
+                      '&is_public_sector=' +
+                      dataSet.current.is_public_sector +
+                      '&entity_name=' +
+                      dataSet.current.entity_name +
+                      '&download_reason=' +
+                      dataSet.current.download_reason
+                    }
+                  >
+                    <Icon color="primary" icon="it-chevron-right" aria-hidden />
                     {x.label}
                   </LinkListItem>
                 ))}
