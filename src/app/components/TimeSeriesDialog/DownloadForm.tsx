@@ -18,7 +18,8 @@ import PapaParse from 'papaparse';
 import JSZip from 'jszip';
 
 export const DownloadForm = props => {
-  const { setOpen, latLng, ids, timeRange, data, filter, filledSeries } = props;
+  const { setOpen, latLng, ids, timeRange, data, filter, filledSeries, mode } =
+    props;
   const { t } = useTranslation();
   const api = RequestApi.getInstance();
   const dispatch = useDispatch();
@@ -45,120 +46,146 @@ export const DownloadForm = props => {
     setUserData({ ...userData, ...values });
   };
 
-  const refreshSeriesObject = async () => {
-    let opseriesObj = [
-      filter.current.uncertainty
-        ? data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp26' &&
-            x.info.climatological_model === filter.current.mainModel &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.uncertainty_type === 'lower_bound',
-        )[0]
-        : null,
-      data.current?.series?.filter(
-        x =>
-          x.info.scenario === 'rcp26' &&
-          x.info.processing_method === filter.current.tsSmoothing &&
-          x.info.climatological_model === filter.current.mainModel &&
-          !('uncertainty_type' in x.info),
-      )[0],
-      filter.current.mainModel === filter.current.secondaryModel
-        ? null
-        : data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp26' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.secondaryModel &&
-            !('uncertainty_type' in x.info),
-        )[0],
-      filter.current.uncertainty
-        ? data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp26' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.mainModel &&
-            x.info.uncertainty_type === 'upper_bound',
-        )[0]
-        : null,
-      filter.current.uncertainty
-        ? data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp45' &&
-            x.info.climatological_model === filter.current.mainModel &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.uncertainty_type === 'lower_bound',
-        )[0]
-        : null,
-      data.current?.series?.filter(
-        x =>
-          x.info.scenario === 'rcp45' &&
-          x.info.processing_method === filter.current.tsSmoothing &&
-          x.info.climatological_model === filter.current.mainModel &&
-          !('uncertainty_type' in x.info),
-      )[0],
-      filter.current.mainModel === filter.current.secondaryModel
-        ? null
-        : data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp45' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.secondaryModel &&
-            !('uncertainty_type' in x.info),
-        )[0],
-      filter.current.uncertainty
-        ? data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp45' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.mainModel &&
-            x.info.uncertainty_type === 'upper_bound',
-        )[0]
-        : null,
-      filter.current.uncertainty
-        ? data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp85' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.mainModel &&
-            x.info.uncertainty_type === 'lower_bound',
-        )[0]
-        : null,
-      data.current?.series?.filter(
-        x =>
-          x.info.scenario === 'rcp85' &&
-          x.info.processing_method === filter.current.tsSmoothing &&
-          x.info.climatological_model === filter.current.mainModel &&
-          !('uncertainty_type' in x.info),
-      )[0],
-      filter.current.mainModel === filter.current.secondaryModel
-        ? null
-        : data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp85' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.secondaryModel &&
-            !('uncertainty_type' in x.info),
-        )[0],
-      filter.current.uncertainty
-        ? data.current?.series?.filter(
-          x =>
-            x.info.scenario === 'rcp85' &&
-            x.info.processing_method === filter.current.tsSmoothing &&
-            x.info.climatological_model === filter.current.mainModel &&
-            x.info.uncertainty_type === 'upper_bound',
-        )[0]
-        : null,
-      data.current?.series?.filter(
-        x =>
-          'station' in x.info &&
-          x.info.processing_method === filter.current.sensorSmoothing,
-      )[0],
-    ];
+  const refreshSeriesObject =
+    mode === 'forecast' && data.current.series
+      ? async () => {
+        let opseriesObj = [
+          filter.current.uncertainty
+            ? data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp26' &&
+                x.info.climatological_model === filter.current.mainModel &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.dataset_type === 'forecast_lower_uncertainty',
+            )[0]
+            : null,
+          data.current.series.filter(
+            x =>
+              x.info.scenario === 'rcp26' &&
+              x.info.processing_method === filter.current.tsSmoothing &&
+              x.info.climatological_model === filter.current.mainModel &&
+              x.info.dataset_type === 'main',
+          )[0],
+          filter.current.mainModel === filter.current.secondaryModel
+            ? null
+            : data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp26' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model ===
+                filter.current.secondaryModel &&
+                x.info.dataset_type === 'main',
+            )[0],
+          filter.current.uncertainty
+            ? data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp26' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model === filter.current.mainModel &&
+                x.info.dataset_type === 'forecast_upper_uncertainty',
+            )[0]
+            : null,
+          filter.current.uncertainty
+            ? data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp45' &&
+                x.info.climatological_model === filter.current.mainModel &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.dataset_type === 'forecast_lower_uncertainty',
+            )[0]
+            : null,
+          data.current.series.filter(
+            x =>
+              x.info.scenario === 'rcp45' &&
+              x.info.processing_method === filter.current.tsSmoothing &&
+              x.info.climatological_model === filter.current.mainModel &&
+              x.info.dataset_type === 'main',
+          )[0],
+          filter.current.mainModel === filter.current.secondaryModel
+            ? null
+            : data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp45' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model ===
+                filter.current.secondaryModel &&
+                x.info.dataset_type === 'main',
+            )[0],
+          filter.current.uncertainty
+            ? data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp45' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model === filter.current.mainModel &&
+                x.info.dataset_type === 'forecast_upper_uncertainty',
+            )[0]
+            : null,
+          filter.current.uncertainty
+            ? data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp85' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model === filter.current.mainModel &&
+                x.info.dataset_type === 'forecast_lower_uncertainty',
+            )[0]
+            : null,
+          data.current.series.filter(
+            x =>
+              x.info.scenario === 'rcp85' &&
+              x.info.processing_method === filter.current.tsSmoothing &&
+              x.info.climatological_model === filter.current.mainModel &&
+              x.info.dataset_type === 'main',
+          )[0],
+          filter.current.mainModel === filter.current.secondaryModel
+            ? null
+            : data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp85' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model ===
+                filter.current.secondaryModel &&
+                x.info.dataset_type === 'main',
+            )[0],
+          filter.current.uncertainty
+            ? data.current.series.filter(
+              x =>
+                x.info.scenario === 'rcp85' &&
+                x.info.processing_method === filter.current.tsSmoothing &&
+                x.info.climatological_model === filter.current.mainModel &&
+                x.info.dataset_type === 'forecast_upper_uncertainty',
+            )[0]
+            : null,
+          data.current.series.filter(
+            x =>
+              x.info.dataset_type === 'observation' &&
+              x.info.processing_method === filter.current.sensorSmoothing,
+          )[0],
+        ];
 
-    await setSeriesObject(opseriesObj);
-    return opseriesObj;
-  };
+        await setSeriesObject(opseriesObj);
+        return opseriesObj;
+      }
+      : async () => {
+        if (data.current.series?.length > 0) {
+          let tdata: any[] = data.current.series;
+          let opseriesObj = [
+            tdata.filter(
+              x =>
+                x.info.processing_method.indexOf(filter.current.mainModel) >=
+                0,
+            )[0],
+            tdata.filter(
+              x => x.info.processing_method === 'decade_aggregation',
+            )[0],
+            tdata.filter(
+              x => x.info.processing_method === 'mann_kendall_trend',
+            )[0],
+          ];
+
+          await setSeriesObject(opseriesObj);
+          return opseriesObj;
+        }
+      };
 
   useEffect(() => {
     refreshSeriesObject();
@@ -183,6 +210,7 @@ export const DownloadForm = props => {
       sfs: filter.current?.series?.flat(),
     };
     setCsvLoader(true);
+    //@ts-ignore
     let fdata = [...seriesObj];
 
     let z = new JSZip();
@@ -193,10 +221,7 @@ export const DownloadForm = props => {
           filterParams.sfs === undefined ||
           filterParams.sfs.indexOf(ffdata.name) >= 0
         ) {
-          ffdata.values =
-            filledSeries.current[
-            ffdata.name + '__' + ffdata.info.processing_method
-            ];
+          ffdata.values = filledSeries.current[ffdata.name];
           console.log(fdata[f]);
           const pu = PapaParse.unparse(
             ffdata.values.slice(filterParams.start, filterParams.end + 1),
@@ -243,10 +268,7 @@ export const DownloadForm = props => {
           filterParams.sfs === undefined ||
           filterParams.sfs.indexOf(ffdata.name) >= 0
         ) {
-          ffdata.values =
-            filledSeries.current[
-            ffdata.name + '__' + ffdata.info.processing_method
-            ];
+          ffdata.values = filledSeries.current[ffdata.name];
           ffdata.values = ffdata.values.slice(
             filterParams.start,
             filterParams.end + 1,
@@ -274,6 +296,7 @@ export const DownloadForm = props => {
               {t('app.map.timeSeriesDialog.DLTimeSeries')}
             </Typography>
             <UserDlData
+              mode={mode}
               onChange={handleChange}
               onValidityChange={userValidityHandleChange}
             />

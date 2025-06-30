@@ -241,8 +241,7 @@ const Graph = (props: any) => {
         icon: 'roundRect',
       }));
     const station = timeseries
-      ?.filter(x => 'historical_variable' in x.info)
-      .filter(x => x.info.historical_variable === 'tdd')
+      ?.filter(x => x.info.climatological_variable === 'tdd')
       .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
       .map(x => ({
         name: labelFor(x, 'station'),
@@ -286,8 +285,8 @@ const Graph = (props: any) => {
       )
       .map(x => (ret[getName(x)] = true));
     timeseries
-      ?.filter(x => Object.keys(x.info).indexOf('station') > 0)
-      .filter(x => x.name.indexOf(snsfltr) >= 0)
+      ?.filter(x => x.info.climatological_variable === 'tdd')
+      .filter(x => x.info.processing_method.indexOf(snsfltr) >= 0)
       .map(x => (ret[getName(x, 'station')] = true));
     //.map(x => (ret[x.name] = x.info.processing_method === 'no_smoothing'));
     return ret;
@@ -379,14 +378,14 @@ const Graph = (props: any) => {
   };
 
   const rcps = {
-    rcp85: 'Scenario nessuna mitigazione',
-    rcp45: 'Scenario intermedio',
-    rcp26: 'Scenario forte mitigazione',
+    rcp85: t('scenarios.rcp85'),
+    rcp45: t('scenarios.rcp45'),
+    rcp26: t('scenarios.rcp26'),
   };
 
   const labelFor = (itm, mode = 'default') => {
     if ('scenario' in itm.info) return rcps[itm.info.scenario];
-    else return 'Osservazioni';
+    else return t('app.index.observations');
   };
 
   const getGraphType = dataset => {
@@ -438,13 +437,13 @@ const Graph = (props: any) => {
     "uncertainty_type": "upper_bound",
     "year_period": "year"
 }*/ const getName = (item, mode = 'timeseries') => {
-    if ('station' in item.info) mode = 'sensor';
+    if (item.info.climatological_variable === 'tdd') mode = 'sensor';
     let tdata: any = {};
     for (let k in item.translations.parameter_values) {
       tdata[k] = item.translations.parameter_values[k][i18n.language];
     }
     if (mode === 'timeseries') return `${tdata.series_nameg} ${tdata.scenario}`;
-    else return `${tdata.station}`;
+    else return 'Osservazioni';
   };
 
   let pseriesObj = timeseries.filter(item => {
@@ -452,7 +451,7 @@ const Graph = (props: any) => {
       (item.info.processing_method === 'MOVING_AVERAGE_11_YEARS' &&
         item.info.scenario) ||
       (item.info.processing_method === 'NO_SMOOTHING' &&
-        item.info.historical_variable === 'tdd')
+        item.info.climatological_variable === 'tdd')
     );
   });
   let opseriesObj = [
@@ -466,7 +465,7 @@ const Graph = (props: any) => {
       x =>
         x.info.scenario === 'rcp26' &&
         x.info.climatological_variable === 'tas' &&
-        !('undertainty_type' in x.info),
+        !('uncertainty_type' in x.info),
     )[0],
     pseriesObj.filter(
       x =>
@@ -484,7 +483,7 @@ const Graph = (props: any) => {
       x =>
         x.info.scenario === 'rcp45' &&
         x.info.climatological_variable === 'tas' &&
-        !('undertainty_type' in x.info),
+        !('uncertainty_type' in x.info),
     )[0],
     pseriesObj.filter(
       x =>
@@ -510,7 +509,7 @@ const Graph = (props: any) => {
         x.info.climatological_variable === 'tas' &&
         x.info.uncertainty_type === 'upper_bound',
     )[0],
-    pseriesObj.filter(x => x.info.historical_variable === 'tdd')[0],
+    pseriesObj.filter(x => x.info.climatological_variable === 'tdd')[0],
   ];
 
   let seriesObj = opseriesObj.map(item => {
@@ -553,13 +552,11 @@ const Graph = (props: any) => {
   });
 
   const titleText = `
-     Barometro del clima
+     ${t('app.index.header.title')}
   `;
 
-  const subText = `Barometro del clima © ARPAV - Arpa FVG
-  Si tratta di proiezioni climatiche e non di previsioni 
-  a lungo termine. Il valore annuale ha validità in un 
-  contesto di trend trentennale.`;
+  const subText = `${t('app.index.header.title')} © ARPAV - Arpa FVG
+  ${t('app.index.header.disclaimer')}`;
 
   const photoCameraIconPath =
     'path://M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z';

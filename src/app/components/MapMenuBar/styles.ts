@@ -78,6 +78,13 @@ export const FirstRowStyle = theme => ({
   backgroundColor: 'secondary.light',
   fontFamily: 'Titillium Web, Helvetica, sans-serif',
   paddingLeft: 2,
+  '& .dropdown-toggle': {
+    padding: '0 0',
+    color: '#164d36',
+    '& *': {
+      display: 'inline-block',
+    },
+  },
 });
 
 export const SecondRowStyle = theme => ({

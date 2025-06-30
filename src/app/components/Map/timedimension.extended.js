@@ -11,56 +11,70 @@ L.Control.TimeDimension = L.Control.TimeDimension.extend({
         else this._map.setupFrontLayer(x, this._map);
       }
     });
+    localStorage.setItem('currentYear', date.getFullYear().toString())
+    if(document.getElementsByClassName(
+        'leaflet-bar-timecontrol',
+      )[0].style.display !== 'none'){
+    
+            const url = new URL(window.location.href);
+            if(url.searchParams.size > 2){
+                if(url.searchParams.has('year')){
+                    url.searchParams.set('year', date.getFullYear().toString());
+                } else {
+                    url.searchParams.append('year', date.getFullYear().toString());
+                }
+                console.log('setting history to', url.toString());
+                window.history.pushState(null, '', url.toString());
+            }
+        }
     // @ts-ignore
     return date.getFullYear();
   },
 });
 
 L.TimeDimension = L.TimeDimension.extend({
-  prepareNextTimes: function(numSteps, howmany, loop){
-    if (!numSteps) {
-      numSteps = 1; 
-  }
+    prepareNextTimes: function(numSteps, howmany, loop){
+        numSteps = 1; 
 
-  var newIndex = this._currentTimeIndex;
-  var currentIndex = newIndex;
-  if (this._loadingTimeIndex > -1) {
-      newIndex = this._loadingTimeIndex;
-  }
-  // assure synced layers have a buffer/cache of at least howmany elements
-  for (var i = 0, len = this._syncedLayers.length; i < len; i++) {
-      if (this._syncedLayers[i].setMinimumForwardCache) {
-          this._syncedLayers[i].setMinimumForwardCache(howmany);
-      }
-  }
-  var count = howmany;
-  var upperLimit = this._upperLimit || this._availableTimes.length - 1;
-  var lowerLimit = this._lowerLimit || 0;
-  while (count > 0) {
-      newIndex = newIndex + numSteps;
-      if (newIndex > upperLimit) {
-          if (!!loop) {
-              newIndex = lowerLimit;
-          } else {
-              break;
-          }
-      }
-      if (newIndex < lowerLimit) {
-          if (!!loop) {
-              newIndex = upperLimit;
-          } else {
-              break;
-          }
-      }
-      if (currentIndex === newIndex) {
-          //we looped around the timeline
-          //no need to load further, the next times are already loading
-          break;
-      }
-      
-      count--;
-  }
-  }
+        var newIndex = this._currentTimeIndex;
+        var currentIndex = newIndex;
+        if (this._loadingTimeIndex > -1) {
+            newIndex = this._loadingTimeIndex;
+        }
+        // assure synced layers have a buffer/cache of at least howmany elements
+        for (var i = 0, len = this._syncedLayers.length; i < len; i++) {
+            if (this._syncedLayers[i].setMinimumForwardCache) {
+                this._syncedLayers[i].setMinimumForwardCache(howmany);
+            }
+        }
+        var count = howmany;
+        var upperLimit = this._upperLimit || this._availableTimes.length - 1;
+        var lowerLimit = this._lowerLimit || 0;
+        while (count > 0) {
+            newIndex = newIndex + numSteps;
+            if (newIndex > upperLimit) {
+                if (!!loop) {
+                    newIndex = lowerLimit;
+                } else {
+                    break;
+                }
+            }
+            if (newIndex < lowerLimit) {
+                if (!!loop) {
+                    newIndex = upperLimit;
+                } else {
+                    break;
+                }
+            }
+            if (currentIndex === newIndex) {
+                //we looped around the timeline
+                //no need to load further, the next times are already loading
+                break;
+            }
+            
+            count--;
+        }
+        }
 });
 
 L.TimeDimension.Layer.WMS.include({
@@ -85,7 +99,7 @@ L.TimeDimension.Layer.WMS.include({
     index-=1;
   }
  
-  if (time != this._availableTimes[index]) {
+  if (time !== this._availableTimes[index]) {
       
       
   }

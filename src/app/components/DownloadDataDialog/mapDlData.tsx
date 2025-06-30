@@ -50,7 +50,7 @@ export function range(
   const startBound = stop === undefined ? 0 : startOrStop;
   const stopBound = stop === undefined ? startOrStop : stop;
   return Array.from(
-    { length: Math.ceil((stopBound - startBound) / step - 1) + 1 },
+    { length: Math.ceil((stopBound - startBound) / step) + 1 },
     (_, index) => startBound + index * step,
   );
 }
@@ -62,6 +62,7 @@ export interface MapDlDataProps {
   menus: any;
   setActive: Function;
   combinations: any;
+  mode?: string;
 }
 
 const MapDlData = (props: MapDlDataProps) => {
@@ -72,6 +73,7 @@ const MapDlData = (props: MapDlDataProps) => {
   const configuration = props.configuration;
   const featureGroupRef: any = useRef();
   const { t, i18n } = useTranslation();
+  const mode = props.mode ?? 'forecast';
 
   const api = RequestApi.getInstance();
 
@@ -121,7 +123,10 @@ const MapDlData = (props: MapDlDataProps) => {
     ]);
   };
 
-  const times: number[] = range(1976, 2100, 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
+  const times: number[] =
+    mode === 'forecast'
+      ? range(1976, 2100, 1)
+      : range(1984, new Date().getFullYear(), 1); // timeserie ? timeserie[0].values.map(v => v.time) : [];
 
   const [years, setYears] = React.useState<number[]>([0, times.length - 1]);
 
@@ -163,8 +168,8 @@ const MapDlData = (props: MapDlDataProps) => {
   }, [downLoadBounds, onChange]);
 
   const getOptions = field => {
-    let x = attributes.filter(x => x.name === field);
-    if (x) {
+    let x = attributes?.filter(x => x.name === field);
+    if (x && x.length > 0) {
       return x[0].allowed_values.map(xx => {
         return {
           value: xx.name,
@@ -175,7 +180,7 @@ const MapDlData = (props: MapDlDataProps) => {
         };
       });
     }
-    return {};
+    return [];
   };
 
   const toDefault = object => {
@@ -188,12 +193,26 @@ const MapDlData = (props: MapDlDataProps) => {
       }
     }
 
-    ret.climatological_model = 'model_ensemble';
-    ret.scenario = 'rcp85';
-    ret.aggregation_period = '30yr';
-    ret.measure = 'anomaly';
-    ret.time_window = 'tw1';
-
+    if (object.archive.indexOf('historical') >= 0) {
+      ret.measure = 'absolute';
+      ret.aggregation_period = '30yr';
+      ret.time_window = 'climate_standard_normal_1991_2020';
+      ret.reference_period = 'climate_standard_normal_1991_2020';
+      ret.decade = 'decade_2011_2020';
+      ret.year_period = 'all_year';
+    } else {
+      ret.climatological_model = 'model_ensemble';
+      ret.scenario = 'rcp85';
+      ret.measure = 'anomaly';
+      ret.aggregation_period = '30yr';
+      ret.time_window = 'tw1';
+      ret.year_period =
+        ['tr', 'su30', 'fd', 'hdds', 'cdds', 'snwdays'].indexOf(
+          ret.climatological_variable,
+        ) >= 0
+          ? 'all_year'
+          : 'winter';
+    }
     return ret;
   };
 
@@ -202,13 +221,65 @@ const MapDlData = (props: MapDlDataProps) => {
     if (field === 'climatological_variable') {
       setActiveCombination(combinations[value]);
       const conf = toDefault(combinations[value]);
-      activeConfiguration.current = conf;
-      setActive(activeConfiguration.current);
+      activeConfiguration.current = { ...conf };
     } else {
       const conf = { ...activeConfiguration.current, ...{ [field]: value } };
       activeConfiguration.current = conf;
-      setActive(activeConfiguration.current);
     }
+    setActive(activeConfiguration.current);
+    if (
+      field === 'aggregation_period' &&
+      activeConfiguration.current.archive === 'historical'
+    ) {
+      if (value === '30yr') {
+        activeConfiguration.current = {
+          ...activeConfiguration.current,
+          ...{
+            time_window: 'climate_standard_normal_1991_2020',
+            reference_period: 'climate_standard_normal_1991_2020',
+          },
+        };
+      } else if (value === 'ten_year') {
+        activeConfiguration.current = {
+          ...activeConfiguration.current,
+          ...{
+            decade: 'decade_2011_2020',
+            time_window: 'decade_2011_2020',
+          },
+        };
+      }
+    }
+
+    if (
+      field === 'time_window' &&
+      activeConfiguration.current.archive === 'historical'
+    ) {
+      if (value.indexOf('climate_standard') >= 0) {
+        let nd = {
+          ...activeConfiguration.current,
+          ...{
+            reference_period: value,
+          },
+        };
+        try {
+          delete nd.decade;
+        } catch (ex) { }
+        activeConfiguration.current = { ...nd };
+      } else if (value.indexOf('decade') >= 0) {
+        let nd = {
+          ...activeConfiguration.current,
+          ...{
+            decade: value,
+          },
+        };
+        try {
+          delete nd.reference_period;
+        } catch (ex) { }
+        activeConfiguration.current = { ...nd };
+      }
+    }
+
+    setActive(activeConfiguration.current);
 
     api
       .getLayers(
@@ -216,9 +287,16 @@ const MapDlData = (props: MapDlDataProps) => {
         activeConfiguration.current.climatological_model,
         activeConfiguration.current.scenario,
         activeConfiguration.current.measure,
-        activeConfiguration.current.time_period,
+        activeConfiguration.current.archive === 'historical'
+          ? activeConfiguration.current.aggregation_period === '30yr'
+            ? activeConfiguration.current.reference_period
+            : activeConfiguration.current.aggregation_period === 'ten_year'
+              ? activeConfiguration.current.decade
+              : activeConfiguration.current.time_period
+          : activeConfiguration.current.time_period,
         activeConfiguration.current.aggregation_period,
         activeConfiguration.current.year_period,
+        activeConfiguration.current.archive,
       )
       .then(x => {
         setFound(x.items.length);
@@ -300,61 +378,66 @@ const MapDlData = (props: MapDlDataProps) => {
             </FormControl>
           </Box>
         </Box>
-        <Box sx={RowStyle}>
-          <Box>
-            <Box sx={FieldContainerStyle}>
-              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-                {t('app.map.downloader.model')}
-              </Typography>
-              <FormControl>
-                <Select
-                  sx={FullWidthStyle}
-                  value={
-                    typeof activeConfiguration.current.climatological_model ===
-                      'object'
-                      ? activeConfiguration.current.climatological_model
-                      : [activeConfiguration.current.climatological_model]
-                  }
-                  multiple
-                  name="climatological_model"
-                  onChange={e =>
-                    handleChange('climatological_model', e.target.value)
-                  }
-                >
-                  {getOptions('climatological_model').map(item => (
-                    <MenuItem key={item.value} value={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+        {mode === 'forecast' ? (
+          <Box sx={RowStyle}>
+            <Box>
+              <Box sx={FieldContainerStyle}>
+                <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                  {t('app.map.downloader.model')}
+                </Typography>
+                <FormControl>
+                  <Select
+                    sx={FullWidthStyle}
+                    value={
+                      typeof activeConfiguration.current
+                        .climatological_model === 'object'
+                        ? activeConfiguration.current.climatological_model
+                        : [activeConfiguration.current.climatological_model]
+                    }
+                    multiple
+                    name="climatological_model"
+                    onChange={e =>
+                      handleChange('climatological_model', e.target.value)
+                    }
+                  >
+                    {getOptions('climatological_model').map(item => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box sx={FieldContainerStyle}>
+                <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                  {t('app.map.downloader.scenario')}
+                </Typography>
+                <FormControl>
+                  <Select
+                    sx={FullWidthStyle}
+                    value={
+                      typeof activeConfiguration.current.scenario === 'object'
+                        ? activeConfiguration.current.scenario
+                        : [activeConfiguration.current.scenario]
+                    }
+                    multiple
+                    name="scenario"
+                    onChange={e => handleChange('scenario', e.target.value)}
+                  >
+                    {getOptions('scenario').map(item => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
           </Box>
-          <Box sx={FieldContainerStyle}>
-            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.downloader.scenario')}
-            </Typography>
-            <FormControl>
-              <Select
-                sx={FullWidthStyle}
-                value={
-                  typeof activeConfiguration.current.scenario === 'object'
-                    ? activeConfiguration.current.scenario
-                    : [activeConfiguration.current.scenario]
-                }
-                multiple
-                name="scenario"
-                onChange={e => handleChange('scenario', e.target.value)}
-              >
-                {getOptions('scenario').map(item => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
+        ) : (
+          <></>
+        )}
+
         <Box sx={RowStyle}>
           <Box sx={FieldContainerStyle}>
             <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
@@ -407,28 +490,72 @@ const MapDlData = (props: MapDlDataProps) => {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={FieldContainerStyle}>
-            <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
-              {t('app.map.downloader.quantity')}
-            </Typography>
-            <FormControl>
-              <Select
-                sx={FullWidthStyle}
-                disabled={
-                  activeConfiguration.current.aggregation_period !== '30yr'
-                }
-                value={activeConfiguration.current.time_window}
-                onChange={e => handleChange('time_window', e.target.value)}
-                name="time_window"
-              >
-                {getOptions('time_window').map(item => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+          {mode === 'forecast' ? (
+            <Box sx={FieldContainerStyle}>
+              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                {t('app.map.downloader.quantity')}
+              </Typography>
+              <FormControl>
+                <Select
+                  sx={FullWidthStyle}
+                  disabled={
+                    activeConfiguration.current.aggregation_period === 'annual'
+                  }
+                  value={activeConfiguration.current.time_window}
+                  onChange={e => handleChange('time_window', e.target.value)}
+                  name="time_window"
+                >
+                  {getOptions('time_window').map(item => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          ) : (
+            <Box sx={FieldContainerStyle}>
+              <Typography variant={'h6'} sx={MapDataSectionTextStyle}>
+                {t('app.map.downloader.quantity')}
+              </Typography>
+              <FormControl>
+                <Select
+                  sx={FullWidthStyle}
+                  disabled={
+                    activeConfiguration.current.aggregation_period === 'annual'
+                  }
+                  value={activeConfiguration.current.time_window || ''}
+                  onChange={e => handleChange('time_window', e.target.value)}
+                  name="time_window"
+                >
+                  {getOptions('reference_period').map(item => (
+                    <MenuItem
+                      key={item.value}
+                      value={item.value}
+                      disabled={
+                        activeConfiguration.current.aggregation_period !==
+                        '30yr'
+                      }
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                  {getOptions('decade').map(item => (
+                    <MenuItem
+                      key={item.value}
+                      value={item.value}
+                      disabled={
+                        activeConfiguration.current.aggregation_period !==
+                        'ten_year'
+                      }
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
         </Box>
         <Box sx={RowStyle}>
           <Box sx={FieldContainerStyle}>
@@ -581,7 +708,7 @@ const MapDlData = (props: MapDlDataProps) => {
             <span>{times[0]}</span>
             <Slider
               disabled={
-                activeConfiguration.current.aggregation_period === '30yr'
+                activeConfiguration.current.aggregation_period !== 'annual'
               }
               sx={YearsSliderStyle}
               getAriaValueText={() =>

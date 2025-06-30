@@ -6,6 +6,7 @@ import OpacityIcon from '@mui/icons-material/Opacity';
 import { useDispatch, useSelector } from 'react-redux';
 import { Filters, MapState } from '../../pages/MapPage/slice/types';
 import { useMapSlice } from '../../pages/MapPage/slice';
+import { t } from 'i18next';
 
 export const OpacityComponent = (param: any) => {
   const doSetOpacity = param.doSetOpacity;
@@ -23,7 +24,7 @@ export const OpacityComponent = (param: any) => {
         <Slider
           size="small"
           color="secondary"
-          aria-label="Opacità"
+          aria-label={t('app.map.opacity')}
           value={opacity}
           // @ts-ignore
           onChange={(e, v) => {

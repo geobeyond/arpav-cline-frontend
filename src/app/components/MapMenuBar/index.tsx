@@ -24,7 +24,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useTheme } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 
-import { MultiRadioSelect } from '../MultiRadioSelect';
+import { IItem, MultiRadioSelect } from '../MultiRadioSelect';
 
 import {
   FirstRowStyle,
@@ -43,7 +43,7 @@ import {
 } from './styles';
 import DownloadDataDialog from '../DownloadDataDialog';
 import { useEffect, useState, useRef } from 'react';
-import { useMapSlice } from '../../pages/MapPage/slice';
+//import { useMapSlice } from '../../pages/MapPage/slice';
 import { MenuSelectionMobileStyle } from './styles';
 import SnowSunIcon from '../../icons/SnowSunIcon';
 import {
@@ -53,6 +53,7 @@ import {
   LinkListItem,
 } from 'design-react-kit';
 import { RequestApi } from 'app/Services';
+import { useSearchParams } from 'react-router-dom';
 
 export interface MapMenuBar {
   onDownloadMapImg?: Function;
@@ -71,10 +72,10 @@ export interface MapMenuBar {
 }
 
 const MAP_MODES = {
-  future: 'Proiezioni',
-  past: 'Storico',
-  advanced: 'Avanzata',
-  simple: 'Semplice',
+  forecast: 'app.index.sections.proj',
+  past: 'app.index.sections.hist',
+  advanced: 'app.index.sections.advanced',
+  simple: 'app.index.sections.simple',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -109,7 +110,7 @@ export function MapMenuBar(props: MapMenuBar) {
   //} = useSelector(state => state?.map as MapState);
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
-  const actions = useMapSlice();
+  //const actions = useMapSlice();
   const localCM = useRef<any>(current_map);
 
   const changingParameter = useRef<string>('climatological_variable');
@@ -119,24 +120,31 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const api = RequestApi.getInstance();
 
-  const mapParameters = (mapKey, parameterListKey) => {
+  const mapParameters = (mapKeys, parameterListKey) => {
+    let items: IItem[] = [];
     if (forecast_parameters) {
-      const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
-      const items = fp.allowed_values.map(item => {
-        return {
-          ...item,
-          disabled: false,
-          selected: false, //currentMap[mapKey] === item.name,
-        };
-      });
-      //const needsSelection =
-      //  selected_map[mapKey] == null &&
-      //  items.filter(x => x.disabled === false).length > 0;
-      //return { items, needsSelection };
-      return { items, needsSelection: false };
-    } else {
-      return { items: [], needsSelection: false };
+      for (let mapKey of mapKeys) {
+        const fp = forecast_parameters.filter(x => x.name === mapKey)[0];
+        if (fp) {
+          items = items.concat(
+            fp.allowed_values?.map(item => {
+              //TODO: Controllre caso in cui fp sia vuoto
+              return {
+                ...item,
+                group: mapKey,
+                disabled: false,
+                selected: false, //currentMap[mapKey] === item.name,
+              };
+            }),
+          );
+        }
+        //const needsSelection =
+        //  selected_map[mapKey] == null &&
+        //  items.filter(x => x.disabled === false).length > 0;
+        //return { items, needsSelection };
+      }
     }
+    return { items, needsSelection: false };
   };
 
   const setItemMenus = () => ({
@@ -148,12 +156,8 @@ export function MapMenuBar(props: MapMenuBar) {
             key: 'climatological_variable',
             groupName: '',
             ...mapParameters(
-              map_data === 'future'
-                ? 'climatological_variable'
-                : 'historical_variable',
-              map_data === 'future'
-                ? 'climatological_variable'
-                : 'historical_variable',
+              ['climatological_variable'],
+              'climatological_variable',
             ),
             disableable: false,
             criteria: (x, c) => [],
@@ -172,7 +176,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 key: 'climatological_model',
                 groupName: t('app.map.menu.models'),
                 ...mapParameters(
-                  'climatological_model',
+                  ['climatological_model'],
                   'climatological_model',
                 ),
                 disableable: false,
@@ -187,7 +191,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 key: 'scenario',
                 disableable: false,
                 groupName: t('app.map.menu.scenarios'),
-                ...mapParameters('scenario', 'scenario'),
+                ...mapParameters(['scenario'], 'scenario'),
                 criteria: (x, c) => [],
                 disabled: x => false,
               },
@@ -199,15 +203,12 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
-            key: 'aggregation_period',
+            key:
+              map_data === 'forecast'
+                ? 'aggregation_period'
+                : 'aggregation_period',
             groupName: t('app.map.menu.dataSeries'),
-            ...mapParameters(
-              map_data === 'future'
-                ? 'aggregation_period'
-                : 'historical_aggregation_period',
-              map_data === 'future'
-                ? 'aggregation_period'
-                : 'historical_aggregation_period',),
+            ...mapParameters(['aggregation_period'], 'aggregation_period'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => {
@@ -217,22 +218,32 @@ export function MapMenuBar(props: MapMenuBar) {
           {
             key: 'measure',
             groupName: t('app.map.menu.valueTypes'),
-            ...mapParameters('measure', 'measure'),
+            ...mapParameters(['measure'], 'measure'),
             disableable: true,
             disabled: x => false,
             criteria: (x, c) => x?.measure,
           },
           {
-            key: 'time_window',
+            key: map_data === 'forecast' ? 'time_window' : 'reference_period',
             groupName: t('app.map.menu.timeWindows'),
             ...mapParameters(
-              map_data === 'future' ? 'time_window' : 'historical_time_window',
-              map_data === 'future' ? 'time_window' : 'historical_time_window',
+              map_data === 'forecast'
+                ? ['time_window']
+                : ['reference_period', 'decade'],
+              map_data === 'forecast'
+                ? ['time_window']
+                : ['reference_period', 'decade'],
             ),
             disableable: true,
-            disabled: x => x.aggregation_period !== '30yr',
+            disabled: x => x.aggregation_period === 'annual',
+            default: ['tw1', 'tw2', 'climate_standard_normal_1991_2020'],
             criteria: (x, c) =>
-              c.aggregation_period !== '30yr' ? [] : ['tw1', 'tw2'],
+              c.aggregation_period !== 'thirty_year' &&
+                c.aggregation_period !== '30yr'
+                ? c.aggregation_period.indexOf('ten') >= 0
+                  ? ['decade_1991_2000', 'decade_2001_2010', 'decade_2011_2020']
+                  : []
+                : ['tw1', 'tw2', 'climate_standard_normal_1991_2020'],
           },
         ],
       },
@@ -242,15 +253,14 @@ export function MapMenuBar(props: MapMenuBar) {
       {
         rows: [
           {
+            multicol: [5, 11, 17],
+            multicol_size: [160, 120, 120],
             key: 'year_period',
             groupName: '',
-            ...mapParameters(
-              map_data === 'future' ? 'year_period' : 'historical_year_period',
-              map_data === 'future' ? 'year_period' : 'historical_year_period',
-            ),
+            ...mapParameters(['year_period'], 'year_period'),
             disableable: true,
             disabled: x => false,
-            criteria: (x, c) => x?.year_period,
+            criteria: (x, c) => x?.year_period || x?.year_period,
           },
         ],
       },
@@ -267,6 +277,7 @@ export function MapMenuBar(props: MapMenuBar) {
   // const [selectedValues, setSelectedValues] = React.useState<IGrpItm[][] | []>(
   //   [],
   // );
+  const [sp, setSearchParams] = useSearchParams();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('def'));
@@ -274,12 +285,45 @@ export function MapMenuBar(props: MapMenuBar) {
   // const actualState = useSelector(state => state);
   //@ts-ignore
   // const forecastParams = actualState?.map?.forecast_parameters;
-
   const [isDownloadDataOpen, setDownloadDataOpen] =
     React.useState<boolean>(false);
 
+  useEffect(() => {
+    const _sp = new URLSearchParams(window.location.search);
+    const _params = Object.fromEntries(_sp);
+
+    if (Object.hasOwn(_params, 'open_dldata')) {
+      setTimeout(() => {
+        setDownloadDataOpen(true);
+      }, 8000);
+      delete _params['open_dldata'];
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDownloadDataOpen) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(searchParams);
+
+      const ret = {
+        ...params,
+        ...{ open_dldata: 'true' },
+      };
+      setTimeout(() => {
+        setSearchParams(ret);
+      }, 250);
+    } else {
+      const searchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(searchParams);
+      if (Object.hasOwn(params, 'open_dldata')) {
+        delete params['open_dldata'];
+      }
+      setSearchParams(params);
+    }
+  }, [isDownloadDataOpen]);
+
   const all_meas = ['absolute', 'anomaly'];
-  const all_pers = ['annual', '30yr'];
+  const all_pers = ['annual', 'thirty_year'];
   const all_indx = [
     'tas',
     'cdds',
@@ -308,12 +352,25 @@ export function MapMenuBar(props: MapMenuBar) {
       }
     }
 
-    ret.climatological_model = 'model_ensemble';
-    ret.scenario = 'rcp85';
-    ret.aggregation_period = '30yr';
-    ret.measure = 'anomaly';
-    ret.time_window = 'tw1';
-
+    if (object.archive.indexOf('historical') >= 0) {
+      ret.measure = 'absolute';
+      ret.reference_period = 'climate_standard_normal_1991_2020';
+      ret.aggregation_period = '30yr';
+      ret.decade = 'decade_2011_2020';
+      ret.year_period = 'all_year';
+    } else {
+      ret.climatological_model = 'model_ensemble';
+      ret.scenario = 'rcp85';
+      ret.aggregation_period = '30yr';
+      ret.measure = 'anomaly';
+      ret.time_window = 'tw1';
+      ret.year_period =
+        ['tr', 'su30', 'fd', 'hdds', 'cdds', 'snwdays'].indexOf(
+          ret.climatological_variable,
+        ) >= 0
+          ? 'all_year'
+          : 'winter';
+    }
     return ret;
   };
 
@@ -437,10 +494,6 @@ export function MapMenuBar(props: MapMenuBar) {
       localCM.current = { ...nm };
       console.log(localCM.current);
       setCurrentMap(localCM.current);
-
-      setActiveCombinations(
-        combinations[localCM.current.climatological_variable],
-      );
     } else {
       if (onMenuChange) {
         onMenuChange(false);
@@ -448,8 +501,12 @@ export function MapMenuBar(props: MapMenuBar) {
     }
   }, [foundLayers]);
 
+  useEffect(() => {
+    setActiveCombinations(combinations['tas::30yr']);
+  }, []);
+
   const labelFor = (itm: string) => {
-    api.getConfigurationParams().then(x => console.log(x));
+    api.getConfigurationParams().then(x => { });
     const confs = localStorage.getItem('configs');
     let configs = [];
     if (confs) {
@@ -469,16 +526,38 @@ export function MapMenuBar(props: MapMenuBar) {
 
   const selectedValueToString = () => {
     const caption = `${labelFor(localCM.current.climatological_variable)}
-    - ${labelFor(localCM.current.climatological_model)}
-    - ${labelFor(localCM.current.scenario)}
-    - ${labelFor(localCM.current.aggregation_period)}
-    - ${labelFor(localCM.current.measure)}
+    ${localCM.current.archive === 'historical'
+        ? ''
+        : ' - ' +
+        labelFor(localCM.current.climatological_model) +
+        ' - ' +
+        labelFor(localCM.current.scenario)
+      }
+  - ${labelFor(localCM.current.aggregation_period)} - ${labelFor(
+        localCM.current.measure,
+      )}
     ${localCM.current.time_window &&
-        localCM.current.aggregation_period === '30yr'
-        ? ' - ' + labelFor(localCM.current.time_window)
+        localCM.current.aggregation_period === '30yr' &&
+        localCM.current.archive === 'forecast'
+        ? labelFor(localCM.current.time_window)
         : ''
       }
-    - ${labelFor(localCM.current.year_period)}`;
+      
+    ${localCM.current.reference_period &&
+        localCM.current.aggregation_period === '30yr' &&
+        localCM.current.archive !== 'forecast'
+        ? labelFor(localCM.current.reference_period)
+        : ''
+      }
+      
+    ${localCM.current.decade &&
+        localCM.current.aggregation_period === 'ten_year' &&
+        localCM.current.archive !== 'forecast'
+        ? labelFor(localCM.current.decade)
+        : ''
+      }
+  - ${labelFor(localCM.current.year_period)}`; // string or function, added caption to bottom of screen
+
     return caption;
   };
 
@@ -489,7 +568,7 @@ export function MapMenuBar(props: MapMenuBar) {
           container
           rowSpacing={0}
           columnSpacing={{ xs: 0 }}
-          columns={{ xs: 7, def: 21 }}
+          columns={{ xs: 7, def: 20 }}
           sx={GridContainerStyle}
         >
           {isMobile ? (
@@ -503,14 +582,17 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              {map_data === 'past'?(<></>):(
-              <Grid xs={4} sx={FirstRowStyle}>
-                <Box>
-                  <Typography sx={MenuLabelStyle}>
-                    {t('app.map.menuBar.model')}
-                  </Typography>
-                </Box>
-              </Grid>)}
+              {map_data === 'past' ? (
+                <></>
+              ) : (
+                <Grid xs={4} sx={FirstRowStyle}>
+                  <Box>
+                    <Typography sx={MenuLabelStyle}>
+                      {t('app.map.menuBar.model')}
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
@@ -518,26 +600,49 @@ export function MapMenuBar(props: MapMenuBar) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid xs={4} sx={FirstRowStyle}>
+              <Grid xs={map_data === 'past' ? 8 : 4} sx={FirstRowStyle}>
                 <Box>
                   <Typography sx={MenuLabelStyle}>
                     {t('app.map.menuBar.season')}
                   </Typography>
                 </Box>
               </Grid>
-              
-              {map_data !== 'past'?(<></>):(
-              <Grid xs={4} sx={FirstRowStyle}></Grid>)}
+
               <Grid xs={4} sx={FirstRowStyle}>
                 <Box>
-                  <Typography sx={MenuLabelStyle}>
-                    {MAP_MODES[map_data]} - {MAP_MODES[map_mode]}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid xs={1} sx={FirstRowStyle}>
-                <Box>
-                  <Typography sx={MenuLabelStyle}></Typography>
+                  <DropdownToggle>
+                    <MenuIcon />{' '}
+                    <Typography sx={MenuLabelStyle}>
+                      {t(MAP_MODES[map_data])} - {t(MAP_MODES[map_mode])}
+                    </Typography>
+                  </DropdownToggle>
+                  <DropdownMenu style={{ zIndex: 100000000 }}>
+                    <LinkList>
+                      <LinkListItem inDropdown href="/">
+                        {t('app.index.sections.barometer')}
+                      </LinkListItem>
+                      <LinkListItem divider />
+                      <LinkListItem header inDropdown>
+                        {t('app.index.sections.proj')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/proiezioni-semplice">
+                        {t('app.index.sections.simple')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/proiezioni-avanzata">
+                        {t('app.index.sections.advanced')}
+                      </LinkListItem>
+                      <LinkListItem divider />
+                      <LinkListItem header inDropdown>
+                        {t('app.index.sections.hist')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/storico-semplice">
+                        {t('app.index.sections.simple')}
+                      </LinkListItem>
+                      <LinkListItem inDropdown href="/storico-avanzata">
+                        {t('app.index.sections.advanced')}
+                      </LinkListItem>
+                    </LinkList>
+                  </DropdownMenu>
                 </Box>
               </Grid>
             </>
@@ -554,26 +659,28 @@ export function MapMenuBar(props: MapMenuBar) {
               disabled={inProgress}
             />
           </Grid>
-          
-          {map_data === 'past'?(<></>):(
-          <Grid xs={1} def={4} sx={SecondRowStyle}>
-            <MultiRadioSelect
-              valueSet={menus.modelAndScenarioMenuSet}
-              current_map={current_map}
-              onChange={handleChange}
-              sx={SelectStyle}
-              menuSx={SelectMenuStyle}
-              mobileIcon={<ShowChartIcon />}
-              className={
-                hasMissingValues(menus.modelAndScenarioMenuSet)
-                  ? 'NeedsSelection'
-                  : ''
-              }
-              // label={'Model and Scenario'}
-              label={t('app.map.menuBar.model')}
-              disabled={inProgress}
-            />
-          </Grid>
+
+          {map_data === 'past' ? (
+            <></>
+          ) : (
+            <Grid xs={1} def={4} sx={SecondRowStyle}>
+              <MultiRadioSelect
+                valueSet={menus.modelAndScenarioMenuSet}
+                current_map={current_map}
+                onChange={handleChange}
+                sx={SelectStyle}
+                menuSx={SelectMenuStyle}
+                mobileIcon={<ShowChartIcon />}
+                className={
+                  hasMissingValues(menus.modelAndScenarioMenuSet)
+                    ? 'NeedsSelection'
+                    : ''
+                }
+                // label={'Model and Scenario'}
+                label={t('app.map.menuBar.model')}
+                disabled={inProgress}
+              />
+            </Grid>
           )}
           <Grid xs={1} def={4} sx={SecondRowStyle}>
             <MultiRadioSelect
@@ -592,25 +699,44 @@ export function MapMenuBar(props: MapMenuBar) {
               disabled={inProgress}
             />
           </Grid>
-          <Grid xs={1} def={4} sx={SecondRowStyle}>
-            <MultiRadioSelect
-              valueSet={menus.seasonMenuSet}
-              current_map={current_map}
-              onChange={handleChange}
-              sx={SelectStyle}
-              menuSx={SelectMenuStyle}
-              mobileIcon={<SnowSunIcon />}
-              className={
-                hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
-              }
-              activeCombinations={activeCombinations.current}
-              label={t('app.map.menuBar.season')}
-              // label={'Season'}
-              disabled={inProgress}
-            />
-          </Grid>
-          {map_data !== 'past'?(<></>):(
-          <Grid xs={1} def={4} sx={SecondRowStyle}></Grid>)}
+
+          {map_data === 'past' ? (
+            <Grid xs={2} def={8} sx={SecondRowStyle}>
+              <MultiRadioSelect
+                valueSet={menus.seasonMenuSet}
+                current_map={current_map}
+                onChange={handleChange}
+                sx={SelectStyle}
+                menuSx={SelectMenuStyle}
+                mobileIcon={<SnowSunIcon />}
+                className={
+                  hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
+                }
+                activeCombinations={activeCombinations.current}
+                label={t('app.map.menuBar.season')}
+                // label={'Season'}
+                disabled={inProgress}
+              />
+            </Grid>
+          ) : (
+            <Grid xs={1} def={4} sx={SecondRowStyle}>
+              <MultiRadioSelect
+                valueSet={menus.seasonMenuSet}
+                current_map={current_map}
+                onChange={handleChange}
+                sx={SelectStyle}
+                menuSx={SelectMenuStyle}
+                mobileIcon={<SnowSunIcon />}
+                className={
+                  hasMissingValues(menus.seasonMenuSet) ? 'NeedsSelection' : ''
+                }
+                activeCombinations={activeCombinations.current}
+                label={t('app.map.menuBar.season')}
+                // label={'Season'}
+                disabled={inProgress}
+              />
+            </Grid>
+          )}
           <Grid xs={1} def={2} sx={SecondRowStyle}>
             <Box sx={ButtonBoxStyle}>
               {isMobile ? (
@@ -621,24 +747,28 @@ export function MapMenuBar(props: MapMenuBar) {
                   <IconButton
                     onClick={() => setDownloadDataOpen(true)}
                     aria-label={t('app.map.menuBar.downloadMap')}
-                    disabled={foundLayers === 0 || inProgress}
+                    disabled={
+                      foundLayers === 0 || inProgress || map_mode === 'simple'
+                    }
                   >
                     <FileDownloadIcon />
                   </IconButton>
                 </Tooltip>
               ) : (
                 /*</Grid><IconButton
-                  onClick={() => setDownloadDataOpen(true)}
-                  disabled={true}
-                  aria-label={t('app.map.menuBar.downloadData')}
-                >
-                  <FileDownloadIcon />
-                </IconButton>*/
+                onClick={() => setDownloadDataOpen(true)}
+                disabled={true}
+                aria-label={t('app.map.menuBar.downloadData')}
+              >
+                <FileDownloadIcon />
+              </IconButton>*/
                 <Button
                   startIcon={<FileDownloadIcon />}
                   onClick={() => setDownloadDataOpen(true)}
                   aria-label={t('app.map.menuBar.downloadData')}
-                  disabled={foundLayers === 0 || inProgress}
+                  disabled={
+                    foundLayers === 0 || inProgress || map_mode === 'simple'
+                  }
                 >
                   {t('app.map.menuBar.downloadData')}
                 </Button>
@@ -649,6 +779,7 @@ export function MapMenuBar(props: MapMenuBar) {
                 setOpen={setDownloadDataOpen}
                 combinations={combinations}
                 configuration={current_map}
+                mode={map_data}
               />
             </Box>
           </Grid>
@@ -684,40 +815,42 @@ export function MapMenuBar(props: MapMenuBar) {
               )}
             </Box>
           </Grid>
-          <Grid xs={1} def={1} sx={SecondRowStyle}>
-            <Box sx={ButtonBoxStyle}>
-              <DropdownToggle>
-                <MenuIcon />
-              </DropdownToggle>
-              <DropdownMenu style={{ zIndex: 100000000 }}>
-                <LinkList>
-                  <LinkListItem inDropdown href="/">
-                    {t('app.index.sections.barometer')}
-                  </LinkListItem>
-                  <LinkListItem divider />
-                  <LinkListItem header inDropdown>
-                    {t('app.index.sections.proj')}
-                  </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/proiezioni-semplice">
-                    {t('app.index.sections.simple')}
-                  </LinkListItem>
-                  <LinkListItem inDropdown href="/proiezioni-avanzata">
-                    {t('app.index.sections.advanced')}
-                  </LinkListItem>
-                  <LinkListItem divider />
-                  <LinkListItem header inDropdown>
-                    {t('app.index.sections.hist')}
-                  </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/storico-semplice">
-                    {t('app.index.sections.simple')}
-                  </LinkListItem>
-                  <LinkListItem disabled inDropdown href="/storico-avanzata">
-                    {t('app.index.sections.advanced')}
-                  </LinkListItem>
-                </LinkList>
-              </DropdownMenu>
-            </Box>
-          </Grid>
+          {isMobile && (
+            <Grid xs={1} def={1} sx={SecondRowStyle}>
+              <Box sx={ButtonBoxStyle}>
+                <DropdownToggle>
+                  <MenuIcon />
+                </DropdownToggle>
+                <DropdownMenu style={{ zIndex: 100000000 }}>
+                  <LinkList>
+                    <LinkListItem inDropdown href="/">
+                      {t('app.index.sections.barometer')}
+                    </LinkListItem>
+                    <LinkListItem divider />
+                    <LinkListItem header inDropdown>
+                      {t('app.index.sections.proj')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/proiezioni-semplice">
+                      {t('app.index.sections.simple')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/proiezioni-avanzata">
+                      {t('app.index.sections.advanced')}
+                    </LinkListItem>
+                    <LinkListItem divider />
+                    <LinkListItem header inDropdown>
+                      {t('app.index.sections.hist')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/storico-semplice">
+                      {t('app.index.sections.simple')}
+                    </LinkListItem>
+                    <LinkListItem inDropdown href="/storico-avanzata">
+                      {t('app.index.sections.advanced')}
+                    </LinkListItem>
+                  </LinkList>
+                </DropdownMenu>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </Toolbar>
       {isMobile && (

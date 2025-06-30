@@ -40,9 +40,35 @@ export const GroupMenuStyle = {
   },
 };
 
+export const MulticolGroupMenuStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  flexWrap: 'wrap',
+  maxHeight: '450px',
+
+  '& .MuiMenuItem-root': {
+    whiteSpace: 'initial',
+  },
+
+  '& .MuiFormControlLabel-root': {
+    pt: 2,
+    pb: 0,
+    pl: 0,
+    pr: 2, // equivalent to paddingRight: theme => theme.spacing(2)
+    marginLeft: 0,
+    marginRight: 0,
+    width: '100%',
+    alignItems: 'flex-start',
+  },
+
+  '& .MuiButtonBase-root': {
+    pt: 0,
+  },
+};
+
 export const MenuLabelStyle = theme => ({
   display: 'flex',
-  height: '40px',
+  height: '20px',
   flexDirection: 'row',
   justifyContent: 'space-between',
   gap: 1,

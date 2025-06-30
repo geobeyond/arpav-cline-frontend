@@ -1,6 +1,6 @@
 {
   "name": "PPCV-frontend",
-  "version": "2.0.0-rc1",
+  "version": "2.0.0",
   "license": "CC-BY-SA-3.0",
   "author": "Geobeyond <info@geobeyond.it> (http://www.geobeyond.it/)",
   "homepage": ".",
@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "1.8.5",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.4.0",
+    "@tolgee/i18next": "6.1.1",
     "@tolgee/react": "5.28.6",
     "@turf/boolean-contains": "6.5.0",
     "@types/fontfaceobserver": "2.1.0",
