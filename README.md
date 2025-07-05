@@ -1,6 +1,6 @@
 # Piattaforma Proiezioni Climatiche per il Nord-Est
 
-This is the frontend component of the ARPAV-PPCV system.
+This is the frontend component of the ARPAV cline system.
 
 #### Climate Projections Platform for North-Eastern Italy
 

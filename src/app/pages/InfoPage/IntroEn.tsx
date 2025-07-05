@@ -66,6 +66,24 @@ const IntroEn = () => {
                     </a>
                 </p>
                 <p>
+                    <a
+                        href="https://www.youtube.com/watch?v=CZIT77gOAM8"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        Video tutorial Historical Climatology
+                    </a>
+                </p>
+                <p>
+                    <a
+                        href="https://www.youtube.com/watch?v=5pzjuQ0ygP8"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        Video tutorial Climate Projections
+                    </a>
+                </p>
+                <p>
                     Sourcecode, available on{' '}
                     <a
                         href="https://github.com/venetoarpa/Arpav-PPCV"
