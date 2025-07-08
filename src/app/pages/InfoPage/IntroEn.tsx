@@ -67,7 +67,7 @@ const IntroEn = () => {
                 </p>
                 <p>
                     <a
-                        href="https://www.youtube.com/watch?v=CZIT77gOAM8"
+                        href="https://www.youtube.com/watch?v=jgowvWIVSE0"
                         target="_blank"
                         rel="noreferrer"
                     >
@@ -76,7 +76,7 @@ const IntroEn = () => {
                 </p>
                 <p>
                     <a
-                        href="https://www.youtube.com/watch?v=5pzjuQ0ygP8"
+                        href="https://www.youtube.com/watch?v=qyMiroQFss0"
                         target="_blank"
                         rel="noreferrer"
                     >
