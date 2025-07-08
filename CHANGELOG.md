@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [2.0.1] - 2025-07-07
+
+### Changed
+- Disabled map downloads in the simple section
+
+
 ## [2.0.0] - 2025-06-26
 
 ### Added
@@ -27,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Previous version, developed by a different team
 
 
-[Unreleased]: https://github.com/geobeyond/arpav-cline-frontend/compare/v2.0.0...main
+[Unreleased]: https://github.com/geobeyond/arpav-cline-frontend/compare/v2.0.1...main
+[2.0.1]: https://github.com/geobeyond/arpav-cline-frontend/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/geobeyond/arpav-cline-frontend/compare/v2.0.0-rc1...v2.0.0
 [2.0.0-rc1]: https://github.com/geobeyond/arpav-cline-frontend/tree/v2.0.0-rc1
