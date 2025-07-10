@@ -79,7 +79,7 @@ const IntroIt = () => {
         </p>
         <p>
           <a
-            href="https://youtu.be/CZIT77gOAM8"
+            href="https://www.youtube.com/watch?v=jgowvWIVSE0"
             target="_blank"
             rel="noreferrer"
           >
@@ -88,7 +88,7 @@ const IntroIt = () => {
         </p>
         <p>
           <a
-            href=" https://youtu.be/5pzjuQ0ygP8"
+            href="https://www.youtube.com/watch?v=qyMiroQFss0"
             target="_blank"
             rel="noreferrer"
           >
