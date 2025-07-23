@@ -982,4 +982,15 @@ export class RequestApi extends Http {
   };
 
   public getForecastAttribute = (attribute, params = {}) => {};
+
+  public pushUserData = (identifier, userData) => {
+    this.instance
+      .get<any> (
+        `${BACKEND_API_URL}/coverages/time-series-download-request/${identifier}`,
+        { params: userData },
+      )
+      .then(data => {
+        console.log(data);
+      });
+  }
 }

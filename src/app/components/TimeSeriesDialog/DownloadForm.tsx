@@ -34,16 +34,30 @@ export const DownloadForm = props => {
     setDownloadDisabled(!isValid);
   };
 
-  const [userData, setUserData] = useState<any>({
+  class UserData {
+    accept_disclaimer?: boolean;
+    email?: string;
+    membership?: string;
+    name?: string;
+    public?: boolean;
+    coords?: string
+  }
+
+  const [userData, setUserData] = useState<UserData>({
     accept_disclaimer: false,
     email: '',
     membership: '',
     name: '',
     public: false,
+    coords: ""
   });
 
   const handleChange = values => {
     setUserData({ ...userData, ...values });
+  };
+
+  const pushUserData = () => {
+    api.pushUserData(data.current.series[0].info.coverage_identifier, {...userData, ...{coords: data.current.series[0].info.location}});
   };
 
   const refreshSeriesObject =
@@ -192,6 +206,7 @@ export const DownloadForm = props => {
   }, [filter.current, data.current]);
 
   const download = async () => {
+    pushUserData();
     const seriesObj = await refreshSeriesObject();
     console.log(seriesObject);
     console.log('download');
@@ -240,6 +255,7 @@ export const DownloadForm = props => {
   };
 
   const downloadJson = () => {
+    pushUserData();
     refreshSeriesObject();
     console.log('download');
     if (!latLng || !ids) {
