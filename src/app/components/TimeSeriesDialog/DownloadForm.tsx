@@ -40,7 +40,7 @@ export const DownloadForm = props => {
     membership?: string;
     name?: string;
     public?: boolean;
-    coords?: string
+    coords?: string;
   }
 
   const [userData, setUserData] = useState<UserData>({
@@ -49,7 +49,7 @@ export const DownloadForm = props => {
     membership: '',
     name: '',
     public: false,
-    coords: ""
+    coords: '',
   });
 
   const handleChange = values => {
@@ -57,7 +57,10 @@ export const DownloadForm = props => {
   };
 
   const pushUserData = () => {
-    api.pushUserData(data.current.series[0].info.coverage_identifier, {...userData, ...{coords: data.current.series[0].info.location}});
+    api.pushUserData(data.current.series[0].info.coverage_identifier, {
+      ...userData,
+      ...{ coords: data.current.series[0].info.location },
+    });
   };
 
   const refreshSeriesObject =
@@ -241,7 +244,7 @@ export const DownloadForm = props => {
           const pu = PapaParse.unparse(
             ffdata.values.slice(filterParams.start, filterParams.end + 1),
           );
-          z.file(ffdata.name + '.csv', pu);
+          z.file(ffdata.name.replaceAll('*', '_') + '.csv', pu);
         }
       }
     }
@@ -289,7 +292,10 @@ export const DownloadForm = props => {
             filterParams.start,
             filterParams.end + 1,
           );
-          z.file(ffdata.name + '.json', JSON.stringify(ffdata));
+          z.file(
+            ffdata.name.replaceAll('*', '_') + '.json',
+            JSON.stringify(ffdata),
+          );
         }
       }
     }
