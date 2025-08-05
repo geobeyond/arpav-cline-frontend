@@ -244,7 +244,7 @@ export const DownloadForm = props => {
           const pu = PapaParse.unparse(
             ffdata.values.slice(filterParams.start, filterParams.end + 1),
           );
-          z.file(ffdata.name.replaceAll('*', '_') + '.csv', pu);
+          z.file(ffdata.name.replaceAll('*', '_').replaceAll(':','_') + '.csv', pu);
         }
       }
     }
@@ -293,7 +293,7 @@ export const DownloadForm = props => {
             filterParams.end + 1,
           );
           z.file(
-            ffdata.name.replaceAll('*', '_') + '.json',
+            ffdata.name.replaceAll('*', '_').replaceAll(':','_') + '.json',
             JSON.stringify(ffdata),
           );
         }
