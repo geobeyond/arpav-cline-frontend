@@ -5,6 +5,7 @@ import {
   BACKEND_API_URL,
   BACKEND_WMS_BASE_URL,
 } from '../../../../utils/constants';
+import { NoEncryption } from '@mui/icons-material';
 
 export interface AuthResponse {
   [key: string]: {};
@@ -37,7 +38,7 @@ export class RequestApi extends Http {
   downloadScreenshot(href: string, filename: string, lang: string) {
     href = href.replaceAll(
       'http://localhost:3000',
-      'https://arpav.geobeyond.dev',
+      'https://clima.arpa.veneto.it',
     );
     return (
       this.instance
@@ -71,20 +72,24 @@ export class RequestApi extends Http {
     );
   }
   getCapabilities(wms) {
-    const fullUrl =
-      BACKEND_WMS_BASE_URL +
-      '/' +
-      wms +
-      '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&verbose=true';
+    if (wms) {
+      const fullUrl =
+        BACKEND_WMS_BASE_URL +
+        '/' +
+        wms +
+        '?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0&verbose=true';
 
-    return this.instance
-      .get<string>(fullUrl, {
-        responseType: 'text',
-      })
-      .then(x => {
-        localStorage.setItem(fullUrl, JSON.stringify(x));
-        return x;
-      });
+      return this.instance
+        .get<string>(fullUrl, {
+          responseType: 'text',
+        })
+        .then(x => {
+          localStorage.setItem(fullUrl, JSON.stringify(x));
+          return x;
+        });
+    } else {
+      return Promise.resolve("");
+    }
   }
 
   /**
@@ -985,12 +990,12 @@ export class RequestApi extends Http {
 
   public pushUserData = (identifier, userData) => {
     this.instance
-      .get<any> (
+      .get<any>(
         `${BACKEND_API_URL}/coverages/time-series-download-request/${identifier}`,
         { params: userData },
       )
       .then(data => {
         console.log(data);
       });
-  }
+  };
 }

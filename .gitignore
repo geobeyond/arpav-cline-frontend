@@ -40,3 +40,5 @@ _locks
 _logs
 docs
 /.vscode
+
+**/debug.log
