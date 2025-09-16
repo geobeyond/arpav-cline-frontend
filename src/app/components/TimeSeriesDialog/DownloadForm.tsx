@@ -57,15 +57,12 @@ export const DownloadForm = props => {
   };
 
   const pushUserData = () => {
-    let sname = api.pushUserData(
-      data.current.series[0].info.coverage_identifier
-        ? data.current.series[0].info.coverage_identifier
-        : data.current.series[0].info.series_identifier,
-      {
-        ...userData,
-        ...{ coords: data.current.series[0].info.location },
-      },
-    );
+    let coverage_identifier = localStorage.getItem('coverage_identifier');
+
+    let sname = api.pushUserData(coverage_identifier, {
+      ...userData,
+      ...{ coords: data.current.series[0].info.location },
+    });
   };
 
   const refreshSeriesObject =

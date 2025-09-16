@@ -460,6 +460,7 @@ export function MapPage(props: MapPageProps) {
   }
 
   useEffect(() => {
+    localStorage.setItem('coverage_identifier', currentLayer);
     if (currentLayer.length > 0 && selectedPoint) {
       const lsp = new URLSearchParams(window.location.search);
       setSearchParams({
