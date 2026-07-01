@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  PUBLISH_IMAGE: ${{ (github.ref_name == 'main' || github.ref_type == 'tag') && 'TRUE' || 'FALSE'}}
+  PUBLISH_IMAGE: ${{ (github.ref_name == 'main' || github.ref_type == 'tag') && github.repository_owner == 'geobeyond' && 'TRUE' || 'FALSE'}}
   IMAGE_TAG: ${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}
 
